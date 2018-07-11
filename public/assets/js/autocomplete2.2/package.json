@@ -1,0 +1,17 @@
+{
+    "name": "autocomplete.js",
+    "version": "2.0.2",
+    "author": "support@autocomplete-js.com",
+    "license": "MIT",
+    "dependencies": {
+        "brunch": "2.4.*",
+        "brunch-typescript": "1.8.*",
+        "less-brunch": "2.0.*",
+        "uglify-js-brunch": "2.0.*"
+    },
+    "scripts": {
+        "dev": "mkdir -p dist/development && rm -f dist/*.{js,css,map} && brunch build && mv -f dist\/*.js dist/development && mv -f dist\/*.css dist/development && mv -f dist\/*.map dist/development",
+        "prod": "mkdir -p dist/production && rm -f dist/*.{js,css,map} && brunch build --production && mv -f dist\/*.js dist/production && mv -f dist\/*.css dist/production",
+        "start": "npm run dev && npm run prod"
+    }
+}

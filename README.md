@@ -1,2 +1,1 @@
-# tripx-bills-app
-Billing management application
+# pharclient
