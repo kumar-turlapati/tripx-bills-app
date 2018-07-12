@@ -92,8 +92,7 @@
           <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/lead/create"><i class="fa fa-comment"></i> Create lead</a></li>
-          <li><a href="javascript:void(0);" onclick="alert('Under progress');return false;"><i class="fa fa-random"></i> Campaigns</a></li>
+          <li><a href="/campaigns/list"><i class="fa fa-random"></i> Campaigns</a></li>
         </ul>
       </li>      
       <li class="sub-menu">
