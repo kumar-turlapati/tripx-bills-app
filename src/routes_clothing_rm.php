@@ -592,9 +592,11 @@ $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportN
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',
   'reportName' => null,
 )));
-
 $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
+)));
+$routes->add('report_indentItemAvail', new Routing\Route('/indent-item-avail', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemAvailability',
 )));
 
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(

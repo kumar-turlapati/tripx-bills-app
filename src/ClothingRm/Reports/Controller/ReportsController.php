@@ -130,17 +130,6 @@ class ReportsController
     $pdf->Cell($invoice_info_widths[2],6,$pay_method,'RTB',0,'C');
     $pdf->Cell($invoice_info_widths[3],6,'','RTB',1,'C');
     
-    # third row(s)
-    # customer information is not necessary for domestic sales.
-/*    $pdf->SetFont('Arial','B',9);
-    $pdf->Cell($customer_info_widths[0],6,'','LRTB',0,'C');
-    $pdf->Cell($customer_info_widths[1],6,'','RTB',0,'C');
-    $pdf->SetFont('Arial','',8);
-    $pdf->SetFont('Arial','B',9);
-    $pdf->Cell($customer_info_widths[0],6,'','LRTB',0,'C');
-    $pdf->Cell($customer_info_widths[1],6,'','RTB',0,'C');
-    $pdf->SetFont('Arial','',8);*/
-
     $pdf->SetFont('Arial','B',7);
     $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
     $pdf->Cell($item_widths[1],6,'ProductName','RTB',0,'C');
@@ -191,388 +180,354 @@ class ReportsController
       $pdf->Cell($item_widths[10],6,number_format($sgst_value,2),'RTB',1,'R');
     }
 
-      $pdf->Cell($item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3],6,'LINE TOTALS','LRTB',0,'R');
-      $pdf->Cell($item_widths[4],6,$tot_items_qty,'RTB',0,'R');
-      $pdf->Cell($item_widths[5],6,number_format($tot_bill_value,2),'RTB',0,'R');
-      $pdf->Cell($item_widths[6],6,number_format($tot_discount,2),'RTB',0,'R');
-      $pdf->Cell($item_widths[6],6,number_format($tot_taxable,2),'RTB',0,'R');  
-      $pdf->Cell($item_widths[7],6,'','RTB',0,'R');
-      $pdf->Cell($item_widths[8],6,number_format($tot_cgst_value,2),'RTB',0,'R');
-      $pdf->Cell($item_widths[9],6,'','RTB',0,'R');
-      $pdf->Cell($item_widths[10],6,number_format($tot_sgst_value,2),'RTB',1,'R');
-        
-      $pdf->SetFont('Arial','B',10);
-      $pdf->Cell(190,6,'INVOICE SUMMARY (figures in Rs.)','LRTB',1,'C');
-      $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3],6,'LINE TOTALS','LRTB',0,'R');
+    $pdf->Cell($item_widths[4],6,$tot_items_qty,'RTB',0,'R');
+    $pdf->Cell($item_widths[5],6,number_format($tot_bill_value,2),'RTB',0,'R');
+    $pdf->Cell($item_widths[6],6,number_format($tot_discount,2),'RTB',0,'R');
+    $pdf->Cell($item_widths[6],6,number_format($tot_taxable,2),'RTB',0,'R');  
+    $pdf->Cell($item_widths[7],6,'','RTB',0,'R');
+    $pdf->Cell($item_widths[8],6,number_format($tot_cgst_value,2),'RTB',0,'R');
+    $pdf->Cell($item_widths[9],6,'','RTB',0,'R');
+    $pdf->Cell($item_widths[10],6,number_format($tot_sgst_value,2),'RTB',1,'R');
+      
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell(190,6,'INVOICE SUMMARY (figures in Rs.)','LRTB',1,'C');
+    $pdf->SetFont('Arial','B',9);
 
-      $pdf->Cell($final_tot_width[0],6,'Bill Amount','LRTB',0,'C');
-      $pdf->Cell($final_tot_width[1],6,'Discount','RTB',0,'C');
-      $pdf->Cell($final_tot_width[2],6,'Taxable','RTB',0,'C');  
-      $pdf->Cell($final_tot_width[3],6,'CGST & SGST','RTB',0,'C');
-      $pdf->Cell($final_tot_width[4],6,'Round Off','RTB',0,'C');
-      $pdf->Cell($final_tot_width[5],6,'Invoice Total','RTB',0,'C');
-      $pdf->Cell($final_tot_width[6],6,'Paid by Cash','RTB',0,'C'); 
-      $pdf->Cell($final_tot_width[7],6,'Paid by Card','RTB',1,'C');
+    $pdf->Cell($final_tot_width[0],6,'Bill Amount','LRTB',0,'C');
+    $pdf->Cell($final_tot_width[1],6,'Discount','RTB',0,'C');
+    $pdf->Cell($final_tot_width[2],6,'Taxable','RTB',0,'C');  
+    $pdf->Cell($final_tot_width[3],6,'CGST & SGST','RTB',0,'C');
+    $pdf->Cell($final_tot_width[4],6,'Round Off','RTB',0,'C');
+    $pdf->Cell($final_tot_width[5],6,'Invoice Total','RTB',0,'C');
+    $pdf->Cell($final_tot_width[6],6,'Paid by Cash','RTB',0,'C'); 
+    $pdf->Cell($final_tot_width[7],6,'Paid by Card','RTB',1,'C');
 
-      $pdf->Cell($final_tot_width[0],6,number_format($sale_details['billAmount'],2),'LRTB',0,'R');
-      $pdf->Cell($final_tot_width[1],6,number_format($sale_details['discountAmount'],2),'RTB',0,'R');
-      $pdf->Cell($final_tot_width[2],6,number_format($sale_details['totalAmount'],2),'RTB',0,'R');  
-      $pdf->Cell($final_tot_width[3],6,number_format($sale_details['taxAmount'],2),'RTB',0,'R');
-      $pdf->Cell($final_tot_width[4],6,number_format($sale_details['roundOff'],2),'RTB',0,'R');
-      $pdf->SetFont('Arial','B',14);      
-      $pdf->Cell($final_tot_width[5],6,number_format($sale_details['netPay'],2),'RTB',0,'R');
-      $pdf->SetFont('Arial','B',9);      
-      $pdf->Cell($final_tot_width[6],6,$sale_details['netPayCash'] > 0 ? number_format($sale_details['netPayCash'],2) : '','RTB',0,'R');      
-      $pdf->Cell($final_tot_width[7],6,$sale_details['netPayCard'] > 0 ? number_format($sale_details['netPayCard'],2) : '','RTB',1,'R');
-
-/*    $pdf->Ln();
-    $pdf->SetFont('Arial','B',9);    
-    $pdf->Cell($totals_width,6,'Gross Total','LRTB',0,'R');
-    $pdf->Cell($item_widths[5],6,$bill_amount,'LRTB',0,'R');
-    $pdf->Ln();
-
-    # print only when there is discount.
-    if($bill_discount>0) {
-        $pdf->Cell($totals_width,6,'(-) Discount','LRTB',0,'R');
-        $pdf->Cell($item_widths[5],6,$bill_discount,'LRTB',0,'R');
-        $pdf->Ln();
-        $pdf->Cell($totals_width,6,'Total Amount','LRTB',0,'R');
-        $pdf->Cell($item_widths[5],6,$total_amount,'LRTB',0,'R');
-        $pdf->Ln();    
-    }
-
-    if($tax_amount>0) {
-        $net_pay_string = '***************** VAT AMOUNT: Rs.'.number_format($tax_amount,2).'  ***************** Net Pay';
-    } else {
-        $net_pay_string = "Net Pay";
-    }
-    
-    $pdf->Cell($totals_width,6,'(+/-) Round Off','LRTB',0,'R');
-    $pdf->Cell($item_widths[5],6,$total_amt_r,'RTB',0,'R');
-    
-    $pdf->Ln();
-    $pdf->Cell($totals_width,6,$net_pay_string,'LRTB',0,'R');
-    $pdf->Cell($item_widths[5],6,$net_pay,'RTB',0,'R');
-    
-    $pdf->Ln();
-    $pdf->SetFont('Arial','',8);
-    $pdf->MultiCell($terms1_width+$terms2_width,4,$terms_text,'LRTB','L');
-
-    $pdf->Cell(57,10,'Print Date & Time: '.$print_date_time,'LRTB',0,'L');
-    $pdf->Cell(47,10,'Operator Name: '.$operator_name,'RTB',0,'L');
-    $pdf->Cell(86,10,'Authorized Signature: ','RTB',0,'L');*/
-
+    $pdf->Cell($final_tot_width[0],6,number_format($sale_details['billAmount'],2),'LRTB',0,'R');
+    $pdf->Cell($final_tot_width[1],6,number_format($sale_details['discountAmount'],2),'RTB',0,'R');
+    $pdf->Cell($final_tot_width[2],6,number_format($sale_details['totalAmount'],2),'RTB',0,'R');  
+    $pdf->Cell($final_tot_width[3],6,number_format($sale_details['taxAmount'],2),'RTB',0,'R');
+    $pdf->Cell($final_tot_width[4],6,number_format($sale_details['roundOff'],2),'RTB',0,'R');
+    $pdf->SetFont('Arial','B',14);      
+    $pdf->Cell($final_tot_width[5],6,number_format($sale_details['netPay'],2),'RTB',0,'R');
+    $pdf->SetFont('Arial','B',9);      
+    $pdf->Cell($final_tot_width[6],6,$sale_details['netPayCash'] > 0 ? number_format($sale_details['netPayCash'],2) : '','RTB',0,'R');      
+    $pdf->Cell($final_tot_width[7],6,$sale_details['netPayCard'] > 0 ? number_format($sale_details['netPayCard'],2) : '','RTB',1,'R');
     $pdf->Output();
   }
 
-  /**
-   * report options for each report.
-  **/
+  // report options for each report.
   public function reportOptions(Request $request) {
-
     $report_name = Utilities::clean_string($request->get('reportName'));
-
     if(count($request->request->all())>0) {
+      $request_params = $request->request->all();
+      $report_url = $request_params['reportHook'];
+      unset($request_params['reportHook']);
 
-        $request_params = $request->request->all();
-        $report_url = $request_params['reportHook'];
-        unset($request_params['reportHook']);
-
-        $query_params = http_build_query($request_params);
-        $redirect_url = $report_url.'?'.$query_params;
-        Utilities::redirect($redirect_url);
-        
+      $query_params = http_build_query($request_params);
+      $redirect_url = $report_url.'?'.$query_params;
+      Utilities::redirect($redirect_url);
     } else {
-        switch($report_name) {
-            case 'sales-register':
-                $template_name = 'template-11';
-                $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();                
-                $template_vars = array(
-                    'title' => 'Sales Register',
-                    'formAction' => '/report-options/sales-register',
-                    'reportHook' => '/sales-register',
-                    'location_codes' => $locations_a,
-                );
-                $controller_vars = array(
-                    'page_title' => 'Sales Register',
-                    'icon_name' => 'fa fa-inr',
-                );
-                break;
-            case 'sales-return-register':
-                $template_name = 'template-1';
-                $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();                
-                $template_vars = array(
-                    'title' => 'Sales Return Register',
-                    'formAction' => '/report-options/sales-return-register',
-                    'reportHook' => '/sales-return-register',
-                    'location_codes' => $locations_a,
-                );
-                $controller_vars = array(
-                    'page_title' => 'Sales Return Register',
-                    'icon_name' => 'fa fa-inr',
-                );
-                break;
-            case 'grn-register':
-                $template_name = 'template-1';
-                $template_vars = array(
-                    'title' => 'GRN Register',
-                    'formAction' => '/report-options/grn-register',
-                    'reportHook' => '/grn-register',
-                );
-                $controller_vars = array(
-                    'page_title' => 'GRN Register',
-                    'icon_name' => 'fa fa-laptop',
-                );
-                break;
-            case 'sales-summary-by-month':
-                $template_name = 'template-2';
-                $template_vars = array(
-                    'title' => 'Sales Summary - Monthly',
-                    'formAction' => '/report-options/sales-summary-by-month',
-                    'reportHook' => '/sales-summary-by-month',
-                );
-                $controller_vars = array(
-                    'page_title' => 'Sales Summary - Daywise',
-                    'icon_name' => 'fa fa-inr',
-                );
-                break;
-            case 'day-sales-report':
-                $template_name = 'template-3';
-                $template_vars = array(
-                    'title' => 'Sales Summary - Day',
-                    'formAction' => '/report-options/day-sales-report',
-                    'reportHook' => '/day-sales-report',
-                );
-                $controller_vars = array(
-                    'page_title' => 'Sales Summary - Day',
-                    'icon_name' => 'fa fa-inr',
-                );            
-                break;
-            case 'sales-summary-patient':
-                $template_name = 'template-4';
-                $template_vars = array(
-                    'title' => 'Sales Summary - By Patient',
-                    'formAction' => '/report-options/sales-summary-patient',
-                    'reportHook' => '/sales-summary-patient',
-                    'patient_types' => array(''=>'Choose')+Constants::$PATIENT_TYPES,
-                );
-                $controller_vars = array(
-                    'page_title' => 'Patient Sales Summary',
-                    'icon_name' => 'fa fa-inr',
-                );            
-                break;
-            case 'stock-report':
-              $template_name = 'template-12';
-              $template_vars = array(
-                'title' => 'Stock Report',
-                'formAction' => '/report-options/stock-report',
-                'reportHook' => '/stock-report',
-                'dropDownlabel' => 'Show',
-                'location_codes' => ['' => 'Store name'] + Utilities::get_client_locations(),
-              );
-              $controller_vars = array(
-                'page_title' => 'Stock Report',
-                'icon_name' => 'fa fa-laptop',
-              );            
-              break;
-            case 'stock-report-new':
-                $template_name = 'template-5';
-                $filter_types = array(
-                    ''=>'Choose', 'all' => 'All', 'neg' => 'Negative'
-                );
-                $template_vars = array(
-                    'title' => 'Stock Report',
-                    'formAction' => '/report-options/stock-report-new',
-                    'reportHook' => '/stock-report-new',
-                    'dropDownlabel' => 'Show',
-                    'filter_types' => $filter_types,
-                );
-                $controller_vars = array(
-                    'page_title' => 'Stock Report',
-                    'icon_name' => 'fa fa-laptop',
-                );            
-                break;                
-            case 'expiry-report':
-                $template_name = 'template-2';
-                $template_vars = array(
-                    'title' => 'Stock Report',
-                    'formAction' => '/report-options/expiry-report',
-                    'reportHook' => '/expiry-report',
-                );
-                $controller_vars = array(
-                    'page_title' => 'Medicine Expiry Report',
-                    'icon_name' => 'fa fa-times',
-                );
-                break;                
-            case 'itemwise-sales-report':
-                $template_name = 'template-3';
-                $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();
-                $template_vars = array(
-                    'title' => 'Itemwise Sales Report',
-                    'formAction' => '/report-options/itemwise-sales-report',
-                    'reportHook' => '/itemwise-sales-report',
-                    'location_codes' => $locations_a,
-                );
-                $controller_vars = array(
-                    'page_title' => 'Itemwise Sales Report',
-                    'icon_name' => 'fa fa-inr',
-                );            
-                break;
-            case 'itemwise-sales-report-bymode':
-              $filter_types = Constants::$SALE_MODES;
-              $template_name = 'template-6';
-              $template_vars = array(
-                'title' => 'Itemwise Sales Report By Sale Mode',
-                'formAction' => '/report-options/itemwise-sales-report-bymode',
-                'reportHook' => '/itemwise-sales-report-bymode',
-                'dropDownlabel' => 'Mode of Sale',
-                'filter_types' => $filter_types,                 
-              );
-              $controller_vars = array(
-                'page_title' => 'Itemwise Sales Report By Sale Mode',
-                'icon_name' => 'fa fa-inr',
-              );
-              break;                
-            case 'sales-by-mode':
-                $template_name = 'template-6';
-                $filter_types = array(
-                  'all' => 'All','pkg'=>'Package','int'=>'Internal/Self',
-                );                
-                $template_vars = array(
-                    'title' => 'Credit Sales Report',
-                    'formAction' => '/report-options/sales-by-mode',
-                    'reportHook' => '/sales-by-mode',
-                    'dropDownlabel' => 'Mode of Sale',
-                    'filter_types' => $filter_types,                    
-                );
-                $controller_vars = array(
-                    'page_title' => 'Credit Sales Report',
-                    'icon_name' => 'fa fa-inr',
-                );            
-                break;
-            case 'supplier-payments-due':
-                $template_name = 'template-2';
-                $template_vars = array(
-                    'title' => "Supplier's Payment Due",
-                    'formAction' => '/report-options/supplier-payments-due',
-                    'reportHook' => '/supplier-payments-due',
-                );
-                $controller_vars = array(
-                    'page_title' => "Supplier's Payment Due -  Monthwise",
-                    'icon_name' => 'fa fa-group',
-                );
-                break;
-            case 'itemwise-sales-returns':
-                $template_name = 'template-1';
-                $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();                
-                $template_vars = array(
-                  'title' => 'Itemwise Sales Return Register',
-                  'formAction' => '/report-options/itemwise-sales-returns',
-                  'reportHook' => '/itemwise-sales-returns',
-                  'location_codes' => $locations_a,
-                );
-                $controller_vars = array(
-                  'page_title' => 'Itemwise Sales Return Register',
-                  'icon_name' => 'fa fa-repeat',
-                );
-                break;
-            case 'material-movement':
-                $template_name = 'template-7';
-                $filter_types = array(
-                  'fast' => 'Fast moving','slow'=>'Slow moving',
-                );                
-                $template_vars = array(
-                  'title' => 'Material Movement Register',
-                  'formAction' => '/report-options/material-movement',
-                  'reportHook' => '/material-movement',
-                  'dropDownlabel' => 'Movement Criteria',
-                  'filter_types' => $filter_types,
-                );
-                $controller_vars = array(
-                  'page_title' => 'Material Movement Register',
-                  'icon_name' => 'fa fa-arrows',
-                );
-                break;
-            case 'io-analysis':
-                $template_name = 'template-2';
-                $template_vars = array(
-                  'title' => 'Inward - Outward Analysis',
-                  'formAction' => '/report-options/io-analysis',
-                  'reportHook' => '/io-analysis',
-                );
-                $controller_vars = array(
-                  'page_title' => 'Inward - Outward Analysis',
-                  'icon_name' => 'fa fa-inr',
-                );
-                break;
-            case 'payables-monthwise':
-                $template_name = 'template-2';
-                $template_vars = array(
-                  'title' => 'Payables - Monthwise',
-                  'formAction' => '/report-options/payables-monthwise',
-                  'reportHook' => '/payables-monthwise',
-                );
-                $controller_vars = array(
-                  'page_title' => 'Payables - Monthwise',
-                  'icon_name' => 'fa fa-inr',
-                );
-                break;
-            case 'inventory-profitability':
-                $template_name = 'template-6';
-                $filter_types = Constants::$SALE_MODES;  
-                $template_vars = array(
-                  'title' => 'Inventory Profitability',
-                  'formAction' => '/report-options/inventory-profitability',
-                  'reportHook' => '/inventory-profitability',
-                  'filter_types' => $filter_types,
-                  'dropDownlabel' => 'Sale mode',
-                );
-                $controller_vars = array(
-                  'page_title' => 'Inventory Profitability',
-                  'icon_name' => 'fa fa-level-up',
-                );
-                break;
-            case 'mom-comparison':
-                $template_name = 'template-8';
-                $filter_types = Constants::$SALE_MODES;  
-                $template_vars = array(
-                  'title' => 'Month over Month Sales Comparison',
-                  'formAction' => '/report-options/mom-comparison',
-                  'reportHook' => '/mom-comparison',
-                  'filter_types' => $filter_types,
-                  'dropDownlabel' => 'Sale mode',
-                );
-                $controller_vars = array(
-                  'page_title' => 'Month over Month Sales Comparison',
-                  'icon_name' => 'fa fa-bolt',
-                );
-                break;
-            case 'sales-summary-tax-rate':
-                $template_name = 'template-10';
-                $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();
-                $template_vars = array(
-                    'title' => 'Sales Summary - Monthwise - By Tax Rate',
-                    'formAction' => '/report-options/sales-summary-by-month',
-                    'reportHook' => '/sales-abs-month/taxrate',
-                    'location_codes' => $locations_a,
-                );
-                $controller_vars = array(
-                    'page_title' => 'Sales Summary - Monthwise - By Tax Rate',
-                    'icon_name' => 'fa fa-inr',
-                );
-                break;                                                                     
-        }
-
-        $template = new Template($this->views_path);
-        return array($template->render_view($template_name, $template_vars), $controller_vars);        
+      switch($report_name) {
+        case 'sales-register':
+          $template_name = 'template-11';
+          $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();                
+          $template_vars = array(
+            'title' => 'Sales Register',
+            'formAction' => '/report-options/sales-register',
+            'reportHook' => '/sales-register',
+            'location_codes' => $locations_a,
+          );
+          $controller_vars = array(
+            'page_title' => 'Sales Register',
+            'icon_name' => 'fa fa-inr',
+          );
+          break;
+        case 'sales-return-register':
+          $template_name = 'template-1';
+          $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();                
+          $template_vars = array(
+            'title' => 'Sales Return Register',
+            'formAction' => '/report-options/sales-return-register',
+            'reportHook' => '/sales-return-register',
+            'location_codes' => $locations_a,
+          );
+          $controller_vars = array(
+            'page_title' => 'Sales Return Register',
+            'icon_name' => 'fa fa-inr',
+          );
+          break;
+        case 'grn-register':
+          $template_name = 'template-1';
+          $template_vars = array(
+            'title' => 'GRN Register',
+            'formAction' => '/report-options/grn-register',
+            'reportHook' => '/grn-register',
+          );
+          $controller_vars = array(
+            'page_title' => 'GRN Register',
+            'icon_name' => 'fa fa-laptop',
+          );
+          break;
+        case 'sales-summary-by-month':
+          $template_name = 'template-2';
+          $template_vars = array(
+            'title' => 'Sales Summary - Monthly',
+            'formAction' => '/report-options/sales-summary-by-month',
+            'reportHook' => '/sales-summary-by-month',
+          );
+          $controller_vars = array(
+            'page_title' => 'Sales Summary - Daywise',
+            'icon_name' => 'fa fa-inr',
+          );
+          break;
+        case 'day-sales-report':
+          $template_name = 'template-3';
+          $template_vars = array(
+            'title' => 'Sales Summary - Day',
+            'formAction' => '/report-options/day-sales-report',
+            'reportHook' => '/day-sales-report',
+          );
+          $controller_vars = array(
+            'page_title' => 'Sales Summary - Day',
+            'icon_name' => 'fa fa-inr',
+          );            
+          break;
+        case 'sales-summary-patient':
+          $template_name = 'template-4';
+          $template_vars = array(
+            'title' => 'Sales Summary - By Patient',
+            'formAction' => '/report-options/sales-summary-patient',
+            'reportHook' => '/sales-summary-patient',
+            'patient_types' => array(''=>'Choose')+Constants::$PATIENT_TYPES,
+          );
+          $controller_vars = array(
+            'page_title' => 'Patient Sales Summary',
+            'icon_name' => 'fa fa-inr',
+          );            
+          break;
+        case 'stock-report':
+          $template_name = 'template-12';
+          $template_vars = array(
+            'title' => 'Stock Report',
+            'formAction' => '/report-options/stock-report',
+            'reportHook' => '/stock-report',
+            'dropDownlabel' => 'Show',
+            'location_codes' => ['' => 'Store name'] + Utilities::get_client_locations(),
+          );
+          $controller_vars = array(
+            'page_title' => 'Stock Report',
+            'icon_name' => 'fa fa-laptop',
+          );            
+          break;
+        case 'stock-report-new':
+          $template_name = 'template-5';
+          $filter_types = array(
+            ''=>'Choose', 'all' => 'All', 'neg' => 'Negative'
+          );
+          $template_vars = array(
+            'title' => 'Stock Report',
+            'formAction' => '/report-options/stock-report-new',
+            'reportHook' => '/stock-report-new',
+            'dropDownlabel' => 'Show',
+            'filter_types' => $filter_types,
+          );
+          $controller_vars = array(
+            'page_title' => 'Stock Report',
+            'icon_name' => 'fa fa-laptop',
+          );            
+          break;                
+        case 'expiry-report':
+          $template_name = 'template-2';
+          $template_vars = array(
+            'title' => 'Stock Report',
+            'formAction' => '/report-options/expiry-report',
+            'reportHook' => '/expiry-report',
+          );
+          $controller_vars = array(
+            'page_title' => 'Medicine Expiry Report',
+            'icon_name' => 'fa fa-times',
+          );
+          break;                
+        case 'itemwise-sales-report':
+          $template_name = 'template-3';
+          $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();
+          $template_vars = array(
+            'title' => 'Itemwise Sales Report',
+            'formAction' => '/report-options/itemwise-sales-report',
+            'reportHook' => '/itemwise-sales-report',
+            'location_codes' => $locations_a,
+          );
+          $controller_vars = array(
+            'page_title' => 'Itemwise Sales Report',
+            'icon_name' => 'fa fa-inr',
+          );            
+          break;
+        case 'itemwise-sales-report-bymode':
+          $filter_types = Constants::$SALE_MODES;
+          $template_name = 'template-6';
+          $template_vars = array(
+            'title' => 'Itemwise Sales Report By Sale Mode',
+            'formAction' => '/report-options/itemwise-sales-report-bymode',
+            'reportHook' => '/itemwise-sales-report-bymode',
+            'dropDownlabel' => 'Mode of Sale',
+            'filter_types' => $filter_types,                 
+          );
+          $controller_vars = array(
+            'page_title' => 'Itemwise Sales Report By Sale Mode',
+            'icon_name' => 'fa fa-inr',
+          );
+          break;                
+        case 'sales-by-mode':
+          $template_name = 'template-6';
+          $filter_types = array(
+            'all' => 'All','pkg'=>'Package','int'=>'Internal/Self',
+          );                
+          $template_vars = array(
+            'title' => 'Credit Sales Report',
+            'formAction' => '/report-options/sales-by-mode',
+            'reportHook' => '/sales-by-mode',
+            'dropDownlabel' => 'Mode of Sale',
+            'filter_types' => $filter_types,                    
+          );
+          $controller_vars = array(
+            'page_title' => 'Credit Sales Report',
+            'icon_name' => 'fa fa-inr',
+          );            
+          break;
+        case 'supplier-payments-due':
+          $template_name = 'template-2';
+          $template_vars = array(
+            'title' => "Supplier's Payment Due",
+            'formAction' => '/report-options/supplier-payments-due',
+            'reportHook' => '/supplier-payments-due',
+          );
+          $controller_vars = array(
+            'page_title' => "Supplier's Payment Due -  Monthwise",
+            'icon_name' => 'fa fa-group',
+          );
+          break;
+        case 'itemwise-sales-returns':
+          $template_name = 'template-1';
+          $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();                
+          $template_vars = array(
+            'title' => 'Itemwise Sales Return Register',
+            'formAction' => '/report-options/itemwise-sales-returns',
+            'reportHook' => '/itemwise-sales-returns',
+            'location_codes' => $locations_a,
+          );
+          $controller_vars = array(
+            'page_title' => 'Itemwise Sales Return Register',
+            'icon_name' => 'fa fa-repeat',
+          );
+          break;
+        case 'material-movement':
+          $template_name = 'template-7';
+          $filter_types = array(
+            'fast' => 'Fast moving','slow'=>'Slow moving',
+          );                
+          $template_vars = array(
+            'title' => 'Material Movement Register',
+            'formAction' => '/report-options/material-movement',
+            'reportHook' => '/material-movement',
+            'dropDownlabel' => 'Movement Criteria',
+            'filter_types' => $filter_types,
+          );
+          $controller_vars = array(
+            'page_title' => 'Material Movement Register',
+            'icon_name' => 'fa fa-arrows',
+          );
+          break;
+        case 'io-analysis':
+          $template_name = 'template-2';
+          $template_vars = array(
+            'title' => 'Inward - Outward Analysis',
+            'formAction' => '/report-options/io-analysis',
+            'reportHook' => '/io-analysis',
+          );
+          $controller_vars = array(
+            'page_title' => 'Inward - Outward Analysis',
+            'icon_name' => 'fa fa-inr',
+          );
+          break;
+        case 'payables-monthwise':
+          $template_name = 'template-2';
+          $template_vars = array(
+            'title' => 'Payables - Monthwise',
+            'formAction' => '/report-options/payables-monthwise',
+            'reportHook' => '/payables-monthwise',
+          );
+          $controller_vars = array(
+            'page_title' => 'Payables - Monthwise',
+            'icon_name' => 'fa fa-inr',
+          );
+          break;
+        case 'inventory-profitability':
+          $template_name = 'template-6';
+          $filter_types = Constants::$SALE_MODES;  
+          $template_vars = array(
+            'title' => 'Inventory Profitability',
+            'formAction' => '/report-options/inventory-profitability',
+            'reportHook' => '/inventory-profitability',
+            'filter_types' => $filter_types,
+            'dropDownlabel' => 'Sale mode',
+          );
+          $controller_vars = array(
+            'page_title' => 'Inventory Profitability',
+            'icon_name' => 'fa fa-level-up',
+          );
+          break;
+        case 'mom-comparison':
+          $template_name = 'template-8';
+          $filter_types = Constants::$SALE_MODES;  
+          $template_vars = array(
+            'title' => 'Month over Month Sales Comparison',
+            'formAction' => '/report-options/mom-comparison',
+            'reportHook' => '/mom-comparison',
+            'filter_types' => $filter_types,
+            'dropDownlabel' => 'Sale mode',
+          );
+          $controller_vars = array(
+            'page_title' => 'Month over Month Sales Comparison',
+            'icon_name' => 'fa fa-bolt',
+          );
+          break;
+        case 'sales-summary-tax-rate':
+          $template_name = 'template-10';
+          $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();
+          $template_vars = array(
+            'title' => 'Sales Summary - Monthwise - By Tax Rate',
+            'formAction' => '/report-options/sales-summary-by-month',
+            'reportHook' => '/sales-abs-month/taxrate',
+            'location_codes' => $locations_a,
+          );
+          $controller_vars = array(
+            'page_title' => 'Sales Summary - Monthwise - By Tax Rate',
+            'icon_name' => 'fa fa-inr',
+          );
+          break;
+        case 'indent-item-avail':
+          $template_name = 'template-indent-1';
+          $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();
+          $template_vars = array(
+            'title' => 'Item Availability Report For Indents',
+            'formAction' => '/report-options/indent-item-avail',
+            'reportHook' => '/indent-item-avail',
+            'location_codes' => $locations_a,
+          );
+          $controller_vars = array(
+            'page_title' => 'Item Availability Report For Indents',
+            'icon_name' => 'fa fa-database',
+          );
+          break;
+      }
+      $template = new Template($this->views_path);
+      return array($template->render_view($template_name, $template_vars), $controller_vars);
     }
   }
 
-  /**
-   * returns error message for the reports.
-  **/
+  // returns error message for the reports.
   private function _get_print_error_message() {
     return "<h1>Invalid Request</h1>";
   }
-
 }

@@ -122,46 +122,22 @@
           <i class="fa fa-sitemap fa-3x"></i> Reports <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <?php /*
-          <li class="sub-menu">
-            <a href="javascript:">
-              <i class="fa fa-inr"></i> Sales <span class="menu-arrow arrow_carrot-right"></span> 
-            </a>
-            <ul class="sub">
-              <li><a href="/report-options/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
-              <li><a href="/report-options/itemwise-sales-report"><i class="fa fa-angle-right"></i> Itemwise Sales</a></li>
-              <li><a href="/report-options/itemwise-sales-returns"><i class="fa fa-angle-right"></i> Itemwise Sales Returns</a></li>
-              <li><a href="/report-options/sales-return-register"><i class="fa fa-angle-right"></i> Sales Return Register</a></li>
-              <li><a href="/report-options/day-sales-report"><i class="fa fa-angle-right"></i> Sales by Day</a></li>              
-              <li><a href="/report-options/sales-summary-by-month"><i class="fa fa-angle-right"></i> Sales by Month</a></li>
-              <li><a href="/report-options/mom-comparison"><i class="fa fa-angle-right"></i> MoM Sales Comparison</a></li>
-            </ul>            
-          </li>*/ ?>
           <li class="sub-menu">
             <a data-toggle="modal" href="javascript:">
               <i class="fa fa-database"></i> Inventory&nbsp;&amp;&nbsp;Stores <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
               <li><a href="/report-options/stock-report"><i class="fa fa-angle-right"></i> Stock Report</a></li>
-              <?php /*
-              <li><a href="/report-options/adj-entries"><i class="fa fa-angle-right"></i> Adjustment Report</a></li>
-              <li><a href="/report-options/grn-register"><i class="fa fa-angle-right"></i> GRN Register</a></li>
-              <li><a href="/report-options/material-movement"><i class="fa fa-angle-right"></i> Material Movement</a></li>
-              <li><a href="/print-itemthr-level" target="_blank"><i class="fa fa-angle-right"></i> Threshold Report</a></li>
-              <li><a href="/report-options/io-analysis" target="_blank"><i class="fa fa-angle-right"></i> I-O Analysis</a></li>              
-              <li><a href="/item-master" target="_blank"><i class="fa fa-angle-right"></i> Inventory master</a></li>
-              <li><a href="/report-options/inventory-profitability"><i class="fa fa-level-up"></i> Inventory Profitability</a></li> */ ?>
             </ul>
           </li>
-          <?php /*
           <li class="sub-menu">
             <a href="javascript:">
-              <i class="fa fa-inr"></i> GST Reports <span class="menu-arrow arrow_carrot-right"></span> 
+              <i class="fa fa-inr"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">
-              <li><a href="/report-options/sales-summary-tax-rate"><i class="fa fa-angle-right"></i> Sales - ByTaxRate</a></li>
+              <li><a href="/report-options/indent-item-avail"><i class="fa fa-database"></i> Item Availability</a></li>
             </ul>            
-          </li> */ ?>
+          </li>
         </ul>
       </li>
     </ul>

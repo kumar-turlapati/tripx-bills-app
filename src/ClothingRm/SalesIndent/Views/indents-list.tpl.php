@@ -123,19 +123,25 @@
                   $total_amount = $indent_details['totalAmount'];
                   $round_off = $indent_details['roundOff'];
                   $netpay = $indent_details['netpay'];
-
+                  $campaign_name = $indent_details['campaignName'];
+                  $agent_name = $indent_details['agentName'];
+                  if((int)$indent_details['status']===1) {
+                    $status = 'Active';
+                  } else {
+                    $status = 'Inactive';
+                  }
                   $total += $netpay;
               ?>
-                <tr class="font12">
+                <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle"><?php echo $indent_no ?></td>
                   <td class="valign-middle"><?php echo $indent_date ?></td>
                   <td align="right" class="valign-middle text-bold"><?php echo number_format($netpay,2,'.','') ?></td>
                   <td align="left" class="valign-middle"><?php echo $customer_name ?></td>                
                   <td class="valign-middle"><?php //echo $ref_no ?></td>
-                  <td class="valign-middle"><?php //echo $ref_date ?></td>
-                  <td class="valign-middle"><?php //echo $narration ?></td>
-                  <td class="valign-middle">&nbsp;</td>
+                  <td class="valign-middle"><?php echo $agent_name ?></td>
+                  <td class="valign-middle"><?php echo $campaign_name ?></td>
+                  <td class="valign-middle"><?php echo $status ?></td>
                   <td class="valign-middle">
                     <div class="btn-actions-group">                    
                       <a class="btn btn-danger" href="/print-indent?indentNo=<?php echo $indent_no ?>" title="Print Sales Indent With Rate" target="_blank">

@@ -237,4 +237,117 @@ class ReportsIndentController {
 
     $pdf->Output();    
   }
+
+  public function indentItemAvailability(Request $request) {
+    
+    $filter_params = $total_items = [];
+    
+    $item_widths = array(10,85,35,35,25);
+    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3];
+    
+    $slno = $tot_qty = 0; 
+    
+    $filter_params['perPage'] = 100;
+    $filter_params['pageNo'] = 1;
+    if(!is_null($request->get('locationCode')) && $request->get('locationCode') !== '') {
+      $filter_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
+    }
+    if(!is_null($request->get('nearbyQty')) && $request->get('nearbyQty') !== '') {
+      $filter_params['nearbyQty'] = Utilities::clean_string($request->get('nearbyQty'));
+    }
+
+    # ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_names[$location_key_a[0]] = $location_value;
+    }
+
+    $indent_item_details = $this->indent_model->get_indent_item_avail($filter_params);
+    if($indent_item_details['status']===false) {
+      die("<h1>No data is available. Change Report Filters and Try again</h1>");
+    } else {
+      $total_items = $indent_item_details['response']['results'];
+      $total_pages = $indent_item_details['response']['total_pages'];
+      if($total_pages>1) {
+        for($i=2;$i<=$total_pages;$i++) {
+          $filter_params['pageNo'] = $i;
+          $indent_item_details = $this->indent_model->get_indent_item_avail($filter_params);
+          if($indent_item_details['status']) {
+            $total_items = array_merge($total_items,$indent_item_details['response']['results']);
+          }
+        }
+      }
+      $heading1 = 'Item Availability Report For Indents';
+      $heading2 = 'As on '.date('jS F, Y');
+      if(isset($filter_params['nearbyQty'])) {
+        $heading3  = 'Threshold Qty <= '.$filter_params['nearbyQty'];
+      } else {
+        $heading3 =  ''; 
+      }
+      if(isset($filter_params['locationCode'])) {
+        $heading3 .= ', Store Name - '.$location_names[$filter_params['locationCode']];
+      }
+    }
+
+    // echo '<pre>';
+    // print_r($total_items);
+    // echo '</pre>';
+    // exit;
+
+    # start PDF printing.
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P','A4');
+    $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    
+    if($heading3 !== '') {
+      $pdf->SetFont('Arial','BU',10);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,'[ FILTERS: '.$heading3.' ]','',1,'C');
+    }
+
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln(5);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Category Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Store Name','RTB',0,'C');    
+    $pdf->Cell($item_widths[4],6,'Available Qty.','RTB',0,'C');        
+    $pdf->SetFont('Arial','',9);
+
+    foreach($total_items as $item_details) {
+      $slno++;
+
+      $item_name = $item_details['itemName'];
+      $category_name = $item_details['categoryName'];
+      $store_name = $location_ids[$item_details['locationID']];
+      $closing_qty = $item_details['closingQty'];
+
+      $tot_qty += $closing_qty;
+      
+      $pdf->Ln();
+      $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+      $pdf->Cell($item_widths[1],6,$item_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,$category_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,$store_name,'RTB',0,'L');            
+      $pdf->Cell($item_widths[4],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
+    }
+
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
+    $pdf->Cell($item_widths[4],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
+    $pdf->SetFont('Arial','B',11);    
+
+    $pdf->Output();
+  }
 }

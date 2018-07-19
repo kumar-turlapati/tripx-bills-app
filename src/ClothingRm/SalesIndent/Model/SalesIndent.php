@@ -44,5 +44,13 @@ class SalesIndent {
     }
   }
 
-
+  public function get_indent_item_avail($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','reports/indent-item-avail-report',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
+  }
 }
