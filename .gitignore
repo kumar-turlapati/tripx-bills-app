@@ -3,3 +3,4 @@ src/Atawa/Config/*
 public/static/*
 public/.htaccess
 composer.lock
+bulkuploads/*

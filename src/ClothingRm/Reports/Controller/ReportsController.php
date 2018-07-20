@@ -10,6 +10,7 @@ use Atawa\Template;
 use Atawa\PDF;
 
 use ClothingRm\Sales\Model\Sales;
+use Campaigns\Model\Campaigns;
 
 class ReportsController
 {
@@ -17,7 +18,8 @@ class ReportsController
   protected $views_path;
 
   public function __construct() {
-	$this->views_path = __DIR__.'/../Views/';
+	 $this->views_path = __DIR__.'/../Views/';
+   $this->camp_model = new Campaigns;   
   }
 
   public function printSalesBillSmall(Request $request) {
@@ -520,6 +522,48 @@ class ReportsController
             'icon_name' => 'fa fa-database',
           );
           break;
+        case 'indent-itemwise':
+          $template_name = 'template-indent-2';
+          $template_vars = array(
+            'title' => 'Itemwise Indents Booked',
+            'formAction' => '/report-options/indent-itemwise',
+            'reportHook' => '/indent-itemwise',
+            'campaigns' => ['' => 'Choose Campaign'] + $this->_get_indent_campaigns(),
+            'show_fromto_dates' => true,
+          );
+          $controller_vars = array(
+            'page_title' => 'Itemwise Indents Booked',
+            'icon_name' => 'fa fa-cubes',
+          );
+          break;
+        case 'indent-agentwise':
+          $template_name = 'template-indent-2';
+          $template_vars = array(
+            'title' => 'Agentwise Indents Booked',
+            'formAction' => '/report-options/indent-itemwise',
+            'reportHook' => '/indent-agentwise',
+            'campaigns' => ['' => 'Choose Campaign'] + $this->_get_indent_campaigns(),
+            'show_fromto_dates' => true,
+          );
+          $controller_vars = array(
+            'page_title' => 'Agentwise Indents Booked',
+            'icon_name' => 'fa fa-user-circle-o',
+          );
+          break;
+        case 'indent-statewise':
+          $template_name = 'template-indent-2';
+          $template_vars = array(
+            'title' => 'Statewise Indents Booked',
+            'formAction' => '/report-options/indent-statewise',
+            'reportHook' => '/indent-statewise',
+            'campaigns' => ['' => 'Choose Campaign']  + $this->_get_indent_campaigns(),
+            'show_fromto_dates' => true,
+          );
+          $controller_vars = array(
+            'page_title' => 'Statewise Indents Booked',
+            'icon_name' => 'fa fa-compass',
+          );
+          break;                   
       }
       $template = new Template($this->views_path);
       return array($template->render_view($template_name, $template_vars), $controller_vars);
@@ -530,4 +574,17 @@ class ReportsController
   private function _get_print_error_message() {
     return "<h1>Invalid Request</h1>";
   }
+
+  private function _get_indent_campaigns() {
+    $campaigns_response = $this->camp_model->get_live_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    } else {
+      $campaigns_a = [];
+    }
+    return $campaigns_a;
+  }
+
 }

@@ -53,4 +53,34 @@ class SalesIndent {
       return array('status'=>false, 'apierror' => $response['reason']);
     }
   }
+
+  public function get_indents_itemwise($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','reports/itemwise-indents-booked',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
+  }
+
+  public function get_indents_agentwise($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','reports/agentwise-indents-booked',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
+  }
+
+  public function get_indents_statewise($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','reports/statewise-indents-booked',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
+  }  
 }

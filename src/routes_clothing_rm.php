@@ -598,6 +598,16 @@ $routes->add('report_printStockReport', new Routing\Route('/stock-report', array
 $routes->add('report_indentItemAvail', new Routing\Route('/indent-item-avail', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemAvailability',
 )));
+$routes->add('report_indentItemwise', new Routing\Route('/indent-itemwise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemwiseBooked',
+)));
+$routes->add('report_indentAgentwise', new Routing\Route('/indent-agentwise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentAgentwiseBooked',
+)));
+$routes->add('report_indentStatewise', new Routing\Route('/indent-statewise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentStatewiseBooked',
+)));
+
 
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
