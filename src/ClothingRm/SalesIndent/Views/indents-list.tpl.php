@@ -4,6 +4,9 @@
   
   $current_date = date("d-m-Y");
 
+  // dump($search_params);
+  // exit;
+
   $query_params = '';
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
     $fromDate = $search_params['fromDate'];
@@ -17,12 +20,19 @@
   } else {
     $toDate = $current_date;
   }
-  if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
-    $locationCode = $search_params['locationCode'];
-    $query_params[] = 'locationCode='.$locationCode;
+  if(isset($search_params['campaignCode']) && $search_params['campaignCode'] !== '' ) {
+    $locationCode = $search_params['campaignCode'];
+    $query_params[] = 'campaignCode='.$campaignCode;
   } else {
-    $locationCode = '';
+    $campaignCode = '';
   }
+  if(isset($search_params['agentCode']) && $search_params['agentCode'] !== '' ) {
+    $agentCode = $search_params['agentCode'];
+    $query_params[] = 'agentCode='.$campaignCode;
+  } else {
+    $agentCode = '';
+  }
+
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
@@ -65,26 +75,42 @@
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
-                <?php /*
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
-                    <select class="form-control" name="locationCode" id="locationCode">
+                    <select class="form-control" name="campaignCode" id="campaignCode">
                       <?php 
-                        foreach($client_locations as $location_key=>$value):
-                          $location_key_a = explode('`', $location_key);
-                          if($locationCode === $location_key_a[0]) {
+                        foreach($campaigns as $campaign_code => $campaign_name):
+                          if($campaignCode === $campaign_code) {
                             $selected = 'selected="selected"';
                           } else {
                             $selected = '';
                           }  
                       ?>
-                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
+                       <option value="<?php echo $campaign_code ?>" <?php echo $selected ?>>
+                          <?php echo $campaign_name ?>
                         </option>
                       <?php endforeach; ?>
                     </select>
                    </div>
-                </div> */?>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="agentCode" id="agentCode">
+                      <?php 
+                        foreach($agents as $agent_code => $agent_name):
+                          if($agentCode === $agent_code) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $agent_code ?>" <?php echo $selected ?>>
+                          <?php echo $agent_name ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>                
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
             </div>
            </form>

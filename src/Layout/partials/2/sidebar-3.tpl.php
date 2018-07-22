@@ -137,7 +137,7 @@
             <ul class="sub">
               <li><a href="/report-options/indent-item-avail"><i class="fa fa-database"></i> Item Availability</a></li>
               <li><a href="/report-options/indent-itemwise"><i class="fa fa-cubes"></i> Indents Itemwise</a></li>
-              <li><a href="/report-options/indent-agentwise"><i class="fa fa-user-circle-o"></i> Indents Agentwise</a></li>
+              <li><a href="/report-options/indent-agentwise"><i class="fa fa-user-circle-o"></i> Indents Whole.wise</a></li>
               <li><a href="/report-options/indent-statewise"><i class="fa fa-compass"></i> Indents Statewise</a></li>
               <li><a href="/report-options/indent-register"><i class="fa fa-inr"></i> Indent Register</a></li>
             </ul>

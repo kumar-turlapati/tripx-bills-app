@@ -9,6 +9,8 @@ use Atawa\Constants;
 use Atawa\PDF;
 
 use ClothingRm\SalesIndent\Model\SalesIndent;
+use BusinessUsers\Model\BusinessUsers;
+use Campaigns\Model\Campaigns;
 
 class ReportsIndentController {
 
@@ -16,6 +18,8 @@ class ReportsIndentController {
 
   public function __construct() {
     $this->indent_model = new SalesIndent;
+    $this->bu_model = new BusinessUsers;
+    $this->camp_model = new Campaigns;     
   }
 
   public function printIndent(Request $request) {
@@ -490,7 +494,7 @@ class ReportsIndentController {
           }
         }
       }
-      $heading1 = 'Agentwise Indent Bookings';
+      $heading1 = 'Wholesalerwise / Agentwise Indent Bookings';
       $heading2 = 'From '.date('jS F, Y', strtotime($from_date)).' To '.date('jS F, Y', strtotime($to_date));
     }
 
@@ -515,7 +519,7 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln(5);
     $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
-    $pdf->Cell($item_widths[1],6,'Agent Name','RTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Wholesaler / Agent Name','RTB',0,'C');
     $pdf->Cell($item_widths[2],6,'State Name','RTB',0,'C');
     $pdf->Cell($item_widths[3],6,'Indent Qty.','RTB',0,'C');        
     $pdf->SetFont('Arial','',9);
@@ -635,6 +639,142 @@ class ReportsIndentController {
     $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
     $pdf->Cell($item_widths[2],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
     $pdf->SetFont('Arial','B',11);
+
+    $pdf->Output();
+  }
+
+  public function indentRegister(Request $request) {
+    $filter_params = $total_indents = $agents_a = $campaigns_a = [];
+    
+    $item_widths = array(10,35,46,46,16,17,21);
+    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+    
+    $slno = $tot_qty = $tot_amount = 0;
+    $heading3 = $campaign_code = $agent_code = '';
+    
+    $filter_params['perPage'] = 100;
+    $filter_params['pageNo'] = 1;
+    if(!is_null($request->get('campaignCode')) && $request->get('campaignCode') !== '') {
+      $campaign_code = Utilities::clean_string($request->get('campaignCode'));
+      $filter_params['campaignCode'] = $campaign_code;
+    }
+    if(!is_null($request->get('agentCode')) && $request->get('agentCode') !== '') {
+      $agent_code =  Utilities::clean_string($request->get('agentCode'));
+      $filter_params['agentCode'] = $agent_code;
+    }
+    if(!is_null($request->get('fromDate')) && $request->get('fromDate') !== '') {
+      $from_date =Utilities::clean_string($request->get('fromDate'));
+      $filter_params['fromDate'] = $from_date;
+    } else {
+      $from_date = date('d-m-Y');
+    }
+    if(!is_null($request->get('toDate')) && $request->get('toDate') !== '') {
+      $to_date = Utilities::clean_string($request->get('toDate'));
+      $filter_params['toDate'] = $to_date;
+    } else {
+      $to_date = date('d-m-Y');
+    }
+
+    # ---------- get business users -------------------------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        $agents_a[$user_details['userCode']] = $user_details['userName'];
+      }
+    }
+    $campaigns_response = $this->camp_model->get_live_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+    #---------------------------------------------------------------------------
+
+    $indents_response = $this->indent_model->get_all_indents($filter_params);
+    if($indents_response['status']===false) {
+      die("<h1>No data is available. Change Report Filters and Try again</h1>");
+    } else {
+      $total_indents = $indents_response['response']['indents'];
+      $total_pages = $indents_response['response']['total_pages'];
+      if($total_pages>1) {
+        for($i=2;$i<=$total_pages;$i++) {
+          $filter_params['pageNo'] = $i;
+          $indents_response = $this->indent_model->get_all_indents($filter_params);
+          if($indents_response['status']) {
+            $total_indents = array_merge($total_indents,$indents_response['response']['indents']);
+          }
+        }
+      }
+      $heading1 = 'Indent Register';
+      $heading2 = 'From '.date('jS F, Y', strtotime($from_date)).' To '.date('jS F, Y', strtotime($to_date));
+      if(isset($campaigns_a[$campaign_code]) && $campaign_code !== '') {
+        $heading3  = 'Campaign Name: '.$campaigns_a[$campaign_code];
+      } else {
+        $heading3 =  ''; 
+      }
+      if($agent_code !== '' && isset($agents_a[$agent_code])) {
+        $heading3 .= ', Wholesaler / Agent Name: '.$agents_a[$agent_code];
+      }
+    }
+
+    # start PDF printing.
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P','A4');
+    $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+
+    if($heading3 !== '') {
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading3,'',1,'C');
+    }
+    
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Indent No. & Date','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Customer Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Wholesaler / Agent Name','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Total Items','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Total Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[6],6,'Indent Value','RTB',0,'C');    
+    $pdf->SetFont('Arial','',9);
+    foreach($total_indents as $indent_details) {
+      $slno++;
+
+      $indent_no_date = $indent_details['indentNo'].' / '.date("d-m-Y", strtotime($indent_details['indentDate']));
+      $customer_name = substr($indent_details['customerName'],0,20);
+      $agent_name = substr($indent_details['agentName'],0,20);
+      $indent_qty = $indent_details['indentQty'];
+      $indent_value = $indent_details['netpay'];
+      $indent_items = $indent_details['totalItems'];
+
+      $tot_qty += $indent_qty;
+      $tot_amount += $indent_value;
+
+      $pdf->Ln();
+      $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+      $pdf->Cell($item_widths[1],6,$indent_no_date,'RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,$customer_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,$agent_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[4],6,number_format($indent_items,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($indent_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($indent_value,2,'.',''),'RTB',0,'R');
+    }
+
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
+    $pdf->Cell($item_widths[5],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
+    $pdf->Cell($item_widths[6],6,number_format($tot_amount,2,'.',''),'LRTB',0,'R');    
+    $pdf->SetFont('Arial','B',11);    
 
     $pdf->Output();
   }

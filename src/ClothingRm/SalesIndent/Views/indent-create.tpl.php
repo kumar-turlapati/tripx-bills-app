@@ -213,7 +213,7 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                  <label class="control-label">Agent name</label>
+                  <label class="control-label">Wholesaler / Agent name</label>
                   <div class="select-wrap">                        
                     <select 
                       class="form-control"

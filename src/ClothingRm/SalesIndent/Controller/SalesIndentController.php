@@ -146,34 +146,46 @@ class SalesIndentController {
   // list indents
   public function listIndents(Request $request) {
     $locations = $vouchers = $search_params = $indents_a = [];
-    $location_code = $page_error = '';
+    $campaign_code = $page_error = $agent_code = '';
     
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
-    # ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations(true);
-    foreach($client_locations as $location_key => $location_value) {
-      $location_key_a = explode('`', $location_key);
-      $location_ids[$location_key_a[1]] = $location_value;
-      $location_codes[$location_key_a[1]] = $location_key_a[0];
+    # ---------- get business users ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
     }
 
-    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+    # ---------- get live campaigns ---------------------------------
+    $campaigns_response = $this->camp_model->get_live_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
 
     // parse request parameters.
     $per_page = 100;
     $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
     $to_date = $request->get('toDate') !== null ? Utilities::clean_string($request->get('toDate')):date("d-m-Y");
     $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
-    $location_code = $request->get('locationCode')!== null ? Utilities::clean_string($request->get('locationCode')) : $default_location;
+    $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
+    $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
 
     $search_params = array(
       'fromDate' => $from_date,
       'toDate' => $to_date,
-      'locationCode' => $location_code,
       'pageNo' => $page_no,
       'perPage' => $per_page,
+      'campaignCode' => $campaign_code,
+      'agentCode' => $agent_code,
     );
 
     $api_response = $this->sindent_model->get_all_indents($search_params);
@@ -208,7 +220,6 @@ class SalesIndentController {
 
      // prepare form variables.
     $template_vars = array(
-      'location_code' => $location_code,
       'page_error' => $page_error,
       'indents' => $indents_a,
       'total_pages' => $total_pages ,
@@ -220,10 +231,10 @@ class SalesIndentController {
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
       'search_params' => $search_params,
-      'client_locations' => array(''=>'Choose') + $client_locations,
-      'default_location' => $default_location,
-      'location_ids' => $location_ids,
-      'location_codes' => $location_codes,
+      'agents' => [''=>'Referred by'] + $agents_a,
+      'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
+      'campaignCode' => $campaign_code,
+      'agentCode' => $agent_code,
     );
 
     // build variables

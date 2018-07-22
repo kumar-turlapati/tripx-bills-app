@@ -11,6 +11,7 @@ use Atawa\PDF;
 
 use ClothingRm\Sales\Model\Sales;
 use Campaigns\Model\Campaigns;
+use BusinessUsers\Model\BusinessUsers;
 
 class ReportsController
 {
@@ -18,8 +19,9 @@ class ReportsController
   protected $views_path;
 
   public function __construct() {
-	 $this->views_path = __DIR__.'/../Views/';
-   $this->camp_model = new Campaigns;   
+   $this->views_path = __DIR__.'/../Views/';
+   $this->camp_model = new Campaigns;
+   $this->bu_model = new BusinessUsers;  
   }
 
   public function printSalesBillSmall(Request $request) {
@@ -539,14 +541,14 @@ class ReportsController
         case 'indent-agentwise':
           $template_name = 'template-indent-2';
           $template_vars = array(
-            'title' => 'Agentwise Indents Booked',
+            'title' => 'Wholesalerwise / Agentwise Indents Booked',
             'formAction' => '/report-options/indent-itemwise',
             'reportHook' => '/indent-agentwise',
             'campaigns' => ['' => 'Choose Campaign'] + $this->_get_indent_campaigns(),
             'show_fromto_dates' => true,
           );
           $controller_vars = array(
-            'page_title' => 'Agentwise Indents Booked',
+            'page_title' => 'Wholesalerwise / Agentwise Indents Booked',
             'icon_name' => 'fa fa-user-circle-o',
           );
           break;
@@ -563,7 +565,33 @@ class ReportsController
             'page_title' => 'Statewise Indents Booked',
             'icon_name' => 'fa fa-compass',
           );
-          break;                   
+          break;
+        case 'indent-register':
+          $template_name = 'template-indent-3';
+          # ---------- get business users ----------------------------
+          $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+          if($agents_response['status']) {
+            foreach($agents_response['users'] as $user_details) {
+              if($user_details['cityName'] !== '') {
+                $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+              } else {
+                $agents_a[$user_details['userCode']] = $user_details['userName'];
+              }
+            }
+          }
+          $template_vars = array(
+            'title' => 'Indent Register',
+            'formAction' => '/report-options/indent-register',
+            'reportHook' => '/indent-register',
+            'campaigns' => ['' => 'Campaign name']  + $this->_get_indent_campaigns(),
+            'agents' => ['' => 'Referred by']  + $agents_a,
+            'show_fromto_dates' => true,
+          );
+          $controller_vars = array(
+            'page_title' => 'Indent Register',
+            'icon_name' => 'fa fa-book',
+          );
+          break;                           
       }
       $template = new Template($this->views_path);
       return array($template->render_view($template_name, $template_vars), $controller_vars);
