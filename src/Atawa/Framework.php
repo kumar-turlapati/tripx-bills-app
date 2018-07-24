@@ -12,7 +12,8 @@ use Atawa\Template;
 use Atawa\Utilities;
 
 ini_set('date.timezone', 'Asia/Kolkata');
-session_start();
+
+if(Utilities::is_session_started() === FALSE) session_start();
 
 class Framework {
 

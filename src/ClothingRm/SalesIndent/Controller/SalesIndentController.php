@@ -409,6 +409,7 @@ class SalesIndentController {
     $agent_code = isset($form_data['agentCode']) ? Utilities::clean_string($form_data['agentCode']) : '';
     $executive_code = isset($form_data['executiveCode']) ? Utilities::clean_string($form_data['executiveCode']) : '';
     $campaign_code = isset($form_data['campaignCode']) ? Utilities::clean_string($form_data['campaignCode']) : '';
+    $remarks = isset($form_data['remarks']) ? Utilities::clean_string($form_data['remarks']) : '';
     $item_details = $form_data['itemDetails'];
 
     # this code is not mandatory. it will change per each item.
@@ -489,7 +490,8 @@ class SalesIndentController {
     $cleaned_params['indentDate'] = $indent_date;
     $cleaned_params['campaignCode'] = $campaign_code;
     $cleaned_params['agentCode'] = $agent_code;
-    $cleaned_params['executiveCode'] = $executive_code;    
+    $cleaned_params['executiveCode'] = $executive_code;
+    $cleaned_params['remarks'] = $remarks;
 
     # return response.
     if(count($form_errors)>0) {
@@ -515,6 +517,7 @@ class SalesIndentController {
     $form_data['agentCode'] = $api_data['tranDetails']['agentCode'];        
     $form_data['executiveCode'] = $api_data['tranDetails']['executiveCode'];
     $form_data['campaignCode'] = $api_data['tranDetails']['campaignCode'];
+    $form_data['remarks'] = $api_data['tranDetails']['remarks'];
 
     $form_data['itemDetails']['itemName'] = array_column($api_data['itemDetails'], 'itemName');
     $form_data['itemDetails']['lotNo'] = array_column($api_data['itemDetails'], 'lotNo');

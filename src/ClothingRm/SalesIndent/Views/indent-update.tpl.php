@@ -19,6 +19,8 @@
   $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
   $executive_code = isset($form_data['executiveCode']) ? $form_data['executiveCode'] : '';  
   $campaign_code = isset($form_data['campaignCode']) ? $form_data['campaignCode'] : '';
+  $remarks = isset($form_data['remarks']) ? $form_data['remarks'] : '';
+
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
 
   $last_indent_no = isset($last_indent_no) ? (int)$last_indent_no : false;
@@ -313,6 +315,10 @@
                       <?php endforeach; ?>                            
                     </select>
                   </div>
+                </div>
+                <div class="col-sm-12 col-md-8 col-lg-8">
+                  <label class="control-label">Remarks (not more than 300 characters)</label>
+                  <textarea name="remarks" id="remarks" class="form-control noEnterKey" maxlength="300"><?php echo $remarks ?></textarea>
                 </div>
               </div>              
             </div>
