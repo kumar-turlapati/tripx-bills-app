@@ -593,6 +593,7 @@ class ReportsController
             'reportHook' => '/indent-register',
             'campaigns' => ['' => 'All Campaigns']  + $this->_get_indent_campaigns(),
             'agents' => ['' => 'Referred by']  + $agents_a,
+            'rateOptions' => [''=>'Rate Option', 'no' => 'Without Rate', 'yes'=>'With Rate'],
             'show_fromto_dates' => true,
           );
           $controller_vars = array(

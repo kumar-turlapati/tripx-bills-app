@@ -46,6 +46,19 @@
                   </div>
                 </div>
               <?php endif; ?>
+              <?php if(isset($rateOptions) && count($rateOptions)>0): ?>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="showRate" id="showRate">
+                      <?php 
+                        foreach($rateOptions as $key=>$value):
+                      ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+              <?php endif; ?>
               <?php if(isset($show_fromto_dates) && $show_fromto_dates): ?>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
@@ -60,11 +73,12 @@
                   </div>
                 </div>
               <?php endif; ?>
-              <div class="col-sm-12 col-md-3 col-lg-3">
-                <input type="hidden" id="reportHook" name="reportHook" value="<?php echo $reportHook ?>" />
-                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons-js.helper.php" ?>
-              </div>
             </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+              <input type="hidden" id="reportHook" name="reportHook" value="<?php echo $reportHook ?>" />
+              <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons-js.helper.php" ?>
+            </div>            
           </form>
         </div>
       </div>

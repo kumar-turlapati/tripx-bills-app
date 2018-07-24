@@ -709,6 +709,11 @@ class ReportsIndentController {
     } else {
       $to_date = date('d-m-Y');
     }
+    if(!is_null($request->get('showRate')) && $request->get('showRate') !== '') {
+      $show_rate = Utilities::clean_string($request->get('showRate'));
+    } else {
+      $show_rate = 'no';
+    }
 
     # ---------- get business users -------------------------------------------
     $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
@@ -779,14 +784,16 @@ class ReportsIndentController {
     $pdf->Cell($item_widths[3],6,'Wholesaler / Agent Name','RTB',0,'C');
     $pdf->Cell($item_widths[4],6,'Total Items','RTB',0,'C');
     $pdf->Cell($item_widths[5],6,'Total Qty.','RTB',0,'C');
-    $pdf->Cell($item_widths[6],6,'Indent Value','RTB',0,'C');    
+    if($show_rate === 'yes') {
+      $pdf->Cell($item_widths[6],6,'Indent Value','RTB',0,'C');    
+    }
     $pdf->SetFont('Arial','',9);
     foreach($total_indents as $indent_details) {
       $slno++;
 
       $indent_no_date = $indent_details['indentNo'].' / '.date("d-m-Y", strtotime($indent_details['indentDate']));
-      $customer_name = substr($indent_details['customerName'],0,20);
-      $agent_name = substr($indent_details['agentName'],0,20);
+      $customer_name = substr($indent_details['customerName'],0,25);
+      $agent_name = substr($indent_details['agentName'],0,22);
       $indent_qty = $indent_details['indentQty'];
       $indent_value = $indent_details['netpay'];
       $indent_items = $indent_details['totalItems'];
@@ -801,18 +808,20 @@ class ReportsIndentController {
       $pdf->Cell($item_widths[3],6,$agent_name,'RTB',0,'L');
       $pdf->Cell($item_widths[4],6,number_format($indent_items,2,'.',''),'RTB',0,'R');
       $pdf->Cell($item_widths[5],6,number_format($indent_qty,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[6],6,number_format($indent_value,2,'.',''),'RTB',0,'R');
+      if($show_rate === 'yes') {
+        $pdf->Cell($item_widths[6],6,number_format($indent_value,2,'.',''),'RTB',0,'R');
+      }
     }
 
     $pdf->Ln();
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
     $pdf->Cell($item_widths[5],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
-    $pdf->Cell($item_widths[6],6,number_format($tot_amount,2,'.',''),'LRTB',0,'R');    
+    if($show_rate === 'yes') {
+      $pdf->Cell($item_widths[6],6,number_format($tot_amount,2,'.',''),'LRTB',0,'R');    
+    }
     $pdf->SetFont('Arial','B',11);    
 
     $pdf->Output();
   }
-
-
 }
