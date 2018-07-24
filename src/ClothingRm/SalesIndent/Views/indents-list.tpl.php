@@ -121,17 +121,17 @@
           <?php if(count($indents)>0): ?>
            <table class="table table-striped table-hover">
             <thead>
-              <tr class="font12">
+              <tr class="font11">
                 <th width="5%" class="text-center valign-middle">Sno</th>
-                <th width="6%" class="text-center valign-middle">Indent <br />No.</th>
-                <th width="8%" class="text-center valign-middle">Indent <br />Date</th>
+                <th width="7%" class="text-center valign-middle">Indent <br />No.</th>
+                <th width="7%" class="text-center valign-middle">Indent <br />Date</th>
                 <th width="8%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
-                <th width="20%" class="text-center valign-middle">Customer name</span></th>
+                <th width="18%" class="text-center valign-middle">Customer name</span></th>
                 <th width="10%" class="text-center valign-middle">Store name</span></th>                
                 <th width="10%" class="text-center valign-middle">Referred by</th>
-                <th width="14%" class="text-center valign-middle">Campaign name</th>                
+                <th width="12%" class="text-center valign-middle">Campaign name</th>                
                 <th width="8%" class="text-center valign-middle">Status</th>
-                <th width="10%" class="text-center valign-middle">Actions</th>
+                <th width="12%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -163,9 +163,9 @@
                   <td align="right" class="valign-middle"><?php echo $indent_no ?></td>
                   <td class="valign-middle"><?php echo $indent_date ?></td>
                   <td align="right" class="valign-middle text-bold"><?php echo number_format($netpay,2,'.','') ?></td>
-                  <td align="left" class="valign-middle"><?php echo $customer_name ?></td>                
+                  <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,20) ?></td>                
                   <td class="valign-middle"><?php //echo $ref_no ?></td>
-                  <td class="valign-middle"><?php echo $agent_name ?></td>
+                  <td class="valign-middle" title="<?php echo $agent_name ?>"><?php echo substr($agent_name,0,15) ?></td>
                   <td class="valign-middle"><?php echo $campaign_name ?></td>
                   <td class="valign-middle"><?php echo $status ?></td>
                   <td class="valign-middle">
@@ -175,7 +175,10 @@
                       </a>&nbsp;
                       <a class="btn btn-primary" href="/print-indent-wor?indentNo=<?php echo $indent_no ?>" title="Print Sales Indent without Rate" target="_blank">
                         <i class="fa fa-print"></i>
-                      </a>                      
+                      </a>&nbsp;
+                      <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
+                        <i class="fa fa-pencil"></i>
+                      </a>
                     </div>
                   </td>
                 </tr>

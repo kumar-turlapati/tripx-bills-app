@@ -357,18 +357,39 @@ class ReportsIndentController {
 
   public function indentItemwiseBooked(Request $request) {
     
-    $filter_params = $total_items = [];
+    $filter_params = $total_items = $agents_a = $campaigns_a = [];
+    $campaign_name = $agent_name = $campaign_code = $agent_code = '';
     
     $item_widths = array(10,100,35,35);
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2];
     
     $slno = $tot_qty = 0; 
-    
+
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        $agents_a[$user_details['userCode']] = $user_details['userName'];
+      }
+    }
+    $campaigns_response = $this->camp_model->get_live_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+
     $filter_params['perPage'] = 100;
     $filter_params['pageNo'] = 1;
     if(!is_null($request->get('campaignCode')) && $request->get('campaignCode') !== '') {
       $filter_params['campaignCode'] = Utilities::clean_string($request->get('campaignCode'));
+      $campaign_code = $filter_params['campaignCode'];
+      $campaign_name = isset($campaigns_a[$campaign_code]) ? $campaigns_a[$campaign_code] : '';
     }
+    if(!is_null($request->get('agentCode')) && $request->get('agentCode') !== '') {
+      $filter_params['agentCode'] = Utilities::clean_string($request->get('agentCode'));
+      $agent_code = $filter_params['agentCode'];
+      $agent_name = isset($agents_a[$agent_code]) ? $agents_a[$agent_code] : '';
+    }    
     if(!is_null($request->get('fromDate')) && $request->get('fromDate') !== '') {
       $filter_params['fromDate'] = Utilities::clean_string($request->get('fromDate'));
       $from_date = $request->get('fromDate');
@@ -399,6 +420,14 @@ class ReportsIndentController {
       }
       $heading1 = 'Itemwise Indent Bookings';
       $heading2 = 'From '.date('jS F, Y', strtotime($from_date)).' To '.date('jS F, Y', strtotime($to_date));
+      if($campaign_name !== '') {
+        $heading3  = 'Campaign Name: '.$campaign_name;
+      } else {
+        $heading3 =  ''; 
+      }
+      if($agent_name !== '') {
+        $heading3 .= ', Wholesaler / Agent Name: '.$agents_a[$agent_code];
+      }      
     }
 
     // echo '<pre>';
@@ -418,6 +447,12 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln(5);
     $pdf->Cell(0,0,$heading2,'',1,'C');
+    
+    if($heading3 !== '') {
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading3,'',1,'C');
+    }    
     
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln(5);

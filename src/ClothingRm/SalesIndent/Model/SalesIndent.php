@@ -23,6 +23,16 @@ class SalesIndent {
     }
   }
 
+  public function update_sindent($form_data=[], $indent_code='') {
+    $response = $this->api_caller->sendRequest('put','sindent/'.$indent_code,$form_data);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true);
+    } elseif($status === 'failed') {
+      return array('status' => false, 'apierror' => $response['reason']);
+    }
+  }  
+
   public function get_all_indents($filter_params=[]) {
     $response = $this->api_caller->sendRequest('get','sindent/register',$filter_params);
     $status = $response['status'];
@@ -33,8 +43,11 @@ class SalesIndent {
     }
   }  
 
-  public function get_indent_details($indent_no=0) {
-    $filter_params['indentNo'] = $indent_no;
+  public function get_indent_details($needle='', $by_code=false) {
+    $filter_params['indentNo'] = $needle;
+    if($by_code) {
+      $filter_params['byCode'] = true;
+    }
     $response = $this->api_caller->sendRequest('get','sindent/details',$filter_params);
     $status = $response['status'];
     if($status === 'success') {

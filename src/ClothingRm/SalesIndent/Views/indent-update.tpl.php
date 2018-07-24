@@ -30,7 +30,6 @@
     }
   }
 ?>
-
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panelBox">
@@ -145,6 +144,7 @@
                         index="<?php echo $i ?>"
                         value="<?php echo $item_qty ?>"
                         style="text-align:right;"
+                        readonly
                       />
                     </td>
                     <td style="vertical-align:middle;" align="center">
@@ -156,6 +156,7 @@
                         size = "10"
                         value = "<?php echo $item_rate ?>"
                         name = "itemDetails[itemRate][]"
+                        readonly
                       />
                     </td>
                     <td class="grossAmount" id="grossAmount_<?php echo $i ?>" index="<?php echo $i ?>" style="vertical-align:middle;text-align:right;">
@@ -316,12 +317,11 @@
               </div>              
             </div>
           </div>
+          <input type="hidden" name="ic" id="ic" value="<?php echo $indent_code ?>" />
+          <input type="hidden" name="in" id="in" value="<?php echo $indent_number ?>" />          
           <div class="text-center" id="saveWindow" style="margin-top: 20px; <?php echo $tot_products > 0 ? '' : 'display:none;' ?>">
-            <button class="btn btn-warning" id="SaveInvoice" name="op" value="printWithRate">
-              <i class="fa fa-save"></i> Save &amp; Print with Rate
-            </button>
             <button class="btn btn-primary" id="SaveInvoiceWr" name="op" value="printWithOutRate">
-              <i class="fa fa-save"></i> Save &amp; Print without Rate
+              <i class="fa fa-save"></i> Update Indent
             </button>            
            <button class="btn btn-danger cancelButton" id="ieWithBarcode">
               <i class="fa fa-times"></i> Cancel

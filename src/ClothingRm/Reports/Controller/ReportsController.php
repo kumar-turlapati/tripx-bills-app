@@ -526,12 +526,20 @@ class ReportsController
           break;
         case 'indent-itemwise':
           $template_name = 'template-indent-2';
+          $agents_a = [];
+          $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+          if($agents_response['status']) {
+            foreach($agents_response['users'] as $user_details) {
+              $agents_a[$user_details['userCode']] = $user_details['userName'];
+            }
+          }
           $template_vars = array(
             'title' => 'Itemwise Indents Booked',
             'formAction' => '/report-options/indent-itemwise',
             'reportHook' => '/indent-itemwise',
-            'campaigns' => ['' => 'Choose Campaign'] + $this->_get_indent_campaigns(),
+            'campaigns' => ['' => 'All Campaigns'] + $this->_get_indent_campaigns(),
             'show_fromto_dates' => true,
+            'agents' => ['' => 'Referred by'] + $agents_a
           );
           $controller_vars = array(
             'page_title' => 'Itemwise Indents Booked',
@@ -544,7 +552,7 @@ class ReportsController
             'title' => 'Wholesalerwise / Agentwise Indents Booked',
             'formAction' => '/report-options/indent-itemwise',
             'reportHook' => '/indent-agentwise',
-            'campaigns' => ['' => 'Choose Campaign'] + $this->_get_indent_campaigns(),
+            'campaigns' => ['' => 'All Campaigns'] + $this->_get_indent_campaigns(),
             'show_fromto_dates' => true,
           );
           $controller_vars = array(
@@ -558,7 +566,7 @@ class ReportsController
             'title' => 'Statewise Indents Booked',
             'formAction' => '/report-options/indent-statewise',
             'reportHook' => '/indent-statewise',
-            'campaigns' => ['' => 'Choose Campaign']  + $this->_get_indent_campaigns(),
+            'campaigns' => ['' => 'All Campaigns']  + $this->_get_indent_campaigns(),
             'show_fromto_dates' => true,
           );
           $controller_vars = array(
@@ -567,7 +575,7 @@ class ReportsController
           );
           break;
         case 'indent-register':
-          $template_name = 'template-indent-3';
+          $template_name = 'template-indent-2';
           # ---------- get business users ----------------------------
           $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
           if($agents_response['status']) {
@@ -583,7 +591,7 @@ class ReportsController
             'title' => 'Indent Register',
             'formAction' => '/report-options/indent-register',
             'reportHook' => '/indent-register',
-            'campaigns' => ['' => 'Campaign name']  + $this->_get_indent_campaigns(),
+            'campaigns' => ['' => 'All Campaigns']  + $this->_get_indent_campaigns(),
             'agents' => ['' => 'Referred by']  + $agents_a,
             'show_fromto_dates' => true,
           );
@@ -614,5 +622,4 @@ class ReportsController
     }
     return $campaigns_a;
   }
-
 }

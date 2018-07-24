@@ -20,17 +20,32 @@
            >
             <div class="form-group">
               <div class="col-sm-12 col-md-1 col-lg-1" style="font-size:16px;font-weight:bold;text-align:right;padding-top:5px;">Filters</div>
-              <div class="col-sm-12 col-md-2 col-lg-2">
-                <div class="select-wrap">
-                  <select class="form-control" name="campaignCode" id="campaignCode">
-                    <?php 
-                      foreach($campaigns as $key=>$value):
-                    ?>
-                      <option value="<?php echo $key ?>"><?php echo $value ?></option>
-                    <?php endforeach; ?>
-                  </select>
+              <?php if(isset($campaigns) && count($campaigns)>0): ?>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="campaignCode" id="campaignCode">
+                      <?php 
+                        foreach($campaigns as $key=>$value):
+                      ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
                 </div>
-              </div>
+              <?php endif; ?>
+              <?php if(isset($agents) && count($agents)>0): ?>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="agentCode" id="agentCode">
+                      <?php 
+                        foreach($agents as $key=>$value):
+                      ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+              <?php endif; ?>
               <?php if(isset($show_fromto_dates) && $show_fromto_dates): ?>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">

@@ -143,6 +143,153 @@ class SalesIndentController {
     return array($this->template->render_view('indent-create', $template_vars),$controller_vars);
   }
 
+  // update indent
+  public function updateIndent(Request $request) {
+
+    # -------- initialize variables ---------------------------
+    $page_error = $page_success = $indent_code = '';
+    $form_errors = $agents_a = $campaigns_a = $form_data = [];
+    $executives_a = [];
+    $list_url = '/sales-indents/list';
+    $indent_no = '';
+
+    # ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
+    # ---------- get default location --------------------------
+    if(!is_null($request->get('lc')) && $request->get('lc') !== '') {
+      $default_location = Utilities::clean_string($request->get('lc'));
+    } elseif(isset($_SESSION['lc']) && $_SESSION['lc'] !== '') {
+      $default_location = $_SESSION['lc'];
+    } else {
+      $default_location = '';
+    }
+
+    # ---------- get business users ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    $executives_response = $this->bu_model->get_business_users(['userType' => 91]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
+    if($executives_response['status']) {
+      foreach($executives_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $executives_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $executives_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
+
+    # ---------- get live campaigns ---------------------------------
+    $campaigns_response = $this->camp_model->get_live_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+
+    if(!is_null($request->get('lastIndent')) && is_numeric($request->get('lastIndent'))) {
+      $last_indent_no = (int)$request->get('lastIndent');
+    } else {
+      $last_indent_no = false;
+    }
+
+    if(!is_null($request->get('it'))) {
+      $indent_print_option = $request->get('it');
+    } else {
+      $indent_print_option = false;
+    }
+
+    # ------------------------------------- check for form Submission --------------------------------
+    # ------------------------------------------------------------------------------------------------
+    if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
+
+      // validate submitted indent code and url indent code is same. otherwise 
+      // redirect user to indents list with error message.
+      $submitted_indent_code = Utilities::clean_string($form_data['ic']);
+      $submitted_indent_no = Utilities::clean_string($form_data['in']);
+      $url_indent_code = !is_null($request->get('indentCode')) ? $request->get('indentCode') : '';
+      if($submitted_indent_code !== $url_indent_code) {
+        $error = "Unable to proceed! Invalid parameters detected.";
+        $this->flash->set_flash_message($error,1);
+        Utilities::redirect($list_url);
+      }
+
+      if(isset($form_data['locationCode'])) {
+        $default_location = $form_data['locationCode'];
+      }
+      $form_validation = $this->_validate_form_data($form_data);
+      if($form_validation['status']===false) {
+        $this->flash->set_flash_message('You have errors in this form. Please fix them before you save', 1);
+        $form_errors = $form_validation['errors'];
+      } else {
+        $api_response = $this->sindent_model->update_sindent($form_data, $url_indent_code);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('Sales Indent No. `' .$submitted_indent_no.'` updated successfully. [ '.$submitted_indent_code.' ]');
+          Utilities::redirect($list_url);
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error,1);
+        }
+      }
+    } elseif( !is_null($request->get('indentCode')) ) {
+      $indent_code = Utilities::clean_string($request->get('indentCode'));
+      $indent_api_response = $this->sindent_model->get_indent_details($indent_code, true);
+      if($indent_api_response['status']) {
+        $indent_number = $indent_api_response['response']['indentDetails']['tranDetails']['indentNo'];
+        $form_data = $this->_map_indent_reponse_with_form_data($indent_api_response['response']['indentDetails']);
+      } else {
+        $this->flash->set_flash_message('Invalid indent code.', 1);
+        Utilities::redirect($list_url);
+      }
+    } else {
+      $this->set_flash_message('Invalid indent code.', 1);
+      Utilities::redirect($list_url);
+    }
+
+    # --------------- build variables -----------------
+    $controller_vars = array(
+      'page_title' => 'Update Sales Indent',
+      'icon_name' => 'fa fa-inr',
+    );
+    
+    # ---------------- prepare form variables. ---------
+    $template_vars = array(
+      'form_data' => $form_data,
+      'errors' => $form_errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => 'Save',
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'default_location' => $default_location,
+      'agents' => ['' => 'Choose'] + $agents_a,
+      'executives' => ['' => 'Choose'] + $executives_a,
+      'campaigns' => ['' => 'Choose'] + $campaigns_a,
+      'last_indent_no' => $last_indent_no,
+      'indent_print_option' => $indent_print_option,
+      'indent_code' => $indent_code,
+      'indent_number' => $indent_number
+    );
+
+    return array($this->template->render_view('indent-update', $template_vars),$controller_vars);
+  }  
+
   // list indents
   public function listIndents(Request $request) {
     $locations = $vouchers = $search_params = $indents_a = [];
@@ -268,12 +415,6 @@ class SalesIndentController {
     $cleaned_params['locationCode'] = '';
 
     # validate location code
-/*    if( isset($form_data['locationCode']) && ctype_alnum($form_data['locationCode']) ) {
-      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
-    } else {
-      $form_errors['locationCode'] = 'Invalid location code.';
-    }*/
-
     # validate primary mobile number.
     if( $primary_mobile_no !== '' && (!is_numeric($primary_mobile_no) || strlen($primary_mobile_no) !== 10) ) {
       $form_errors['primaryMobileNo'] = 'Invalid mobile number.';
@@ -362,5 +503,25 @@ class SalesIndentController {
         'cleaned_params' => $cleaned_params,
       ];
     }
+  }
+
+  // map indent response data with form data.
+  private function _map_indent_reponse_with_form_data($api_data=[]) {
+    $form_data = [];
+    $form_data['indentDate'] = $api_data['tranDetails']['indentDate'];
+    $form_data['primaryMobileNo'] = $api_data['tranDetails']['primaryMobileNo'];
+    $form_data['alternativeMobileNo'] = $api_data['tranDetails']['alterMobileNo'];
+    $form_data['name'] = $api_data['tranDetails']['customerName'];
+    $form_data['agentCode'] = $api_data['tranDetails']['agentCode'];        
+    $form_data['executiveCode'] = $api_data['tranDetails']['executiveCode'];
+    $form_data['campaignCode'] = $api_data['tranDetails']['campaignCode'];
+
+    $form_data['itemDetails']['itemName'] = array_column($api_data['itemDetails'], 'itemName');
+    $form_data['itemDetails']['lotNo'] = array_column($api_data['itemDetails'], 'lotNo');
+    $form_data['itemDetails']['itemSoldQty'] = array_column($api_data['itemDetails'], 'itemQty');
+    $form_data['itemDetails']['itemRate'] = array_column($api_data['itemDetails'], 'itemRate');
+    $form_data['itemDetails']['barcode'] = array_column($api_data['itemDetails'], 'barcode');
+
+    return $form_data;
   }
 }

@@ -42,7 +42,7 @@ class ReportsInventoryController {
       'locationCode' => $location_code,
     ];
 
-    $inven_api_response = $this->inven_api->get_stock_report($params);
+    $inven_api_response = $this->inven_api->get_stock_adj_report($params);
     
     // dump($inven_api_response);
     // exit;
@@ -99,10 +99,20 @@ class ReportsInventoryController {
       $lot_no = $item_details['lotNo'];
       $closing_qty = $item_details['closingQty'];
       $closing_rate = $item_details['purchaseRate'];
-
-      $mrp = $item_details['mrp'];
-      $amount = round($closing_qty*$closing_rate,2);
       $tax_percent = $item_details['taxPercent'];
+      $mrp = $item_details['mrp'];
+      $upp = $item_details['upp'];
+
+      # calculate landing cost
+      $amount_gross = round($closing_qty*$closing_rate,2);
+      if($amount_gross>0 && $tax_percent>0) {
+        $tax_amount = round( ($amount_gross*$tax_percent)/100, 2);
+      } else {
+        $tax_amount = 0;
+      }
+      $landing_cost = $amount_gross + $tax_amount;
+      $purchase_rate = $upp > 0 ? round($landing_cost/$upp, 2) : round($landing_cost,2);
+      $amount = round($closing_qty * $purchase_rate, 2);
 
       $tot_amount += $amount;
       $tot_qty += $closing_qty;
@@ -113,7 +123,7 @@ class ReportsInventoryController {
       $pdf->Cell($item_widths[2],6,$lot_no,'RTB',0,'L');
       $pdf->Cell($item_widths[3],6,number_format($tax_percent,2,'.',''),'RTB',0,'R');            
       $pdf->Cell($item_widths[4],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[5],6,number_format($closing_rate,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($purchase_rate,2,'.',''),'RTB',0,'R');
       $pdf->Cell($item_widths[6],6,number_format($amount,2,'.',''),'RTB',0,'R');
       $pdf->Cell($item_widths[7],6,number_format($mrp,2,'.',''),'RTB',0,'R');
     }
