@@ -50,6 +50,7 @@ class ReportsIndentController {
     $campaign_name = $indent_tran_details['campaignName'];
     $print_date_time = date("d/m/Y H:ia");
     $operator_name = $_SESSION['uname'];
+    $remarks = isset($indent_tran_details['remarks']) && $indent_tran_details['remarks'] !== '' ? $indent_tran_details['remarks'] : '';
 
     # start PDF printing.
     $pdf = PDF::getInstance();
@@ -115,12 +116,17 @@ class ReportsIndentController {
       $pdf->Ln();
     }
 
-    $pdf->SetFont('Arial','B',11);
     $pdf->Cell(140,6,'TOTALS','LRTB',0,'R');
-    $pdf->Cell(25,6,number_format($tot_items_qty,2,'.',''),'LRTB',0,'R');
+    $pdf->Cell(25,6,number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
     $pdf->Cell(25,6,'','LRTB',0,'R');    
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
+
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell(20,6,'REMARKS:','LT',0,'L');
+    $pdf->SetFont('Arial','',9);    
+    $pdf->Cell(170,6,$remarks,'RT',0,'L');
+    $pdf->Ln();    
 
     $pdf->Cell(60,10,'Buyer Signature','LRTB',0,'R');
     $pdf->Cell(130,10,'','LRTB',0,'R');
@@ -156,6 +162,8 @@ class ReportsIndentController {
     $mobile_no = isset($indent_tran_details['primaryMobileNo']) && $indent_tran_details['primaryMobileNo'] !== '' ? $indent_tran_details['primaryMobileNo'] : '';
     $print_date_time = date("d/m/Y H:ia");
     $operator_name = $_SESSION['uname'];
+    $remarks = isset($indent_tran_details['remarks']) && $indent_tran_details['remarks'] !== '' ? $indent_tran_details['remarks'] : '';
+    $campaign_name = $indent_tran_details['campaignName'];    
 
     // dump($indent_details);
     // exit;
@@ -194,7 +202,7 @@ class ReportsIndentController {
     $pdf->Ln();
 
     $pdf->Cell(95,6,substr($referred_by,0,20),'LRTB',0,'C');
-    $pdf->Cell(95,6,'GOA CONFERENCE','RTB',0,'C');
+    $pdf->Cell(95,6,$campaign_name,'RTB',0,'C');
 
     # item details
     $pdf->Ln();
@@ -229,6 +237,12 @@ class ReportsIndentController {
     $pdf->Cell(62,6,'','R',0,'R');
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
+
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell(20,6,'REMARKS:','LT',0,'L');
+    $pdf->SetFont('Arial','',9);    
+    $pdf->Cell(170,6,$remarks,'RT',0,'L');
+    $pdf->Ln();    
 
     $pdf->Cell(60,10,'Buyer Signature','LRTB',0,'R');
     $pdf->Cell(130,10,'','LRTB',0,'R');
