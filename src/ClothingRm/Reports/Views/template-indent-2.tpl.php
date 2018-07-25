@@ -1,6 +1,8 @@
 <?php
   use Atawa\Utilities;
   $current_date = date("d-m-Y");
+
+  $format_options = ['pdf'=>'Download as PDF', 'csv' => 'Download as CSV'];
 ?>
 
 <!-- Basic form starts -->
@@ -76,6 +78,15 @@
             </div>
             <div class="clearfix"></div>
             <div class="form-group">
+              <div class="col-sm-12 col-md-2 col-lg-2" style="margin-left:91px;">
+                <div class="select-wrap">
+                  <select class="form-control" name="format" id="format">
+                    <?php foreach($format_options as $key=>$value): ?>
+                      <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+              </div>               
               <input type="hidden" id="reportHook" name="reportHook" value="<?php echo $reportHook ?>" />
               <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons-js.helper.php" ?>
             </div>            

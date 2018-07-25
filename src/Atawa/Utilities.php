@@ -731,4 +731,34 @@ class Utilities
     return FALSE;
   }
 
+  public static function download_as_CSV_attachment($file_name='', $headings=[], $records=[]) {
+    $csv_keys = array_keys($records[0]);
+    $d_file_name = $file_name.'_'.date("d-m-Y H:ia").'.csv';
+
+    // output headers so that the file is downloaded rather than displayed
+    header('Content-type: text/csv');
+    header('Content-Disposition: attachment; filename="'.$d_file_name.'"');
+
+    // do not cache the file
+    header('Pragma: no-cache');
+    header('Expires: 0');
+     
+    // create a file pointer connected to the output stream
+    $file = fopen('php://output', 'w');
+
+    // print headings
+    if(count($headings)>0) {
+      foreach($headings as $heading) {
+        fputcsv($file, $heading);        
+      }
+    }
+
+    // send the column headers
+    fputcsv($file, $csv_keys);
+    foreach($records as $csv_row) {
+      fputcsv($file, $csv_row);
+    }
+    exit;
+  }
+
 }

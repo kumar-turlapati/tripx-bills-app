@@ -259,6 +259,7 @@ class ReportsIndentController {
   public function indentItemAvailability(Request $request) {
     
     $filter_params = $total_items = [];
+    $csv_headings = [];
     
     $item_widths = array(10,85,35,35,25);
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3];
@@ -267,6 +268,9 @@ class ReportsIndentController {
     
     $filter_params['perPage'] = 100;
     $filter_params['pageNo'] = 1;
+
+    $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';
+
     if(!is_null($request->get('locationCode')) && $request->get('locationCode') !== '') {
       $filter_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
     }
@@ -299,14 +303,24 @@ class ReportsIndentController {
       }
       $heading1 = 'Item Availability Report For Indents';
       $heading2 = 'As on '.date('jS F, Y');
+      $csv_headings = [ [$heading1], [$heading2] ];
       if(isset($filter_params['nearbyQty'])) {
         $heading3  = 'Threshold Qty <= '.$filter_params['nearbyQty'];
       } else {
         $heading3 =  ''; 
       }
       if(isset($filter_params['locationCode'])) {
-        $heading3 .= ', Store Name - '.$location_names[$filter_params['locationCode']];
+        $heading3 .= '=== Store Name - '.$location_names[$filter_params['locationCode']];
       }
+      if($heading3 !== '') {
+        $csv_headings[] = [$heading3];
+      }
+    }
+
+    // if format is csv dump csv file for download. otherwise go with pdf
+    if($format === 'csv') {
+      Utilities::download_as_CSV_attachment('IndentItemAvailability', $csv_headings, $total_items);
+      return;
     }
 
     // echo '<pre>';
@@ -373,6 +387,9 @@ class ReportsIndentController {
     
     $filter_params = $total_items = $agents_a = $campaigns_a = [];
     $campaign_name = $agent_name = $campaign_code = $agent_code = '';
+    $csv_headings = [];    
+
+    $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';
     
     $item_widths = array(10,100,35,35);
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2];
@@ -434,6 +451,8 @@ class ReportsIndentController {
       }
       $heading1 = 'Itemwise Indent Bookings';
       $heading2 = 'From '.date('jS F, Y', strtotime($from_date)).' To '.date('jS F, Y', strtotime($to_date));
+      $csv_headings = [ [$heading1], [$heading2] ];
+
       if($campaign_name !== '') {
         $heading3  = 'Campaign Name: '.$campaign_name;
       } else {
@@ -441,6 +460,9 @@ class ReportsIndentController {
       }
       if($agent_name !== '') {
         $heading3 .= ', Wholesaler / Agent Name: '.$agents_a[$agent_code];
+      }
+      if($heading3 !== '') {
+        $csv_headings[] = [$heading3];
       }      
     }
 
@@ -448,6 +470,12 @@ class ReportsIndentController {
     // print_r($total_items);
     // echo '</pre>';
     // exit;
+
+    // if format is csv dump csv file for download. otherwise go with pdf
+    if($format === 'csv') {
+      Utilities::download_as_CSV_attachment('IndentItemwiseBooked', $csv_headings, $total_items);
+      return;
+    }    
 
     # start PDF printing.
     $pdf = PDF::getInstance();
@@ -504,9 +532,12 @@ class ReportsIndentController {
   public function indentAgentwiseBooked(Request $request) {
     
     $filter_params = $total_items = [];
+    $csv_headings = [];
     
     $item_widths = array(10,100,35,35);
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2];
+
+    $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';
     
     $slno = $tot_qty = 0; 
     
@@ -545,7 +576,14 @@ class ReportsIndentController {
       }
       $heading1 = 'Wholesalerwise / Agentwise Indent Bookings';
       $heading2 = 'From '.date('jS F, Y', strtotime($from_date)).' To '.date('jS F, Y', strtotime($to_date));
+      $csv_headings = [ [$heading1], [$heading2] ];
     }
+
+    // if format is csv dump csv file for download. otherwise go with pdf
+    if($format === 'csv') {
+      Utilities::download_as_CSV_attachment('IndentAgentwiseBooked', $csv_headings, $total_items);
+      return;
+    }    
 
     // echo '<pre>';
     // print_r($total_items);
@@ -604,6 +642,8 @@ class ReportsIndentController {
     
     $item_widths = array(10,100,35);
     $totals_width = $item_widths[0] + $item_widths[1];
+
+    $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';
     
     $slno = $tot_qty = 0; 
     
@@ -642,12 +682,19 @@ class ReportsIndentController {
       }
       $heading1 = 'Statewise Indent Bookings';
       $heading2 = 'From '.date('jS F, Y', strtotime($from_date)).' To '.date('jS F, Y', strtotime($to_date));
+      $csv_headings = [ [$heading1], [$heading2] ];      
     }
 
     // echo '<pre>';
     // print_r($total_items);
     // echo '</pre>';
     // exit;
+
+    // if format is csv dump csv file for download. otherwise go with pdf
+    if($format === 'csv') {
+      Utilities::download_as_CSV_attachment('IndentStatewiseBooked', $csv_headings, $total_items);
+      return;
+    }    
 
     # start PDF printing.
     $pdf = PDF::getInstance();
@@ -697,6 +744,8 @@ class ReportsIndentController {
     
     $item_widths = array(10,35,46,46,16,17,21);
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+
+    $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';    
     
     $slno = $tot_qty = $tot_amount = 0;
     $heading3 = $campaign_code = $agent_code = '';
@@ -761,6 +810,7 @@ class ReportsIndentController {
       }
       $heading1 = 'Indent Register';
       $heading2 = 'From '.date('jS F, Y', strtotime($from_date)).' To '.date('jS F, Y', strtotime($to_date));
+      $csv_headings = [ [$heading1], [$heading2] ];      
       if(isset($campaigns_a[$campaign_code]) && $campaign_code !== '') {
         $heading3  = 'Campaign Name: '.$campaigns_a[$campaign_code];
       } else {
@@ -769,7 +819,16 @@ class ReportsIndentController {
       if($agent_code !== '' && isset($agents_a[$agent_code])) {
         $heading3 .= ', Wholesaler / Agent Name: '.$agents_a[$agent_code];
       }
+      if($heading3 !== '') {
+        $csv_headings[] = [$heading3];
+      }      
     }
+
+    // if format is csv dump csv file for download. otherwise go with pdf
+    if($format === 'csv') {
+      Utilities::download_as_CSV_attachment('IndentRegister', $csv_headings, $total_indents);
+      return;
+    }    
 
     # start PDF printing.
     $pdf = PDF::getInstance();
