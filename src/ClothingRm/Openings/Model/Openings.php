@@ -26,7 +26,9 @@ class Openings
 				$category = Utilities::clean_string($search_params['category']);
 				$params['category'] = $category;
 			}
-			$params['locationCode'] = $search_params['locationCode'];
+			if(isset($search_params['locationCode'])) {
+				$params['locationCode'] = $search_params['locationCode'];
+			}
 		}
 
 		// fetch client id

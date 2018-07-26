@@ -142,8 +142,8 @@ class OpeningsController
         }
         
         if(count($request->request->all()) > 0) {
-            if($request->get('medName') !== '') {
-                $search_params['medName'] = Utilities::clean_string($request->get('medName'));
+            if($request->get('itemName') !== '') {
+                $search_params['itemName'] = Utilities::clean_string($request->get('itemName'));
             }
             if($request->get('batchNo') !== '') {
                 $search_params['batchNo'] = Utilities::clean_string($request->get('batchNo'));

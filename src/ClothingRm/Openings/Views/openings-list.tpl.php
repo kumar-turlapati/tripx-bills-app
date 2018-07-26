@@ -2,11 +2,11 @@
   use Atawa\Utilities;
 
   $query_params = [];
-  if(isset($search_params['medName']) && $search_params['medName'] !='') {
-    $medName = $search_params['medName'];
-    $query_params[] = 'medName='.$medName;
+  if(isset($search_params['itemName']) && $search_params['itemName'] !='') {
+    $itemName = $search_params['itemName'];
+    $query_params[] = 'itemName='.$itemName;
   } else {
-    $medName = '';
+    $itemName = '';
   }
   if(isset($search_params['category']) && $search_params['category'] !='' ) {
     $category = $search_params['category'];
@@ -53,7 +53,7 @@
         				<div class="form-group">
                   <div class="col-sm-12 col-md-2 col-lg-1">Filter by</div>
         				  <div class="col-sm-12 col-md-2 col-lg-2">
-          					<input type="text" placeholder="Item name" name="medName" id="medName" class="form-control" value="<?php echo $medName ?>">
+          					<input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control" value="<?php echo $itemName ?>">
         				  </div>
                   <?php /*
                   <div class="col-sm-12 col-md-2 col-lg-2">
