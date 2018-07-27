@@ -860,7 +860,7 @@ class ReportsIndentController {
     if($show_rate === 'yes') {
       $pdf->Cell($item_widths[6],6,'Indent Value','RTB',0,'C');    
     }
-    $pdf->SetFont('Arial','',9);
+    $pdf->SetFont('Arial','',8);
     foreach($total_indents as $indent_details) {
       $slno++;
 
@@ -887,13 +887,13 @@ class ReportsIndentController {
     }
 
     $pdf->Ln();
-    $pdf->SetFont('Arial','B',10);
+    $pdf->SetFont('Arial','B',9);
     $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
     $pdf->Cell($item_widths[5],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
     if($show_rate === 'yes') {
       $pdf->Cell($item_widths[6],6,number_format($tot_amount,2,'.',''),'LRTB',0,'R');    
     }
-    $pdf->SetFont('Arial','B',11);    
+    $pdf->SetFont('Arial','B',9);
 
     $pdf->Output();
   }
