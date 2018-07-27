@@ -742,7 +742,7 @@ class ReportsIndentController {
   public function indentRegister(Request $request) {
     $filter_params = $total_indents = $agents_a = $campaigns_a = [];
     
-    $item_widths = array(10,35,46,46,16,17,21);
+    $item_widths = array(10,33,47,47,16,17,21);
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
 
     $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';    
@@ -865,8 +865,8 @@ class ReportsIndentController {
       $slno++;
 
       $indent_no_date = $indent_details['indentNo'].' / '.date("d-m-Y", strtotime($indent_details['indentDate']));
-      $customer_name = substr($indent_details['customerName'],0,25);
-      $agent_name = substr($indent_details['agentName'],0,22);
+      $customer_name = substr($indent_details['customerName'],0,27);
+      $agent_name = substr($indent_details['agentName'],0,24);
       $indent_qty = $indent_details['indentQty'];
       $indent_value = $indent_details['netpay'];
       $indent_items = $indent_details['totalItems'];
