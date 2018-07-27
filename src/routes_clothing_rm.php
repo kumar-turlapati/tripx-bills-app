@@ -579,12 +579,13 @@ $routes->add('cancel_sindent', new Routing\Route('/sales-indent/cancel/{indentCo
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::cancelIndent',
   'indentCode' => null,
 )));
-$routes->add('list_sindents', new Routing\Route('/sales-indents/list', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::listIndents',
-)));
 $routes->add('delete_sindent', new Routing\Route('/sales-indent/remove/{indentCode}', array(
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::removeIndent',
   'indentCode' => null,
+)));
+$routes->add('list_sindents', new Routing\Route('/sales-indents/list/{pageNo}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::listIndents',
+  'pageNo' => null,
 )));
 
 // reports
