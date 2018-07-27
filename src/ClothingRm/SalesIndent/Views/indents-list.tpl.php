@@ -36,7 +36,7 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
-  $page_url = '/sales-indents/list';
+  $page_url = $pagination_url = '/sales-indents/list';
 ?>
 
 <div class="row">
