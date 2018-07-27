@@ -865,7 +865,7 @@ class ReportsIndentController {
       $slno++;
 
       $indent_no_date = $indent_details['indentNo'].' / '.date("d-m-Y", strtotime($indent_details['indentDate']));
-      $customer_name = substr($indent_details['customerName'],0,29);
+      $customer_name = substr($indent_details['customerName'],0,27);
       $agent_name = substr($indent_details['agentName'],0,24);
       $indent_qty = $indent_details['indentQty'];
       $indent_value = $indent_details['netpay'];
