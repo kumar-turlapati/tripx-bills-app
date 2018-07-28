@@ -122,12 +122,9 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
 
-    $pdf->SetFont('Arial','B',10);
-    $pdf->Cell(20,6,'REMARKS:','LT',0,'L');
-    $pdf->SetFont('Arial','',9);    
-    $pdf->Cell(170,6,$remarks,'RT',0,'L');
-    $pdf->Ln();    
-
+    $pdf->SetFont('Arial','IB',7);
+    $pdf->MultiCell(190,4,'REMARKS: '.$remarks,'LTR','');
+    $pdf->SetFont('Arial','B',9);
     $pdf->Cell(60,10,'Buyer Signature','LRTB',0,'R');
     $pdf->Cell(130,10,'','LRTB',0,'R');
 
@@ -238,14 +235,11 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
 
-    $pdf->SetFont('Arial','B',10);
-    $pdf->Cell(20,6,'REMARKS:','LT',0,'L');
-    $pdf->SetFont('Arial','',9);    
-    $pdf->Cell(170,6,$remarks,'RT',0,'L');
-    $pdf->Ln();    
-
+    $pdf->SetFont('Arial','IB',7);
+    $pdf->MultiCell(190,4,'REMARKS: '.$remarks,'LTR','');
+    $pdf->SetFont('Arial','B',9);
     $pdf->Cell(60,10,'Buyer Signature','LRTB',0,'R');
-    $pdf->Cell(130,10,'','LRTB',0,'R');
+    $pdf->Cell(130,10,'','LRTB',0,'R');       
 
     $pdf->Ln();
     $pdf->SetFont('Arial','',9);
@@ -898,3 +892,9 @@ class ReportsIndentController {
     $pdf->Output();
   }
 }
+
+/*
+    // $pdf->SetFont('Arial','',9);
+    // $pdf->Cell(170,6,$remarks,'RT',0,'L');
+    // $pdf->Ln();
+*/
