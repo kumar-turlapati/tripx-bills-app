@@ -14,6 +14,7 @@ use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Taxes\Model\Taxes;
 use ClothingRm\Finance\Model\CreditNote;
 use ClothingRm\PromoOffers\Model\PromoOffers;
+use ClothingRm\SalesIndent\Model\SalesIndent;
 use User\Model\User;
 
 class salesEntryWithBarcode {
@@ -30,6 +31,7 @@ class salesEntryWithBarcode {
     $this->user_model = new User;
     $this->cn_model = new CreditNote;
     $this->promo_key = 'pr0M0Aplied';
+    $this->sindent_model = new SalesIndent;
   }
 
   // create sales transaction
@@ -149,6 +151,17 @@ class salesEntryWithBarcode {
             $form_data = $cleaned_params;
           }
         }
+      }
+    // check if indent code already exists and prefill the sales entry form.      
+    } elseif(!is_null($request->get('ic')) && ctype_alnum($request->get('ic'))) {
+      $indent_code = Utilities::clean_string($request->get('ic'));
+      $indent_details = $this->sindent_model->get_indent_details($indent_code, true);
+      if($indent_details['status']) {
+        // map indent data with Sales invoice
+        $form_data = $this->_map_indent_data_with_sales_entry($indent_details['response']['indentDetails']);
+      } else {
+        $this->flash->set_flash_message('Invalid Indent Code (or) Indent does not exists.');
+        Utilities::redirect('/sales-indents/list');
       }
     }
 
@@ -533,4 +546,22 @@ class salesEntryWithBarcode {
     ];
   }
 
+  /* maps indent data with sales data */
+  public function _map_indent_data_with_sales_entry($indent_details=[]) {
+    $tran_details = $indent_details['tranDetails'];
+    $indent_items = $indent_details['itemDetails'];
+    $form_data['name'] = $tran_details['customerName'];
+    $form_data['mobileNo'] = $tran_details['primaryMobileNo'];
+    $form_data['indentNo'] = $tran_details['indentNo'];
+    foreach($indent_items as $key => $item_details) {
+      $form_data['itemDetails']['itemName'][$key] = $item_details['itemName'];
+      $form_data['itemDetails']['itemSoldQty'][$key] = $item_details['itemQty'];
+      $form_data['itemDetails']['itemRate'][$key] = $item_details['itemRate'];
+      $form_data['itemDetails']['taxPercent'][$key] = $item_details['taxPercent'];
+      $form_data['itemDetails']['itemAvailQty'][$key] = $item_details['closingQty'];
+      $form_data['itemDetails']['lotNo'][$key] = $item_details['lotNo'];
+      $form_data['itemDetails']['barcode'][$key] = $item_details['barcode'];
+    }
+    return $form_data;
+  }
 }

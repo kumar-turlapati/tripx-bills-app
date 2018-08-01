@@ -644,6 +644,9 @@ $routes->add('report_printIndent', new Routing\Route('/print-indent', array(
 $routes->add('report_printIndentWr', new Routing\Route('/print-indent-wor', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentWoRate',
 )));
+$routes->add('report_printIndentsAgentwise', new Routing\Route('/print-indents-agentwise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentsAgentwise',
+)));
 
 return $routes;
 

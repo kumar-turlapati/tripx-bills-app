@@ -107,6 +107,7 @@
                       $item_discount = isset($form_data['itemDetails']['itemDiscount'][$i]) ? $form_data['itemDetails']['itemDiscount'][$i] : '';
                       $tax_percent = isset($form_data['itemDetails']['itemTaxPercent'][$i]) ? $form_data['itemDetails']['itemTaxPercent'][$i] : '';
                       $lot_no = isset($form_data['itemDetails']['lotNo'][$i]) ? $form_data['itemDetails']['lotNo'][$i] : '';
+                      $barcode = isset($form_data['itemDetails']['barcode'][$i]) ? $form_data['itemDetails']['barcode'][$i] : '';                      
                       if($item_qty > 0 && $item_rate > 0) {
                         $item_amount = $item_qty * $item_rate;
                         $taxable_amount = $item_amount - $item_discount;
@@ -123,8 +124,8 @@
                         $tax_amount = '';
                       }
                   ?>
-                  <tr>
-                    <td align="right" style="vertical-align:middle;"><?php echo $i+1 ?></td>
+                  <tr id="tr_<?php echo $barcode ?>">
+                    <td align="right" style="vertical-align:middle;" class="itemSlno"><?php echo $i+1 ?></td>
                     <td style="vertical-align:middle;">
                       <input 
                         type="text" 
@@ -233,6 +234,13 @@
                       <input type="hidden" class="taxAmount" id="taxAmount_<?php echo $i-1 ?>" value="<?php echo $tax_amount ?>" />
                       <input type="hidden" class="itemType" id="itemType_<?php echo $i-1 ?>" />
                     </td>
+                    <td style="vertical-align:middle;text-align:center;">
+                      <div class="btn-actions-group">
+                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode ?>">
+                          <i class="fa fa-times"></i>
+                        </a>
+                      </div>
+                    </td>                    
                   </tr>
                   <?php endfor; ?>
                 <?php endif; ?>

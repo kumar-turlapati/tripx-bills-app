@@ -8,6 +8,7 @@ use Atawa\Utilities;
 use Atawa\Constants;
 use Atawa\Template;
 use Atawa\PDF;
+use Atawa\Flash;
 
 use ClothingRm\Sales\Model\Sales;
 use Campaigns\Model\Campaigns;
@@ -22,6 +23,7 @@ class ReportsController
    $this->views_path = __DIR__.'/../Views/';
    $this->camp_model = new Campaigns;
    $this->bu_model = new BusinessUsers;  
+   $this->flash = new Flash;
   }
 
   public function printSalesBillSmall(Request $request) {
@@ -600,7 +602,32 @@ class ReportsController
             'page_title' => 'Indent Register',
             'icon_name' => 'fa fa-book',
           );
-          break;                           
+          break;
+        case 'print-indents-agentwise':
+          $template_name = 'template-indent-2';
+          $agents_a = [];
+          $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+          if($agents_response['status']) {
+            foreach($agents_response['users'] as $user_details) {
+              $agents_a[$user_details['userCode']] = $user_details['userName'];
+            }
+          }
+          $template_vars = array(
+            'title' => 'Indents List By Agentwise',
+            'formAction' => '/report-options/print-indents-agentwise',
+            'reportHook' => '/print-indents-agentwise',
+            'campaigns' => ['' => 'All Campaigns'] + $this->_get_indent_campaigns(),
+            'agents' => ['' => 'Referred by'] + $agents_a,
+            'show_fromto_dates' => false,
+          );
+          $controller_vars = array(
+            'page_title' => 'All Indents List - By Agentwise',
+            'icon_name' => 'fa fa-cubes',
+          );
+          break;
+        default:
+          $this->flash->set_flash_message('Invalid Report!! Try again.', 1);
+          Utilities::redirect('/dashboard');
       }
       $template = new Template($this->views_path);
       return array($template->render_view($template_name, $template_vars), $controller_vars);

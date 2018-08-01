@@ -60,7 +60,7 @@
 
   		  <div class="filters-block">
     		  <div id="filters-form">
-            <form class="form-validate form-horizontal" method="POST">
+            <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
@@ -125,13 +125,13 @@
                 <th width="5%" class="text-center valign-middle">Sno</th>
                 <th width="7%" class="text-center valign-middle">Indent <br />No.</th>
                 <th width="7%" class="text-center valign-middle">Indent <br />Date</th>
-                <th width="8%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
-                <th width="18%" class="text-center valign-middle">Customer name</span></th>
-                <th width="10%" class="text-center valign-middle">Store name</span></th>                
+                <th width="6%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
+                <th width="20%" class="text-center valign-middle">Customer name</span></th>
+                <th width="11%" class="text-center valign-middle">Store name</span></th>                
                 <th width="10%" class="text-center valign-middle">Referred by</th>
                 <th width="12%" class="text-center valign-middle">Campaign name</th>                
-                <th width="8%" class="text-center valign-middle">Status</th>
-                <th width="12%" class="text-center valign-middle">Actions</th>
+                <th width="6%" class="text-center valign-middle">Status</th>
+                <th width="16%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -168,7 +168,7 @@
                   <td class="valign-middle" title="<?php echo $agent_name ?>"><?php echo substr($agent_name,0,15) ?></td>
                   <td class="valign-middle"><?php echo $campaign_name ?></td>
                   <td class="valign-middle"><?php echo $status ?></td>
-                  <td class="valign-middle">
+                  <td class="valign-middle" align="right">
                     <div class="btn-actions-group">                    
                       <a class="btn btn-danger" href="/print-indent?indentNo=<?php echo $indent_no ?>" title="Print Sales Indent With Rate" target="_blank">
                         <i class="fa fa-print"></i>
@@ -178,7 +178,10 @@
                       </a>&nbsp;
                       <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
                         <i class="fa fa-pencil"></i>
-                      </a>
+                      </a>&nbsp;
+                      <a class="btn btn-info" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
+                        <i class="fa fa-inr"></i>
+                      </a>                      
                     </div>
                   </td>
                 </tr>

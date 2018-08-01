@@ -28,14 +28,6 @@ class PDF extends FPDF {
     $client_details = $this->get_client_details();
     $business_name = $client_details['businessName'];
 
-    // dump($client_details);
-    // exit;
-    
-/*    if(isset($_SESSION['lname']) && $_SESSION['lname'] !== '') {
-      $business_name = $client_details['businessName'].' - '.$_SESSION['lname'];
-    } else {
-      $business_name = $client_details['businessName'].' - No Location';
-    }*/
     $address = $client_details['addr1'].', '.$client_details['addr2'];
 
     // Arial bold 15

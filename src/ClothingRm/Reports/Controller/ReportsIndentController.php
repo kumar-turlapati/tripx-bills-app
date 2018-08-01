@@ -22,6 +22,171 @@ class ReportsIndentController {
     $this->camp_model = new Campaigns;     
   }
 
+  public function printIndentsAgentwise(Request $request) {
+    $filter_params = $total_indents = $agents_a = $campaigns_a = [];
+    
+    $item_widths = array(10,33,47,47,16,17,21);
+    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+
+    // $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';
+    $format = 'pdf';
+    
+    $slno = $tot_qty = $tot_amount = 0;
+    $heading3 = $campaign_code = $agent_code = '';
+    
+    $filter_params['perPage'] = 100;
+    $filter_params['pageNo'] = 1;
+    $filter_params['printAllIndents'] = true;
+    if(!is_null($request->get('campaignCode')) && $request->get('campaignCode') !== '') {
+      $campaign_code = Utilities::clean_string($request->get('campaignCode'));
+      $filter_params['campaignCode'] = $campaign_code;
+    }
+    if(!is_null($request->get('agentCode')) && $request->get('agentCode') !== '') {
+      $agent_code =  Utilities::clean_string($request->get('agentCode'));
+      $filter_params['agentCode'] = $agent_code;
+    }
+
+    # ---------- get business users -------------------------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        $agents_a[$user_details['userCode']] = $user_details['userName'];
+      }
+    }
+    $campaigns_response = $this->camp_model->get_live_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+    #---------------------------------------------------------------------------
+
+    $indents_response = $this->indent_model->get_all_indents($filter_params);
+    if($indents_response['status']===false) {
+      die("<h1>No data is available. Change Report Filters and Try again</h1>");
+    } else {
+      $total_indents = $indents_response['response']['indents'];
+      $total_pages = $indents_response['response']['total_pages'];
+      if($total_pages>1) {
+        for($i=2;$i<=$total_pages;$i++) {
+          $filter_params['pageNo'] = $i;
+          $indents_response = $this->indent_model->get_all_indents($filter_params);
+          if($indents_response['status']) {
+            $total_indents = array_merge($total_indents,$indents_response['response']['indents']);
+          }
+        }
+      }
+      $heading1 = 'Details Indent Register - Agentwise';
+      if(isset($campaigns_a[$campaign_code]) && $campaign_code !== '') {
+        $heading3  = 'Campaign Name: '.$campaigns_a[$campaign_code];
+      } else {
+        $heading3 =  ''; 
+      }
+      if($agent_code !== '' && isset($agents_a[$agent_code])) {
+        $heading3 .= ', Wholesaler / Agent Name: '.$agents_a[$agent_code];
+      }
+    }
+
+    $indent_slno = 1;
+
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P','A4');
+
+    $indent_info_widths = [30,20,70,70];
+    $customer_info_widths = [95,95];
+    $item_widths = [10,70,30,18,62];
+    $final_tot_width = [23,23,23,25,20,30,23,23];    
+
+    // print indents
+    foreach($total_indents as $key => $indent_tran_details) {
+
+      $placed_by = isset($indent_tran_details['customerName']) && $indent_tran_details['customerName'] !== '' ? $indent_tran_details['customerName'] : '';
+      $referred_by = isset($indent_tran_details['agentName']) && $indent_tran_details['agentName'] !== '' ? $indent_tran_details['agentName'] : '';
+      $mobile_no = isset($indent_tran_details['primaryMobileNo']) && $indent_tran_details['primaryMobileNo'] !== '' ? $indent_tran_details['primaryMobileNo'] : '';
+      $print_date_time = date("d/m/Y H:ia");
+      $operator_name = $_SESSION['uname'];
+      $remarks = isset($indent_tran_details['remarks']) && $indent_tran_details['remarks'] !== '' ? $indent_tran_details['remarks'] : '';
+      $campaign_name = $indent_tran_details['campaignName'];
+
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Ln(2);    
+      $pdf->Cell(0,0,'SALES INDENT','',1,'C');
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Ln(5);
+
+      # second row
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Ln();
+      $pdf->Cell($indent_info_widths[0],6,'Indent No.','LRTB',0,'C');
+      $pdf->Cell($indent_info_widths[1],6,'Indent Date','RTB',0,'C');
+      $pdf->Cell($indent_info_widths[2],6,'Retailer Name','RTB',0,'C');
+      $pdf->Cell($indent_info_widths[3],6,'Mobile No.','RTB',0,'C');
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',12);
+      $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
+      $pdf->SetFont('Arial','',10);
+      $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
+      $pdf->Cell($indent_info_widths[2],6,substr($placed_by,0,20),'RTB',0,'C');
+      $pdf->Cell($indent_info_widths[3],6,$mobile_no,'RTB',0,'C');
+
+      # third row
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Ln();
+      $pdf->Cell(95,6,'Wholesaler Name','LRTB',0,'C');
+      $pdf->Cell(95,6,'Campaign','RTB',0,'C');
+      $pdf->Ln();
+
+      $pdf->Cell(95,6,substr($referred_by,0,20),'LRTB',0,'C');
+      $pdf->Cell(95,6,$campaign_name,'RTB',0,'C');
+
+      # item details
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Product Name','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'HSN/SAC Code','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'Qty.','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'Comments/Notes','RTB',0,'C');
+      $pdf->SetFont('Arial','',9);
+      $pdf->Ln();
+
+      $tot_bill_value = $tot_items_qty = $slno = 0;
+      foreach($indent_tran_details['itemsList'] as $item_details) {
+        $slno++;
+        $amount = round($item_details['itemQty']*$item_details['itemRate'], 2);
+
+        $tot_bill_value += $amount;
+        $tot_items_qty += $item_details['itemQty'];
+
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,20),'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,$item_details['itemQty'],'RTB',0,'R');
+        $pdf->Cell($item_widths[4],6,'','RTB',0,'R');
+        $pdf->Ln();
+      }
+
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Cell(110,6,'TOTALS','LR',0,'R');
+      $pdf->Cell(18,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
+      $pdf->Cell(62,6,'','R',0,'R');
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Ln();
+
+      $pdf->SetFont('Arial','IB',8);
+      $pdf->MultiCell(190,4,'REMARKS: '.$remarks,'LTRB','');
+      
+      if($indent_slno !== count($total_indents)) {
+        $pdf->AddPage('P','A4');
+      }
+      $indent_slno++;
+    }
+
+    $pdf->Output();
+
+  }
+
   public function printIndent(Request $request) {
 
     $indent_no = $request->get('indentNo');
@@ -160,7 +325,7 @@ class ReportsIndentController {
     $print_date_time = date("d/m/Y H:ia");
     $operator_name = $_SESSION['uname'];
     $remarks = isset($indent_tran_details['remarks']) && $indent_tran_details['remarks'] !== '' ? $indent_tran_details['remarks'] : '';
-    $campaign_name = $indent_tran_details['campaignName'];    
+    $campaign_name = $indent_tran_details['campaignName'];
 
     // dump($indent_details);
     // exit;
@@ -247,7 +412,7 @@ class ReportsIndentController {
     $pdf->Cell(60,10,'Prepared by: '.$operator_name,'RTB',0,'L');
     $pdf->Cell(70,10,'Authorized Signature: ','RTB',0,'L');
 
-    $pdf->Output();    
+    $pdf->Output();
   }
 
   public function indentItemAvailability(Request $request) {

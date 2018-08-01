@@ -137,8 +137,9 @@
             <ul class="sub">
               <li><a href="/report-options/indent-item-avail"><i class="fa fa-database"></i> Item Availability</a></li>
               <li><a href="/report-options/indent-itemwise"><i class="fa fa-cubes"></i> Indents Itemwise</a></li>
-              <li><a href="/report-options/indent-agentwise"><i class="fa fa-user-circle-o"></i> Indents Whole.wise</a></li>
+              <li><a href="/report-options/indent-agentwise"><i class="fa fa-user-circle-o"></i> Indents Ag.wise</a></li>
               <li><a href="/report-options/indent-statewise"><i class="fa fa-compass"></i> Indents Statewise</a></li>
+              <li><a href="/report-options/print-indents-agentwise"><i class="fa fa-book"></i> Indents All By Agent</a></li> 
               <li><a href="/report-options/indent-register"><i class="fa fa-inr"></i> Indent Register</a></li>
             </ul>
           </li>
@@ -147,123 +148,3 @@
     </ul>
   </div>
 </aside>
-
-<?php 
-/*
-      <li class="sub-menu">
-        <a href="javascript:">
-          <i class="fa fa-sitemap fa-3x"></i> Reports <span class="menu-arrow arrow_carrot-right"></span>
-        </a>
-        <ul class="sub">
-          <li class="sub-menu">
-            <a data-toggle="modal" href="javascript:">
-              <i class="fa fa-database"></i> Inventory&nbsp;&amp;&nbsp;Stores <span class="menu-arrow arrow_carrot-right"></span>
-            </a>
-            <ul class="sub">
-              <li><a href="/report-options/stock-report-new"><i class="fa fa-angle-right"></i> Stock Report</a></li>
-              <li><a href="/report-options/adj-entries"><i class="fa fa-angle-right"></i> Adjustment Report</a></li>
-              <li><a href="/report-options/grn-register"><i class="fa fa-angle-right"></i> GRN Register</a></li>
-              <li><a href="/report-options/material-movement"><i class="fa fa-angle-right"></i> Material Movement</a></li>
-              <li><a href="/print-itemthr-level" target="_blank"><i class="fa fa-angle-right"></i> Threshold Report</a></li>
-              <li><a href="/report-options/io-analysis" target="_blank"><i class="fa fa-angle-right"></i> I-O Analysis</a></li>              
-              <li><a href="/item-master" target="_blank"><i class="fa fa-angle-right"></i> Inventory master</a></li>
-              <li><a href="/report-options/inventory-profitability"><i class="fa fa-level-up"></i> Inventory Profitability</a></li>
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:">
-              <i class="fa fa-inr"></i> Sales <span class="menu-arrow arrow_carrot-right"></span> 
-            </a>
-            <ul class="sub">
-              <li><a href="/report-options/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
-              <li><a href="/report-options/sales-by-mode"><i class="fa fa-angle-right"></i> Credit Sales</a></li>              
-              <li><a href="/report-options/itemwise-sales-report"><i class="fa fa-angle-right"></i> Itemwise Sales</a></li>
-              <li><a href="/report-options/itemwise-sales-returns"><i class="fa fa-angle-right"></i> Itemwise Sales Returns</a></li>
-              <li><a href="/report-options/sales-return-register"><i class="fa fa-angle-right"></i> Sales Return Register</a></li>
-              <li><a href="/report-options/day-sales-report"><i class="fa fa-angle-right"></i> Sales by Day</a></li>              
-              <li><a href="/report-options/sales-summary-by-month"><i class="fa fa-angle-right"></i> Sales by Month</a></li>
-              <li><a href="/report-options/mom-comparison"><i class="fa fa-angle-right"></i> MoM Sales Comparison</a></li>
-            </ul>            
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:" class="">
-              <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span> 
-            </a>
-            <ul class="sub">
-              <li><a href="/report-options/supplier-payments-due"><i class="fa fa-group"></i> Supp. Payments Due</a></li>
-              <li><a href="/report-options/payables-monthwise"><i class="fa fa-check"></i> Payables - Monthwise</a></li> 
-            </ul>
-          </li>          
-        </ul>
-      </li>
-      <li class="sub-menu">
-        <a href="javascript:" class="">
-          <i class="fa fa-cogs"></i> Admin Panel <span class="menu-arrow arrow_carrot-right"></span> 
-        </a>
-        <ul class="sub">
-          <li>
-            <a href="/admin-options/edit-business-info"><i class="fa fa-building"></i> Update Business Details</a>
-          </li>          
-          <li>
-            <a href="/users/list"><i class="fa fa-users"></i> Users</a>
-          </li>
-          <li>
-            <a href="/admin-options/upload-inventory" title="Upload inventory and opening balances">
-              <i class="fa fa-upload"></i> Upload inventory
-            </a>
-          </li>
-          <li>
-            <a href="/admin-options/enter-bill-no?billType=sale" title="This option allows the user to allow/remove Discount from Sale Bill">
-              <i class="fa fa-inr"></i> Add/Remove Bill Discount
-            </a>
-          </li>
-          <li>
-            <a href="/admin-options/delete-sale-bill" title="Remove sale bill from system">
-              <i class="fa fa-times"></i> Delete Sale Bill
-            </a>
-          </li>
-          <li>
-            <a href="/admin-options/update-batch-qtys" title="This option will update available item quantities from Stock Report that will be shown on Sales Entry screen">
-              <i class="fa fa-database"></i> Update Available Qtys.
-            </a>
-          </li>
-        </ul>        
-      </li> 
-      <li class="sub-menu">
-        <a href="javascript:" class="">
-          <i class="fa fa-database"></i> Inventory&nbsp;&amp;&nbsp;Stores<span class="menu-arrow arrow_carrot-right"></span> 
-        </a>
-        <ul class="sub">
-          <li><a href="/opbal/list"><i class="fa fa-folder-open"></i> Openings</a></li>
-          <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Adjustments</a></li>        
-          <li><a href="/grn/list"><i class="fa fa-list-ol"></i> GRNs</a></li>          
-          <li><a href="/inventory/item-threshold-list"><i class="fa fa-bullhorn"></i> Threshold Qtys.</a></li>          
-        </ul>
-      </li> 
-
-      <?php /*
-      <li class="sub-menu">
-        <a href="javascript:void(0)">
-          <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span>
-        </a>
-        <ul class="sub">
-          <li><a href="/fin/billwise-payables"><i class="fa fa-question"></i> Payables - Billwise</a></li>          
-          <li><a href="/fin/payables-ason"><i class="fa fa-check"></i> Payables - As on date</a></li>
-          <li><a href="/fin/receivables-ason"><i class="fa fa-bullseye"></i> Receivables - As on date</a></li>
-          <li><a href="/fin/billwise-receivables"><i class="fa fa-bullseye"></i> Receivables - Billwise</a></li>          
-          <li><a href="/fin/receipt-vouchers"><i class="fa fa-check"></i> Receipt Vouchers</a></li> 
-        </ul>
-
-      </li>
-
-          <?php /*      
-          <li><a href="javascript:void(0);"><i class="fa fa-inbox"></i> Stores</a></li>
-          <li><a href="javascript:void(0);"><i class="fa fa-map-o"></i> Ledgers</a></li>
-          <li><a href="/barcode/list"><i class="fa fa-barcode"></i> Generate BarCode</a></li>*/
-
-
-
-      
-
-
-      ?>
