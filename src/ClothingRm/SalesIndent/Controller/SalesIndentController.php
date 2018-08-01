@@ -311,10 +311,10 @@ class SalesIndentController {
     }
 
     # ---------- get live campaigns ---------------------------------
-    $campaigns_response = $this->camp_model->get_live_campaigns();
+    $campaigns_response = $this->camp_model->list_campaigns();
     if($campaigns_response['status']) {
-      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
-      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
       $campaigns_a = array_combine($campaign_keys, $campaign_names);
     }
 
