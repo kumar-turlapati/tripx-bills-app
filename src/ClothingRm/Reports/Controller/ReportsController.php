@@ -619,6 +619,7 @@ class ReportsController
             'campaigns' => ['' => 'All Campaigns'] + $this->_get_indent_campaigns(),
             'agents' => ['' => 'Referred by'] + $agents_a,
             'show_fromto_dates' => false,
+            'show_format' => false,
           );
           $controller_vars = array(
             'page_title' => 'All Indents List - By Agentwise',
@@ -640,10 +641,10 @@ class ReportsController
   }
 
   private function _get_indent_campaigns() {
-    $campaigns_response = $this->camp_model->get_live_campaigns();
+    $campaigns_response = $this->camp_model->list_campaigns();
     if($campaigns_response['status']) {
-      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
-      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
       $campaigns_a = array_combine($campaign_keys, $campaign_names);
     } else {
       $campaigns_a = [];
