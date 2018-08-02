@@ -141,6 +141,7 @@
               <li><a href="/report-options/indent-statewise"><i class="fa fa-compass"></i> Indents Statewise</a></li>
               <li><a href="/report-options/print-indents-agentwise"><i class="fa fa-book"></i> Indents All By Agent</a></li> 
               <li><a href="/report-options/indent-register"><i class="fa fa-inr"></i> Indent Register</a></li>
+              <li><a href="/report-options/indent-dispatch-summary"><i class="fa fa-truck"></i> Dispatch Summary</a></li>              
             </ul>
           </li>
         </ul>

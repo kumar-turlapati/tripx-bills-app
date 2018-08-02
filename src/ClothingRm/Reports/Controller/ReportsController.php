@@ -626,6 +626,22 @@ class ReportsController
             'icon_name' => 'fa fa-cubes',
           );
           break;
+        case 'indent-dispatch-summary':
+          $template_name = 'template-indent-2';
+          $template_vars = array(
+            'title' => 'Dispatch Summary - Indents Itemwise',
+            'formAction' => '/report-options/print-indents-agentwise',
+            'reportHook' => '/indent-dispatch-summary',
+            'campaigns' => ['' => 'All Campaigns'] + $this->_get_indent_campaigns(),
+            'agents' => [],
+            'show_fromto_dates' => false,
+            'show_format' => false,
+          );
+          $controller_vars = array(
+            'page_title' => 'Dispatch Summary - Indents Itemwise',
+            'icon_name' => 'fa fa-truck',
+          );
+          break;
         default:
           $this->flash->set_flash_message('Invalid Report!! Try again.', 1);
           Utilities::redirect('/dashboard');

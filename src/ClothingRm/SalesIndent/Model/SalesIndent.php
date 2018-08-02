@@ -95,5 +95,15 @@ class SalesIndent {
     } elseif($status === 'failed') {
       return array('status'=>false, 'apierror' => $response['reason']);
     }
-  }  
+  }
+
+  public function get_indent_dispatch_register($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','reports/itemwise-dispatch-register',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }    
+  }
 }

@@ -1056,6 +1056,137 @@ class ReportsIndentController {
 
     $pdf->Output();
   }
+
+  public function indentDispatchSummary(Request $request) {
+
+    $filter_params = $campaigns_a = [];
+    
+    $item_widths = array(10,33,47,47,16,17,21);
+    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+
+    $slno = $tot_qty = $tot_amount = 0;
+    $heading3 = $campaign_code = '';
+    
+    $filter_params['perPage'] = 1000;
+    $filter_params['pageNo'] = 1;
+    if(!is_null($request->get('campaignCode')) && $request->get('campaignCode') !== '') {
+      $campaign_code = Utilities::clean_string($request->get('campaignCode'));
+      $filter_params['campaignCode'] = $campaign_code;
+    }
+    #---------------------------------------------------------------------------
+    $campaigns_response = $this->camp_model->list_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+    # ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_names[$location_key_a[0]] = $location_value;
+    }
+    #---------------------------------------------------------------------------
+
+    $indents_response = $this->indent_model->get_indent_dispatch_register($filter_params);
+    if($indents_response['status']===false) {
+      die("<h1>No data is available. Change Report Filters and Try again</h1>");
+    } else {
+      $total_items = $indents_response['response']['results'];
+      $total_pages = $indents_response['response']['total_pages'];
+      if($total_pages>1) {
+        for($i=2;$i<=$total_pages;$i++) {
+          $filter_params['pageNo'] = $i;
+          $indents_response = $this->indent_model->get_indent_dispatch_register($filter_params);
+          if($indents_response['status']) {
+            $total_items = array_merge($total_items,$indents_response['response']['results']);
+          }
+        }
+      }
+      $heading1 = 'Dispatch Summary';
+      if(isset($campaigns_a[$campaign_code]) && $campaign_code !== '') {
+        $heading2  = 'Campaign Name: '.$campaigns_a[$campaign_code];
+      } else {
+        $heading2 =  ''; 
+      }
+    }
+
+    # start PDF printing.
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+    $old_item_name = $new_item_name = $total_items[0]['itemName'];
+    $this->_add_page_heading_for_dispatch_reg($pdf, $heading1, $heading2, $item_widths, $new_item_name);
+    $sl_no = $item_cntr = $tot_item_qty = 0;
+    foreach($total_items as $item_details) {
+      if($old_item_name !== $new_item_name) {
+        $item_cntr++;
+        $pdf->SetFont('Arial','B',9);        
+        $pdf->Cell($totals_width,6,number_format($tot_item_qty,2,'.',''),'LRTB',0,'R');
+        $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,'','RTB',0,'R');        
+        $this->_add_page_heading_for_dispatch_reg($pdf, $heading1, $heading2, $item_widths, $new_item_name);
+        // if($item_cntr >= 10) {
+        //   break;
+        // }
+        $old_item_name = $new_item_name;
+        $tot_item_qty = 0;
+      }
+      $slno++;
+
+      $indent_no_date = $item_details['indentNo'].' / '.date("d-m-Y", strtotime($item_details['indentDate']));
+      $customer_name = substr($item_details['customerName'],0,27);
+      $agent_name = isset($item_details['agentName']) ? substr($item_details['agentName'],0,24) : '';
+      $order_qty = $item_details['orderQty'];
+      $indent_value = $item_details['indentValue'];
+      $location_id = $item_details['locationID'];
+
+      $tot_item_qty += $order_qty;
+
+      $pdf->SetFont('Arial','',7);
+      $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+      $pdf->Cell($item_widths[1],6,$indent_no_date,'RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,$customer_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,$agent_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,$location_ids[$location_id],'RTB',0,'L');
+      $pdf->Cell($item_widths[6],6,$indent_value,'RTB',0,'R');
+      $pdf->Ln();
+
+      $new_item_name = $item_details['itemName'];
+    }
+
+    $pdf->Output();
+  }
+
+  public function _add_page_heading_for_dispatch_reg(&$pdf, $heading1='', $heading2='', $item_widths=[], $item_name='') {
+    $pdf->AddPage('P','A4');
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+
+    $pdf->setTextColor(245,11,26);
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln(4);
+    $pdf->Cell(0,0,'Item Name: [ '.$item_name.' ]','',1,'C');
+    $pdf->setTextColor(0,0,0);    
+
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Indent No./Date','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Customer Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Wholesaler/Agent Name','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Order Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Store Name','RTB',0,'C');
+    $pdf->Cell($item_widths[6],6,'Indent Value','RTB',0,'C');    
+    $pdf->Ln();
+  }
 }
 
 /*

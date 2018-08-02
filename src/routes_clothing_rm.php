@@ -611,7 +611,9 @@ $routes->add('report_indentStatewise', new Routing\Route('/indent-statewise', ar
 $routes->add('report_indentRegister', new Routing\Route('/indent-register', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentRegister',
 )));
-
+$routes->add('report_dispatchSummary', new Routing\Route('/indent-dispatch-summary', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentDispatchSummary',
+)));
 
 
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
