@@ -1117,31 +1117,30 @@ class ReportsIndentController {
     $pdf->AliasNbPages();
     $pdf->setTitle($heading1.' - '.date('jS F, Y'));
 
-    $old_item_name = $new_item_name = $total_items[0]['itemName'];
+    $old_item_name = $new_item_name  = $total_items[0]['itemName'];
     $this->_add_page_heading_for_dispatch_reg($pdf, $heading1, $heading2, $item_widths, $new_item_name);
     $sl_no = $item_cntr = $tot_item_qty = 0;
     foreach($total_items as $item_details) {
+      $slno++;
+      $new_item_name = $item_details['itemName'];
       if($old_item_name !== $new_item_name) {
+        $old_item_name = $new_item_name = $item_details['itemName'];        
         $item_cntr++;
-        $pdf->SetFont('Arial','B',9);        
-        $pdf->Cell($totals_width,6,number_format($tot_item_qty,2,'.',''),'LRTB',0,'R');
-        $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
-        $pdf->Cell($item_widths[6],6,'','RTB',0,'R');        
+        $this->_add_item_total_for_dispatch_reg($pdf, $tot_item_qty, $totals_width, $item_widths);
         $this->_add_page_heading_for_dispatch_reg($pdf, $heading1, $heading2, $item_widths, $new_item_name);
-        // if($item_cntr >= 10) {
+        // if($item_cntr >= 3) {
         //   break;
         // }
         $old_item_name = $new_item_name;
         $tot_item_qty = 0;
-      }
-      $slno++;
-
+      }      
       $indent_no_date = $item_details['indentNo'].' / '.date("d-m-Y", strtotime($item_details['indentDate']));
       $customer_name = substr($item_details['customerName'],0,27);
       $agent_name = isset($item_details['agentName']) ? substr($item_details['agentName'],0,24) : '';
       $order_qty = $item_details['orderQty'];
       $indent_value = $item_details['indentValue'];
       $location_id = $item_details['locationID'];
+      $remarks = $item_details['remarks'];
 
       $tot_item_qty += $order_qty;
 
@@ -1154,11 +1153,20 @@ class ReportsIndentController {
       $pdf->Cell($item_widths[5],6,$location_ids[$location_id],'RTB',0,'L');
       $pdf->Cell($item_widths[6],6,$indent_value,'RTB',0,'R');
       $pdf->Ln();
-
-      $new_item_name = $item_details['itemName'];
+      if($remarks !== '') {
+        $pdf->SetFont('Arial','',6);
+        $pdf->MultiCell(array_sum($item_widths),4,'REMARKS - '.$item_details['indentNo'].': '.$remarks,'LTRB','C');
+      }
     }
-
+    $this->_add_item_total_for_dispatch_reg($pdf, $tot_item_qty, $totals_width, $item_widths);
     $pdf->Output();
+  }
+
+  public function _add_item_total_for_dispatch_reg(&$pdf, $tot_item_qty=0, $totals_width=0, $item_widths=[]) {
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($totals_width,6,number_format($tot_item_qty,2,'.',''),'LRTB',0,'R');
+    $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
+    $pdf->Cell($item_widths[6],6,'','RTB',0,'R');
   }
 
   public function _add_page_heading_for_dispatch_reg(&$pdf, $heading1='', $heading2='', $item_widths=[], $item_name='') {
