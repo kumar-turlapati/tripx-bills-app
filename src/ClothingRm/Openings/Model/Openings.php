@@ -8,36 +8,13 @@ use Atawa\Utilities;
 class Openings 
 {
 
-	public function opbal_list($page_no=1,$per_page=100,$search_params=array()) {
-
-		$params['pageNo']  = $page_no;
-		$params['perPage'] = $per_page;
-
-		if(count($search_params)>0) {
-			if(isset($search_params['batchNo'])) {
-				$batchNo = Utilities::clean_string($search_params['batchNo']);
-				$params['batchNo'] = $batchNo;
-			}
-			if(isset($search_params['itemName'])) {
-				$itemName = Utilities::clean_string($search_params['itemName']);
-				$params['itemName'] = $itemName;
-			}			
-			if(isset($search_params['category'])) {
-				$category = Utilities::clean_string($search_params['category']);
-				$params['category'] = $category;
-			}
-			if(isset($search_params['locationCode'])) {
-				$params['locationCode'] = $search_params['locationCode'];
-			}
-		}
-
+	public function opbal_list($search_params=[]) {
 		// fetch client id
-		$client_id = Utilities::get_current_client_id();
-		$params['clientID'] = $client_id;
+		$search_params['clientID'] = Utilities::get_current_client_id();
 
 		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get','opbal/list',$params);
+		$response = $api_caller->sendRequest('get','opbal/list',$search_params);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return array(

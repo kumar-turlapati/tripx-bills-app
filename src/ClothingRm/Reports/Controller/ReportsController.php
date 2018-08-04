@@ -642,6 +642,20 @@ class ReportsController
             'icon_name' => 'fa fa-truck',
           );
           break;
+        case 'opening-balances':
+          $template_name = 'common-1';
+          $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();            
+          $template_vars = array(
+            'title' => 'Opening Balances Report',
+            'formAction' => '/report-options/opening-balances',
+            'reportHook' => '/opening-balances',
+            'location_codes' => $locations_a,            
+          );
+          $controller_vars = array(
+            'page_title' => 'Opening Balances Report',
+            'icon_name' => 'fa fa-folder-open',
+          );
+          break;          
         default:
           $this->flash->set_flash_message('Invalid Report!! Try again.', 1);
           Utilities::redirect('/dashboard');
