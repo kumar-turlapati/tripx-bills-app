@@ -42,7 +42,7 @@
             </a>            
           </div>
         </div>
-        <form id="openingBarcodes" method="POST">
+        <form id="openingBarcodes" method="POST" class="form-validate form-horizontal">
           <div class="filters-block">
             <div id="filters-form">
               <div class="form-group">
@@ -201,6 +201,17 @@
               </table>
               <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>          
             </div>
+            <div class="form-group">
+              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+                <label class="control-label">Sticker format</label>
+                <div class="select-wrap">
+                  <select class="form-control" name="indentFormat" id="indentFormat">
+                    <option value="indent">Indent Sticker</option>
+                    <option value="mrp">MRP Sticker</option>                  
+                  </select>
+                </div>
+              </div>
+            </div>
             <div class="text-center">
               <button class="btn btn-danger" id="op" name="op" value="save" type="submit" formtarget="_blank" title="Barcodes will be generated in new Tab">
                 <i class="fa fa-print"></i> Generate & Print Barcodes
@@ -212,11 +223,7 @@
     </section>
   </div>
 </div>
-
-
-
 <?php
-
 /*
         <div class="panel">
           <div class="panel-body">

@@ -195,14 +195,20 @@ class BarcodeController
       Utilities::redirect('/barcodes/list');
     }
 
+    if(!is_null($request->get('format')) && $request->get('format') === 'indent') {
+      $print_tpl = 'barcode-print-stickers-html';
+    } else {
+      $print_tpl = 'barcode-print-stickers-mrp-html';
+    }
+
     // build variables
     $controller_vars = array(
       'page_title' => 'Print Barcodes',
-      'icon_name' => 'fa fa-print',      
+      'icon_name' => 'fa fa-print',
     );
 
     // render template
-    return array($this->template->render_view('barcode-print-stickers-html', []), $controller_vars);     
+    return array($this->template->render_view($print_tpl, []), $controller_vars);     
   }
 
   public function barcodesListAction(Request $request) {
@@ -318,6 +324,7 @@ class BarcodeController
         $item_rates = $form_data['itemRates'];
         $barcodes_a = $form_data['opBarcode'];
         $sticker_qtys = $form_data['stickerQty'];
+        $indent_format = $form_data['indentFormat'];
 
         $form_validation = $this->_validate_op_barcode_form($form_data);
         if($form_validation['status']) {
@@ -379,7 +386,7 @@ class BarcodeController
               unset($_SESSION['printBarCodes']);
             }
             $_SESSION['printBarCodes'] = $print_array_final;
-            Utilities::redirect('/barcodes/print');
+            Utilities::redirect('/barcodes/print?format='.$indent_format);
           }
 
         } else {
@@ -409,7 +416,7 @@ class BarcodeController
       );
     }
 
-    $openings = $this->openings_model->opbal_list($page_no,$per_page,$search_params);
+    $openings = $this->openings_model->opbal_list($search_params);
     # check api status
     if($openings['status']) {
       # check whether we got products or not.
