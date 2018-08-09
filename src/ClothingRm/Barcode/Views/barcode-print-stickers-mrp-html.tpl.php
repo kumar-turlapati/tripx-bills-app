@@ -109,9 +109,9 @@
       <div>
         <div class="productName"><?php echo $print_item_name ?></div>
         <div class="rate">MRP : <?php echo 'Rs.'.$print_item_mrp ?></div>
-        <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
+        <img src="<?php echo $barcode_image ?>" width="190" height="20" alt="NoImage" />
         <div class="barCode"><?php echo $barcode ?></div>
-        <div class="mfgDate"><?php echo 'Mfg.:'.$mfg_date.' - 1 pc.' ?></div>
+        <div class="mfgDate"><?php echo 'Mfg.:'.$mfg_date.' - 1pc.' ?></div>
       </div>
       <?php
         $tot_sticker_count++;
