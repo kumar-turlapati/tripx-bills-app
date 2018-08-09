@@ -69,7 +69,7 @@ class Framework {
 
       if($path === '/login') {
         $page_content = $this->template->render_view('login', array('content'=>$controller_output, 'view_vars'=>$view_vars));
-      } elseif($view_vars['render']===true) {
+      } elseif($view_vars['render']) {
         $page_content = $this->template->render_view('layout', array('content'=>$controller_output, 'view_vars'=>$view_vars));
       } else {
         $page_content = $controller_output;
