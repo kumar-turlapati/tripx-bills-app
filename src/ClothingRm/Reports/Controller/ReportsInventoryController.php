@@ -42,7 +42,7 @@ class ReportsInventoryController {
       'locationCode' => $location_code,
     ];
 
-    $inven_api_response = $this->inven_api->get_stock_adj_report($params);
+    $inven_api_response = $this->inven_api->get_stock_report($params);
     
     // dump($inven_api_response);
     // exit;
@@ -100,19 +100,23 @@ class ReportsInventoryController {
       $closing_qty = $item_details['closingQty'];
       $closing_rate = $item_details['purchaseRate'];
       $tax_percent = $item_details['taxPercent'];
-      $mrp = $item_details['mrp'];
-      $upp = $item_details['upp'];
+      $mrp = $item_details['mrp'] + 0;
+      $upp = $item_details['upp'] + 0;
 
       # calculate landing cost
       $amount_gross = round($closing_qty*$closing_rate,2);
-      if($amount_gross>0 && $tax_percent>0) {
+      $tax_amount = 0;
+/*      if($amount_gross>0 && $tax_percent>0) {
         $tax_amount = round( ($amount_gross*$tax_percent)/100, 2);
       } else {
         $tax_amount = 0;
-      }
+      }*/
       $landing_cost = $amount_gross + $tax_amount;
-      $purchase_rate = $upp > 0 ? round($landing_cost/$upp, 2) : round($landing_cost,2);
+      $purchase_rate = round($landing_cost/$closing_qty, 2);
       $amount = round($closing_qty * $purchase_rate, 2);
+
+      // dump($landing_cost, $purchase_rate, $amount);
+      // exit;
 
       $tot_amount += $amount;
       $tot_qty += $closing_qty;

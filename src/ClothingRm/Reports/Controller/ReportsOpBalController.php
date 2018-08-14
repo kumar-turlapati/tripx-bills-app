@@ -143,11 +143,12 @@ class ReportsOpBalController {
       $opening_rate = $item_details['openingRate'];
 
       $item_amount = round($purchase_rate*$opening_qty,2);
-      if($tax_percent>0) {
+      $tax_amount = 0;
+/*      if($tax_percent>0) {
         $tax_amount = round(($item_amount*$tax_percent)/100,2);
       } else {
         $tax_amount = 0;
-      }
+      }*/
 
       $item_total = $item_amount + $tax_amount;
       $tot_amount += $item_total;

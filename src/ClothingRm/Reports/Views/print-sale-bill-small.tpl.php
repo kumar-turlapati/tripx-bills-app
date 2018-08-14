@@ -259,8 +259,8 @@
         </table>
 	  	<div>
 	  </div>
-	  <h6 style="margin:0;text-align:center;padding:0;font-size:11px;">Register your mobile number with us for personalized offers and new stock updates.</h6>	  
-	  <h6 style="margin-top:5px;text-align:center;padding:0;font-size:10px;">--- powered by billqwik ---</h6>
+	  <h6 style="margin:0;text-align:center;padding:0;font-size:11px;">Register your mobile number with us for personalized offers and new stock updates.</h6>
+	  <h6 style="margin-top:5px;text-align:center;padding:0;font-size:10px;">--- powered by qwikbills.com ---</h6>
 	  <br />
 	  <a href="javascript: window.print();window.close();">Print</a>
 	  <a href="javascript: window.close();" style="padding-left:150px;">(x) Close</a>	  

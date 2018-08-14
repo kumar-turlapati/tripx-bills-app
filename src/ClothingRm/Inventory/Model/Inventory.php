@@ -85,7 +85,7 @@ class Inventory
 		}	
 	}
 
-	public function get_stock_report_new($params) {
+/*	public function get_stock_report_new($params) {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'reports/stock-report-new/'.$client_id;
@@ -107,7 +107,7 @@ class Inventory
 			);
 		}	
 	}
-
+*/
 	public function get_expiry_report($params=array(),$page_no=1) {
 
 		// fetch client id
