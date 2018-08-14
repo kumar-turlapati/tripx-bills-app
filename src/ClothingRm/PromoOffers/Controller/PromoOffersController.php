@@ -327,8 +327,7 @@ class PromoOffersController
 
     # validate offer discount fields.
     if($offer_type === 'a') {
-
-      if(!ctype_alnum(str_replace(' ', '', $product_name))) {
+      if(!ctype_alnum(str_replace([' ', '-', '_'], ['','',''], $product_name)) {
         $form_errors['productName'] = 'Invalid product name.';
       } else {
         $cleaned_params['productName'] = $product_name;
@@ -338,7 +337,6 @@ class PromoOffersController
       } else {
         $cleaned_params['discountOnProduct'] = $discount_on_product;
       }
-
       # make zero or empty for all other config fields.
       $cleaned_params['totalProducts'] = $cleaned_params['freeProducts'] = 0;
       $cleaned_params['billValue'] = $cleaned_params['discountOnBillValue'] = 0;

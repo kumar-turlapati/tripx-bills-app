@@ -850,12 +850,15 @@ class SalesControllerGst {
 
     # apply discount on each item we have.
     for($i=0; $i < $total_rows; $i++) {
-      $item_rate = $item_details['itemRate'][$i];
-      $item_value = $item_rate * 1;
-      if( (int)$i !== (int)$max_mrp_key) {
-        $item_details['itemDiscount'][$i] = $item_value;
+      if((int)$applied_items !== (int)$free_qty_per_order) {
+        $item_rate = $item_details['itemRate'][$i];
+        $item_value = $item_rate * 1;
+        if( (int)$i !== (int)$max_mrp_key) {
+          $item_details['itemDiscount'][$i] = $item_value;
+          $applied_items++;
+        }
+        $item_details['itemSoldQty'][$i] = 1;
       }
-      $item_details['itemSoldQty'][$i] = 1;
     }
 
     // dump($item_details);
