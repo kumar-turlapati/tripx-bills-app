@@ -2,18 +2,24 @@
   use Atawa\Utilities;
 
   $query_params = [];
-  if(isset($search_params['itemName']) && $search_params['itemName'] !='') {
+  if(isset($search_params['itemName']) && $search_params['itemName'] !== '') {
     $itemName = $search_params['itemName'];
     $query_params[] = 'itemName='.$itemName;
   } else {
     $itemName = '';
   }
-  if(isset($search_params['category']) && $search_params['category'] !='' ) {
+  if(isset($search_params['category']) && $search_params['category'] !== '' ) {
     $category = $search_params['category'];
     $query_params[] = 'category='.$category;
   } else {
     $category = '';
   }
+  if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
+    $locationCode = $search_params['locationCode'];
+    $query_params[] = 'locationCode='.$locationCode;
+  } else {
+    $locationCode = '';
+  }  
   if(count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   } else {
@@ -55,6 +61,24 @@
         				  <div class="col-sm-12 col-md-2 col-lg-2">
           					<input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control" value="<?php echo $itemName ?>">
         				  </div>
+                  <div class="col-sm-12 col-md-2 col-lg-2">
+                    <div class="select-wrap">
+                      <select class="form-control" name="locationCode" id="locationCode">
+                        <?php 
+                          foreach($location_codes as $key=>$value):
+                            if($locationCode === $key) {
+                              $selected = 'selected="selected"';
+                            } else {
+                              $selected = '';
+                            }
+                        ?>
+                          <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </div>
+                  </div>
+
+
                   <?php /*
                   <div class="col-sm-12 col-md-2 col-lg-2">
                     <input type="text" placeholder="Batch no." name="batchNo" id="batchNo" class="form-control" value="<?php echo $batchNo ?>">
@@ -139,7 +163,7 @@
             ?>
               <tr>
                 <td colspan="5" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
-                <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_value,2) ?></td>
+                <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_value,2,'.','') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>                                

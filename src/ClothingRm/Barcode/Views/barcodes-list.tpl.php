@@ -122,8 +122,8 @@
                   $available_qty = $barcode_details['availableQty'];
                   $mrp = $barcode_details['mrp'];
                   $location_id = $barcode_details['locationID'];
-                  $location_code = $location_codes[$location_id];
-                  $location_name = $location_ids[$location_id];
+                  $location_code = isset($location_codes[$location_id]) ? $location_codes[$location_id] : '';
+                  $location_name = isset($location_ids[$location_id]) ? $location_ids[$location_id] : '';
                   if($barcode_details['poNo'] !== '' && !is_null($barcode_details['poNo'])) {
                     $po_string = $barcode_details['poNo'].', '.date("d-m-Y", strtotime($barcode_details['purchaseDate']));
                   } else {

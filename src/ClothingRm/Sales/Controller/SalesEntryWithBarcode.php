@@ -15,6 +15,7 @@ use ClothingRm\Taxes\Model\Taxes;
 use ClothingRm\Finance\Model\CreditNote;
 use ClothingRm\PromoOffers\Model\PromoOffers;
 use ClothingRm\SalesIndent\Model\SalesIndent;
+use BusinessUsers\Model\BusinessUsers;
 use User\Model\User;
 
 class salesEntryWithBarcode {
@@ -32,6 +33,7 @@ class salesEntryWithBarcode {
     $this->cn_model = new CreditNote;
     $this->promo_key = 'pr0M0Aplied';
     $this->sindent_model = new SalesIndent;
+    $this->bu_model = new BusinessUsers;
   }
 
   // create sales transaction
@@ -73,22 +75,25 @@ class salesEntryWithBarcode {
     # ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations();
 
-    # ---------- get sales executive names from api -----------------------
-    $result = $this->user_model->get_users(['userType' => 4, 'locationCode' => $_SESSION['lc']]);
-    if($result['status']) {
-      $users = $result['users'];
-      foreach($users as $user_details) {
-        $sa_executives[$user_details['uuid']] = $user_details['userName'];
+    # ---------- get sales executives ------------------------------
+    if($_SESSION['__utype'] !== 3) {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+    } else {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+    }
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
       }
     } else {
       $sa_executives = [];
     }       
 
     # ---------- check for last bill printing ----
-    if($request->get('lastBill') && is_numeric($request->get('lastBill'))) {
+    if( !is_null($request->get('lastBill')) ) {
       $bill_to_print = $request->get('lastBill');
     } else {
-      $bill_to_print = 0;
+      $bill_to_print = '';
     }
 
     # ------------------------------------- check for form Submission --------------------------------
@@ -107,7 +112,7 @@ class salesEntryWithBarcode {
         $api_response = $this->sales->create_sale($cleaned_params);
         if($api_response['status']) {
           $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> created successfully.');
-          Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['billNo']);
+          Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['invoiceCode']);
         } else {
           $page_error = $api_response['apierror'];
           $this->flash->set_flash_message($page_error,1);  
@@ -128,7 +133,7 @@ class salesEntryWithBarcode {
             $api_response = $this->sales->create_sale($cleaned_params);
             if($api_response['status']) {
               $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> created successfully.');
-              Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['billNo']);
+              Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['invoiceCode']);
             } else {
               $page_error = $api_response['apierror'];
               $this->flash->set_flash_message($page_error,1);
@@ -142,7 +147,7 @@ class salesEntryWithBarcode {
             # if the promo code applied successfully reload the page with processed data.
             if($promo_code_processing['status']) {
               $cleaned_params['itemDetails'] = $promo_code_processing['processed_data'];
-              $this->flash->set_flash_message("Promo Code `$promo_code` applied successfully. Click on <span style='color:red;font-weight:bold;'><i class='fa fa-save'></i> Save &amp; Print</span> button at the bottom of this page to save this transaction.");
+              $this->flash->set_flash_message("Promo Code `$promo_code` applied successfully. Click on <span style='color:red;font-weight:bold;'><i class='fa fa-save'></i> Save Bill &amp; Print</span> button at the bottom of this page to save this transaction.");
               $promo_key = md5($promo_code.$this->promo_key);
             } else {
               $promo_error = $promo_code_processing['reason'];
@@ -512,14 +517,22 @@ class salesEntryWithBarcode {
   private function _apply_price_off_for_items($item_details = [], $offer_details=[]) {
     $total_qty_per_order = $offer_details['totalQty'] + 0;
     $free_qty_per_order = $offer_details['freeQty'] + 0;
+    $billable_qty_per_order = $total_qty_per_order - $free_qty_per_order;
     $total_rows = count($item_details['itemName']);
 
-    # find max mrp from rates array.
-    $max_mrp = max($item_details['itemRate']) + 0;
-    $max_mrp_key = array_search($max_mrp, $item_details['itemRate']);
+    $sorted_array = $item_details['itemRate'];
+    asort($sorted_array);
+    $fin_sorted_array = array_reverse($sorted_array, true);
 
-    // dump($max_mrp_key, $max_mrp);
-    // exit;
+    $ignored_items = 0;
+    foreach($fin_sorted_array as $item_key => $item_value) {
+      if((int)$ignored_items !== $billable_qty_per_order) {
+        $ignored_items++;
+      } else {
+        $item_details['itemDiscount'][$item_key] = $item_value;
+        $item_details['itemSoldQty'][$item_key] = 1;        
+      }
+    }
 
     if($total_qty_per_order !== $total_rows) {
       return [
@@ -528,18 +541,6 @@ class salesEntryWithBarcode {
       ];
     }
 
-    # apply discount on each item we have.
-    for($i=0; $i < $total_rows; $i++) {
-      $item_rate = $item_details['itemRate'][$i];
-      $item_value = $item_rate * 1;
-      if( (int)$i !== (int)$max_mrp_key) {
-        $item_details['itemDiscount'][$i] = $item_value;
-      }
-      $item_details['itemSoldQty'][$i] = 1;
-    }
-
-    // dump($item_details);
-    // exit;
     return [
       'status' => true,
       'processed_data' => $item_details,

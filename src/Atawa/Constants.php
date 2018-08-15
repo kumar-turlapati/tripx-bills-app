@@ -85,13 +85,13 @@ class Constants
     );    
 
     public static $PROMO_OFFER_CATEGORIES = array(
-      'a' => 'Discount on an Item (Ex: 10% discount on Shirt)',
+      // 'a' => 'Discount on an Item (Ex: 10% discount on Shirt)',
       'b' => 'Buy X Get Y Products (Ex: Buy 1 get 3, Buy 1 get 2 etc...)',
       'c' => 'Discount on Total Bill Value (Ex: 20% off on Bill Value > 1000)',
     );
 
     public static $PROMO_OFFER_CATEGORIES_DIGITS = array(
-       0  => 'Discount on an Item (Ex: 10% discount on Shirt)',
+       // 0  => 'Discount on an Item (Ex: 10% discount on Shirt)',
        1  => 'Buy X Get Y Products (Ex: Buy 1 get 3, Buy 1 get 2 etc...)',
        2  => 'Discount on Total Bill Value (Ex: 20% off on Bill Value > 1000)',
     );

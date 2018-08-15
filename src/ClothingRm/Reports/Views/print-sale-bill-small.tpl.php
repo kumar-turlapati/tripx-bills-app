@@ -34,6 +34,7 @@
   $cn_no          =   $sale_details['cnNo'];
   $referral_no    =   $sale_details['refCardNo'];
   $promo_code     =   $sale_details['promoCode'];
+  $exe_name       =   substr($sale_details['executiveName'],0,20);
 ?>
 <html>
 	<head>
@@ -61,6 +62,9 @@
         <h3 style="margin: 0px 0 0px 0px;text-align:center;font-size:12px;">GSTIN: <?php echo $gst_no ?></h3>        
 	  		<h3 style="margin: 0px 0 0px 0px;text-align:center;border-top: 1px dotted #000;font-size:14px;">Bill No : <?php echo $bill_no ?></h3>
 	  		<h5 style="text-align:center;margin:0 0 0 0px;font-size:12px;">Bill date &amp; time: <?php echo $bill_date.', '.$bill_time ?></h5>
+        <?php if($exe_name !== ''): ?>
+          <h5 style="text-align:center;margin:0 0 0 0px;font-size:11px;">Sales Executive: <?php echo $exe_name ?></h5>
+        <?php endif; ?>
         <?php if($customer_name !== ''): ?>
 	  		  <h5 style="text-align:center;margin:0 0 0 0px;font-size:12px;">Customer name: <?php echo $customer_name ?></h5>
         <?php endif; ?>

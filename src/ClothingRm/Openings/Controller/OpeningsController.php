@@ -124,7 +124,7 @@ class OpeningsController
     $page_success = $page_error = '';
     $categories_a = [''=>'Choose'];
 
-    $client_locations = Utilities::get_client_locations(true);
+    $client_locations = Utilities::get_client_locations();
 
     $openings_api = new Openings;
     if( $request->get('pageNo') ) {
@@ -148,78 +148,78 @@ class OpeningsController
       }
       if($request->get('category') !== '') {
         $search_params['category'] = Utilities::clean_string($request->get('category'));
-      }            
+      }
+      if($request->get('locationCode') !== '') {
+        $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
+      }      
     } else {
       $search_params = [];
     }
 
+    $search_params['pageNo'] = $page_no;
+    $search_params['perPage'] = $per_page;
 
-    $openings = $openings_api->opbal_list($page_no,$per_page,$search_params);
+    $openings = $openings_api->opbal_list($search_params);
     $api_status = $openings['status'];
 
-      # check api status
+    // check api status
     if($api_status) {
-
-        # check whether we got products or not.
-        if(count($openings['openings'])>0) {
-            $slno = Utilities::get_slno_start(count($openings['openings']), $per_page, $page_no);
-            $to_sl_no = $slno+$per_page;
-            $slno++;
-
-            if($page_no<=3) {
-                $page_links_to_start = 1;
-                $page_links_to_end = 10;
-            } else {
-                $page_links_to_start = $page_no-3;
-                $page_links_to_end = $page_links_to_start+10;            
-            }
-
-            if($openings['total_pages']<$page_links_to_end) {
-                $page_links_to_end = $openings['total_pages'];
-            }
-
-            if($openings['record_count'] < $per_page) {
-                $to_sl_no = ($slno+$openings['record_count'])-1;
-            }
-
-            $openings_a = $openings['openings'];
-            $total_pages = $openings['total_pages'];
-            $total_records = $openings['total_records'];
-            $record_count = $openings['record_count'];
+      # check whether we got products or not.
+      if(count($openings['openings'])>0) {
+        $slno = Utilities::get_slno_start(count($openings['openings']), $per_page, $page_no);
+        $to_sl_no = $slno+$per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
         } else {
-            $page_error = $openings['apierror'];
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;            
         }
-
-    } else {
+        if($openings['total_pages']<$page_links_to_end) {
+          $page_links_to_end = $openings['total_pages'];
+        }
+        if($openings['record_count'] < $per_page) {
+          $to_sl_no = ($slno+$openings['record_count'])-1;
+        }
+        $openings_a = $openings['openings'];
+        $total_pages = $openings['total_pages'];
+        $total_records = $openings['total_records'];
+        $record_count = $openings['record_count'];
+      } else {
         $page_error = $openings['apierror'];
+      }
+    } else {
+      $page_error = $openings['apierror'];
     }           
 
-       // prepare form variables.
-      $template_vars = array(
-        'page_error' => $page_error,
-        'page_success' => $page_success,
-        'openings' => $openings_a,
-        'total_pages' => $total_pages ,
-        'total_records' => $total_records,
-        'record_count' =>  $record_count,
-        'sl_no' => $slno,
-        'to_sl_no' => $to_sl_no,
-        'search_params' => $search_params,            
-        'page_links_to_start' => $page_links_to_start,
-        'page_links_to_end' => $page_links_to_end,
-        'current_page' => $page_no,
-        'categories' => $categories_a,
-      );
+     // prepare form variables.
+    $template_vars = array(
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'openings' => $openings_a,
+      'total_pages' => $total_pages ,
+      'total_records' => $total_records,
+      'record_count' =>  $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'search_params' => $search_params,            
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'categories' => $categories_a,
+      'location_codes' => ['' => 'All Stores'] + $client_locations,
+    );
 
-      // build variables
-      $controller_vars = array(
-        'page_title' => 'Opening Balances',
-        'icon_name' => 'fa fa-folder-open',             
-      );
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Opening Balances',
+      'icon_name' => 'fa fa-folder-open',             
+    );
 
-      // render template
-      $template = new Template($this->views_path);
-      return array($template->render_view('openings-list', $template_vars), $controller_vars);
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('openings-list', $template_vars), $controller_vars);
   }
 
 }

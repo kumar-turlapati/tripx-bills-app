@@ -14,6 +14,7 @@ use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Taxes\Model\Taxes;
 use ClothingRm\Finance\Model\CreditNote;
 use ClothingRm\PromoOffers\Model\PromoOffers;
+use BusinessUsers\Model\BusinessUsers;
 use User\Model\User;
 
 class SalesControllerGst {
@@ -29,6 +30,7 @@ class SalesControllerGst {
     $this->user_model = new User;
     $this->cn_model = new CreditNote;
     $this->promo_key = 'pr0M0Aplied';
+    $this->bu_model = new BusinessUsers;    
 	}
 
   # create sales transaction
@@ -70,8 +72,26 @@ class SalesControllerGst {
     # ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations();
 
-    # ---------- get sales executive names from api -----------------------
-    $result = $this->user_model->get_users(['userType' => 4, 'locationCode' => $_SESSION['lc']]);
+    # ---------- get business users ----------------------------
+    if($_SESSION['__utype'] !== 3) {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+    } else {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+    }
+
+    // dump($sexe_response);
+    // exit;
+
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
+      }
+    } else {
+      $sa_executives = [];
+    }
+
+
+/*    $result = $this->user_model->get_users(['userType' => 4, 'locationCode' => $_SESSION['lc']]);
     if($result['status']) {
       $users = $result['users'];
       foreach($users as $user_details) {
@@ -79,7 +99,7 @@ class SalesControllerGst {
       }
     } else {
       $sa_executives = [];
-    }       
+    }*/       
 
     # ---------- check for last bill printing ----
     if($request->get('lastBill') && is_numeric($request->get('lastBill'))) {
@@ -138,7 +158,7 @@ class SalesControllerGst {
             # if the promo code applied successfully reload the page with processed data.
             if($promo_code_processing['status']) {
               $cleaned_params['itemDetails'] = $promo_code_processing['processed_data'];
-              $this->flash->set_flash_message("Promo Code `$promo_code` applied successfully. Click on <span style='color:red;font-weight:bold;'><i class='fa fa-save'></i> Save &amp; Print</span> button at the bottom of this page to save this transaction.");
+              $this->flash->set_flash_message("Promo Code `$promo_code` applied successfully. Click on <span style='color:red;font-weight:bold;'><i class='fa fa-save'></i> Save Bill &amp; Print</span> button at the bottom of this page to save this transaction.");
               $promo_key = md5($promo_code.$this->promo_key);
             } else {
               $promo_error = $promo_code_processing['reason'];
@@ -298,13 +318,18 @@ class SalesControllerGst {
     $page_success = $page_error = '';
     
     $search_params = $sales_a = $query_totals = $client_locations = [];
-
-    $client_locations = Utilities::get_client_locations();
- 
-    $page_no = 1;
-    $per_page = 200;
+    $location_ids = $location_codes = [];
+    $page_no = 1; $per_page = 200;
 
     $payment_methods = Constants::$PAYMENT_METHODS_RC;
+
+    # ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
 
     # ---------- get sales executive names from api -----------------------
     $result = $this->user_model->get_users(['userType' => 4, 'locationCode' => $_SESSION['lc']]);
@@ -412,6 +437,8 @@ class SalesControllerGst {
       'query_totals' => $query_totals,
       'client_locations' => ['' => 'All Stores'] + $client_locations,
       'sa_executives' =>  array('' => 'All executives') + $sa_executives,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     # build variables
@@ -833,6 +860,7 @@ class SalesControllerGst {
     $total_qty_per_order = $offer_details['totalQty'] + 0;
     $free_qty_per_order = $offer_details['freeQty'] + 0;
     $total_rows = count($item_details['itemName']);
+    $applied_items = 0;
 
     # find max mrp from rates array.
     $max_mrp = max($item_details['itemRate']) + 0;

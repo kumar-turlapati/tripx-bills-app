@@ -51,7 +51,7 @@
         <?php echo Utilities::print_flash_message() ?>
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
-            <a href="/sales/entry" class="btn btn-default">
+            <a href="/sales/entry-with-barcode" class="btn btn-default">
               <i class="fa fa-file-text-o"></i> New Sale 
             </a> 
           </div>
@@ -97,14 +97,15 @@
                 <div class="select-wrap">
                   <select class="form-control" name="locationCode" id="locationCode">
                     <?php 
-                      foreach($client_locations as $key=>$value):
-                        if($locationCode === $key) {
+                      foreach($client_locations as $location_key=>$value):
+                        $location_key_a = explode('`', $location_key);
+                        if($locationCode === $location_key_a[0]) {
                           $selected = 'selected="selected"';
                         } else {
                           $selected = '';
                         }  
                     ?>
-                     <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                     <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
                         <?php echo $value ?>
                       </option>
                     <?php endforeach; ?>
@@ -165,6 +166,7 @@
                 $sales_code = $sales_details['invoiceCode'];
                 $invoice_date = date("d-M-Y", strtotime($sales_details['invoiceDate']));
                 $mobile_number = $sales_details['mobileNo'];
+                $location_code = isset($location_codes[$sales_details['locationID']]) ? $location_codes[$sales_details['locationID']] : '';
                 if($sales_details['customerName'] !== null) {
                   $customer_name = $sales_details['customerName'];
                 } else {
@@ -200,7 +202,7 @@
                   <td>
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>
-                        <a class="btn btn-danger" href="javascript: printSalesBillSmall(<?php echo $sales_details['billNo'] ?>)" title="Print Sale Bill - Small format">
+                        <a class="btn btn-danger" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Sale Bill - Small format">
                           <i class="fa fa-files-o"></i>
                         </a>
                         <a class="btn btn-primary" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">

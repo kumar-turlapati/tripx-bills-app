@@ -531,10 +531,10 @@
   </div>
 </div>
 
-<?php if($bill_to_print>0): ?>
+<?php if($bill_to_print !== ''): ?>
   <script>
     (function() {
-      var printUrl = '/print-sales-bill-small?billNo='+<?php echo $bill_to_print ?>;
+      var printUrl = '/print-sales-bill-small?billNo=<?php echo $bill_to_print ?>';
       var printWindow = window.open(printUrl, "_blank", "left=0,top=0,width=300,height=300,toolbar=0,scrollbars=0,status=0");
     })();
   </script>

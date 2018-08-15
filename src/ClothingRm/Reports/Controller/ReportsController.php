@@ -45,7 +45,7 @@ class ReportsController
     $params['billNo'] = $billNo;
     $print_date_time = date("d-M-Y h:ia");
 
-    $sales_response = $sales->get_sales_details($billNo,true);
+    $sales_response = $sales->get_sales_details($billNo,false);
     $status = $sales_response['status'];
     if($status) {
       $sale_details = $sales_response['saleDetails'];

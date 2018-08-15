@@ -137,6 +137,11 @@ function initializeJS() {
             if(trRowContainer.length > 0) {
               trRowContainer.remove();
               if($('#tBodyowItems tr').length > 0) {
+                var newSlno = 1;
+                $(".itemSlno").each(function(index, obj) {
+                  $(this).text(newSlno);
+                  newSlno++;
+                });
                 $('.saleItemQty').trigger('change');
               } else {
                 $('#totalItems, #grossAmount, #totDiscount, #taxableAmount, #gstAmount, #roundOff, #netPayBottom').text('');
@@ -173,7 +178,7 @@ function initializeJS() {
         }
         var grossAmount = taxableAmount = parseFloat(mrp*1).toFixed(2);
         var tableRowBegin = '<tr id="tr_'+barcode+'" class="bcRow" index="' + nextIndex + '">';
-        var itemSlno = '<td align="right" style="vertical-align:middle;">' + nextIndex + '</td>';
+        var itemSlno = '<td align="right" style="vertical-align:middle;" class="itemSlno">' + nextIndex + '</td>';
         var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
         var lotNoInput = '<td style="vertical-align:middle;"><input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly /></td>';
         var qtyAvailableInput = '<td style="vertical-align:middle;"><input type="text" class="qtyAvailable text-right noEnterKey" name="itemDetails[itemAvailQty][]" id="qtyava_' + nextIndex + '" index="' + nextIndex + '" value="' + availableQty + '"  readonly  size="10" /></td>';
