@@ -12,36 +12,43 @@ use Atawa\Flash;
 use ClothingRm\Openings\Model\Openings;
 use ClothingRm\Taxes\Model\Taxes;
 
-class OpeningsController
-{
-	protected $views_path;
+class OpeningsController {
+  
+  protected $views_path;
 
 	public function __construct() {
-		$this->views_path = __DIR__.'/../Views/';
+    $this->template = new Template(__DIR__.'/../Views/');    
     $this->taxes_model = new Taxes;
+    $this->openings_model = new Openings;
 	}
 
   public function opBalCreateAction(Request $request) {
-
-    $errors = $taxes = array();
+    $errors = $taxes = $submitted_data = $opbal_details = [];
     $page_error = $page_success = '';
     $update_flag = false;
-    $submitted_data = $opbal_details = array();
-    $qtys_a = array(''=>'Choose');
-    $months_a = array(''=>'Choose')+Utilities::get_calender_months();
-    $years_a = array(''=>'Choose')+Utilities::get_calender_years();
-    
-    # initiate supplier model.
-    $openings_api_caller = new Openings;
 
-    for($i=1;$i<=1000;$i++) {
-      $qtys_a[$i] = $i;
+    $months_a = [''=>'Choose']+ Utilities::get_calender_months();
+    $years_a = [''=>'Choose'] + Utilities::get_calender_years();
+
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
+
+    $taxes_a = $this->taxes_model->list_taxes();
+    if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
+      $taxes_raw = $taxes_a['taxes'];
+      foreach($taxes_a['taxes'] as $tax_details) {
+        $taxes[$tax_details['taxCode']] = $tax_details['taxPercent'];
+      }
     }
 
     if($request->get('opCode') && $request->get('opCode')!='') {
       $op_code = Utilities::clean_string($request->get('opCode'));
-      $opbal_response = $openings_api_caller->get_opbal_details($op_code);
-      if($opbal_response['status']===true) {
+      $opbal_response = $this->openings_model->get_opbal_details($op_code);
+      if($opbal_response['status']) {
         $opbal_details = $opbal_response['opDetails'];
         $update_flag = true;
       }
@@ -55,10 +62,10 @@ class OpeningsController
 
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
-      if(count($opbal_details)>0) {
-        $opbal_response = $openings_api_caller->updateOpBal($request->request->all(),$op_code);             
+      if( count($opbal_details)>0 && $update_flag) {
+        $opbal_response = $this->openings_model->updateOpBal($submitted_data,$op_code);             
       } else {
-        $opbal_response = $openings_api_caller->createOpBal($request->request->all());
+        $opbal_response = $this->openings_model->createOpBal($submitted_data);
       }
       $status = $opbal_response['status'];
       $flash = new Flash;
@@ -70,24 +77,16 @@ class OpeningsController
         }
         $submitted_data = $opbal_details;
       } elseif($update_flag===false) {
-        $page_success   = 'Opening Balance added successfully for Item [ '.$request->get('itemName').' ]';
+        $page_success = 'Opening balance added successfully for item [ '.$request->get('itemName').' ]';
         $flash->set_flash_message($page_success);
         Utilities::redirect('/opbal/add');                
       } else {
-        $page_success   = 'Opening Balance updated successfully for Item [ '.$opbal_details['itemName'].' ]';
+        $page_success = 'Opening balance updated successfully for item [ '.$opbal_details['itemName'].' ]';
         $flash->set_flash_message($page_success);
         Utilities::redirect('/opbal/update/'.$op_code);
       }
     } elseif(count($opbal_details)>0) {
       $submitted_data = $opbal_details;
-    }
-
-    $taxes_a = $this->taxes_model->list_taxes();
-    if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
-      $taxes_raw = $taxes_a['taxes'];
-      foreach($taxes_a['taxes'] as $tax_details) {
-        $taxes[$tax_details['taxCode']] = $tax_details['taxPercent'];
-      }
     }
 
     // prepare form variables.
@@ -96,12 +95,14 @@ class OpeningsController
       'page_success' => $page_success,
       'submitted_data' => $submitted_data,
       'errors' => $errors,
-      'qtys' => $qtys_a,
       'months' => $months_a,
       'years' => $years_a,
       'vat_percents' => array(''=>'Choose')+$taxes,
       'btn_label' => $btn_label,
       'update_mode' => $update_flag,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     // build variables
@@ -111,8 +112,7 @@ class OpeningsController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('opbal-create', $template_vars), $controller_vars);
+    return array($this->template->render_view('opbal-create', $template_vars), $controller_vars);
   }    
 
   public function opBalListAction(Request $request) {
@@ -125,20 +125,9 @@ class OpeningsController
     $categories_a = [''=>'Choose'];
 
     $client_locations = Utilities::get_client_locations();
+    $page_no = !is_null($request->get('pageNo')) ? $request->get('pageNo') : 1;
+    $per_page = !is_null($request->get('perPage')) ? $request->get('perPage') : 100;
 
-    $openings_api = new Openings;
-    if( $request->get('pageNo') ) {
-      $page_no = $request->get('pageNo');
-    } else {
-      $page_no = 1;
-    }
-
-    if( $request->get('perPage') ) {
-      $per_page = $request->get('perPage');
-    } else {
-      $per_page = 100;
-    }
-      
     if(count($request->request->all()) > 0) {
       if($request->get('itemName') !== '') {
         $search_params['itemName'] = Utilities::clean_string($request->get('itemName'));
@@ -159,7 +148,7 @@ class OpeningsController
     $search_params['pageNo'] = $page_no;
     $search_params['perPage'] = $per_page;
 
-    $openings = $openings_api->opbal_list($search_params);
+    $openings = $this->openings_model->opbal_list($search_params);
     $api_status = $openings['status'];
 
     // check api status
@@ -218,8 +207,6 @@ class OpeningsController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('openings-list', $template_vars), $controller_vars);
+    return array($this->template->render_view('openings-list', $template_vars), $controller_vars);
   }
-
 }

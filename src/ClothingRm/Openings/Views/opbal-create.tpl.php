@@ -1,76 +1,22 @@
 <?php
   use Atawa\Utilities;
+  
+  $item_name = isset($submitted_data['itemName']) && $submitted_data['itemName'] !== '' ? $submitted_data['itemName'] : '';
+  $opening_rate = isset($submitted_data['openingRate']) && $submitted_data['openingRate'] !== '' ? $submitted_data['openingRate'] : ''; 
+  $opening_qty = isset($submitted_data['openingQty']) && $submitted_data['openingQty'] !== '' ? $submitted_data['openingQty'] : '';
+  $purchase_rate = isset($submitted_data['purchaseRate']) && $submitted_data['purchaseRate'] !== '' ? $submitted_data['purchaseRate'] : '';
+  $tax_percent = isset($submitted_data['taxPercent']) && $submitted_data['taxPercent'] !== '' ? $submitted_data['taxPercent'] + 0 : '';
+  $location_code = isset($submitted_data['locationID']) && isset($location_codes[$submitted_data['locationID']]) ? $location_codes[$submitted_data['locationID']] : '';
+  $upp = isset($submitted_data['unitsPerPack']) ? $submitted_data['unitsPerPack'] : 1;
+  $lot_no = isset($submitted_data['lotNo']) ? $submitted_data['lotNo'] : '';
 
-  // dump($submitted_data);
-
-  $batch_no_auto = date("dMy").'_'.Utilities::generate_unique_string(12);
-
-  if(isset($submitted_data['itemName']) && $submitted_data['itemName'] !== '') {
-    $item_name = $submitted_data['itemName'];
-    $item_name_dis = 'disabled';
-  } else {
-    $item_name = $item_name_dis = '';
-  }
-
-  if(isset($submitted_data['openingRate']) && $submitted_data['openingRate'] !== '') {
-    $opening_rate = $submitted_data['openingRate'];
-  } else {
-    $opening_rate = '';
-  }
-
-  if(isset($submitted_data['openingQty']) && $submitted_data['openingQty'] !== '') {
-    $opening_qty = $submitted_data['openingQty'];
-    $opening_qty_dis = 'disabled';
-  } else {
-    $opening_qty = $opening_qty_dis = '';
-  }
-  /*
-  if(isset($submitted_data['expiryDateMonth']) && $submitted_data['expiryDateMonth'] !== '') {
-    $expiry_date_mon = $submitted_data['expiryDateMonth'];
-  } else {
-    $expiry_date_mon = '';
-  }
-
-  if(isset($submitted_data['expiryDateYear']) && $submitted_data['expiryDateYear'] !== '') {
-    $expiry_date_year = $submitted_data['expiryDateYear'];
-  } else {
-    $expiry_date_year = '';
-  }
-
-  if(isset($submitted_data['batchNo']) && $submitted_data['batchNo'] !== '') {
-    $batch_no = $submitted_data['batchNo'];
-    $batch_no_dis = 'disabled';    
-  } else {
-    $batch_no = '';
-    $batch_no_dis = '';
-  }*/
-
-  if(isset($submitted_data['mrp']) && $submitted_data['mrp'] !== '') {
-    $mrp = $submitted_data['mrp'];
-  } else {
-    $mrp = '';
-  }
-
-  if(isset($submitted_data['taxPercent']) && $submitted_data['taxPercent'] !== '') {
-    $tax_percent = (int)$submitted_data['taxPercent'];
-  } else {
-    $tax_percent = '';
-  }
-
-  // dump($errors);
+  $item_name_dis = $update_mode ? ' disabled="disabled"' : '';
 ?>
-
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
-    
-    <!-- Panel starts -->
     <section class="panel">
       <div class="panel-body">
-
         <?php echo Utilities::print_flash_message() ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/opbal/list" class="btn btn-default">
@@ -78,50 +24,41 @@
             </a>
           </div>
         </div>
-        <!-- Right links ends --> 
-        
-        <!-- Form starts -->
         <form class="form-validate form-horizontal" method="POST">
           <h2 class="hdg-reports borderBottom">Item Details</h2>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Item name</label>
               <input type="text" class="form-control inameAc noEnterKey" name="itemName" id="itemName" value="<?php echo $item_name ?>" <?php echo $item_name_dis ?>>
               <?php if(isset($errors['itemName'])): ?>
                 <span class="error"><?php echo $errors['itemName'] ?></span>
               <?php endif; ?>           
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Opening Qty.</label>
-              <div class="select-wrap">
-                <select class="form-control" name="opQty" id="opQty" <?php echo $opening_qty_dis ?>>
-                  <?php 
-                    foreach($qtys as $key=>$value):
-                      if((int)$opening_qty === (int)$key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                      
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['opQty'])): ?>
-                  <span class="error"><?php echo $errors['opQty'] ?></span>
-                <?php endif; ?>
-              </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Opening qty.</label>
+              <input type="text" class="form-control noEnterKey" name="opQty" id="opQty" value="<?php echo $opening_qty ?>" />
+              <?php if(isset($errors['opQty'])): ?>
+                <span class="error"><?php echo $errors['opQty'] ?></span>
+              <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Opening Price</label>
-                <input type="text" class="form-control" name="opRate" id="opRate" value="<?php echo $opening_rate ?>">
-                <?php if(isset($errors['opRate'])): ?>
-                  <span class="error"><?php echo $errors['opRate'] ?></span>
-                <?php endif; ?>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Opening rate (in Rs.)</label>
+              <input type="text" class="form-control noEnterKey" name="opRate" id="opRate" value="<?php echo $opening_rate ?>">
+              <?php if(isset($errors['opRate'])): ?>
+                <span class="error"><?php echo $errors['opRate'] ?></span>
+              <?php endif; ?>
             </div>                  
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Tax Percent</label>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Purchase rate (in Rs.)</label>
+              <input type="text" class="form-control noEnterKey" name="purchaseRate" id="purchaseRate" value="<?php echo $purchase_rate ?>" />
+              <?php if(isset($errors['purchaseRate'])): ?>
+                <span class="error"><?php echo $errors['purchaseRate'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Tax percent</label>
               <div class="select-wrap">
                 <select class="form-control" name="taxPercent" id="taxPercent">
                   <?php 
@@ -140,19 +77,52 @@
                 <?php endif; ?>
               </div>             
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php
+                    foreach($client_locations as $location_key=>$value):
+                      $location_key_a = explode('`', $location_key);
+                      if($location_code === $location_key_a[0]) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                   <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
+            </div>
           </div>
+          <?php if($update_mode): ?>
+            <div class="form-group">
+              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+                <label class="control-label">Units per pack</label>
+                <input type="text" class="form-control noEnterKey" name="upp" id="upp" value="<?php echo $upp ?>" disabled="disabled" />
+                <?php if(isset($errors['upp'])): ?>
+                  <span class="error"><?php echo $errors['upp'] ?></span>
+                <?php endif; ?>
+              </div>
+              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+                <label class="control-label">Lot no. (auto)</label>
+                <input type="text" class="form-control noEnterKey" name="lotNo" id="lotNo" value="<?php echo $lot_no ?>" disabled="disabled" />
+              </div>
+            </div>
+          <?php endif; ?>
           <div class="text-center">
             <button class="btn btn-primary" id="Save">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
             </button>
           </div>
-            <input type="hidden" name="batchNo" id="batchNo" value="<?php echo $batch_no_auto ?>" />
-            <input type="hidden" name="expMonth" id="expMonth" value="12" />
-            <input type="hidden" name="expYear" id="expYear" value="2099" />            
         </form>  
       </div>
     </section>
-    <!-- Panel ends --> 
   </div>
 </div>
-<!-- Basic Forms ends -->
