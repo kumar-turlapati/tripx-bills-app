@@ -36,7 +36,7 @@ $routes->add('dashboard', new Routing\Route('/dashboard', array(
 
 // products or services list
 $routes->add('products_list', new Routing\Route('/products/list/{pageNo}/{perPage}', array(
-  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::createProductService',
+  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::listProductsOrServices',
   'pageNo' => 1,
   'perPage' => 100,
 )));
@@ -45,7 +45,7 @@ $routes->add('products_create', new Routing\Route('/products/create', array(
   'itemCode' => null
 )));
 $routes->add('products_update', new Routing\Route('/products/update/{itemCode}', array(
-  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::listProductsOrServices',
+  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::createProductService',
   'itemCode' => null
 )));
 
