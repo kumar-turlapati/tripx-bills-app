@@ -40,26 +40,26 @@
   $page_url = '/sales/list';
 ?>
 
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12">
     
-    <!-- Panel starts -->
     <section class="panelBox">
       <h2 class="hdg-reports text-center">Daywise Sales List</h2>
       <div class="panelBody">
         <?php echo Utilities::print_flash_message() ?>
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
+            <a href="/sales-return/list" class="btn btn-default">
+              <i class="fa fa-repeat"></i> Sales Return Register 
+            </a>&nbsp;&nbsp;
             <a href="/sales/entry-with-barcode" class="btn btn-default">
-              <i class="fa fa-file-text-o"></i> New Sale 
-            </a> 
+              <i class="fa fa-inr"></i> New Sale 
+            </a>            
           </div>
         </div>
 		
 		  <div class="filters-block">
   			<div id="filters-form">
-  			  <!-- Form starts -->
   			  <form class="form-validate form-horizontal" method="GET" action="/sales/list">
     				<div class="form-group">
               <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
@@ -135,7 +135,6 @@
               <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
             </div>
   			  </form>
-  			  <!-- Form ends -->
   			</div>
       </div>
       <div class="table-responsive">

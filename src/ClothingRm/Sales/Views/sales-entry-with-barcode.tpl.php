@@ -41,7 +41,7 @@
     <section class="panelBox">
       <div class="panelBody">
         <?php echo $flash_obj->print_flash_message(); ?>
-        <form id="outwardEntryForm" method="POST">
+        <form id="outwardEntryForm" method="POST" action="/sales/entry-with-barcode">
           <div class="table-responsive">
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
               <thead>
@@ -130,90 +130,98 @@
                       <input 
                         type="text" 
                         name="itemDetails[itemName][]" 
-                        id="iname_<?php echo $i-1 ?>" 
+                        id="iname_<?php echo $i+1 ?>" 
                         size="30" 
                         class="inameAc saleItem noEnterKey" 
-                        index="<?php echo $i-1 ?>" 
+                        index="<?php echo $i+1 ?>" 
                         value="<?php echo $item_name ?>"
                       />
+                      <?php if(isset($errors['itemDetails']['itemName'][$i])): ?>
+                        <span class="error">Invalid</span>
+                      <?php endif; ?>
                     </td>
                     <td style="vertical-align:middle;">
                       <div class="select-wrap">
                         <select 
                           class="form-control lotNo"
                           name="itemDetails[lotNo][]"
-                          id="lotNo_<?php echo $i-1 ?>"
-                          index="<?php echo $i-1 ?>"              
+                          id="lotNo_<?php echo $i+1 ?>"
+                          index="<?php echo $i+1 ?>"              
                         >
                           <option value="">Choose</option>
                           <?php if($lot_no !== ''): ?>
                           <option value="<?php echo $lot_no ?>" selected><?php echo $lot_no ?></option>
                           <?php endif; ?>
                         </select>
-                      </div>                      
+                      </div>
+                      <?php if(isset($errors['itemDetails']['lotNo'][$i])): ?>
+                        <span class="error">Invalid</span>
+                      <?php endif; ?>                      
                     </td>                
                     <td style="vertical-align:middle;">
                       <input
                         type="text"
                         class="qtyAvailable text-right noEnterKey"
-                        id="qtyava_<?php echo $i-1 ?>"
+                        id="qtyava_<?php echo $i+1 ?>"
                         name="itemDetails[itemAvailQty][]"
-                        index="<?php echo $i-1 ?>"
+                        index="<?php echo $i+1 ?>"
                         value="<?php echo $item_qty_available ?>"
                         size="10"
                         readonly
                       />
+                      <?php if(isset($errors['itemDetails']['itemAvailQty'][$i])): ?>
+                        <span class="error">Invalid</span>
+                      <?php endif; ?>                      
                     </td>
                     <td style="vertical-align:middle;" align="center">
-                      <div class="select-wrap">
-                        <select 
-                          class="form-control saleItemQty"
-                          name="itemDetails[itemSoldQty][]"
-                          id="qty_<?php echo $i-1 ?>"
-                          index="<?php echo $i-1 ?>"              
-                        >
-                          <?php 
-                            foreach($qtys_a as $key=>$value):
-                               if((int)$item_qty === (int)$key) {
-                                $selected = 'selected="selected"';
-                               } else {
-                                $selected = '';
-                               }                                 
-                          ?>
-                            <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
+                      <input
+                        type="text"
+                        class="saleItemQty text-right noEnterKey"
+                        id="qty_<?php echo $i+1 ?>"
+                        name="itemDetails[itemSoldQty][]"
+                        index="<?php echo $i+1 ?>"
+                        value="<?php echo $item_qty ?>"
+                        size="10"
+                      />
+                      <?php if(isset($errors['itemDetails']['itemSoldQty'][$i])): ?>
+                        <span class="error">Invalid</span>
+                      <?php endif; ?>                      
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
                         readonly
                         class = "mrp text-right noEnterKey"
-                        id = "mrp_<?php echo $i-1 ?>"
-                        index = "<?php echo $i-1 ?>"
+                        id = "mrp_<?php echo $i+1 ?>"
+                        index = "<?php echo $i+1 ?>"
                         size = "10"
                         value = "<?php echo $item_rate ?>"
                         name = "itemDetails[itemRate][]"
                       />
+                      <?php if(isset($errors['itemDetails']['mrp'][$i])): ?>
+                        <span class="error">Invalid</span>
+                      <?php endif; ?>                      
                     </td>
-                    <td class="grossAmount" id="grossAmount_<?php echo $i-1 ?>" index="<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;"><?php echo $item_amount ?></td>
+                    <td class="grossAmount" id="grossAmount_<?php echo $i+1 ?>" index="<?php echo $i+1 ?>" style="vertical-align:middle;text-align:right;"><?php echo $item_amount ?></td>
                     <td align="center" style="vertical-align:middle;">
                       <input
                         type="text" 
                         name="itemDetails[itemDiscount][]" 
-                        id="discount_<?php echo $i-1 ?>" 
+                        id="discount_<?php echo $i+1 ?>" 
                         size="10" 
                         class="saDiscount noEnterKey" 
-                        index="<?php echo $i-1 ?>" 
+                        index="<?php echo $i+1 ?>" 
                         value="<?php echo $item_discount ?>"
-                      />                      
+                      />
+                      <?php if(isset($errors['itemDetails']['itemDiscount'][$i])): ?>
+                        <span class="error">Invalid</span>
+                      <?php endif; ?>                      
                     </td>
-                    <td class="taxableAmt text-right" id="taxableAmt_<?php echo $i-1 ?>" index="<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;"><?php echo $taxable_amount ?></td>
+                    <td class="taxableAmt text-right" id="taxableAmt_<?php echo $i+1 ?>" index="<?php echo $i+1 ?>" style="vertical-align:middle;text-align:right;"><?php echo $taxable_amount ?></td>
                     <td style="vertical-align:middle;">
                       <div class="select-wrap">
                         <select 
                           class="form-control saItemTax"
-                          id="saItemTax_<?php echo $i-1 ?>" 
+                          id="saItemTax_<?php echo $i+1 ?>" 
                           name="itemDetails[itemTaxPercent][]"
                           style="font-size:12px;"
                         >
@@ -231,8 +239,11 @@
                           <?php endforeach; ?>                            
                         </select>
                       </div>
-                      <input type="hidden" class="taxAmount" id="taxAmount_<?php echo $i-1 ?>" value="<?php echo $tax_amount ?>" />
-                      <input type="hidden" class="itemType" id="itemType_<?php echo $i-1 ?>" />
+                      <?php if(isset($errors['itemDetails']['itemTaxPercent'][$i])): ?>
+                        <span class="error">Invalid</span>
+                      <?php endif; ?>                      
+                      <input type="hidden" class="taxAmount" id="taxAmount_<?php echo $i+1 ?>" value="<?php echo $tax_amount ?>" />
+                      <input type="hidden" class="itemType" id="itemType_<?php echo $i+1 ?>" />
                     </td>
                     <td style="vertical-align:middle;text-align:center;">
                       <div class="btn-actions-group">

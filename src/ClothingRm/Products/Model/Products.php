@@ -29,7 +29,7 @@ class Products
 			if(isset($search_params['mfg'])) {
 				$mfg = Utilities::clean_string($search_params['mfg']);
 				$params['mfg'] = $mfg;
-			}				
+			}
 		}
 
 		// call api.

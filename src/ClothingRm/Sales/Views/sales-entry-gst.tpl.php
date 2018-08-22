@@ -98,26 +98,19 @@
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
 ?>
 
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
     
-    <!-- Panel starts -->
     <section class="panelBox">
       <div class="panelBody">
 
         <?php echo $flash_obj->print_flash_message(); ?>
        
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix"> 
           <div class="pull-right text-right">
-            <a href="/sales/list" class="btn btn-default"><i class="fa fa-book"></i> Daywise Sales List</a>
-            <a href="/sales/entry" class="btn btn-default"><i class="fa fa-file-text-o"></i> New Sale </a> 
+            <a href="/sales/list" class="btn btn-default"><i class="fa fa-inr"></i> Sales Register</a>
           </div>
         </div>
-        <!-- Right links ends -->
-        
-        <!-- Form starts -->
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="outwardEntryForm">
           <div class="panel" style="margin-bottom:0px;">
             <div class="panel-body">
@@ -438,7 +431,7 @@
                       <input type="hidden" class="itemType" id="itemType_<?php echo $i-1 ?>" />
                     </td>
                   </tr>
-                  <?php 
+                  <?php
                     /* Show error tr if there are any errors in the line item */
                     if( isset($errors['itemDetails']['itemName'][$i-1]) ) {
                   ?>
@@ -462,8 +455,6 @@
                   $net_pay_actual = $tot_taxable_amount + $tax_amount;
                   $rounded_off = round($net_pay_actual,0) - $net_pay_actual;
                   $net_pay = round($net_pay_actual,0);
-
-                  // dump($tot_item_amount, $tot_taxable_amount, $tot_tax_amount);
                 ?>
                   <tr>
                     <td colspan="4" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Total Bill Qty.</td>
@@ -613,7 +604,6 @@
     </section>
   </div>
 </div>
-
 <?php if($bill_to_print>0) : ?>
   <script>
     (function() {

@@ -64,9 +64,8 @@ class Supplier
 	}
 
 	private function _validateFormData($params = array()) {
-
 		$api_params = $this->_getApiParams();
-		$errors = array();
+		$errors = [];
 
 		// check for mandatory params
 		$mand_param_errors = Utilities::checkMandatoryParams(array_keys($params), $api_params['mandatory']);
@@ -75,13 +74,13 @@ class Supplier
 		}
 
 		// check for data in posted forms
-		if(!Utilities::validateName($params['supplierName'])) {
-				$errors['supplierName'] = $this->_errorDescriptions('supplierName');
+		if($params['supplierName'] === '' || !Utilities::validateName($params['supplierName'])) {
+			$errors['supplierName'] = $this->_errorDescriptions('supplierName');
 		}
 
 		if( isset($params['mobileNo']) && $params['mobileNo'] != '') {
 			if(!Utilities::validateMobileNo($params['mobileNo'])) {
-					$errors['mobileNo'] = $this->_errorDescriptions('mobileNo');
+				$errors['mobileNo'] = $this->_errorDescriptions('mobileNo');
 			}
 		}
 
@@ -97,7 +96,7 @@ class Supplier
 			{
 				$errors['supplierType'] = $this->_errorDescriptions('supplierType');
 			}
-		}		
+		}
 
 		if( isset($params['pincode']) && $params['pincode'] != '') {
 			if(!is_numeric($params['pincode'])) 
@@ -146,7 +145,6 @@ class Supplier
 		} else {
 			return array('status' => true, 'errors' => $errors);
 		}
-
 	}
 
 	private function _getApiParams() {

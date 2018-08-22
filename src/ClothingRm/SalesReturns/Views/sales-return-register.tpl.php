@@ -40,9 +40,12 @@
         <?php endif; ?>
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
-            <a href="/sales/entry" class="btn btn-default">
+            <a href="/sales/entry-with-barcode" class="btn btn-default">
               <i class="fa fa-file-text-o"></i> New Sale 
-            </a> 
+            </a>&nbsp;&nbsp; 
+            <a href="/sales/list" class="btn btn-default">
+              <i class="fa fa-inr"></i> Sales Register
+            </a>            
           </div>
         </div>
     		<div class="filters-block">

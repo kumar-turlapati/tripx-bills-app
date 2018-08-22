@@ -292,7 +292,8 @@ class SalesIndentController {
 
   // list indents
   public function listIndents(Request $request) {
-    $locations = $vouchers = $search_params = $indents_a = [];
+    $locations = $vouchers = $search_params = $indents_a = $agents_a = [];
+    $campaigns_a = [];
     $campaign_code = $page_error = $agent_code = '';
     
     $total_pages = $total_records = $record_count = $page_no = 0 ;

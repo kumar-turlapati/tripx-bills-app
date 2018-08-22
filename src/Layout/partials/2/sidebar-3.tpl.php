@@ -133,7 +133,19 @@
           </li>
           <li class="sub-menu">
             <a href="javascript:">
-              <i class="fa fa-inr"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
+              <i class="fa fa-inr"></i> Sales <span class="menu-arrow arrow_carrot-right"></span> 
+            </a>
+            <ul class="sub">
+              <li><a href="/report-options/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
+              <li><a href="/report-options/itemwise-sales-report"><i class="fa fa-angle-right"></i> Itemwise Sales</a></li>
+              <li><a href="/report-options/itemwise-sales-returns"><i class="fa fa-angle-right"></i> Itemwise Sales Returns</a></li>
+              <li><a href="/report-options/sales-return-register"><i class="fa fa-angle-right"></i> Sales Return Register</a></li>
+              <li><a href="/report-options/day-sales-report"><i class="fa fa-angle-right"></i> Sales by Day</a></li>              
+            </ul>            
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:">
+              <i class="fa fa-plane"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">
               <li><a href="/report-options/indent-item-avail"><i class="fa fa-angle-right"></i> Item Availability</a></li>

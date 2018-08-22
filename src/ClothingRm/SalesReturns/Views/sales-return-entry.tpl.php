@@ -126,7 +126,6 @@
                         $return_allowed_qty = $item_qty;
                         $return_ason_date = 0;
                       }
-
                       $return_qty_a = array_slice($qtys_a,0,($return_allowed_qty+1));
                       $return_value = $item_rate*$return_qty;
                 ?>
@@ -142,21 +141,13 @@
                       <?php echo $return_ason_date ?>
                     </td>                    
                     <td style="vertical-align:middle;">
-                      <div class="select-wrap">
-                        <input type="hidden" name="itemInfo[]" id="<?php echo $item_code ?>" value="<?php echo $item_string ?>" />
-                        <select class="form-control returnQty" name="returnQty_<?php echo $item_code.'_'.$i ?>" id="returnQty_<?php echo $i ?>" <?php echo $disabled ?>>
-                          <?php 
-                            foreach($return_qty_a as $key=>$value): 
-                              if((int)$value===(int)$return_qty) {
-                                $selected = 'selected="selected"';
-                              } else {
-                                $selected = '';
-                              }
-                          ?>
-                            <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
+                      <input type="hidden" name="itemInfo[]" id="<?php echo $item_code ?>" value="<?php echo $item_string ?>" />
+                      <input 
+                        type="text" 
+                        class="form-control returnQty" 
+                        name="returnQty_<?php echo $item_code.'_'.$i ?>" 
+                        id="returnQty_<?php echo $i ?>" <?php echo $disabled ?>
+                      />
                       <?php if(isset($errors['returnQty'])): ?>
                         <span class="error"><?php echo $errors['returnQty'] ?></span>
                       <?php endif; ?>                      
@@ -196,3 +187,19 @@
     </section>
   </div>
 </div>
+
+<?php /*                      
+<div class="select-wrap">
+  <select class="form-control returnQty" name="returnQty_<?php echo $item_code.'_'.$i ?>" id="returnQty_<?php echo $i ?>" <?php echo $disabled ?>>
+    <?php 
+      foreach($return_qty_a as $key=>$value): 
+        if((int)$value===(int)$return_qty) {
+          $selected = 'selected="selected"';
+        } else {
+          $selected = '';
+        }
+    ?>
+      <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+    <?php endforeach; ?>
+  </select>
+</div>*/ ?>

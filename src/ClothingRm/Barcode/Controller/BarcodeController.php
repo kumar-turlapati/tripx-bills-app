@@ -74,7 +74,7 @@ class BarcodeController
         $client_details = Utilities::get_client_details();
         $client_business_state = $client_details['locState'];
         $inward_entry_no =  ' - Inward Entry No. { '. $purchase_details['poNo'] .' }';
-        $mfg_date = $purchase_details['purchaseDate'];
+        $mfg_date = date("m/Y", strtotime($purchase_details['purchaseDate']));
 
         # convert received item details to template item details.
         $item_names = array_column($purchase_details['itemDetails'],'itemName');
@@ -134,7 +134,7 @@ class BarcodeController
           $print_array = [];
           $index_key = 0;
           foreach($cleaned_params as $key => $print_qty) {
-            $print_array[$api_response['barcodes'][$index_key]] = $print_qty;
+            $print_array[$api_response['barcodes'][$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date];
             $index_key++;
           }
         } else {

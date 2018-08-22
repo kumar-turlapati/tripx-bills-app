@@ -376,7 +376,7 @@ class salesEntryWithBarcode {
         }        
 
         # validate if sold qty. is more than available qty.
-        if($item_sold_qty>$item_ava_qty) {
+        if($item_sold_qty > $item_ava_qty) {
           $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid sold qty.';
         }
       }

@@ -163,13 +163,16 @@ function initializeJS() {
       var taxPercent = itemDetails.taxPercent;
       var availableQty = itemDetails.availableQty;
       var totalRows = $('#tBodyowItems tr').length;
+      var upp = itemDetails.upp;
+      var moq = itemDetails.mOq;
+      var orderQty = (parseFloat(moq)*1).toFixed(2);
 
       $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems').show();
       
       if( $('#tr_'+barcode).length > 0) {
         var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
-        var trAddedQty = Number(trExistingQty) + 1;
-        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty);
+        var trAddedQty = parseFloat(trExistingQty)+parseFloat(orderQty);
+        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty.toFixed(2));
       } else {
         if(totalRows == 0) {
           nextIndex = 1;
@@ -182,7 +185,7 @@ function initializeJS() {
         var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
         var lotNoInput = '<td style="vertical-align:middle;"><input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly /></td>';
         var qtyAvailableInput = '<td style="vertical-align:middle;"><input type="text" class="qtyAvailable text-right noEnterKey" name="itemDetails[itemAvailQty][]" id="qtyava_' + nextIndex + '" index="' + nextIndex + '" value="' + availableQty + '"  readonly  size="10" /></td>';
-        var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="1" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" /></td>';
+        var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="'+orderQty+'" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" readonly="readonly" /></td>';
         var mrpInput = '<td style="vertical-align:middle;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10" /></td>';
         var grossAmount = '<td class="grossAmount" id="grossAmount_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+grossAmount+'</td>';
         var discounInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemDiscount][]" id="discount_' + nextIndex + '" size="10" class="saDiscount noEnterKey"  index="'+ nextIndex +'"  /></td>';
@@ -201,11 +204,9 @@ function initializeJS() {
   }
 
   if( $('#indentBarcode').length>0 ) {
-
     if( $('.messageContainer').length>0 ) {
       $('.messageContainer').fadeOut(5000);
     }
-
     $('#indentBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
        var barcode = $(this).val();
@@ -269,12 +270,14 @@ function initializeJS() {
       var mrp = itemDetails.mrp;
       var taxPercent = itemDetails.taxPercent;
       var locationNumber = itemDetails.lc;
+      var upp = itemDetails.upp;
+      var moq = itemDetails.mOq;
+      var orderQty = (parseFloat(moq)*1).toFixed(2);      
       if($('#loc_'+locationNumber).length>0) {
         var locationCode = $('#loc_'+locationNumber).val();
       } else {
         var locationCode = '';
       }
-
       var availableQty = itemDetails.availableQty;
       var totalRows = $('#tBodyowItems tr').length;
 
@@ -282,8 +285,8 @@ function initializeJS() {
       
       if( $('#tr_'+barcode).length > 0) {
         var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
-        var trAddedQty = Number(trExistingQty) + 1;
-        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty);
+        var trAddedQty = parseFloat(trExistingQty) + parseFloat(orderQty);
+        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty.toFixed(2));
       } else {
         if(totalRows == 0) {
           nextIndex = 1;
@@ -295,7 +298,7 @@ function initializeJS() {
         var itemSlno = '<td align="right" style="vertical-align:middle;" class="itemSlno">' + nextIndex + '</td>';
         var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
         var lotNoInput = '<td style="vertical-align:middle;"><input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly /></td>';
-        var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="1" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" /></td>';
+        var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="'+orderQty+'" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" readonly="readonly" /></td>';
         var mrpInput = '<td style="vertical-align:middle;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10" /></td>';
         var grossAmount = '<td class="grossAmount" id="grossAmount_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+grossAmount+'</td>';
         var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'"><i class="fa fa-times"></i></a></div></td>';
@@ -927,13 +930,13 @@ function initializeJS() {
       $('#roundOff').text(roundOff);
       $('#netPayTop').val(roundedNetPay.toFixed(2));
       $('#netPayBottom').text(roundedNetPay.toFixed(2));
-      $('#totalItems').text(totalQty);
+      $('#totalItems').text(totalQty.toFixed(2));
     }
   }
 
   // sales return window.
   if( $('#salesReturnWindow').length > 0 ) {
-    $('.returnQty').on("change", function(e){
+    $('.returnQty').on("blur", function(e){
       var returnItemId = $(this).attr('id').split('_')[1];
       var returnRate = parseFloat($('#returnRate_'+returnItemId).text());
       var returnQty = parseFloat($(this).val());

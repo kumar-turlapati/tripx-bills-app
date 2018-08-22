@@ -418,7 +418,7 @@ class Utilities
       5 => 'Sales operator',
       6 => 'Stores operator',
       7 => 'Purchase operator',
-      4 => 'Sales executive',
+      // 4 => 'Sales executive',
       10 => 'Marketing user',
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
