@@ -34,17 +34,18 @@ $routes->add('dashboard', new Routing\Route('/dashboard', array(
   '_controller' => 'User\\Controller\\DashBoardController::indexAction',
 )));
 
+// products or services list
 $routes->add('products_list', new Routing\Route('/products/list/{pageNo}/{perPage}', array(
-  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::listMedicines',
+  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::createProductService',
   'pageNo' => 1,
   'perPage' => 100,
 )));
 $routes->add('products_create', new Routing\Route('/products/create', array(
-  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::createMedicines',
+  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::createProductService',
   'itemCode' => null
 )));
 $routes->add('products_update', new Routing\Route('/products/update/{itemCode}', array(
-  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::createMedicines',
+  '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::listProductsOrServices',
   'itemCode' => null
 )));
 
@@ -84,7 +85,7 @@ $routes->add('suppliers_list', new Routing\Route('/suppliers/list/{pageNo}/{perP
   'perPage' => 50,
 )));
 
-# inward entry
+// inward entry
 $routes->add('inward_entry', new Routing\Route('/inward-entry', array(
   '_controller' => 'ClothingRm\\Inward\\Controller\\InwardController::inwardEntryAction',
 )));
