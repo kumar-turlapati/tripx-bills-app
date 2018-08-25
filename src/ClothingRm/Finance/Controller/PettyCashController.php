@@ -269,8 +269,9 @@ class PettyCashController {
 
   # petty cash book
   public function pettyCashBookAction(Request $request) {
-    $locations = $vouchers = $search_params = $vouchers_a = $location_names = [];
+    $locations = $vouchers = $search_params = $vouchers_a = $location_names = $query_totals = [];
     $location_code = $page_error = '';
+    $excess_dates = false;
     
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
@@ -302,36 +303,47 @@ class PettyCashController {
       'perPage' => $per_page,
     );
 
-    $api_response = $this->pettycash_model->get_cash_book($location_code, $search_params);
-    // dump($api_response);
-    // exit;
-    if($api_response['status']) {
-      if(count($api_response['response']['vouchers'])>0) {
-        $slno = Utilities::get_slno_start(count($api_response['response']['vouchers']),$per_page,$page_no);
-        $to_sl_no = $slno+$per_page;
-        $slno++;
-        if($page_no<=3) {
-          $page_links_to_start = 1;
-          $page_links_to_end = 10;
+    $diff_days_obj = date_diff( date_create(date("Y-m-d",strtotime($from_date))), date_create(date("Y-m-d",strtotime($to_date))) );
+    if($diff_days_obj !== false) {
+      $diff_days = $diff_days_obj->days + 1;
+    }
+
+    if($diff_days <= 61) {
+
+      $api_response = $this->pettycash_model->get_cash_book($location_code, $search_params);
+      // dump($api_response);
+      // exit;
+      if($api_response['status']) {
+        if(count($api_response['response']['vouchers'])>0) {
+          $slno = Utilities::get_slno_start(count($api_response['response']['vouchers']),$per_page,$page_no);
+          $to_sl_no = $slno+$per_page;
+          $slno++;
+          if($page_no<=3) {
+            $page_links_to_start = 1;
+            $page_links_to_end = 10;
+          } else {
+            $page_links_to_start = $page_no-3;
+            $page_links_to_end = $page_links_to_start+10;        
+          }
+          if($api_response['response']['total_pages']<$page_links_to_end) {
+            $page_links_to_end = $api_response['response']['total_pages'];
+          }
+          if($api_response['response']['this_page'] < $per_page) {
+            $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
+          }
+          $vouchers_a = $api_response['response']['vouchers'];
+          $query_totals = $api_response['response']['queryTotals'];
+          $total_pages = $api_response['response']['total_pages'];
+          $total_records = $api_response['response']['total_records'];
+          $record_count = $api_response['response']['this_page'];
         } else {
-          $page_links_to_start = $page_no-3;
-          $page_links_to_end = $page_links_to_start+10;        
+          $page_error = $api_response['apierror'];
         }
-        if($api_response['response']['total_pages']<$page_links_to_end) {
-          $page_links_to_end = $api_response['response']['total_pages'];
-        }
-        if($api_response['response']['this_page'] < $per_page) {
-          $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
-        }
-        $vouchers_a = $api_response['response']['vouchers'];
-        $total_pages = $api_response['response']['total_pages'];
-        $total_records = $api_response['response']['total_records'];
-        $record_count = $api_response['response']['this_page'];
       } else {
         $page_error = $api_response['apierror'];
       }
     } else {
-      $page_error = $api_response['apierror'];
+      $excess_dates = true;
     }
 
      // prepare form variables.
@@ -354,6 +366,8 @@ class PettyCashController {
       'location_codes' => $location_codes,
       'location_names' => $location_names,
       'sel_location' => $location_code,
+      'query_totals' => $query_totals,
+      'excess_dates' => $excess_dates,
     );
 
     // build variables

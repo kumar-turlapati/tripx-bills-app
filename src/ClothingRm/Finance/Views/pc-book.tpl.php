@@ -57,7 +57,7 @@
 
   		  <div class="filters-block">
     		  <div id="filters-form">
-            <form class="form-validate form-horizontal" autocomplete="Off">
+            <form class="form-validate form-horizontal" autocomplete="Off" action="<?php echo $page_url ?>">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
@@ -97,7 +97,7 @@
 			    </div>
         </div>
         <div class="table-responsive">
-          <?php if(count($vouchers)>0): ?>
+          <?php if(count($vouchers)>1 && $excess_dates === false): ?>
            <table class="table table-striped table-hover">
             <thead>
               <tr class="font12">
@@ -116,6 +116,31 @@
               <?php
                 $cntr = $sl_no;
                 $receipts_total = $payments_total = $balance = 0;
+                if(isset($_SESSION['pcBalance']) && is_numeric($_SESSION['pcBalance']) && $current_page > 1) {
+                  $bal_brought_down = $_SESSION['pcBalance'];
+                  unset($_SESSION['pcBalance']);
+                } else {
+                  $bal_brought_down = 0;
+                }
+                if($bal_brought_down < 0) {
+                  $payments_total = $bal_brought_down;
+                  $balance -= $bal_brought_down;
+                } else {
+                  $receipts_total = $bal_brought_down;
+                  $balance += $bal_brought_down;
+                }
+              ?>
+              <?php if($bal_brought_down < 0 || $bal_brought_down > 0): ?>
+                <tr class="font12">
+                  <td align="right" colspan="4" class="valign-middle">Balance brought down</td>
+                  <td align="right" class="valign-middle" style="color:green;"><?php echo $receipts_total > 0 ? number_format($receipts_total,2,'.','') : '' ?></td>
+                  <td align="right" class="valign-middle" style="color:red;"><?php echo $payments_total > 0 ? number_format($payments_total,2,'.','') : '' ?></td>
+                  <td align="right" class="valign-middle" style="color:#225992;font-weight:bold;font-size:14px;"><?php echo number_format($balance,2) ?></td>
+                  <td class="valign-middle">&nbsp;</td>
+                  <td class="valign-middle">&nbsp;</td>
+                </tr>
+              <?php endif; ?>
+              <?php
                 foreach($vouchers as $voucher_details):
                   $voucher_no = $voucher_details['voucherNo'];
                   $voucher_date = date('d-M-Y', strtotime($voucher_details['voucherDate']));
@@ -157,30 +182,55 @@
                   <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
                   <td class="valign-middle"><?php echo $voucher_date ?></td>
                   <td class="valign-middle"><?php echo $narration ?></td>
-                  <td align="right" class="valign-middle" style="color:green;"><?php echo $receipt > 0 ? number_format($receipt,2) : '' ?></td>
-                  <td align="right" class="valign-middle" style="color:red;"><?php echo $payment > 0 ? number_format($payment,2) : '' ?></td>
-                  <td align="right" class="valign-middle" style="color:#225992;font-weight:bold;font-size:14px;"><?php echo number_format($balance,2) ?></td>
+                  <td align="right" class="valign-middle" style="color:green;"><?php echo $receipt > 0 ? number_format($receipt,2,'.','') : '' ?></td>
+                  <td align="right" class="valign-middle" style="color:red;"><?php echo $payment > 0 ? number_format($payment,2,'.','') : '' ?></td>
+                  <td align="right" class="valign-middle" style="color:#225992;font-weight:bold;font-size:14px;"><?php echo number_format($balance,2,'.','') ?></td>
                   <td class="valign-middle"><?php echo $ref_no ?></td>
                   <td class="valign-middle"><?php echo $ref_date ?></td>
                 </tr>
               <?php
                 $cntr++;
                 endforeach; 
+                /* Keep balance in session if there are more than one page */
+                if($total_pages > 0) {
+                  if(isset($_SESSION['pcBalance'])) {
+                    unset($_SESSION['pcBalance']);
+                  }
+                  $_SESSION['pcBalance'] = $balance;
+                }
+
+                /* process book totals */
+                if($query_totals['opening']>0) {
+                  $book_receipts = $query_totals['opening'] + $query_totals['receipts'];
+                  $book_payments = $query_totals['payments'];
+                } else {
+                  $book_payments = $query_totals['opening'] + $query_totals['payments'];
+                  $book_receipts = $query_totals['receipts'];
+                }
+                $book_balance = $book_receipts - $book_payments;
               ?>
               <tr class="text-bold">
-                <td colspan="4" align="right">TOTALS</td>
-                <td align="right" style="color:green;font-weight:bold;font-size:16px;"><?php echo number_format($receipts_total, 2) ?></td>
-                <td align="right" style="color:red;font-weight:bold;font-size:16px;"><?php echo number_format($payments_total, 2) ?></td>
-                <td align="right" style="color:#225992;font-weight:bold;font-size:18px;"><?php echo number_format($balance, 2) ?></td>
+                <td colspan="4" align="right">Page Totals</td>
+                <td align="right" style="color:green;font-weight:bold;font-size:16px;"><?php echo number_format($receipts_total,2, '.','') ?></td>
+                <td align="right" style="color:red;font-weight:bold;font-size:16px;"><?php echo number_format($payments_total,2,'.','') ?></td>
+                <td align="right" style="color:#225992;font-weight:bold;font-size:18px;"><?php echo number_format($balance,2,'.','') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
               </tr>
+              <tr class="text-bold">
+                <td colspan="4" align="right">PETTY CASH BOOK TOTALS</td>
+                <td align="right" style="color:green;font-weight:bold;font-size:16px;"><?php echo number_format($book_receipts,2, '.','') ?></td>
+                <td align="right" style="color:red;font-weight:bold;font-size:16px;"><?php echo number_format($book_payments,2,'.','') ?></td>
+                <td align="right" style="color:#225992;font-weight:bold;font-size:18px;"><?php echo number_format($book_balance,2,'.','') ?></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>              
             </tbody>
           </table>
+          <?php elseif($excess_dates): ?>
+            <div style="text-align:center;margin-top:10px;font-weight:bold;color:red;font-size:14px;border:1px dotted;">Unable to generate Petty Cash Book! Difference between From and To dates must be less than 61 days.</div>
           <?php else: ?>
-            <tr>
-              <td colspan="7" style="text-align:center;">Unable to generate Petty Cash Book. Please change search filters.</td>
-            </tr>
+            <div style="text-align:center;margin-top:10px;font-weight:bold;color:red;font-size:14px;border:1px dotted;">Unable to generate Petty Cash Book. Please change search filters!</div>
           <?php endif; ?>
           <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>
         </div>

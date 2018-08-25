@@ -26,7 +26,7 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
-  $page_url = '/fin/pc-vouchers';
+  $page_url = $pagination_url = '/fin/pc-vouchers';
 ?>
 
 <div class="row">
