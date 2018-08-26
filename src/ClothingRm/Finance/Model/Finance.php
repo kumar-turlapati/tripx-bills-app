@@ -162,7 +162,7 @@ class Finance
 		$end_point = 'fin/debtors-list/'.$client_id;
 		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get',$end_point,array());
+		$response = $api_caller->sendRequest('get',$end_point,[]);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return array('status'=>true,'data'=>$response['response']['debtors']);

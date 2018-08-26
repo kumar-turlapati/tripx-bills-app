@@ -133,7 +133,7 @@
                     $user_name = $user_details['userName'];
                     $mobile_no = $user_details['mobileNo'];
                     $user_code = $user_details['userCode'];
-                    $user_type = '';
+                    $user_type = Utilities::get_business_user_types($user_details['userType'], false);
                     if($user_details['address'] !== '') {
                       $address = $user_details['address'];
                     }

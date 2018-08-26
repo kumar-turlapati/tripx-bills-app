@@ -118,7 +118,7 @@ class SalesIndentController {
     # --------------- build variables -----------------
     $controller_vars = array(
       'page_title' => 'Create Sales Indent',
-      'icon_name' => 'fa fa-inr',
+      'icon_name' => 'fa fa-delicious',
     );
     
     # ---------------- prepare form variables. ---------
@@ -263,7 +263,7 @@ class SalesIndentController {
     # --------------- build variables -----------------
     $controller_vars = array(
       'page_title' => 'Update Sales Indent',
-      'icon_name' => 'fa fa-inr',
+      'icon_name' => 'fa fa-delicious',
     );
     
     # ---------------- prepare form variables. ---------

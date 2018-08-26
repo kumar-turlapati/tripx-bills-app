@@ -623,6 +623,9 @@ $routes->add('report_openingBalance', new Routing\Route('/opening-balances', arr
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
 )));
+$routes->add('report_printSalesBill', new Routing\Route('/print-sales-bill', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBill',
+)));
 $routes->add('report_salesabs_month_taxrate', new Routing\Route('/sales-abs-month/taxrate', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesControllerTax::salesAbsMonthTaxRate',
 )));
@@ -656,9 +659,7 @@ $routes->add('report_printIndentsAgentwise', new Routing\Route('/print-indents-a
 
 return $routes;
 
-/*$routes->add('report_printSalesBill', new Routing\Route('/print-sales-bill', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBill',
-)));
+/*
 $routes->add('report_printSalesReturnBill', new Routing\Route('/print-sales-return-bill', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesReturnController::printSalesReturnBill',
 )));

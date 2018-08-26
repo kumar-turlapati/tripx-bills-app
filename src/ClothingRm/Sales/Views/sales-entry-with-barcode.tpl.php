@@ -530,11 +530,14 @@
               }
             ?>
             <button class="<?php echo $button_class ?>" id="SaveInvoice" name="op" value="SaveandPrintBill">
-              <i class="<?php echo $button_icon ?>"></i> Save Bill &amp; Print
+              <i class="<?php echo $button_icon ?>"></i> Save &amp; Print Bill
             </button>
-           <button class="btn btn-danger cancelButton" id="seWithBarcode">
+            <button class="btn btn-warning" id="SaveBill" name="op" value="SaveandPrintInvoice">
+              <i class="fa fa-save"></i> Save &amp; Print Invoice
+            </button>            
+            <button class="btn btn-danger cancelButton" id="seWithBarcode">
               <i class="fa fa-times"></i> Cancel
-           </button>
+            </button>
           </div>
         </form>
       </div>
@@ -542,10 +545,17 @@
   </div>
 </div>
 
-<?php if($bill_to_print !== ''): ?>
+<?php if($bill_to_print !== '' && $print_format === 'bill'): ?>
   <script>
     (function() {
       var printUrl = '/print-sales-bill-small?billNo=<?php echo $bill_to_print ?>';
+      var printWindow = window.open(printUrl, "_blank", "left=0,top=0,width=300,height=300,toolbar=0,scrollbars=0,status=0");
+    })();
+  </script>
+<?php elseif($bill_to_print !== '' && $print_format === 'invoice'): ?>
+  <script>
+    (function() {
+      var printUrl = '/print-sales-bill?billNo=<?php echo $bill_to_print ?>';
       var printWindow = window.open(printUrl, "_blank", "left=0,top=0,width=300,height=300,toolbar=0,scrollbars=0,status=0");
     })();
   </script>

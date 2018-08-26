@@ -18,8 +18,7 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry</a></li>
-          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry - Barcode</a></li>          
+          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry</a></li>          
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
           <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Petty cash voucher</a></li>
         </ul>
@@ -77,3 +76,5 @@
     </ul>
   </div>
 </aside>
+
+<?php /*<li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry</a></li> */?>

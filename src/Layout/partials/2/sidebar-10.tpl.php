@@ -18,7 +18,7 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/sales-indent/create"><i class="fa fa-inr"></i> Sales indent</a></li>
+          <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>
         </ul>
       </li>
       <li class="sub-menu">

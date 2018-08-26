@@ -706,7 +706,7 @@ class Utilities
     }
   }
 
- public static function get_business_user_types($bu_id=0, $return_all=true) {
+ public static function get_business_user_types($bu_type=0, $return_all=true) {
     $sources = [
       90 => 'Wholesaler',
       91 => 'Marketing Executive',
@@ -714,8 +714,8 @@ class Utilities
     ];
     if($return_all) {
       return $sources;
-    } elseif(isset($sources[$bu_id])) {
-      return $sources[$bu_id];
+    } elseif(array_key_exists($bu_type, $sources) && (int)$bu_type>0) {
+      return $sources[$bu_type];
     }
     return false;
   }

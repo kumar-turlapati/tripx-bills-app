@@ -45,6 +45,7 @@ class salesEntryWithBarcode {
     $taxes = $loc_states = [];
 
     $page_error = $page_success = $promo_key = '';
+    $print_format = 'bill';
 
     # ---------- end of initializing variables -----------------
     for($i=1;$i<=500;$i++) {
@@ -90,12 +91,16 @@ class salesEntryWithBarcode {
     }       
 
     # ---------- check for last bill printing ----
-    if( !is_null($request->get('lastBill')) ) {
+    if( !is_null($request->get('lastBill')) && is_numeric($request->get('lastBill')) ) {
       $bill_to_print = $request->get('lastBill');
     } else {
       $bill_to_print = '';
     }
-
+    if( !is_null($request->get('format')) && ($request->get('format') === 'bill' || $request->get('format') === 'invoice')) {
+      $print_format = $request->get('format');
+    } else {
+      $print_format = 'bill';
+    }
     # ------------------------------------- check for form Submission --------------------------------
     # ------------------------------------------------------------------------------------------------
     if(count($request->request->all()) > 0) {
@@ -103,21 +108,26 @@ class salesEntryWithBarcode {
       $submitted_promo_key = !is_null($request->get('promoKey')) ? $request->get('promoKey') : '';
       $derived_promo_key = !is_null($request->get('promoCode')) ? md5($request->get('promoCode').$this->promo_key) : '';
 
+      $op = $request->get('op');
+      if($op === 'SaveandPrintInvoice') {
+        $print_format = 'invoice';
+      } else {
+        $print_format = 'bill';
+      }
+
       // dump($submitted_promo_key, $derived_promo_key, $request->get('promoCode'));
 
       # check whether the url contains promo code or not.
       if(in_array($request->get('promoCode'), $offers) && $submitted_promo_key === $derived_promo_key && $submitted_promo_key !== '' && $derived_promo_key !== '') {
-
         $cleaned_params = $request->request->all();
         $api_response = $this->sales->create_sale($cleaned_params);
         if($api_response['status']) {
           $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> created successfully.');
-          Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['invoiceCode']);
+          Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['invoiceCode'].'&format='.$print_format);
         } else {
           $page_error = $api_response['apierror'];
           $this->flash->set_flash_message($page_error,1);  
         }
-
       } else {
       # if no promo code is available process the transaction as is.
         $form_data = $request->request->all();
@@ -133,7 +143,7 @@ class salesEntryWithBarcode {
             $api_response = $this->sales->create_sale($cleaned_params);
             if($api_response['status']) {
               $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> created successfully.');
-              Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['invoiceCode']);
+              Utilities::redirect('/sales/entry-with-barcode?lastBill='.$api_response['invoiceCode'].'&format='.$print_format);
             } else {
               $page_error = $api_response['apierror'];
               $this->flash->set_flash_message($page_error,1);
@@ -186,6 +196,7 @@ class salesEntryWithBarcode {
       'page_error' => $page_error,
       'page_success' => $page_success,
       'btn_label' => 'Create Invoice',
+      'print_format' => $print_format,
       'taxes' => $taxes,
       'form_data' => $form_data,
       'bill_to_print' => $bill_to_print,

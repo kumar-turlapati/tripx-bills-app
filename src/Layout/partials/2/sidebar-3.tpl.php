@@ -28,13 +28,13 @@
           <li><a href="/inward-entry"><i class="fa fa-compass"></i> Inward entry</a></li>
           <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Inward entry from files</a></li>          
           <?php /*<li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry</a></li> */ ?>
-          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry - Barcode</a></li>          
+          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry</a></li>          
           <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
-          <li><a href="/fin/receipt-voucher/create"><i class="fa fa-inr"></i> Receipt</a></li>
+          <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
           <li><a href="/fin/pc-voucher/create"><i class="fa fa-money"></i> Petty cash voucher</a></li>
           <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock adjustment</a></li>
-          <li><a href="/sales-indent/create"><i class="fa fa-inr"></i> Sales indent</a></li>                  
+          <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>                  
         </ul>
       </li>
       <li class="sub-menu">
