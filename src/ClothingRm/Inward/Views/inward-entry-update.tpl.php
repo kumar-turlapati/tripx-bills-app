@@ -275,17 +275,18 @@
             <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable">
               <thead>
                 <tr>
-                  <th style="width:300px;" class="text-center purItem">Item name</th>
-                  <th style="width:80px;" class="text-center purItem">HSN / SAC Code</th>                  
-                  <th style="width:50px;" class="text-center">Received<br />qty.</th>
-                  <th style="width:50px" class="text-center">Free<br />qty.</th>
-                  <th style="width:50px" class="text-center">Billed<br />qty.</th>
-                  <th style="width:55px" class="text-center">MRP<br />( in Rs. )</th>
-                  <th style="width:55px" class="text-center">Rate / Unit<br />( in Rs. )</th>
-                  <th style="width:55px" class="text-center">Gross Amt.<br />( in Rs. )</th>
-                  <th style="width:55px" class="text-center">Discount<br />( in Rs. )</th>                  
-                  <th style="width:70px" class="text-center">Taxable Amt.<br />( in Rs. )</th>
-                  <th style="width:70px" class="text-center">G.S.T<br />( in % )</th>
+                  <th style="width:240px;" class="text-center purItem">Item name</th>
+                  <th style="width:80px;"  class="text-center purItem">HSN / SAC Code</th>                  
+                  <th style="width:50px;"  class="text-center">Received<br />qty.</th>
+                  <th style="width:50px"   class="text-center">Free<br />qty.</th>
+                  <th style="width:50px"   class="text-center">Billed<br />qty.</th>
+                  <th style="width:60px"   class="text-center">Packed/<br />Unit</th>                  
+                  <th style="width:55px"   class="text-center">MRP<br />( in Rs. )</th>
+                  <th style="width:55px"   class="text-center">Rate / Unit<br />( in Rs. )</th>
+                  <th style="width:55px"   class="text-center">Gross Amt.<br />( in Rs. )</th>
+                  <th style="width:55px"   class="text-center">Discount<br />( in Rs. )</th>                  
+                  <th style="width:70px"   class="text-center">Taxable Amt.<br />( in Rs. )</th>
+                  <th style="width:70px"   class="text-center">G.S.T<br />( in % )</th>
                 </tr>
               </thead>
               <tbody>
@@ -339,6 +340,11 @@
                     $hsn_code = $form_data['hsnCodes'][$i-1];
                   } else {
                     $hsn_code = '';
+                  }
+                  if( isset($form_data['packedQty'][$i-1]) && $form_data['packedQty'][$i-1] !== '' ) {
+                    $packed_qty = $form_data['packedQty'][$i-1];
+                  } else {
+                    $packed_qty = '';
                   }                  
 
                   $gross_amount = $billed_qty*$item_rate;
@@ -429,6 +435,20 @@
                       <span class="error">Invalid</span>
                     <?php endif; ?>                    
                   </td>
+                  <td style="width:60px;">
+                    <input 
+                      type="text" 
+                      name="packedQty[]"
+                      placeholder="Pkd.Qty."
+                      class="form-control noEnterKey"
+                      style="width:60px;font-size:12px;"
+                      id="packed_<?php echo $i ?>"
+                      value="<?php echo $packed_qty ?>"                      
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['mrp']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>               
+                  </td>                  
                   <td style="width:55px;">
                     <input 
                       type="text" 
@@ -537,24 +557,24 @@
                 $net_pay = round($grand_total);
               ?>
                 <tr>
-                  <td colspan="10" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
+                  <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
                   <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo round($items_total, 2) ?></td>
                 </tr>
                 <tr>
-                  <td colspan="10" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
+                  <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
                   <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo round($total_tax_amount, 2) ?></td>
                 </tr>
                 <tr>
-                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="10" align="right">(+ or -) Round off</td>
+                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">(+ or -) Round off</td>
                   <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo $round_off ?></td>
                 </tr>
                 <tr>
-                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="10" align="right">Total Amount</td>
+                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">Total Amount</td>
                   <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo $net_pay ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="10">
+                  <td style="vertical-align:middle;text-align:right;" colspan="11">
                     <textarea
                       class="form-control noEnterKey"
                       rows="3"

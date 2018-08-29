@@ -154,7 +154,7 @@ class UploadInventoryController
         $category_name = Utilities::clean_string($imported_record_details['CategoryName']);
         $gst = Utilities::clean_string($imported_record_details['GST']);
         $hsn_sac_code = Utilities::clean_string($imported_record_details['HsnSacCode']);
-        $min_indent_qty = Utilities::clean_string($imported_record_details['MinIndentQty']);
+        $packed_qty = Utilities::clean_string($imported_record_details['PackedQty']);
 
         if(!is_numeric($closing_qty)) {
           $error_flag = true;
@@ -182,9 +182,9 @@ class UploadInventoryController
         } else {
           $hsn_sac_code = '';
         }
-        if(!is_numeric($min_indent_qty)) {
+        if(!is_numeric($packed_qty) || $packed_qty < 0) {
           $error_flag = true;
-          $xl_errors[$key]['MinIndentQty'] = 'Invalid Minimum Indent Qty. at Row - '.($key+2);
+          $xl_errors[$key]['PackedQty'] = 'Invalid Packed Qty. at Row - '.($key+2);
         }        
 
         if(!$error_flag) {
@@ -196,7 +196,7 @@ class UploadInventoryController
           $cleaned_array[$key]['CategoryName'] = $category_name;
           $cleaned_array[$key]['GST'] = $gst;
           $cleaned_array[$key]['HsnSacCode'] = $hsn_sac_code;
-          $cleaned_array[$key]['MinIndentQty'] = round($min_indent_qty,2);
+          $cleaned_array[$key]['PackedQty'] = round($packed_qty,2);
         }
       }
     }

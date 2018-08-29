@@ -63,7 +63,7 @@ class OpeningsController {
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
       if( count($opbal_details)>0 && $update_flag) {
-        $opbal_response = $this->openings_model->updateOpBal($submitted_data,$op_code);             
+        $opbal_response = $this->openings_model->updateOpBal($submitted_data,$op_code);
       } else {
         $opbal_response = $this->openings_model->createOpBal($submitted_data);
       }
@@ -74,8 +74,8 @@ class OpeningsController {
           $errors = $opbal_response['errors'];
         } elseif(isset($opbal_response['apierror'])) {
           $page_error = $opbal_response['apierror'];
+          $flash->set_flash_message($page_error, 1);
         }
-        $submitted_data = $opbal_details;
       } elseif($update_flag===false) {
         $page_success = 'Opening balance added successfully for item [ '.$request->get('itemName').' ]';
         $flash->set_flash_message($page_success);

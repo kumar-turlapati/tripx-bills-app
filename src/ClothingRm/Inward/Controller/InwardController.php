@@ -37,7 +37,7 @@ class InwardController
     $form_errors = $form_data = [];
     $api_error = '';
     
-    $total_item_rows = 25;
+    $total_item_rows = 50;
 
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
@@ -195,6 +195,7 @@ class InwardController
         $cgst_amounts = array_column($purchase_details['itemDetails'],'cgstAmount');
         $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
+        $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
 
         # unset item details from api data.
         unset($purchase_details['itemDetails']);
@@ -214,6 +215,7 @@ class InwardController
         $form_data['mrp'] = $mrps;
         $form_data['itemDiscount'] = $discounts;
         $form_data['hsnCodes'] = $hsn_codes;
+        $form_data['packedQty'] = $packed_qtys;
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
           $this->flash->set_flash_message($page_error, 1);
@@ -560,7 +562,8 @@ class InwardController
       $item_rates_a = $form_data['itemRate'];
       $tax_percents_a = $form_data['taxPercent'];
       $item_discounts = $form_data['itemDiscount'];
-      $item_hsnsac_codes_a = $form_data['hsnSacCode'];      
+      $item_hsnsac_codes_a = $form_data['hsnSacCode'];
+      $packed_qty_a = $form_data['packedQty'];
 
       foreach($item_names_a as $key=>$item_name) {
         if($item_name !== '') {
@@ -575,6 +578,7 @@ class InwardController
           $tax_percent = Utilities::clean_string($tax_percents_a[$key]);
           $discount_amount = Utilities::clean_string($item_discounts[$key]);
           $hsn_sac_code = Utilities::clean_string($item_hsnsac_codes_a[$key]);
+          $packed_qty = Utilities::clean_string($packed_qty_a[$key]);
 
           $cleaned_params['itemDetails']['itemName'][] = $item_name;
 
@@ -622,6 +626,12 @@ class InwardController
             $form_errors['itemDetails'][$key]['hsnSacCode'] = 'Invalid HSN or SAC code';
           } else {
             $cleaned_params['itemDetails']['hsnSacCode'][] = $hsn_sac_code;
+          }
+          # validate packed qty.
+          if(is_numeric($packed_qty) && $packed_qty > 0) {
+            $cleaned_params['itemDetails']['packedQty'][] = $packed_qty;
+          } else {
+            $form_errors['itemDetails'][$key]['packedQty'] = 'Invalid Packed Qty.';
           }
         }
       }

@@ -1,16 +1,26 @@
 <?php
+
   use Atawa\Utilities;
-  
+
+  $item_name_dis = $update_mode ? ' disabled="disabled"' : '';
+
   $item_name = isset($submitted_data['itemName']) && $submitted_data['itemName'] !== '' ? $submitted_data['itemName'] : '';
   $opening_rate = isset($submitted_data['openingRate']) && $submitted_data['openingRate'] !== '' ? $submitted_data['openingRate'] : ''; 
   $opening_qty = isset($submitted_data['openingQty']) && $submitted_data['openingQty'] !== '' ? $submitted_data['openingQty'] : '';
   $purchase_rate = isset($submitted_data['purchaseRate']) && $submitted_data['purchaseRate'] !== '' ? $submitted_data['purchaseRate'] : '';
   $tax_percent = isset($submitted_data['taxPercent']) && $submitted_data['taxPercent'] !== '' ? $submitted_data['taxPercent'] + 0 : '';
   $location_code = isset($submitted_data['locationID']) && isset($location_codes[$submitted_data['locationID']]) ? $location_codes[$submitted_data['locationID']] : '';
-  $upp = isset($submitted_data['unitsPerPack']) ? $submitted_data['unitsPerPack'] : 1;
+  $packed_qty = isset($submitted_data['packedQty']) ? $submitted_data['packedQty'] : 1;
   $lot_no = isset($submitted_data['lotNo']) ? $submitted_data['lotNo'] : '';
-
-  $item_name_dis = $update_mode ? ' disabled="disabled"' : '';
+  if($opening_qty === '') {
+    $opening_qty = isset($submitted_data['opQty']) ? $submitted_data['opQty'] : '';
+  }
+  if($opening_rate === '') {
+    $opening_rate = isset($submitted_data['opRate']) ? $submitted_data['opRate'] : '';
+  }
+  if($location_code === '') {
+    $location_code = isset($submitted_data['locationCode']) ? $submitted_data['locationCode'] : '';
+  }
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -20,7 +30,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/opbal/list" class="btn btn-default">
-              <i class="fa fa-book"></i> Opening Balance List
+              <i class="fa fa-book"></i> Opening Balances List
             </a>
           </div>
         </div>
@@ -28,21 +38,21 @@
           <h2 class="hdg-reports borderBottom">Item Details</h2>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Item name</label>
+              <label class="control-label">Item Name</label>
               <input type="text" class="form-control inameAc noEnterKey" name="itemName" id="itemName" value="<?php echo $item_name ?>" <?php echo $item_name_dis ?>>
               <?php if(isset($errors['itemName'])): ?>
                 <span class="error"><?php echo $errors['itemName'] ?></span>
               <?php endif; ?>           
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Opening qty.</label>
+              <label class="control-label">Opening Qty.</label>
               <input type="text" class="form-control noEnterKey" name="opQty" id="opQty" value="<?php echo $opening_qty ?>" />
               <?php if(isset($errors['opQty'])): ?>
                 <span class="error"><?php echo $errors['opQty'] ?></span>
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Opening rate (in Rs.)</label>
+              <label class="control-label">Opening Rate (in Rs.)</label>
               <input type="text" class="form-control noEnterKey" name="opRate" id="opRate" value="<?php echo $opening_rate ?>">
               <?php if(isset($errors['opRate'])): ?>
                 <span class="error"><?php echo $errors['opRate'] ?></span>
@@ -51,14 +61,14 @@
           </div>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Purchase rate (in Rs.)</label>
+              <label class="control-label">Purchase Rate (in Rs.)</label>
               <input type="text" class="form-control noEnterKey" name="purchaseRate" id="purchaseRate" value="<?php echo $purchase_rate ?>" />
               <?php if(isset($errors['purchaseRate'])): ?>
                 <span class="error"><?php echo $errors['purchaseRate'] ?></span>
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Tax percent</label>
+              <label class="control-label">Tax Percent</label>
               <div class="select-wrap">
                 <select class="form-control" name="taxPercent" id="taxPercent">
                   <?php 
@@ -78,7 +88,7 @@
               </div>             
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name</label>
+              <label class="control-label">Store Name</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php
@@ -101,21 +111,21 @@
               <?php endif; ?>
             </div>
           </div>
-          <?php if($update_mode): ?>
-            <div class="form-group">
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Packed Qty. / Each unit</label>
+              <input type="text" class="form-control noEnterKey" name="packedQty" id="packedQty" value="<?php echo $packed_qty ?>" />
+              <?php if(isset($errors['packed_qty'])): ?>
+                <span class="error"><?php echo $errors['packed_qty'] ?></span>
+              <?php endif; ?>
+            </div>
+            <?php if($update_mode): ?>
               <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                <label class="control-label">Units per pack</label>
-                <input type="text" class="form-control noEnterKey" name="upp" id="upp" value="<?php echo $upp ?>" disabled="disabled" />
-                <?php if(isset($errors['upp'])): ?>
-                  <span class="error"><?php echo $errors['upp'] ?></span>
-                <?php endif; ?>
-              </div>
-              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                <label class="control-label">Lot no. (auto)</label>
+                <label class="control-label">Lot No. (auto generated)</label>
                 <input type="text" class="form-control noEnterKey" name="lotNo" id="lotNo" value="<?php echo $lot_no ?>" disabled="disabled" />
               </div>
+            <?php endif; ?>
             </div>
-          <?php endif; ?>
           <div class="text-center">
             <button class="btn btn-primary" id="Save">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>

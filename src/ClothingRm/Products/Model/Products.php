@@ -100,9 +100,9 @@ class Products
 				$errors['itemName'] = $this->_errorDescriptions('itemName');
 		}
 
-		if($params['unitsPerPack'] == '') {
+/*	if($params['unitsPerPack'] == '') {
 			$errors['unitsPerPack'] = $this->_errorDescriptions('unitsPerPack');
-		}
+		}*/
 
 		if($params['hsnSacCode'] !== '' && (!is_numeric($params['hsnSacCode']) || strlen($params['hsnSacCode']) > 8) ) {
 			$errors['hsnSacCode'] = 'Invalid HSN / SAC code.';
@@ -113,7 +113,6 @@ class Products
 		} else {
 			return array('status' => true, 'errors' => $errors);
 		}
-
 	}
 
 	/**
@@ -162,7 +161,6 @@ class Products
 		$api_params = array(
 			'mandatory' => array(
 				'itemName',
-				'unitsPerPack'
 			),
 			'optional' => array(
 			),			

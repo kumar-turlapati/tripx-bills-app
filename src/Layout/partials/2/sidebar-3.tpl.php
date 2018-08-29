@@ -43,10 +43,10 @@
         </a>
         <ul class="sub">
           <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales register</a></li>
-          <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales return register</a></li>
+          <li><a href="/sales-return/list"><i class="fa fa-undo"></i> Sales return register</a></li>
           <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Inward register</a></li>
           <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN register</a></li>
-          <li><a href="/fin/payment-vouchers"><i class="fa fa-inr"></i> Payments register</a></li> 
+          <li><a href="/fin/payment-vouchers"><i class="fa fa-strikethrough"></i> Payments register</a></li> 
           <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit notes register</a></li>
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock transfer register</a></li>          
           <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty cash register</a></li>
@@ -54,7 +54,7 @@
           <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock adjustment register</a></li>
           <li><a href="/purchase-return/register"><i class="fa fa-laptop"></i> Purchase return register</a></li>
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes register</a></li>
-          <li><a href="/sales-indents/list"><i class="fa fa-inr"></i> Sales indent register</a></li>
+          <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales indent register</a></li>
         </ul>
       </li>
       <li class="sub-menu">

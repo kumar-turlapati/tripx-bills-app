@@ -10,20 +10,10 @@
   } else {
     $sel_mfg_code = '';
   }
-  if(isset($submitted_data['minIndentQty'])) {
-    $min_indent_qty = $submitted_data['minIndentQty'];
-  } else {
-    $min_indent_qty = '';
-  }
   if(isset($submitted_data['mrp'])) {
     $sel_mrp = $submitted_data['mrp'];
   } else {
     $sel_mrp = '';
-  }
-  if(isset($submitted_data['unitsPerPack'])) {
-    $sel_upp = $submitted_data['unitsPerPack'];
-  } else {
-    $sel_upp = 1;
   }
   if(isset($submitted_data['catCode'])) {
     $sel_cat = $submitted_data['catCode'];
@@ -154,35 +144,6 @@
               <?php endif; ?>              
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Min. Indent Qty. (for marketing campaigns)</label>
-              <input
-                type="text" 
-                class="form-control noEnterKey" 
-                name="minIndentQty" 
-                id="minIndentQty" 
-                value="<?php echo $min_indent_qty ?>"
-                maxlength="10"
-              >
-              <?php if(isset($errors['minIndentQty'])): ?>
-                <span class="error"><?php echo $errors['minIndentQty'] ?></span>
-              <?php endif; ?>              
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Units per pack</label>
-              <input
-                type="text" 
-                class="form-control noEnterKey" 
-                name="unitsPerPack" 
-                id="unitsPerPack" 
-                value="<?php echo $sel_upp ?>"
-              >
-              <?php if(isset($errors['unitsPerPack'])): ?>
-                <span class="error"><?php echo $errors['unitsPerPack'] ?></span>
-              <?php endif; ?>
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Tax rate</label>
               <div class="select-wrap">
                 <select class="form-control" name="taxPercent" id="taxPercent">
@@ -202,6 +163,8 @@
                 <?php endif; ?>
               </div>              
             </div>
+          </div>
+          <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Status</label>
               <div class="select-wrap">
@@ -223,33 +186,11 @@
               <?php endif; ?>
             </div>                   
           </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Manufacturer name</label>
-              <div class="select-wrap">
-                <select class="form-control" name="mfgID" id="mfgID">
-                  <?php 
-                    foreach($mfgs as $key=>$value): 
-                      if($sel_mfg_code === $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['status'])): ?>
-                  <span class="error"><?php echo $errors['status'] ?></span>
-                <?php endif; ?>
-              </div>
-            </div> 
-          </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
             </button>
-          </div>          
+          </div>
         </form>  
       </div>
     </section>
@@ -272,3 +213,70 @@
                   <?php endforeach; ?>
                 </select>
               </div>*/ ?>
+
+
+            <?php /*
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Min. Indent Qty. (for marketing campaigns)</label>
+              <input
+                type="text" 
+                class="form-control noEnterKey" 
+                name="minIndentQty" 
+                id="minIndentQty" 
+                value="<?php echo $min_indent_qty ?>"
+                maxlength="10"
+              >
+              <?php if(isset($errors['minIndentQty'])): ?>
+                <span class="error"><?php echo $errors['minIndentQty'] ?></span>
+              <?php endif; ?>              
+            </div> */?>
+
+            <?php /*
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Units per pack</label>
+              <input
+                type="text" 
+                class="form-control noEnterKey" 
+                name="unitsPerPack" 
+                id="unitsPerPack" 
+                value="<?php echo $sel_upp ?>"
+              >
+              <?php if(isset($errors['unitsPerPack'])): ?>
+                <span class="error"><?php echo $errors['unitsPerPack'] ?></span>
+              <?php endif; ?>
+            </div> */ ?>
+
+          <?php /*
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Manufacturer name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="mfgID" id="mfgID">
+                  <?php 
+                    foreach($mfgs as $key=>$value): 
+                      if($sel_mfg_code === $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }                       
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+                <?php if(isset($errors['status'])): ?>
+                  <span class="error"><?php echo $errors['status'] ?></span>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div> */ ?>
+<?php /*
+/*  if(isset($submitted_data['minIndentQty'])) {
+    $min_indent_qty = $submitted_data['minIndentQty'];
+  } else {
+    $min_indent_qty = '';
+  }
+  if(isset($submitted_data['unitsPerPack'])) {
+    $sel_upp = $submitted_data['unitsPerPack'];
+  } else {
+    $sel_upp = 1;
+  }*/ ?>          

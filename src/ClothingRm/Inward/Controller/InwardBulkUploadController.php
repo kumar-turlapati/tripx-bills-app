@@ -258,6 +258,8 @@ class InwardBulkUploadController
             $tax_percent = (float)Utilities::clean_string($item_details['TaxPercent']);
             $item_discount = (float)Utilities::clean_string($item_details['DiscountAmount']);
             $hsn_sac_code = Utilities::clean_string($item_details['HsnSacCode']);
+            $packed_qty = Utilities::clean_string($item_details['PackedQty']);
+
             if($item_name === '') {
               $form_errors['itemDetails'][$key]['itemName'] = 'Matched item name is required.';
             } else {
@@ -285,9 +287,23 @@ class InwardBulkUploadController
             }
             if($item_discount !== '' && $item_discount < 0) {
               $form_errors['itemDetails'][$key]['DiscountAmount'] = 'Invalid discount value.';
-            } else {
+            } elseif($item_discount > 0) {
               $imported_records[$key]['DiscountAmount'] = $item_discount;
+            } else {
+              $imported_records[$key]['DiscountAmount'] = 0;
             }
+            if($item_discount !== '' && $item_discount < 0) {
+              $form_errors['itemDetails'][$key]['DiscountAmount'] = 'Invalid discount value.';
+            } elseif($item_discount > 0) {
+              $imported_records[$key]['DiscountAmount'] = $item_discount;
+            } else {
+              $imported_records[$key]['DiscountAmount'] = 0;
+            }
+            if($packed_qty !== '' && $packed_qty > 0) {
+              $imported_records[$key]['PackedQty'] = $packed_qty;
+            } else {
+              $form_errors['itemDetails'][$key]['PackedQty'] = 'Invalid Packed Qty.';
+            }            
             if($hsn_sac_code !== '') {
               if(!is_numeric(str_replace([' '], '', $hsn_sac_code))) {
                 $form_errors['itemDetails'][$key]['HsnSacCode'] = 'Invalid HSN/SAC code.';
