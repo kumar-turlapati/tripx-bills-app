@@ -145,7 +145,7 @@
                     <td class="text-left med-name valign-middle"><?php echo $category_name ?></td>                    
                     <td class="valign-middle"><?php echo number_format($opening_qty,2,'.','') ?></td>
                     <td class="valign-middle"><?php echo number_format($packed_qty,2,'.','') ?></td>
-                    <td class="valign-middle"><?php echo number_format($total_qty,,2,'.','') ?></td>
+                    <td class="valign-middle"><?php echo number_format($total_qty,2,'.','') ?></td>
                     <td class="valign-middle"><?php echo number_format($opening_rate,2,'.','') ?></td>
                     <td class="text-bold valign-middle"><?php echo number_format($opening_value,2,'.','') ?></td>
                     <td class="text-bold valign-middle"><?php echo number_format($purchase_rate,2,'.','') ?></td>                    
