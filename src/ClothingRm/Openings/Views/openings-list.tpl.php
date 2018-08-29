@@ -121,28 +121,30 @@
             <tbody>
               <?php 
                 $cntr = $sl_no;
-                $tot_opening_value = 0;
+                $tot_opening_stock_value = 0;
                 foreach($openings as $opening_details):
                   $item_name = $opening_details['itemName'];
                   $category_name = $opening_details['categoryName'];
                   $opening_rate = $opening_details['openingRate']; 
                   $opening_qty = $opening_details['openingQty'];
-                  $opening_value = $opening_qty*$opening_rate;
                   $purchase_rate = $opening_details['purchaseRate'];
                   $tax_percent = $opening_details['taxPercent'];
                   $opening_code = $opening_details['openingCode'];
+                  $packed_qty = $opening_details['packedQty'];
 
-                  $tot_opening_value += ($opening_qty * $purchase_rate);
+                  $opening_value = round($opening_qty*$opening_rate*$packed_qty,2);
+
+                  $tot_opening_stock_value += round($opening_qty*$purchase_rate*$packed_qty, 2);
               ?>
                   <tr class="text-uppercase text-right font11">
                     <td class="valign-middle"><?php echo $cntr ?></td>
                     <td class="text-left med-name valign-middle"><?php echo $item_name ?></td>
                     <td class="text-left med-name valign-middle"><?php echo $category_name ?></td>                    
                     <td class="valign-middle"><?php echo $opening_qty ?></td>
-                    <td class="valign-middle"><?php echo number_format($opening_rate,2) ?></td>
-                    <td class="text-bold valign-middle"><?php echo number_format($opening_value,2) ?></td>
-                    <td class="text-bold valign-middle"><?php echo number_format($purchase_rate,2) ?></td>                    
-                    <td class="text-right valign-middle"><?php echo number_format($tax_percent,2) ?></td>
+                    <td class="valign-middle"><?php echo number_format($opening_rate,2,'.','') ?></td>
+                    <td class="text-bold valign-middle"><?php echo number_format($opening_value,2,'.','') ?></td>
+                    <td class="text-bold valign-middle"><?php echo number_format($purchase_rate,2,'.','') ?></td>                    
+                    <td class="text-right valign-middle"><?php echo number_format($tax_percent,2,'.','') ?></td>
                     <td>
                       <?php if($opening_code !== ''): ?>
                         <div class="btn-actions-group">
@@ -163,7 +165,7 @@
             ?>
               <tr>
                 <td colspan="5" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
-                <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_value,2,'.','') ?></td>
+                <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_stock_value,2,'.','') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>                                
