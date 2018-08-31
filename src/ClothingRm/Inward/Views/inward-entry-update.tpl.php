@@ -347,7 +347,12 @@
                     $packed_qty = '';
                   }                  
 
-                  $gross_amount = $billed_qty*$item_rate;
+                  if(is_numeric($packed_qty) && $packed_qty>0) {
+                    $gross_amount = $billed_qty*$item_rate*$packed_qty;
+                  } else {
+                    $gross_amount = $billed_qty*$item_rate;
+                  }
+                  
                   $item_amount = $gross_amount - $item_discount;
                   $tax_amount = $item_amount*$tax_percent/100;
 
@@ -558,19 +563,19 @@
               ?>
                 <tr>
                   <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
-                  <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo round($items_total, 2) ?></td>
+                  <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
                   <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
-                  <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo round($total_tax_amount, 2) ?></td>
+                  <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">(+ or -) Round off</td>
-                  <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo $round_off ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo number_format($round_off,2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">Total Amount</td>
-                  <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo $net_pay ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>

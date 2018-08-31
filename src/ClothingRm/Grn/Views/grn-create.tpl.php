@@ -228,7 +228,7 @@
                   <th style="width:250px;" class="text-center purItem">Item name</th>
                   <th style="width:100px;" class="text-center purItem">Lot No.</th>                  
                   <th style="width:50px;"  class="text-center purItem">HSN/SAC Code</th>                  
-                  <th style="width:50px;"  class="text-center">Available<br />qty.</th>
+                  <th style="width:50px;"  class="text-center">Packed<br /> / Unit</th>
                   <th style="width:50px"   class="text-center">Accepted<br />qty.</th>
                   <th style="width:50px"   class="text-center">MRP<br />(Rs.)</th>
                   <th style="width:50px"   class="text-center">Item Rate<br />(Rs.)</th>
@@ -260,7 +260,7 @@
                   } else {
                     $free_qty = 0;
                   }
-                  if( isset($form_data['expDate'][$i-1]) && $form_data['expDate'][$i-1] !== '' ) {
+                  if( isset($form_data['mrp'][$i-1]) && $form_data['mrp'][$i-1] !== '' ) {
                     $mrp = $form_data['mrp'][$i-1];
                   } else {
                     $mrp = 0;
@@ -289,55 +289,62 @@
                     $lot_no = $form_data['lotNos'][$i-1];
                   } else {
                     $lot_no = '';
-                  }                             
-                  $item_amount = round( ($inward_qty-$free_qty)*$item_rate, 2);
+                  }
+                  if( isset($form_data['packedQtys'][$i-1]) && $form_data['packedQtys'][$i-1] !== '' ) {
+                    $packed_qty = $form_data['packedQtys'][$i-1];
+                  } else {
+                    $packed_qty = '';
+                  }
+                  $item_amount = round( ($inward_qty-$free_qty)*$packed_qty*$item_rate, 2);
+                  $inward_qty_in_units = $inward_qty-$free_qty;
+                  $inward_qty = $inward_qty * $packed_qty;
               ?>
                 <tr class="purchaseItemRow">
                   <td style="vertical-align:middle;"><?php echo $item_name ?></td>
                   <td style="vertical-align:middle;"><?php echo $lot_no ?></td>                  
                   <td style="vertical-align:middle;"><?php echo $hsn_sac_code ?></td>                  
-                  <td style="vertical-align:middle;text-align:right;"><?php echo $inward_qty ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $inward_qty_in_units.' x '.number_format($packed_qty,2,'.','') ?></td>
                   <td style="vertical-align:middle;width:70px;" align="center">
                     <input
                       type="text"
                       class="form-control inwFreeQty noEnterKey" 
                       name="acceptedQty[<?php echo $item_code.'__'.$lot_no ?>]" 
                       placeholder="Accepted Qty."
-                      style="text-align:right;width:70px;background-color:#f1f442;border:1px solid #000;font-weight:bold;"
+                      style="text-align:right;width:70px;/*background-color:#f1f442;border:1px solid #000;*/font-weight:bold;"
                       id="acceptedQty_<?php echo $i ?>"
-                      value="<?php echo $inward_qty ?>"
-                      readonly   
+                      value="<?php echo number_format($inward_qty,2,'.','') ?>"
+                      readonly
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['acceptedQty']) ) :?>
                       <span class="error">Invalid</span>
                     <?php endif; ?>                     
                   </td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($mrp,2) ?></td>
-                  <td style="vertical-align:middle;text-align:right;font-weight:bold;"><?php echo number_format($item_rate,2) ?></td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($discount_amount,2) ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($mrp,2,'.','') ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-weight:bold;"><?php echo number_format($item_rate,2,'.','') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($discount_amount,2,'.','') ?></td>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_percent,2).'%' ?></td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($item_amount,2) ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($item_amount,2,'.','') ?></td>
                 </tr>
               <?php endfor; ?>
                 <tr>
                   <td colspan="9" align="right">Taxable value</td>
-                  <td id="inwItemsTotal" align="right"><?php echo number_format($bill_amount, 2) ?></td>
+                  <td id="inwItemsTotal" align="right"><?php echo number_format($bill_amount, 2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">G.S.T</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount, 2) ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount, 2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Grand totals</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_value, 2) ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_value, 2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Round off</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2) ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Net pay</td>
-                  <td style="vertical-align:middle;text-align:right;font-weight:bold;font-size:18px;"><?php echo number_format($net_pay, 2) ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-weight:bold;font-size:18px;"><?php echo number_format($net_pay, 2,'.','') ?></td>
                 </tr>                
               </tbody>
             </table>

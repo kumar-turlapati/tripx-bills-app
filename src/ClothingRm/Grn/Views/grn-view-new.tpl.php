@@ -152,18 +152,22 @@
                   	$item_name = $grn_item_details[$i]['itemName'];
                     $lot_no = $grn_item_details[$i]['lotNo'];
                   	$rec_qty = $grn_item_details[$i]['itemQty'];
+                    $free_qty = $grn_item_details[$i]['freeQty'];
                   	$acc_qty = $grn_item_details[$i]['grnQty'];
-                  	$free_qty = $grn_item_details[$i]['freeQty'];
                   	$mrp = $grn_item_details[$i]['mrp'];
                   	$item_rate = $grn_item_details[$i]['itemRate'];
                   	$tax_percent = $grn_item_details[$i]['taxPercent'];
                     $discount = $grn_item_details[$i]['discountAmount'];
+                    $packed_qty = $grn_item_details[$i]['packedQty'];
+
+                    $rec_qty = round(($rec_qty+$free_qty)*$packed_qty,2);
+                    $acc_qty = round($acc_qty*$packed_qty, 2);
                   	
                    //  $item_amount = ($item_rate*($acc_qty-$free_qty));
                   	// $tax_amount = ($item_amount*$tax_percent/100);
                   	// $item_amount += $tax_amount;
 
-                    $gross_amount = round(($acc_qty-$free_qty)*$item_rate,2);
+                    $gross_amount = round(($rec_qty-$free_qty)*$item_rate,2);
                     $taxable_amount = $gross_amount-$discount;
 
                     $tot_acc_qty += $acc_qty;
@@ -171,14 +175,14 @@
                     <tr>
                       <td><?php echo $item_name ?></td>
                       <td><?php echo $lot_no ?></td>                      
-                      <td class="text-right"><?php echo $rec_qty.' ('.$free_qty.')'  ?></td>
-                      <td class="text-right"><?php echo $acc_qty ?></td>
-                      <td class="text-right"><?php echo number_format($mrp,2) ?></td>
-                      <td class="text-right"><?php echo number_format($item_rate,2) ?></td>
-                      <td class="text-right"><?php echo number_format($gross_amount,2) ?></td>
-                      <td class="text-right"><?php echo number_format($discount,2) ?></td>
-                      <td class="text-right"><?php echo number_format($taxable_amount,2) ?></td>                      
-                      <td class="text-right"><?php echo number_format($tax_percent,2) ?></td>
+                      <td class="text-right"><?php echo number_format($rec_qty,2,'.','') ?></td>
+                      <td class="text-right"><?php echo number_format($acc_qty,2,'.','') ?></td>
+                      <td class="text-right"><?php echo number_format($mrp,2,'.','') ?></td>
+                      <td class="text-right"><?php echo number_format($item_rate,2,'.','') ?></td>
+                      <td class="text-right"><?php echo number_format($gross_amount,2,'.','') ?></td>
+                      <td class="text-right"><?php echo number_format($discount,2,'.','') ?></td>
+                      <td class="text-right"><?php echo number_format($taxable_amount,2,'.','') ?></td>                      
+                      <td class="text-right"><?php echo number_format($tax_percent,2,'.','') ?></td>
                     </tr>
                 <?php endfor; ?>
                   <tr>
@@ -189,19 +193,19 @@
                   </tr>
                   <tr>
                     <td style="vertical-align:middle;" colspan="9" align="right">G.S.T</td>
-                    <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount, 2) ?></td>
+                    <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount,2,'.','') ?></td>
                   </tr>
                   <tr>
                     <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Bill value</td>
-                    <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_value, 2) ?></td>
+                    <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_value,2,'.','') ?></td>
                   </tr>
                   <tr>
                     <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Round off</td>
-                    <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2) ?></td>
+                    <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off,2,'.','') ?></td>
                   </tr>
                   <tr>
                     <td style="vertical-align:middle;font-weight:bold;font-size:18px;" colspan="9" align="right">Net pay</td>
-                    <td style="vertical-align:middle;text-align:right;font-weight:bold;font-size:18px;"><?php echo number_format($net_pay, 2) ?></td>
+                    <td style="vertical-align:middle;text-align:right;font-weight:bold;font-size:18px;"><?php echo number_format($net_pay,2,'.','') ?></td>
                   </tr>                
               </tbody>
             </table>

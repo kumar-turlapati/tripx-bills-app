@@ -25,7 +25,7 @@ class GrnControllerNew
     $this->grn_model = new GrnNew;    
   }
 
-  # Grn entry Action
+  // Grn entry Action
   public function grnEntryCreateAction(Request $request) {
     
     if( is_null($request->get('poNo')) ) {
@@ -96,6 +96,7 @@ class GrnControllerNew
       $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
       $hsn_sac_codes = array_column($purchase_details['itemDetails'], 'hsnSacCode');
       $lot_nos = array_column($purchase_details['itemDetails'], 'lotNo');
+      $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
 
       # unset item details from api data.
       unset($purchase_details['itemDetails']);
@@ -116,7 +117,8 @@ class GrnControllerNew
       $form_data['itemDiscount'] = $discounts;
       $form_data['hsnSacCodes'] = $hsn_sac_codes;
       $form_data['itemCode'] = $item_codes;
-      $form_data['lotNos'] = $lot_nos;      
+      $form_data['lotNos'] = $lot_nos;
+      $form_data['packedQtys'] = $packed_qtys;
 
     # invalid PO No. redirect user.
     } else {
@@ -154,7 +156,7 @@ class GrnControllerNew
     return array($this->template->render_view('grn-create',$template_vars),$controller_vars);
   }
 
-  # Grn list action
+  // Grn list action
   public function grnListAction(Request $request) {
     $suppliers= $search_params = $suppliers_a = $grns_a = array();
 
@@ -262,7 +264,7 @@ class GrnControllerNew
     return array($this->template->render_view('grn-register',$template_vars),$controller_vars);
   }
 
-  # Grn view action
+  // Grn view action
   public function grnViewAction(Request $request) {
     # initialize variables.
     $po_no = '';

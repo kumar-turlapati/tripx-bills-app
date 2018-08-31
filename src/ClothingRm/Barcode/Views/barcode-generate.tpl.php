@@ -185,8 +185,8 @@
                   $items_total_qty += $billed_qty;
               ?>
                 <tr class="purchaseItemRow font12">
-                  <td align="center" class="valign-middle"><?php echo $item_name ?></td>
-                  <td align="center" class="valign-middle"><?php echo $hsn_code ?></td>                  
+                  <td align="left" class="valign-middle"><?php echo $item_name ?></td>
+                  <td align="left" class="valign-middle"><?php echo $hsn_code ?></td>                  
                   <td class="valign-middle"><?php echo $lot_no ?></td>
                   <td align="right" class="valign-middle"><?php echo number_format($billed_qty,2) ?></td>
                   <td align="right" class="valign-middle"><?php echo number_format($mrp,2) ?></td>

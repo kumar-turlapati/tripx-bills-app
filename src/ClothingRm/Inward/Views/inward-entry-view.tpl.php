@@ -327,7 +327,13 @@
                   }                  
 
                   $billed_qty = $inward_qty-$free_qty;
-                  $gross_amount = $billed_qty*$item_rate;
+
+                  if(is_numeric($packed_qty) && $packed_qty>0) {
+                    $gross_amount = $billed_qty*$item_rate*$packed_qty;
+                  } else {
+                    $gross_amount = $billed_qty*$item_rate;
+                  }
+                                    
                   $item_amount = $gross_amount-$item_discount;
                   $tax_amount = round($item_amount*$tax_percent/100,2);
 

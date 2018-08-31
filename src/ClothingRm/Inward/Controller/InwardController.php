@@ -37,7 +37,7 @@ class InwardController
     $form_errors = $form_data = [];
     $api_error = '';
     
-    $total_item_rows = 50;
+    $total_item_rows = !is_null($request->get('tr')) && is_numeric($request->get('tr')) ? (int)$request->get('tr') : 50;
 
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
@@ -138,7 +138,7 @@ class InwardController
     $form_errors = $form_data = [];
     $api_error = '';
     
-    $total_item_rows = 30;
+    $total_item_rows = 50;
 
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
@@ -196,6 +196,8 @@ class InwardController
         $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
+
+        $total_item_rows = count($item_names);
 
         # unset item details from api data.
         unset($purchase_details['itemDetails']);
@@ -675,6 +677,7 @@ class InwardController
       $form_data['taxPercent'][$key] = $item_details['TaxPercent'];
       $form_data['itemDiscount'][$key] = $item_details['DiscountAmount'];
       $form_data['hsnCodes'][$key] = $item_details['HsnSacCode'];
+      $form_data['packedQty'][$key] = $item_details['PackedQty'];      
     }
     return $form_data;
   }
