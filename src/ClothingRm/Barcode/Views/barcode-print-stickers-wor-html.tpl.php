@@ -101,7 +101,7 @@
       $tot_sticker_count = 0;
       foreach($printable_array as $print_qty_details):
         $barcode = $print_qty_details['barcode'];
-        $print_qty = $print_qty_details[0];
+        $print_qty = round($print_qty_details[4], 2);
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
         $print_item_mrp = number_format($print_qty_details[2],2,'.','');
         $mfg_date = date("m/y", strtotime($print_qty_details[3]));
@@ -109,10 +109,10 @@
     ?>
       <div>
         <div class="productName"><?php echo $print_item_name ?></div>
-        <div class="rate">MRP : <?php echo 'Rs.'.$print_item_mrp ?></div>
+        <div class="rate">Qty.: <?php echo $print_qty.' mtrs.' ?></div>
         <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
         <div class="barCode"><?php echo $barcode ?></div>
-        <div class="mfgDate"><?php echo 'Mfg.:'.$mfg_date.' - 1pc.' ?></div>
+        <div class="mfgDate"><?php echo 'Mfg. Date: '.$mfg_date ?></div>
       </div>
       <?php
         $tot_sticker_count++;

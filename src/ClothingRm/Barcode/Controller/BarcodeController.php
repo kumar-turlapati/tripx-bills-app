@@ -195,10 +195,17 @@ class BarcodeController
       Utilities::redirect('/barcodes/list');
     }
 
-    if(!is_null($request->get('format')) && $request->get('format') === 'indent') {
-      $print_tpl = 'barcode-print-stickers-html';
-    } else {
-      $print_tpl = 'barcode-print-stickers-mrp-html';
+    $print_format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'indent';
+    switch ($print_format) {
+      case 'indent':
+        $print_tpl = 'barcode-print-stickers-html';
+        break;
+      case 'mrp':
+        $print_tpl = 'barcode-print-stickers-mrp-html';
+        break;
+      case 'worate':
+        $print_tpl = 'barcode-print-stickers-wor-html';
+        break;
     }
 
     // build variables
@@ -349,8 +356,9 @@ class BarcodeController
                     $print_qty = $sticker_qtys[$item_key];
                   } else {
                     $print_qty = 0;
-                  } 
-                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("d-m-Y")]; 
+                  }
+                  $item_key_a = explode("__", $item_key);
+                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2]]; 
                 }
               }
             } else {
@@ -377,8 +385,9 @@ class BarcodeController
                 $barcode = $barcodes_a[$item_key];
               } else {
                 $barcode = 'Invalid';
-              }            
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("d-m-Y")];
+              }
+              $item_key_a = explode("__", $item_key);
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2]];
             }
           }
           if(count($print_array_final)>0) {

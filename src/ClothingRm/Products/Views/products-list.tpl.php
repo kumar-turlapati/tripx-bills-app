@@ -67,13 +67,13 @@
             <thead>
               <tr class="font12">
                 <th width="5%" class="text-center">Sno.</th>
-                <th width="4%" class="text-left">Unique Code</th>                
                 <th width="30%" class="text-left">Product / Service Name</th>
+                <th width="10%" class="text-center">Brand Name</th>                
                 <th width="5%" class="text-center">Threshold<span class="brk">Qty.</span></th>                
                 <th width="5%" class="text-center">Units /<span class="brk">pack</span></th>
                 <th width="5%" class="text-center">M.R.P <span class="brk">(in Rs.)</span></th>
                 <th width="8%" class="text-center">HSN/SAC<span class="brk">Code</span></th>
-                <th width="8%" class="text-center">Min.Indent.Qty</th>
+                <th width="8%" class="text-center">Rack Number</th>
                 <th width="8%" class="text-center">SKU</th>                                                
               </tr>
             </thead>
@@ -81,37 +81,40 @@
               <?php 
                 $cntr = $sl_no;
                 foreach($products as $product_details):
+                  // dump($product_details);
+                  // exit;
+
                   if($product_details['mrp']>0) {
                     $mrp = $product_details['mrp'];
                   } else {
                     $mrp = '';
                   }
-                  if($product_details['mfgName'] !== '') {
-                    $mfgName = $product_details['mfgName'];
+                  if($product_details['brandName'] !== '') {
+                    $brandName = $product_details['brandName'];
                   } else {
-                    $mfgName = '';
+                    $brandName = '';
                   }
-                  if($product_details['minIndentQty'] !== '') {
-                    $min_indent_qty = $product_details['minIndentQty'];
+                  if($product_details['unitsPerPack'] !== '') {
+                    $units_per_pack = $product_details['unitsPerPack'];
                   } else {
-                    $min_indent_qty = '';
+                    $units_per_pack = '';
                   }
                   if($product_details['hsnSacCode'] !== '') {
                     $hsnSacCode = $product_details['hsnSacCode'];
                   } else {
                     $hsnSacCode = '';
                   }
-                  if($product_details['itemSku'] !== '') {
-                    $itemSku = $product_details['itemSku'];
+                  if($product_details['rackNo'] !== '') {
+                    $rack_no = $product_details['rackNo'];
                   } else {
-                    $itemSku = '';
-                  }                                  
+                    $rack_no = '';
+                  }
                   $thr_qty = $product_details['thrQty'];
                   $item_code = $product_details['itemCode'];
+                  $item_sku = $product_details['itemSku'];
               ?>
                   <tr class="text-uppercase text-right font11">
                     <td class="text-center"><?php echo $cntr ?></td>
-                    <td class="text-left"><?php echo $item_code ?></td>                    
                     <td class="text-left med-name">
                       <a 
                         href="/products/update/<?php echo $item_code ?>"
@@ -121,12 +124,13 @@
                         <?php echo $product_details['itemName'] ?>
                       </a>
                     </td>
+                    <td class="text-left"><?php echo substr($brandName,0,20) ?></td>
                     <td class="text-right"><?php echo $thr_qty ?></td>
-                    <td><?php echo $product_details['unitsPerPack'] ?></td>
+                    <td><?php echo $units_per_pack ?></td>
                     <td class="text-bold"><?php echo $mrp ?></td>
                     <td class="text-right"><?php echo $hsnSacCode ?></td>
-                    <td class="text-right"><?php echo $min_indent_qty ?></td>
-                    <td class="text-right"><?php echo $itemSku ?></td>                    
+                    <td class="text-right"><?php echo $rack_no ?></td>
+                    <td class="text-right"><?php echo $item_sku ?></td>                    
                   </tr>
             <?php
               $cntr++;

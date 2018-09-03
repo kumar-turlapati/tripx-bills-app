@@ -39,7 +39,17 @@
     $item_sku = $submitted_data['itemSku'];
   } else {
     $item_sku = '';
-  }   
+  }
+  if(isset($submitted_data['rackNo']) && $submitted_data['rackNo'] !== '') {
+    $rack_no = $submitted_data['rackNo'];
+  } else {
+    $rack_no = '';
+  }
+  if(isset($submitted_data['brandID']) && $submitted_data['brandID'] !== '') {
+    $brand_code = $submitted_data['brandID'];
+  } else {
+    $brand_code = '';
+  }
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -155,7 +165,7 @@
                         $selected = '';
                       }                       
                   ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                    <option value="<?php echo $value ?>" <?php echo $selected ?>><?php echo $value ?></option>
                   <?php endforeach; ?>
                 </select>
                 <?php if(isset($errors['taxRate'])): ?>
@@ -165,7 +175,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="itemStatus" id="itemStatus">
@@ -184,7 +194,33 @@
               <?php if(isset($errors['status'])): ?>
                 <span class="error"><?php echo $errors['status'] ?></span>
               <?php endif; ?>
-            </div>                   
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Brand name</label>
+              <input 
+                type="text" 
+                class="form-control noEnterKey"
+                name="brandCode" 
+                id="brandCode" 
+                value="<?php echo $brand_code ?>"
+              >
+              <?php if(isset($errors['brandCode'])): ?>
+                <span class="error"><?php echo $errors['brandCode'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Rack no.</label>
+              <input 
+                type="text" 
+                class="form-control noEnterKey"
+                name="rackNo" 
+                id="rackNo" 
+                value="<?php echo $rack_no ?>"
+              >
+              <?php if(isset($errors['rack_no'])): ?>
+                <span class="error"><?php echo $errors['rack_no'] ?></span>
+              <?php endif; ?>
+            </div>
           </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">

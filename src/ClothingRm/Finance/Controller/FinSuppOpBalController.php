@@ -12,12 +12,10 @@ use Atawa\Flash;
 use ClothingRm\Finance\Model\SuppOpbal;
 use ClothingRm\Suppliers\Model\Supplier;
 
-class FinSuppOpBalController
-{
-	protected $views_path;
-
+class FinSuppOpBalController {
+	
 	public function __construct() {
-		$this->views_path = __DIR__.'/../Views/';
+    $this->template = new Template(__DIR__.'/../Views/');    
 	}
 
 	public function supplierOpBalCreateAction(Request $request) {
@@ -74,8 +72,7 @@ class FinSuppOpBalController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('supp-opbal-create', $template_vars), $controller_vars);
+    return array($this->template->render_view('supp-opbal-create', $template_vars), $controller_vars);
 	}
 
 	public function supplierOpBalUpdateAction(Request $request) {
@@ -137,8 +134,7 @@ class FinSuppOpBalController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('supp-opbal-update', $template_vars), $controller_vars);
+    return array($this->template->render_view('supp-opbal-update', $template_vars), $controller_vars);
 	}
 
 	public function supplierOpBalListAction(Request $request) {
@@ -163,13 +159,26 @@ class FinSuppOpBalController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('supp-opbal-list', $template_vars), $controller_vars);
+    return array($this->template->render_view('supp-opbal-list', $template_vars), $controller_vars);
 	}
 
-  /**
-   * Supplier Billwise outstanding.
-  **/
+  public function supplierOpBalImportAction(Request $request) {
+
+    $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
+    $allowed_extensions = ['xls', 'ods', 'xlsx'];
+    $upload_errors = [];
+
+    $controller_vars = [];
+    $template_vars = [
+      'op_a' => $op_a,
+      'upload_errors' => $upload_errors,
+    ];
+
+    // render template_vars
+    return array($this->template->render_view('supp-opbal-import', $template_vars), $controller_vars);    
+  }
+
+  // Supplier Billwise outstanding.
   public function supplierBillwiseOsAction(Request $request) {
     $records = $suppliers_a = $search_params = array();
 
@@ -209,13 +218,10 @@ class FinSuppOpBalController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('supp-outstanding',$template_vars),$controller_vars);    
+    return array($this->template->render_view('supp-outstanding',$template_vars),$controller_vars);    
   }
 
-  /**
-   * Supplier Billwise outstanding.
-  **/
+  // Supplier Billwise outstanding.
   public function supplierBillwiseAsonAction(Request $request) {
     $records = $suppliers_a = $search_params = array();
 
@@ -255,10 +261,10 @@ class FinSuppOpBalController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('supp-outstanding-ason',$template_vars),$controller_vars);    
+    return array($this->template->render_view('supp-outstanding-ason',$template_vars),$controller_vars);    
   }
 
+  // Supplier ledger
   public function supplierLedger(Request $request) {
 
     $records = $suppliers_a = array();
@@ -302,12 +308,10 @@ class FinSuppOpBalController
     );
 
     // render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('supplier-ledger',$template_vars),$controller_vars);     
+    return array($this->template->render_view('supplier-ledger',$template_vars),$controller_vars);     
   }
 
-
-  /*************************** Private functions should start from here ************************************/
+  // Validate form data
   private function _validate_form_data($form_data=array(),$is_update=false) {
     $errors = $cleaned_params = array();
 
@@ -369,6 +373,4 @@ class FinSuppOpBalController
     unset($opbal_details['supplierCode']);
     return $opbal_details;
   }
-
-
 }

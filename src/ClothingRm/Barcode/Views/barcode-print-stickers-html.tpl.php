@@ -93,7 +93,7 @@
         $print_qty = $balance_qty = $print_qty_details[0];
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
         $print_item_mrp = number_format($print_qty_details[2],2,'.','');
-        $mfg_date = date("d/m/y", strtotime($print_qty_details[3]));
+        $mfg_date = date("m/y", strtotime($print_qty_details[3]));
         $no_of_pages = (int)ceil($print_qty/$printable_qty);
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
     ?>

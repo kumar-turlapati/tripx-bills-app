@@ -115,8 +115,9 @@
                       $opening_code = $opening_details['openingCode'];
                       $item_code = $opening_details['itemCode'];
                       $lot_no = $opening_details['lotNo'];
-                      $item_key = $item_code.'__'.$lot_no;
                       $barcode = $opening_details['barcode'];
+                      $packed_qty = $opening_details['packedQty'];
+                      $item_key = $item_code.'__'.$lot_no.'__'.$packed_qty;
 
                       $tot_opening_value_pur += ($opening_qty * $purchase_rate);
                       $tot_opening_value_sale += ($opening_qty * $opening_rate);
@@ -207,7 +208,8 @@
                 <div class="select-wrap">
                   <select class="form-control" name="indentFormat" id="indentFormat">
                     <option value="indent">Indent Sticker</option>
-                    <option value="mrp">MRP Sticker</option>                  
+                    <option value="mrp">MRP Sticker</option>
+                    <option value="worate">Sticker Without Rate</option>                    
                   </select>
                 </div>
               </div>
