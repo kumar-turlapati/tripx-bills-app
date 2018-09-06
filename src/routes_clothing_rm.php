@@ -301,6 +301,28 @@ $routes->add('fin_supp_opbal_update', new Routing\Route('/fin/supp-opbal/update/
 $routes->add('fin_supp_opbal_list', new Routing\Route('/fin/supp-opbal/list', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierOpBalListAction',
 )));
+$routes->add('fin_supp_opbal_import', new Routing\Route('/fin/supp-opbal/import', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierOpBalImportAction',
+)));
+
+// Customers opening balance
+$routes->add('fin_cust_opbal_create', new Routing\Route('/fin/cust-opbal/create', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalCreateAction',
+)));
+$routes->add('fin_cust_opbal_update', new Routing\Route('/fin/cust-opbal/update/{opBalCode}', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalUpdateAction',
+  'opBalCode' => null,
+)));
+$routes->add('fin_cust_opbal_delete', new Routing\Route('/fin/cust-opbal/remove/{opBalCode}', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalDeleteAction',
+  'opBalCode' => null,
+)));
+$routes->add('fin_cust_opbal_list', new Routing\Route('/fin/cust-opbal/list', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalListAction',
+)));
+$routes->add('fin_cust_opbal_import', new Routing\Route('/fin/cust-opbal/import', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalImportAction',
+)));
 
 // Supplier outstanding
 $routes->add('fin_supp_billwise_outstanding', new Routing\Route('/fin/billwise-outstanding', array(
@@ -576,8 +598,8 @@ $routes->add('update_sindent', new Routing\Route('/sales-indent/update/{indentCo
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndent',
   'indentCode' => null,
 )));
-$routes->add('cancel_sindent', new Routing\Route('/sales-indent/cancel/{indentCode}', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::cancelIndent',
+$routes->add('cancel_sindent', new Routing\Route('/sales-indent/update-status/{indentCode}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndentStatus',
   'indentCode' => null,
 )));
 $routes->add('delete_sindent', new Routing\Route('/sales-indent/remove/{indentCode}', array(

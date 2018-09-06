@@ -223,7 +223,7 @@ class CustomersController
 
       } else {
           $page_error = $customers_list['apierror'];
-      }               
+      }
 
        // prepare form variables.
       $template_vars = array(
@@ -250,7 +250,7 @@ class CustomersController
       );
 
       # render template
-      return array($this->template->render_view('customers-list', $template_vars), $controller_vars);       
+      return array($this->template->render_view('customers-list', $template_vars), $controller_vars);
   }
 
   # private functions should go from here.
