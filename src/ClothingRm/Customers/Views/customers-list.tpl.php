@@ -11,18 +11,11 @@
     $query_params = '?'.implode('&', $query_params);
   }
 ?>
-
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12">
-    
-    <!-- Panel starts -->
     <section class="panelBox">
       <div class="panelBody">
-
         <?php echo Utilities::print_flash_message() ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/customers/create" class="btn btn-default">
@@ -30,8 +23,6 @@
             </a> 
           </div>
         </div>
-        <!-- Right links ends --> 
-        
         <h2 class="hdg-reports text-center">Customers List</h2>
         <div class="table-responsive">
           <table class="table table-striped table-hover font12">
@@ -88,17 +79,14 @@
               ?>
             <?php else: ?>
                 <tr>
-                  <td colspan="6" align="center"><b>No content is available.</b></td>
+                  <td colspan="6" align="center"><b>No data available.</b></td>
                 </tr>
             <?php endif; ?>
             </tbody>
           </table>
-
           <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>
-
         </div>
       </div>
     </section>
-    <!-- Panel ends -->
   </div>
 </div>

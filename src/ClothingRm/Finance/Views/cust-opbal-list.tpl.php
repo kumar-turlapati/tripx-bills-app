@@ -25,7 +25,7 @@
                 <th width="10%" class="text-center">Credit Days</th>                
                 <th width="10%" class="text-center">Amount</th>
                 <th width="10%" class="text-center">Status</span></th>
-                <th width="10%">Opening date</th>
+                <th width="10%" class="text-center">Opening date</th>
                 <th width="15%" class="text-center">Actions</th>
               </tr>
             </thead>
@@ -85,7 +85,7 @@
                   </tr>
             <?php } else { ?>
                 <tr>
-                  <td colspan="6" style="color:red;font-weight:bold;text-align:center;">No records are available.</td>
+                  <td colspan="9" style="color:red;font-weight:bold;text-align:center;">No records are available.</td>
                 </tr>
             <?php } ?>
             </tbody>
