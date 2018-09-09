@@ -237,9 +237,18 @@ class salesEntryWithBarcode {
     $split_payment_cn = isset($form_data['splitPaymentCn']) ? Utilities::clean_string($form_data['splitPaymentCn']) : 0;
     $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
     $item_details = $form_data['itemDetails'];
-    $executive_id = Utilities::clean_string($form_data['saExecutive']);
+    $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
     $referral_code = is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
+
+    $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
+    $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
+    $insurance_charges = Utilities::clean_string($form_data['insuranceCharges']);
+    $other_charges = Utilities::clean_string($form_data['otherCharges']);
+    $transporter_name = Utilities::clean_string($form_data['transporterName']);
+    $lr_no = Utilities::clean_string($form_data['lrNos']);
+    $lr_date = Utilities::clean_string($form_data['lrDate']);
+    $chalan_no = Utilities::clean_string($form_data['challanNo']);    
 
     # validate location code
     if( isset($form_data['locationCode']) && ctype_alnum($form_data['locationCode']) ) {
@@ -263,11 +272,33 @@ class salesEntryWithBarcode {
     }
 
     # validate name.
-    if( $name !== '' && !ctype_alpha(str_replace(' ', '', $name)) ) {
+    if( $name !== '' && !ctype_alnum(str_replace(' ', '', $name)) ) {
       $form_errors['name'] = 'Invalid name.';      
     } else {
       $cleaned_params['name'] = $name;      
     }
+
+    # validate various charges.
+    if($packing_charges !== '' && !is_numeric($packing_charges)) {
+      $form_errors['packingCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['packingCharges'] = $packing_charges;
+    }
+    if($shipping_charges !== '' && !is_numeric($shipping_charges)) {
+      $form_errors['shippingCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['shippingCharges'] = $shipping_charges;
+    }
+    if($insurance_charges !== '' && !is_numeric($insurance_charges)) {
+      $form_errors['insuranceCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['insuranceCharges'] = $insurance_charges;
+    }
+    if($other_charges !== '' && !is_numeric($other_charges)) {
+      $form_errors['otherCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['otherCharges'] = $other_charges;
+    }    
 
     # validate card no, auth code when the card value is more than zero
     if( ($split_payment_card > 0 || $payment_method === 1) && ($card_no === '' || $auth_code === '') ) {
@@ -435,6 +466,10 @@ class salesEntryWithBarcode {
     $cleaned_params['saExecutiveId'] = $executive_id;
     $cleaned_params['cnNo'] = $cn_no;
     $cleaned_params['refCode'] = $referral_code;
+    $cleaned_params['transporterName'] = $transporter_name;
+    $cleaned_params['lrNos'] = $lr_no;
+    $cleaned_params['lrDate'] = $lr_date;
+    $cleaned_params['challanNo'] = $chalan_no;
 
     # return response.
     if(count($form_errors)>0) {

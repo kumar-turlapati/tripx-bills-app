@@ -18,6 +18,7 @@
           <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores</a></li>
           <li><a href="/fin/bank/list"><i class="fa fa-university"></i> Banks</a></li>
           <li><a href="/bu/list"><i class="fa fa-user-circle-o"></i> Business Users</a></li>
+          <li><a href="/fin/cust-opbal/list"><i class="fa fa-line-chart"></i> OpBal - Customers</a></li>          
         </ul>
       </li>
       <li class="sub-menu">

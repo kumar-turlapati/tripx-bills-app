@@ -145,7 +145,7 @@ function initializeJS() {
                 $('.saleItemQty').trigger('change');
               } else {
                 $('#totalItems, #grossAmount, #totDiscount, #taxableAmount, #gstAmount, #roundOff, #netPayBottom').text('');
-                $('#paymentMethodWindow, #customerWindow, #splitPaymentWindow, #saveWindow, #owItemsTable').hide();
+                $('#paymentMethodWindow, #customerWindow, #splitPaymentWindow, #saveWindow, #owItemsTable, #siOtherInfoWindow').hide();
                 $('#owBarcode').val('');
               }
             }
@@ -167,7 +167,7 @@ function initializeJS() {
       var moq = itemDetails.mOq;
       var orderQty = (parseFloat(moq)*1).toFixed(2);
 
-      $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems').show();
+      $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems, #siOtherInfoWindow').show();
       
       if( $('#tr_'+barcode).length > 0) {
         var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
@@ -500,7 +500,7 @@ function initializeJS() {
       $('#grossAmount').text(parseFloat(totGrossAmount).toFixed(2));
       $('#gstAmount').text(parseFloat(totTaxAmount).toFixed(2));
 
-      netPay = parseFloat(totGrossAmount + totTaxAmount);
+      netPay = parseFloat(totGrossAmount + totTaxAmount + shippingCharges + insuranceCharges + otherCharges);
       roundedNetPay = Math.round(netPay);
       roundOff = (parseFloat(roundedNetPay)-netPay).toFixed(2);
 
@@ -805,11 +805,9 @@ function initializeJS() {
       var itemIndex = jQuery(this).attr('index');      
       updateSaleItemRow(itemIndex);
     });
-
     $('#outwardEntryForm').on('change', '.taxCalcOption', function(){
       updateSaleItemTotal();
     });
-
     $('#outwardEntryForm').on('change', '.saleItemQty', function(){
       var itemIndex = jQuery(this).attr('index');      
       updateSaleItemRow(itemIndex);
@@ -846,6 +844,10 @@ function initializeJS() {
         $('#refMemberMobile').val('');
         $('#refCode').val('');
       }
+    });
+
+    $('#shippingCharges, #insuranceCharges, #otherCharges').on('blur', function(e){
+      updateSaleItemTotal();
     });
 
     // update sale item row.
@@ -897,6 +899,12 @@ function initializeJS() {
       var totGrossAmount = totTaxableAmount = totDiscount = totTaxAmount = 0;
       var totBeforeRound = roundedNetPay = netPay = 0;
       var totalQty = 0;
+      var shippingCharges = insuranceCharges = otherCharges = 0;
+
+      var packingCharges = returnNumber(parseFloat($('#packingCharges').val()));
+      var shippingCharges = returnNumber(parseFloat($('#shippingCharges').val()));
+      var insuranceCharges = returnNumber(parseFloat($('#insuranceCharges').val()));
+      var otherCharges = returnNumber(parseFloat($('#otherCharges').val()));      
 
       var taxCalcOption = $('#taxCalcOption').val();
 
@@ -934,7 +942,7 @@ function initializeJS() {
       $('#taxableAmount').text(parseFloat(totTaxableAmount).toFixed(2));
       $('#gstAmount').text(parseFloat(totTaxAmount).toFixed(2));
 
-      netPay = parseFloat(totTaxableAmount + totTaxAmount);
+      netPay = parseFloat(totTaxableAmount+totTaxAmount+packingCharges+shippingCharges+insuranceCharges+otherCharges);
       roundedNetPay = Math.round(netPay);
       roundOff = (parseFloat(roundedNetPay)-netPay).toFixed(2);
 

@@ -19,7 +19,10 @@
             <thead>
               <tr>
                 <th width="5%" class="text-center">Sno.</th>
-                <th width="50%" class="text-center">Customer Name</th>
+                <th width="20%" class="text-center">Customer Name</th>
+                <th width="10%" class="text-center">Bill No.</th>
+                <th width="10%" class="text-center">Bill Date</th>
+                <th width="10%" class="text-center">Credit Days</th>                
                 <th width="10%" class="text-center">Amount</th>
                 <th width="10%" class="text-center">Status</span></th>
                 <th width="10%">Opening date</th>
@@ -36,6 +39,9 @@
                       $amount = $balance_details['amount'];
                       $opbal_date = date("d-m-Y",strtotime($balance_details['openingDate']));
                       $opbal_code = $balance_details['openingCode'];
+                      $bill_no = $balance_details['billNo'];
+                      $bill_date = date("d-m-Y", strtotime($balance_details['billDate']));
+                      $credit_days = $balance_details['creditDays'];
                       if($balance_details['action']==='c') {
                         $status = 'Credit';
                         $total_balance -= $amount;
@@ -45,13 +51,16 @@
                       }
                   ?>
                     <tr class="text-right font12">
-                      <td class="text-right"><?php echo $cntr ?></td>
-                      <td class="text-left"><?php echo $cust_name ?></td>
-                      <td class="text-right"><?php echo number_format($amount,2,'.','') ?></td>
-                      <td class="text-center"><?php echo $status ?></td>
-                      <td class="text-right"><?php echo $opbal_date ?></td>
+                      <td class="text-right valign-middle"><?php echo $cntr ?></td>
+                      <td class="text-left valign-middle"><?php echo $cust_name ?></td>
+                      <td class="text-left valign-middle"><?php echo $bill_no ?></td>
+                      <td class="text-left valign-middle"><?php echo $bill_date ?></td>
+                      <td class="text-left valign-middle"><?php echo $credit_days ?></td>                      
+                      <td class="text-right valign-middle"><?php echo number_format($amount,2,'.','') ?></td>
+                      <td class="text-center valign-middle"><?php echo $status ?></td>
+                      <td class="text-right valign-middle"><?php echo $opbal_date ?></td>
                       <td>
-                        <div class="btn-actions-group">
+                        <div class="btn-actions-group valign-middle">
                           <?php if($opbal_code !== ''): ?>
                             <a class="btn btn-primary" href="/fin/cust-opbal/update/<?php echo $opbal_code ?>" title="Edit Details">
                               <i class="fa fa-pencil"></i>
@@ -68,7 +77,7 @@
                   endforeach; 
                 ?>
                   <tr>
-                    <td colspan="2" class="text-right text-bold">Totals</td>
+                    <td colspan="5" class="text-right text-bold">Totals</td>
                     <td class="text-right text-bold"><?php echo number_format($total_balance,2,'.','') ?></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>

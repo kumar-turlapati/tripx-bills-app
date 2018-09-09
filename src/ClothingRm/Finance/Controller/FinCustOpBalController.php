@@ -217,6 +217,9 @@ class FinCustOpBalController {
     $cust_name = Utilities::clean_string($form_data['custName']);
     $action = Utilities::clean_string($form_data['action']);
     $amount = Utilities::clean_string($form_data['amount']);
+    $bill_no = Utilities::clean_string($form_data['billNo']);
+    $bill_date = Utilities::clean_string($form_data['billDate']);
+    $credit_days = Utilities::clean_string($form_data['creditDays']);
 
     if($cust_name === '') {
       $errors['custName'] = 'Invalid customer name.';
@@ -233,6 +236,21 @@ class FinCustOpBalController {
     } else {
       $cleaned_params['amount'] = $amount;
     }
+    if($bill_no === '') {
+      $errors['billNo'] = 'Invalid Bill No.';
+    } else {
+      $cleaned_params['billNo'] = $bill_no;
+    }
+    if($bill_date === '') {
+      $errors['billDate'] = 'Invalid Bill Date';
+    } else {
+      $cleaned_params['billDate'] = $bill_date;
+    }
+    if(is_numeric($credit_days) && $credit_days>0) {
+      $cleaned_params['creditDays'] = $credit_days;
+    } else {
+      $errors['creditDays'] = 'Invalid Credit Days';
+    }       
 
     if(count($errors)>0) {
       return array('status'=>false, 'errors'=>$errors);

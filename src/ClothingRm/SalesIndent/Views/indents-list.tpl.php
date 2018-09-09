@@ -151,10 +151,15 @@
                   $netpay = $indent_details['netpay'];
                   $campaign_name = $indent_details['campaignName'];
                   $agent_name = $indent_details['agentName'];
-                  if((int)$indent_details['status']===1) {
-                    $status = 'Active';
+                  $indent_status = (int)$indent_details['status'];
+                  if($indent_details['status']===1) {
+                    $status = '<span style="color:green;font-weight:bold;font-size:11px;">Approved</span>';
+                  } elseif($indent_details['status']===0) {
+                    $status = '<span style="color:brown;font-weight:bold;font-size:11px;">Pending</span>';
+                  } elseif($indent_details['status']===2) {
+                    $status = '<span style="color:red;font-weight:bold;font-size:11px;">Rejected</span>';
                   } else {
-                    $status = 'Inactive';
+                    $status = 'Invalid';
                   }
                   $total += $netpay;
               ?>
@@ -179,9 +184,15 @@
                       <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
                         <i class="fa fa-pencil"></i>
                       </a>&nbsp;
-                      <a class="btn btn-info" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
-                        <i class="fa fa-inr"></i>
-                      </a>                      
+                      <?php if($indent_status === 1): ?>
+                        <a class="btn btn-info" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
+                          <i class="fa fa-inr"></i>
+                        </a>
+                      <?php else: ?>
+                        <a class="btn btn-info" href="/sales-indent/update-status/<?php echo $indent_code ?>" title="Approve / Reject Indent">
+                          <i class="fa fa-check"></i>
+                        </a>
+                      <?php endif; ?>
                     </div>
                   </td>
                 </tr>

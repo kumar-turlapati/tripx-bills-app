@@ -598,12 +598,8 @@ $routes->add('update_sindent', new Routing\Route('/sales-indent/update/{indentCo
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndent',
   'indentCode' => null,
 )));
-$routes->add('cancel_sindent', new Routing\Route('/sales-indent/update-status/{indentCode}', array(
+$routes->add('change_sindent_status', new Routing\Route('/sales-indent/update-status/{indentCode}', array(
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndentStatus',
-  'indentCode' => null,
-)));
-$routes->add('delete_sindent', new Routing\Route('/sales-indent/remove/{indentCode}', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::removeIndent',
   'indentCode' => null,
 )));
 $routes->add('list_sindents', new Routing\Route('/sales-indents/list/{pageNo}', array(

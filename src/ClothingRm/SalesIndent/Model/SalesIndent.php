@@ -31,7 +31,17 @@ class SalesIndent {
     } elseif($status === 'failed') {
       return array('status' => false, 'apierror' => $response['reason']);
     }
-  }  
+  }
+
+  public function change_sindent_status($form_data, $indent_code='') {
+    $response = $this->api_caller->sendRequest('put','sindent/change/status/'.$indent_code,$form_data);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true);
+    } elseif($status === 'failed') {
+      return array('status' => false, 'apierror' => $response['reason']);
+    }
+  }
 
   public function get_all_indents($filter_params=[]) {
     $response = $this->api_caller->sendRequest('get','sindent/register',$filter_params);

@@ -320,11 +320,11 @@
                   <label class="control-label">Remarks (not more than 300 characters)</label>
                   <textarea name="remarks" id="remarks" class="form-control noEnterKey" maxlength="300"><?php echo $remarks ?></textarea>
                 </div>
-              </div>              
+              </div>
             </div>
           </div>
           <input type="hidden" name="ic" id="ic" value="<?php echo $indent_code ?>" />
-          <input type="hidden" name="in" id="in" value="<?php echo $indent_number ?>" />          
+          <input type="hidden" name="in" id="in" value="<?php echo $indent_number ?>" />
           <div class="text-center" id="saveWindow" style="margin-top: 20px; <?php echo $tot_products > 0 ? '' : 'display:none;' ?>">
             <button class="btn btn-primary" id="SaveInvoiceWr" name="op" value="printWithOutRate">
               <i class="fa fa-save"></i> Update Indent

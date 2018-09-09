@@ -15,6 +15,21 @@
   } else {
     $mode = '';
   }
+  if(isset($submitted_data['billNo'])) {
+    $bill_no = $submitted_data['billNo'];
+  } else {
+    $bill_no = '';
+  }
+  if(isset($form_data['billDate']) && $form_data['billDate']!=='') {
+    $bill_date = date("d-m-Y", strtotime($form_data['billDate']));
+  } else {
+    $bill_date = date("d-m-Y");
+  }
+  if(isset($form_data['creditDays']) && $form_data['creditDays'] !=='' ) {
+    $credit_days = $form_data['creditDays'];
+  } else {
+    $credit_days = '';
+  }
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -31,20 +46,20 @@
         </div>
         <form class="form-validate form-horizontal" method="POST">
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Customer name</label>
-              <input 
+              <input
                 type="text"
                 class="form-control cnameAc" 
-                name="custName" 
-                id="custName" 
+                name="custName"
+                id="custName"
                 value="<?php echo $customer_name ?>"
               >              
               <?php if(isset($form_errors['custName'])): ?>
                 <span class="error"><?php echo $form_errors['custName'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Amount</label>
               <input 
                 type="text" 
@@ -57,7 +72,7 @@
                 <span class="error"><?php echo $form_errors['amount'] ?></span>
               <?php endif; ?> 
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Action</label>
               <select class="form-control" name="action" id="action">
                 <?php 
@@ -74,6 +89,48 @@
               <?php if(isset($form_errors['action'])): ?>
                 <span class="error"><?php echo $form_errors['action'] ?></span>
               <?php endif; ?> 
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Bill no.</label>
+              <input
+                type="text"
+                class="form-control" 
+                name="billNo"
+                id="billNo"
+                value="<?php echo $bill_no ?>"
+              >              
+              <?php if(isset($form_errors['billNo'])): ?>
+                <span class="error"><?php echo $form_errors['billNo'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Bill date (dd-mm-yyyy)</label>
+              <div class="form-group">
+                <div class="col-lg-12">
+                  <div class="input-append date" data-date="<?php echo $bill_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" value="<?php echo $bill_date ?>" size="16" type="text" readonly name="billDate" id="billDate" />
+                    <span class="add-on"><i class="fa fa-calendar"></i></span>
+                  </div>
+                  <?php if(isset($errors['billDate'])): ?>
+                    <span class="error"><?php echo $errors['billDate'] ?></span>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Credit days</label>
+              <input
+                type="text"
+                class="form-control" 
+                name="creditDays"
+                id="creditDays"
+                value="<?php echo $credit_days ?>"
+              >              
+              <?php if(isset($form_errors['creditDays'])): ?>
+                <span class="error"><?php echo $form_errors['creditDays'] ?></span>
+              <?php endif; ?>
             </div>
           </div>
           <div class="text-center">

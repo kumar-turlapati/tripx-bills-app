@@ -288,7 +288,76 @@ class SalesIndentController {
     );
 
     return array($this->template->render_view('indent-update', $template_vars),$controller_vars);
-  }  
+  }
+
+  public function updateIndentStatus(Request $request) {
+
+    # allow this option only to the administrator.
+    if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 3) {
+      $this->flash_obj->set_flash_message("Permission Error: You are not authorized to perform this action.", 1);
+      Utilities::redirect('/sales-indents/list');
+    }
+
+    # -------- initialize variables ---------------------------
+    $page_error = $page_success = $indent_code = '';
+    $form_errors = $agents_a = $campaigns_a = $form_data = [];
+    $executives_a = [];
+    $list_url = '/sales-indents/list';
+    $indent_no = $indent_code = '';
+    $indent_status_a = [-1=>'Choose', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
+
+    # ------- fetch indent details -----------------------------
+    $indent_code = Utilities::clean_string($request->get('indentCode'));
+    $indent_api_response = $this->sindent_model->get_indent_details($indent_code, true);
+    if($indent_api_response['status']) {
+      $indent_number = $indent_api_response['response']['indentDetails']['tranDetails']['indentNo'];
+      $form_data = $this->_map_indent_reponse_with_form_data($indent_api_response['response']['indentDetails']);
+    } else {
+      $this->flash->set_flash_message('Invalid indent code.', 1);
+      Utilities::redirect($list_url);
+    }    
+
+    # ------------------------------------- check for form Submission --------------------------------
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $form_validation = $this->_validate_ar_indent_data($submitted_data);
+      if($form_validation['status']===false) {
+        $this->flash->set_flash_message('You have errors in this form. Please fix them before you save', 1);
+        $form_errors = $form_validation['errors'];
+        $form_data['ic'] = $indent_code;
+        $form_data['in'] = $indent_number;
+      } else {
+        $api_response = $this->sindent_model->change_sindent_status($form_validation['cleaned_params'], $indent_code);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('Sales indent with Indent No. <b>`'.$indent_number.'`</b> updated successfully.');
+          Utilities::redirect('/sales-indent/list');
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error,1);
+        }
+      }
+    }
+    # --------------- build variables ------------------------------------------------------------------
+    $controller_vars = array(
+      'page_title' => 'Approve / Reject Indent No. - '.$indent_number,
+      'icon_name' => 'fa fa-delicious',
+    );
+    # ---------------- prepare form variables. ---------
+    $template_vars = array(
+      'form_data' => $form_data,
+      'errors' => $form_errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => 'Save',
+      'flash_obj' => $this->flash,
+      'indent_code' => $indent_code,
+      'indent_number' => $indent_number,
+      'indent_status_a' => $indent_status_a,
+      'form_errors' => $form_errors,
+    );
+
+    return array($this->template->render_view('change-indent-status', $template_vars),$controller_vars);    
+  }
 
   // list indents
   public function listIndents(Request $request) {
@@ -393,6 +462,33 @@ class SalesIndentController {
 
     // render template
     return array($this->template->render_view('indents-list', $template_vars), $controller_vars);
+  }
+
+  // validate ar data
+  private function _validate_ar_indent_data($form_data= []) {
+    $cleaned_params = $form_errors = [];
+    $indent_status = isset($form_data['arStatus']) ? (int)Utilities::clean_string($form_data['arStatus']) : -1;
+    $indent_remarks = isset($form_data['arRemarks']) ? Utilities::clean_string($form_data['arRemarks']) : '';
+    if($indent_status === 1 || $indent_status === 2) {
+      $cleaned_params['arStatus'] = $indent_status;
+    } else {
+      $form_errors['arStatus'] = 'Invalid Status.';
+    }
+
+    $cleaned_params['arRemarks'] = $indent_remarks;
+
+    # return response.
+    if(count($form_errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $form_errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
   }
 
   // validate form data
@@ -510,6 +606,8 @@ class SalesIndentController {
 
   // map indent response data with form data.
   private function _map_indent_reponse_with_form_data($api_data=[]) {
+    // dump($api_data);
+    // exit;
     $form_data = [];
     $form_data['indentDate'] = $api_data['tranDetails']['indentDate'];
     $form_data['primaryMobileNo'] = $api_data['tranDetails']['primaryMobileNo'];
@@ -519,6 +617,10 @@ class SalesIndentController {
     $form_data['executiveCode'] = $api_data['tranDetails']['executiveCode'];
     $form_data['campaignCode'] = $api_data['tranDetails']['campaignCode'];
     $form_data['remarks'] = $api_data['tranDetails']['remarks'];
+    $form_data['indentStatus'] = $api_data['tranDetails']['indentStatus'];
+    $form_data['agentName'] = $api_data['tranDetails']['agentName'];
+    $form_data['campaignName'] = $api_data['tranDetails']['campaignName'];    
+    $form_data['executiveName'] = $api_data['tranDetails']['executiveName'];
 
     $form_data['itemDetails']['itemName'] = array_column($api_data['itemDetails'], 'itemName');
     $form_data['itemDetails']['lotNo'] = array_column($api_data['itemDetails'], 'lotNo');
