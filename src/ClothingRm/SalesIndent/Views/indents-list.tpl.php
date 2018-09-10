@@ -185,10 +185,10 @@
                         <i class="fa fa-pencil"></i>
                       </a>&nbsp;
                       <?php if($indent_status === 1): ?>
-                        <a class="btn btn-info" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
+                        <a class="btn btn-danger" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
                           <i class="fa fa-inr"></i>
                         </a>
-                      <?php else: ?>
+                      <?php elseif($indent_status === 0): ?>
                         <a class="btn btn-info" href="/sales-indent/update-status/<?php echo $indent_code ?>" title="Approve / Reject Indent">
                           <i class="fa fa-check"></i>
                         </a>
