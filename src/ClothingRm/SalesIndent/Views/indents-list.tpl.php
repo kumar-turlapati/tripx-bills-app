@@ -181,14 +181,14 @@
                       <a class="btn btn-primary" href="/print-indent-wor?indentNo=<?php echo $indent_no ?>" title="Print Sales Indent without Rate" target="_blank">
                         <i class="fa fa-print"></i>
                       </a>&nbsp;
-                      <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
-                        <i class="fa fa-pencil"></i>
-                      </a>&nbsp;
                       <?php if($indent_status === 1): ?>
                         <a class="btn btn-danger" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
                           <i class="fa fa-inr"></i>
                         </a>
                       <?php elseif($indent_status === 0): ?>
+                        <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
+                          <i class="fa fa-pencil"></i>
+                        </a>&nbsp;
                         <a class="btn btn-info" href="/sales-indent/update-status/<?php echo $indent_code ?>" title="Approve / Reject Indent">
                           <i class="fa fa-check"></i>
                         </a>
