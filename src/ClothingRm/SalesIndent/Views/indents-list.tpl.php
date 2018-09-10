@@ -152,11 +152,11 @@
                   $campaign_name = $indent_details['campaignName'];
                   $agent_name = $indent_details['agentName'];
                   $indent_status = (int)$indent_details['status'];
-                  if($indent_details['status']===1) {
+                  if($indent_status===1) {
                     $status = '<span style="color:green;font-weight:bold;font-size:11px;">Approved</span>';
-                  } elseif($indent_details['status']===0) {
+                  } elseif($indent_status===0) {
                     $status = '<span style="color:brown;font-weight:bold;font-size:11px;">Pending</span>';
-                  } elseif($indent_details['status']===2) {
+                  } elseif($indent_status===2) {
                     $status = '<span style="color:red;font-weight:bold;font-size:11px;">Rejected</span>';
                   } else {
                     $status = 'Invalid';

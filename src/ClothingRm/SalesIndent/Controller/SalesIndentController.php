@@ -330,7 +330,7 @@ class SalesIndentController {
         $api_response = $this->sindent_model->change_sindent_status($form_validation['cleaned_params'], $indent_code);
         if($api_response['status']) {
           $this->flash->set_flash_message('Sales indent with Indent No. <b>`'.$indent_number.'`</b> updated successfully.');
-          Utilities::redirect('/sales-indent/list');
+          Utilities::redirect($list_url);
         } else {
           $page_error = $api_response['apierror'];
           $this->flash->set_flash_message($page_error,1);
