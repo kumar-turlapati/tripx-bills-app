@@ -168,7 +168,7 @@
                   <td align="right" class="valign-middle"><?php echo $indent_no ?></td>
                   <td class="valign-middle"><?php echo $indent_date ?></td>
                   <td align="right" class="valign-middle text-bold"><?php echo number_format($netpay,2,'.','') ?></td>
-                  <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,20) ?></td>                
+                  <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,30) ?></td>                
                   <td class="valign-middle"><?php //echo $ref_no ?></td>
                   <td class="valign-middle" title="<?php echo $agent_name ?>"><?php echo substr($agent_name,0,15) ?></td>
                   <td class="valign-middle"><?php echo $campaign_name ?></td>
