@@ -273,7 +273,7 @@ class CustomersController
     $dob = Utilities::clean_string($form_data['dob']);
     $dor = Utilities::clean_string($form_data['dor']);
 
-    if(ctype_alnum(str_replace([' ', '.'], ['',''], $customer_name)) ) {
+    if($customer_name !== '') {
       $cleaned_params['customerName'] = $customer_name;
     } else {
       $form_errors['customerName'] = 'Invalid customer name.';

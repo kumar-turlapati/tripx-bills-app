@@ -63,6 +63,7 @@
                       class="saleItem"
                       style="font-size:16px;font-weight:bold;border:1px dashed #225992;padding-left:5px;font-weight:bold;width:150px;"
                       maxlength="13"
+                      <?php echo $from_indent ? 'disabled' : '' ?>
                     />
                   </td>
                   <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:6%;padding-left:5px;">Store name</td>
@@ -298,7 +299,7 @@
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
           </div>
-          <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0 && (int)$payment_method === 2 ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
+          <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">

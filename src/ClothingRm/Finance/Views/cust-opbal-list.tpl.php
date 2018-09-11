@@ -22,7 +22,7 @@
                 <th width="20%" class="text-center">Customer Name</th>
                 <th width="10%" class="text-center">Bill No.</th>
                 <th width="10%" class="text-center">Bill Date</th>
-                <th width="10%" class="text-center">Credit Days</th>                
+                <th width="10%" class="text-center">Credit Days</th>
                 <th width="10%" class="text-center">Amount</th>
                 <th width="10%" class="text-center">Status</span></th>
                 <th width="10%" class="text-center">Opening date</th>
@@ -55,7 +55,7 @@
                       <td class="text-left valign-middle"><?php echo $cust_name ?></td>
                       <td class="text-left valign-middle"><?php echo $bill_no ?></td>
                       <td class="text-left valign-middle"><?php echo $bill_date ?></td>
-                      <td class="text-left valign-middle"><?php echo $credit_days ?></td>                      
+                      <td class="text-left valign-middle"><?php echo $credit_days ?></td>
                       <td class="text-right valign-middle"><?php echo number_format($amount,2,'.','') ?></td>
                       <td class="text-center valign-middle"><?php echo $status ?></td>
                       <td class="text-right valign-middle"><?php echo $opbal_date ?></td>

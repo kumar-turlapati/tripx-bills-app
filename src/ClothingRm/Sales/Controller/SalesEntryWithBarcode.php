@@ -44,6 +44,8 @@ class salesEntryWithBarcode {
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = [];
 
+    $from_indent = false;
+
     $page_error = $page_success = $promo_key = '';
     $print_format = 'bill';
 
@@ -174,6 +176,7 @@ class salesEntryWithBarcode {
       if($indent_details['status']) {
         // map indent data with Sales invoice
         $form_data = $this->_map_indent_data_with_sales_entry($indent_details['response']['indentDetails']);
+        $from_indent = true;
       } else {
         $this->flash->set_flash_message('Invalid Indent Code (or) Indent does not exists.');
         Utilities::redirect('/sales-indents/list');
@@ -206,6 +209,7 @@ class salesEntryWithBarcode {
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'sa_executives' => $sa_executives,
       'promo_key' => $promo_key,
+      'from_indent' => $from_indent,
     );
 
     return array($this->template->render_view('sales-entry-with-barcode', $template_vars),$controller_vars);

@@ -532,6 +532,17 @@ function initializeJS() {
     });            
   }
 
+  // supplier name auto complete
+  if(jQuery('.suppnameAc').length>0) {
+    $('.suppnameAc').autocomplete("/async/suppAc", {
+      width: 300,
+      cacheLength:0,
+      selectFirst:false,
+      minChars:1,
+      'max': 0,
+    });            
+  }  
+
   // customer entry form
   if($('#customerForm').length > 0) {
     $('#customerType').on('change', function(){

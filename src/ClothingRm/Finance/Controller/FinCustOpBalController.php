@@ -250,7 +250,7 @@ class FinCustOpBalController {
       $cleaned_params['creditDays'] = $credit_days;
     } else {
       $errors['creditDays'] = 'Invalid Credit Days';
-    }       
+    }
 
     if(count($errors)>0) {
       return array('status'=>false, 'errors'=>$errors);

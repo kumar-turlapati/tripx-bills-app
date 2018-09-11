@@ -74,7 +74,7 @@ class Supplier
 		}
 
 		// check for data in posted forms
-		if($params['supplierName'] === '' || !Utilities::validateName($params['supplierName'])) {
+		if($params['supplierName'] === '') {
 			$errors['supplierName'] = $this->_errorDescriptions('supplierName');
 		}
 

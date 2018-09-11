@@ -15,30 +15,26 @@ use ClothingRm\Suppliers\Model\Supplier;
 class FinSuppOpBalController {
 	
 	public function __construct() {
-    $this->template = new Template(__DIR__.'/../Views/');    
+    $this->template = new Template(__DIR__.'/../Views/');
+    $this->supp_model = new Supplier;
+    $this->supp_op_model = new SuppOpbal;
+    $this->flash = new Flash;
 	}
 
+  // supplier opbal create action
 	public function supplierOpBalCreateAction(Request $request) {
     $page_error = $page_success = '';
-    $submitted_data = $form_errors = $suppliers_a = $search_params = array();
+    $submitted_data = $form_errors = $suppliers_a = $search_params = [];
     $modes_a = array(-1=>'Choose',0=>'Debit',1=>'Credit');
-
-    $supplier_api_call = new Supplier;
-    $search_params['pagination'] = 'no';
-
     if(count($request->request->all()) > 0) {
       $validate_form = $this->_validate_form_data($request->request->all());
       $status = $validate_form['status'];
       if($status) {
-        $flash = new Flash();
         $form_data = $validate_form['cleaned_params'];
-        $fin_model = new SuppOpbal();
-        $result = $fin_model->create_supplier_opbal($form_data);
-        // dump($result);
-        // exit;
+        $result = $this->supp_op_model->create_supplier_opbal($form_data);
         if($result['status']===true) {
           $message = 'Opening balance added successfully with code ` '.$result['opBalCode'].' `';
-          $flash->set_flash_message($message);
+          $this->flash->set_flash_message($message);
           Utilities::redirect('/fin/supp-opbal/create');
         } else {
           $page_error = $result['apierror'];
@@ -50,17 +46,11 @@ class FinSuppOpBalController {
       }
     }
 
-    $suppliers = $supplier_api_call->get_suppliers(0,0,$search_params);
-    if($suppliers['status']) {
-        $suppliers_a = array(''=>'Choose')+$suppliers['suppliers'];
-    }    
-
-     // prepare form variables.
+    // prepare form variables.
     $template_vars = array(
       'page_error' => $page_error,
       'page_success' => $page_success,
       'form_errors' => $form_errors,
-      'suppliers' => $suppliers_a,
       'modes' => $modes_a,
       'submitted_data' => $submitted_data,
     );
@@ -75,28 +65,23 @@ class FinSuppOpBalController {
     return array($this->template->render_view('supp-opbal-create', $template_vars), $controller_vars);
 	}
 
+  // supplier opbal update action
 	public function supplierOpBalUpdateAction(Request $request) {
     $page_error = $page_success = $opbal_code = '';
-    $submitted_data = $form_errors = $suppliers_a = $search_params = array();
+    $submitted_data = $form_errors = $suppliers_a = $search_params = [];
     $modes_a = array(-1=>'Choose',0=>'Debit',1=>'Credit');
 
-    $supplier_api_call = new Supplier;
-    $flash = new Flash;
-    $fin_model = new SuppOpbal;
-
-    $search_params['pagination'] = 'no';
+    $opbal_code = !is_null($request->get('opBalCode')) ? Utilities::clean_string($request->get('opBalCode')) : '';
 
     if(count($request->request->all()) > 0) {
       $validate_form = $this->_validate_form_data($request->request->all(),true);
       $status = $validate_form['status'];
       if($status) {
         $form_data = $validate_form['cleaned_params'];
-        $opbal_code = $form_data['opBalCode'];
-        unset($form_data['opBalCode']);
-        $result = $fin_model->update_supplier_opbal($opbal_code,$form_data);
-        if($result['status']===true) {
+        $result = $this->supp_op_model->update_supplier_opbal($opbal_code,$form_data);
+        if($result['status']) {
           $message = 'Opening balance updated successfully';
-          $flash->set_flash_message($message);
+          $this->flash->set_flash_message($message);
           Utilities::redirect('/fin/supp-opbal/create');
         } else {
           $page_error = $result['apierror'];
@@ -107,13 +92,7 @@ class FinSuppOpBalController {
         $submitted_data = $request->request->all();
       }
     } else {
-      $opbal_code = Utilities::clean_string($request->get('opBalCode'));
       $submitted_data = $this->_validate_opbal_code($opbal_code);
-    }
-
-    $suppliers = $supplier_api_call->get_suppliers(0,0,$search_params);
-    if($suppliers['status']) {
-        $suppliers_a = array(''=>'Choose')+$suppliers['suppliers'];
     }
 
      // prepare form variables.
@@ -137,6 +116,7 @@ class FinSuppOpBalController {
     return array($this->template->render_view('supp-opbal-update', $template_vars), $controller_vars);
 	}
 
+  // supplier opbal list action
 	public function supplierOpBalListAction(Request $request) {
     $balances = array();
     
@@ -162,6 +142,67 @@ class FinSuppOpBalController {
     return array($this->template->render_view('supp-opbal-list', $template_vars), $controller_vars);
 	}
 
+  // validate form data
+  private function _validate_form_data($form_data=[]) {
+    $errors = $cleaned_params = [];
+
+    $supplier_name = Utilities::clean_string($form_data['suppName']);
+    $action = Utilities::clean_string($form_data['action']);
+    $amount = Utilities::clean_string($form_data['amount']);
+    $bill_no = Utilities::clean_string($form_data['billNo']);
+    $bill_date = Utilities::clean_string($form_data['billDate']);
+    $credit_days = Utilities::clean_string($form_data['creditDays']);
+
+    if($supplier_name === '') {
+      $errors['suppName'] = 'Invalid supplier name';
+    } else {
+      $cleaned_params['suppName'] = $supplier_name;
+    }
+    if(!is_numeric($action) || $action<0 || $action>1) {
+      $errors['action'] = 'Invalid action';
+    } else {
+      $cleaned_params['action'] = (int)$action;
+    }
+    if(!is_numeric($amount) || $amount<=0) {
+      $errors['amount'] = 'Invalid amount';
+    } else {
+      $cleaned_params['amount'] = $amount;
+    }
+    if($bill_no === '') {
+      $errors['billNo'] = 'Invalid bill no.';
+    } else {
+      $cleaned_params['billNo'] = $bill_no;
+    }
+    if($bill_date === '') {
+      $errors['billDate'] = 'Invalid bill date';
+    } else {
+      $cleaned_params['billDate'] = $bill_date;
+    }
+    if(is_numeric($credit_days) && $credit_days>0) {
+      $cleaned_params['creditDays'] = $credit_days;
+    } else {
+      $errors['creditDays'] = 'Invalid credit days';
+    }
+    if(count($errors)>0) {
+      return array('status' => false, 'errors' => $errors);
+    } else {
+      return array('status' => true, 'cleaned_params' => $cleaned_params);
+    }
+  }
+
+  // validate opbal code.
+  private function _validate_opbal_code($opbal_code='') {
+    $supp_opbal_details = $this->supp_op_model->get_supp_opbal_details($opbal_code);
+    if($supp_opbal_details['status']) {
+      return $supp_opbal_details['opBalDetails'];
+    } else {
+      $this->flash->set_flash_message('Invalid entry',1);
+      Utilities::redirect('/fin/supp-opbal/list');        
+    }
+  }
+}
+
+/*
   public function supplierOpBalImportAction(Request $request) {
 
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
@@ -309,68 +350,4 @@ class FinSuppOpBalController {
 
     // render template
     return array($this->template->render_view('supplier-ledger',$template_vars),$controller_vars);     
-  }
-
-  // Validate form data
-  private function _validate_form_data($form_data=array(),$is_update=false) {
-    $errors = $cleaned_params = array();
-
-    $supp_code = Utilities::clean_string($form_data['suppCode']);
-    $action = Utilities::clean_string($form_data['action']);
-    $amount = Utilities::clean_string($form_data['amount']);
-    if($is_update) {
-      $opbal_code = Utilities::clean_string($form_data['opBalCode']);
-      $this->_validate_opbal_code($opbal_code);
-      $cleaned_params['opBalCode'] = $opbal_code;
-    }
-
-    if($supp_code === '') {
-      $errors['suppCode'] = 'Invalid supplier code';
-    } else {
-      $cleaned_params['suppCode'] = $supp_code;
-    }
-    if(!is_numeric($action) || $action<0 || $action>1) {
-      $errors['action'] = 'Invalid action';
-    } else {
-      $cleaned_params['action'] = (int)$action===0?'d':'c'; //$action; //;
-    }
-    if(!is_numeric($amount) || $amount<=0) {
-      $errors['amount'] = 'Invalid amount';
-    } else {
-      $cleaned_params['amount'] = $amount;
-    }
-
-    $cleaned_params['openingDate'] = Utilities::clean_string($form_data['openDate']);
-
-    if(count($errors)>0) {
-      return array('status'=>false, 'errors'=>$errors);
-    } else {
-      return array('status'=>true, 'cleaned_params'=>$cleaned_params);
-    }    
-  }
-
-  // validate opbal code.
-  private function _validate_opbal_code($opbal_code='') {
-    $fin_model = new SuppOpbal();
-    $supp_opbal_details = $fin_model->get_supp_opbal_details($opbal_code);
-    if($supp_opbal_details['status']) {
-      return $this->_map_api_data($supp_opbal_details['opBalDetails']);
-    } else {
-      $flash->set_flash_message('Invalid entry',1);
-      Utilities::redirect('/fin/supp-opbal/list');        
-    }
-  }
-
-  private function _map_api_data($opbal_details=array()) {
-    $supp_code = $opbal_details['supplierCode'];
-    if($opbal_details['action']==='c') {
-      $action = 1;
-    } else {
-      $action = 0;
-    }
-    $opbal_details['suppCode'] = $supp_code;
-    $opbal_details['action'] = $action;
-    unset($opbal_details['supplierCode']);
-    return $opbal_details;
-  }
-}
+  }*/

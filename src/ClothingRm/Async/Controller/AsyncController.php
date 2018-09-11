@@ -145,6 +145,12 @@ class AsyncController {
       if(count($response)>0 && is_array($response)) {
         echo implode($response,"\n");
       }
+    } elseif($api_string === 'suppAc' && !is_null($request->get('a'))) {
+      $params['q'] = Utilities::clean_string($request->get('a'));
+      $response = $api_caller->sendRequest('get','suppliers/ac/get-names',$params,false);
+      if(count($response)>0 && is_array($response)) {
+        echo implode($response,"\n");
+      }      
     }
     exit;
   }

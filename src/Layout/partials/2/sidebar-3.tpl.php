@@ -18,7 +18,8 @@
           <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores</a></li>
           <li><a href="/fin/bank/list"><i class="fa fa-university"></i> Banks</a></li>
           <li><a href="/bu/list"><i class="fa fa-user-circle-o"></i> Business Users</a></li>
-          <li><a href="/fin/cust-opbal/list"><i class="fa fa-line-chart"></i> OpBal - Customers</a></li>          
+          <li><a href="/fin/cust-opbal/list"><i class="fa fa-line-chart"></i> OpBal - Customers</a></li>
+          <li><a href="/fin/supp-opbal/list"><i class="fa fa-user-circle-o"></i> OpBal - Suppliers</a></li>          
         </ul>
       </li>
       <li class="sub-menu">
@@ -146,7 +147,7 @@
           </li>
           <li class="sub-menu">
             <a href="javascript:">
-              <i class="fa fa-plane"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
+              <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">
               <li><a href="/report-options/indent-item-avail"><i class="fa fa-angle-right"></i> Item Availability</a></li>
