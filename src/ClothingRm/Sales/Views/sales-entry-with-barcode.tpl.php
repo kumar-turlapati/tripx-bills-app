@@ -43,14 +43,19 @@
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
 
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
-?>
 
+  if($from_indent) {
+    $form_submit_url = '/sales/entry-with-barcode?ic='.$ic;
+  } else {
+    $form_submit_url = '/sales/entry-with-barcode';
+  }
+?>
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panelBox">
       <div class="panelBody">
         <?php echo $flash_obj->print_flash_message(); ?>
-        <form id="outwardEntryForm" method="POST" action="/sales/entry-with-barcode">
+        <form id="outwardEntryForm" method="POST" action="<?php echo $form_submit_url ?>">
           <div class="table-responsive">
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
               <thead>
@@ -142,7 +147,7 @@
                         name="itemDetails[itemName][]" 
                         id="iname_<?php echo $i+1 ?>" 
                         size="30" 
-                        class="inameAc saleItem noEnterKey" 
+                        class="saleItem noEnterKey" 
                         index="<?php echo $i+1 ?>" 
                         value="<?php echo $item_name ?>"
                       />
@@ -545,7 +550,7 @@
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Customer name</label>
-                  <input type="text" class="form-control noEnterKey" name="name" id="name" value="<?php echo $customer_name ?>" />
+                  <input type="text" class="form-control noEnterKey <?php echo $from_indent ? 'cnameAc' : ''?>" name="name" id="name" value="<?php echo $customer_name ?>" />
                   <?php if(isset($errors['name'])): ?>
                     <span class="error"><?php echo $errors['name'] ?></span>
                   <?php endif; ?>                  
@@ -679,6 +684,9 @@
               <i class="fa fa-times"></i> Cancel
             </button>
           </div>
+          <?php if($from_indent): ?>
+            <input type="hidden" name="fi" id="fi" value="" />
+          <?php endif; ?>
         </form>
       </div>
     </section>

@@ -48,6 +48,7 @@ class salesEntryWithBarcode {
 
     $page_error = $page_success = $promo_key = '';
     $print_format = 'bill';
+    $indent_code = '';
 
     # ---------- end of initializing variables -----------------
     for($i=1;$i<=500;$i++) {
@@ -210,6 +211,7 @@ class salesEntryWithBarcode {
       'sa_executives' => $sa_executives,
       'promo_key' => $promo_key,
       'from_indent' => $from_indent,
+      'ic' => $indent_code,
     );
 
     return array($this->template->render_view('sales-entry-with-barcode', $template_vars),$controller_vars);
@@ -244,6 +246,7 @@ class salesEntryWithBarcode {
     $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
     $referral_code = is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
+    $from_indent = isset($form_data['fi']) ? 'y': 'n';
 
     $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
     $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
@@ -276,9 +279,7 @@ class salesEntryWithBarcode {
     }
 
     # validate name.
-    if( $name !== '' && !ctype_alnum(str_replace(' ', '', $name)) ) {
-      $form_errors['name'] = 'Invalid name.';      
-    } else {
+    if($name !== '') {
       $cleaned_params['name'] = $name;      
     }
 
@@ -474,6 +475,7 @@ class salesEntryWithBarcode {
     $cleaned_params['lrNos'] = $lr_no;
     $cleaned_params['lrDate'] = $lr_date;
     $cleaned_params['challanNo'] = $chalan_no;
+    $cleaned_params['fromIndent'] = $from_indent;
 
     # return response.
     if(count($form_errors)>0) {
