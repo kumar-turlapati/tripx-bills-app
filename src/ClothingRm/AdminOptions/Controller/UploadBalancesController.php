@@ -81,7 +81,7 @@ class UploadBalancesController {
           $file->upload();
         } catch (\Exception $e) {
           $this->flash->set_flash_message('Unknown error. Unable to upload your file.',1);
-          Utilities::redirect($redirect_url);        
+          Utilities::redirect($redirect_url);
         }
 
         # get file path from uploaded operation.
@@ -90,6 +90,10 @@ class UploadBalancesController {
         # initiate importer
         $importer = new Importer($file_path);
         $imported_records = $importer->_import_data();
+        if(count($imported_records)>301) {
+          $this->flash->set_flash_message('Only 300 rows are allowed per file upload.', 1);
+          Utilities::redirect($redirect_url);
+        }
 
         # validate imported leads.
         $validation_response = $this->_validate_imported_records_debtors($imported_records);
