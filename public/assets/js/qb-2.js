@@ -324,7 +324,9 @@ function initializeJS() {
     } else if(buttonId === 'seWithBarcode') {
       window.location.href = '/sales/entry-with-barcode';
     } else if(buttonId === 'ieWithBarcode') {
-      window.location.href = '/sales-indent/create';      
+      window.location.href = '/sales-indent/create';
+    } else if(buttonId === 'uploadCustomers') {
+      window.location.href = '/upload-debtors';
     }
     e.preventDefault();
   });
