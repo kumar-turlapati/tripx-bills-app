@@ -569,7 +569,7 @@ class Utilities
     }
   }
 
-  public static function validate_gst_no($gst_no) {
+  public static function validate_gst_no($gst_no='') {
     if(strlen($gst_no) !== 15) {
       return false;
     }

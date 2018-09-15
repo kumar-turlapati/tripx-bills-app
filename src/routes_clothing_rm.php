@@ -452,6 +452,12 @@ $routes->add('adminOptions_deleteSaleBill', new Routing\Route('/admin-options/de
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadInventoryController::uploadInventoryAction',
 )));
+$routes->add('upload_debtors', new Routing\Route('/upload-debtors', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadBalancesController::uploadDebtorsAction',
+)));
+$routes->add('upload_creditors', new Routing\Route('/upload-creditors', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadBalancesController::uploadCreditorsAction',
+)));
 
 // Taxes Management
 $routes->add('add_tax', new Routing\Route('/taxes/add', array(

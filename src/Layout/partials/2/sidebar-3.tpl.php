@@ -104,9 +104,14 @@
         <ul class="sub">
           <li>
             <a href="/upload-inventory" title="Upload inventory and opening balances">
-              <i class="fa fa-upload"></i> Import Inventory
+              <i class="fa fa-upload"></i> Upload Inventory
             </a>
           </li>
+          <li>
+            <a href="/upload-debtors" title="Upload Customer's Data with Opening Balances">
+              <i class="fa fa-upload"></i> Upload Customers Data
+            </a>
+          </li>          
           <li>
             <a href="/devices/list" title="Register devices to access the application">
               <i class="fa fa-lock"></i> Devices List

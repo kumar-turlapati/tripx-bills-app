@@ -170,87 +170,84 @@ class CustomersController
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
 
-    $customers_model = new Customers;
-    $flash_obj = new Flash;
+    $page_no = is_null($request->get('pageNo')) ? 1 : Utilities::clean_string($request->get('pageNo'));
+    $per_page = is_null($request->get('perPage')) ? 100 : Utilities::clean_string($request->get('perPage'));
+    $customer_name = is_null($request->get('custName')) ? '' : Utilities::clean_string($request->get('custName'));
+    $state_code = is_null($request->get('stateCode')) ? '' : Utilities::clean_string($request->get('stateCode'));
 
-    if( $request->get('pageNo') ) {
-      $page_no = $request->get('pageNo');
-    } else {
-      $page_no = 1;
-    }
+    $search_params = [
+      'pageNo' => $page_no,
+      'perPage' => $per_page,
+      'custName' => $customer_name,
+      'stateCode' => $state_code,
+    ];
 
-    if( $request->get('perPage') ) {
-      $per_page = $request->get('perPage');
-    } else {
-      $per_page = 100;
-    }
+    // dump($search_params);
 
-    $customers_list = $customers_model->get_customers($page_no,$per_page,$search_params);
+    $customers_list = $this->customer_api_call->get_customers($search_params);
     $api_status = $customers_list['status'];
 
-      # check api status
-      if($api_status) {
-
-          # check whether we got products or not.
-          if(count($customers_list['customers']) >0) {
-              $slno = Utilities::get_slno_start(count($customers_list['customers']),$per_page,$page_no);
-              $to_sl_no = $slno+$per_page;
-              $slno++;
-
-              if($page_no<=3) {
-                  $page_links_to_start = 1;
-                  $page_links_to_end = 10;
-              } else {
-                  $page_links_to_start = $page_no-3;
-                  $page_links_to_end = $page_links_to_start+10;            
-              }
-
-              if($customers_list['total_pages']<$page_links_to_end) {
-                  $page_links_to_end = $customers_list['total_pages'];
-              }
-
-              if($customers_list['record_count'] < $per_page) {
-                  $to_sl_no = ($slno+$customers_list['record_count'])-1;
-              }
-
-              $customers = $customers_list['customers'];
-              $total_pages = $customers_list['total_pages'];
-              $total_records = $customers_list['total_records'];
-              $record_count = $customers_list['record_count'];
-          } else {
-              $page_error = $customers_list['apierror'];
-          }
-
+    # check api status
+    if($api_status) {
+      # check whether we got products or not.
+      if(count($customers_list['customers']) >0) {
+        $slno = Utilities::get_slno_start(count($customers_list['customers']),$per_page,$page_no);
+        $to_sl_no = $slno+$per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
+        } else {
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;
+        }
+        if($customers_list['total_pages']<$page_links_to_end) {
+          $page_links_to_end = $customers_list['total_pages'];
+        }
+        if($customers_list['record_count'] < $per_page) {
+          $to_sl_no = ($slno+$customers_list['record_count'])-1;
+        }
+        $customers = $customers_list['customers'];
+        $total_pages = $customers_list['total_pages'];
+        $total_records = $customers_list['total_records'];
+        $record_count = $customers_list['record_count'];
       } else {
-          $page_error = $customers_list['apierror'];
+        $page_error = $customers_list['apierror'];
       }
+    } else {
+      $page_error = $customers_list['apierror'];
+    }
 
-       // prepare form variables.
-      $template_vars = array(
-          'page_error' => $page_error,
-          'page_success' => $page_success,
-          'customers' => $customers,
-          'total_pages' => $total_pages ,
-          'total_records' => $total_records,
-          'record_count' =>  $record_count,
-          'sl_no' => $slno,
-          'to_sl_no' => $to_sl_no,
-          'search_params' => $search_params,            
-          'page_links_to_start' => $page_links_to_start,
-          'page_links_to_end' => $page_links_to_end,
-          'current_page' => $page_no,
-          'customer_types' => [],
-          'genders' => Constants::$GENDERS,
-      );
+    $states_a = Constants::$LOCATION_STATES;
+    asort($states_a);
 
-      // build variables
-      $controller_vars = array(
-        'page_title' => 'Customers',
-        'icon_name' => 'fa fa-smile-o',
-      );
+     // prepare form variables.
+    $template_vars = array(
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'customers' => $customers,
+      'total_pages' => $total_pages ,
+      'total_records' => $total_records,
+      'record_count' =>  $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'search_params' => $search_params,            
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'customer_types' => [],
+      'genders' => Constants::$GENDERS,
+      'states_a' => array(0=>'All Locations') + $states_a,
+    );
 
-      # render template
-      return array($this->template->render_view('customers-list', $template_vars), $controller_vars);
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Customers',
+      'icon_name' => 'fa fa-smile-o',
+    );
+
+    // render template
+    return array($this->template->render_view('customers-list', $template_vars), $controller_vars);
   }
 
   # private functions should go from here.

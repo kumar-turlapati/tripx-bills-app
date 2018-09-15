@@ -25,7 +25,6 @@ class Customers
 	public function updateCustomer($params=array(), $customer_code='') {		
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'customers/'.$client_id.'/'.$customer_code;
-
 		# call api.
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('put', $request_uri, $params);
@@ -34,7 +33,7 @@ class Customers
 			return array('status' => true);
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);
-		}		
+		}
 	}
 
 	public function get_customer_details($customer_code='') {
@@ -63,23 +62,13 @@ class Customers
 		}
 	}
 
-	public function get_customers($page_no=1, $per_page=100, $search_params=[]) {
-		$params = [];
-		$params['pageNo']  = $page_no;
-		$params['perPage'] = $per_page;
-		if(count($search_params)>0) {
-			if(isset($search_params['custName'])) {
-				$cust_name = Utilities::clean_string($search_params['custName']);
-				$params['custName'] = $cust_name;
-			}
-		}
-
+	public function get_customers($search_params=[]) {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
 
 		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get','customers/'.$client_id,$params);
+		$response = $api_caller->sendRequest('get','customers/'.$client_id,$search_params);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return array(
@@ -95,5 +84,22 @@ class Customers
 				'apierror' => $response['reason']
 			);
 		}	
+	}
+
+	public function upload_debtors($debtors=[], $upload_type='') {
+		$request_uri = 'upload-debtors';
+		# call api.
+		$api_caller = new ApiCaller();
+		$params = array(
+			'debtors' => $debtors,
+			'uploadType' => $upload_type
+		);
+		$response = $api_caller->sendRequest('post', $request_uri, $params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
 	}
 }

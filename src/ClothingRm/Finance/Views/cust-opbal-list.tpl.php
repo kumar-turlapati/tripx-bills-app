@@ -15,16 +15,16 @@
         </div>
         <h2 class="hdg-reports text-center">List of Customers Opening Balances</h2>
         <div class="table-responsive">
-          <table class="table table-striped table-hover">
+          <table class="table table-striped table-hover font12">
             <thead>
               <tr>
                 <th width="5%" class="text-center">Sno.</th>
-                <th width="20%" class="text-center">Customer Name</th>
+                <th width="35%" class="text-center">Customer Name</th>
                 <th width="10%" class="text-center">Bill No.</th>
                 <th width="10%" class="text-center">Bill Date</th>
-                <th width="10%" class="text-center">Credit Days</th>
+                <th width="5%" class="text-center">Credit Days</th>
                 <th width="10%" class="text-center">Amount</th>
-                <th width="10%" class="text-center">Status</span></th>
+                <th width="5%" class="text-center">Status</span></th>
                 <th width="10%" class="text-center">Opening date</th>
                 <th width="15%" class="text-center">Actions</th>
               </tr>
@@ -50,12 +50,12 @@
                         $total_balance += $amount;
                       }
                   ?>
-                    <tr class="text-right font12">
+                    <tr class="text-right font11">
                       <td class="text-right valign-middle"><?php echo $cntr ?></td>
                       <td class="text-left valign-middle"><?php echo $cust_name ?></td>
-                      <td class="text-left valign-middle"><?php echo $bill_no ?></td>
-                      <td class="text-left valign-middle"><?php echo $bill_date ?></td>
-                      <td class="text-left valign-middle"><?php echo $credit_days ?></td>
+                      <td class="text-right valign-middle"><?php echo $bill_no ?></td>
+                      <td class="text-right valign-middle"><?php echo $bill_date ?></td>
+                      <td class="text-right valign-middle"><?php echo $credit_days ?></td>
                       <td class="text-right valign-middle"><?php echo number_format($amount,2,'.','') ?></td>
                       <td class="text-center valign-middle"><?php echo $status ?></td>
                       <td class="text-right valign-middle"><?php echo $opbal_date ?></td>
