@@ -271,7 +271,7 @@
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
                   <label class="control-label">Customer name</label>
-                  <input type="text" class="form-control noEnterKey" name="name" id="name" value="<?php echo $customer_name ?>" />
+                  <input type="text" class="form-control noEnterKey cnameAc" name="name" id="name" value="<?php echo $customer_name ?>" />
                   <?php if(isset($errors['name'])): ?>
                     <span class="error"><?php echo $errors['name'] ?></span>
                   <?php endif; ?>                  
