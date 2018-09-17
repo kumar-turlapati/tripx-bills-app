@@ -142,9 +142,15 @@ class FinCustOpBalController {
 
     $page_no = !is_null($request->get('pageNo')) ? $request->get('pageNo') : 1;
     $per_page = !is_null($request->get('perPage')) ? $request->get('perPage') : 300;
+    $customer_name = is_null($request->get('custName')) ? '' : Utilities::clean_string($request->get('custName'));
+    $state_code = is_null($request->get('stateCode')) ? '' : Utilities::clean_string($request->get('stateCode'));
 
-    $search_params['pageNo'] = $page_no;
-    $search_params['perPage'] = $per_page;
+    $search_params = [
+      'pageNo' => $page_no,
+      'perPage' => $per_page,
+      'custName' => $customer_name,
+      'stateCode' => $state_code,
+    ];    
 
     $customers_list = $this->cust_op_model->get_cust_opbal_list($search_params);
     $api_status = $customers_list['status'];

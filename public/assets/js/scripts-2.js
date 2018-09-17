@@ -327,6 +327,8 @@ function initializeJS() {
       window.location.href = '/sales-indent/create';
     } else if(buttonId === 'uploadCustomers') {
       window.location.href = '/upload-debtors';
+    } else if(buttonId === 'uploadSuppliers') {
+      window.location.href = '/upload-creditors';
     }
     e.preventDefault();
   });

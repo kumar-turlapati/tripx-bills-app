@@ -237,7 +237,7 @@ class CustomersController
       'current_page' => $page_no,
       'customer_types' => [],
       'genders' => Constants::$GENDERS,
-      'states_a' => array(0=>'All Locations') + $states_a,
+      'states_a' => array(0=>'All States') + $states_a,
     );
 
     // build variables

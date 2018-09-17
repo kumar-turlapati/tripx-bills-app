@@ -1,6 +1,6 @@
 <?php
   use Atawa\Utilities;
-  $query_params = '';  
+  $query_params = '';
   if(isset($search_params['custName']) && $search_params['custName'] !='') {
     $custName = $search_params['custName'];
     $query_params[] = 'custName='.$custName;
@@ -85,7 +85,7 @@
                     if($customer_details['customerType'] === 'b') {
                       $customer_type = 'Business';
                     } else {
-                      $customer_type = 'Retail Customer';
+                      $customer_type = 'Retail';
                     }
                     if($customer_details['address'] !== '') {
                       $address = $customer_details['address'];

@@ -31,9 +31,8 @@ class UploadBalancesController {
 
   // upload debtors action
   public function uploadDebtorsAction(Request $request) {
-
-    # variable assignments.
-    $unique_leads = $import_data = $form_errors = [];
+    // variable assignments.
+    $import_data = $form_errors = [];
     $upload_errors = [];
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
     $allowed_extensions = ['xls', 'ods', 'xlsx'];
@@ -56,13 +55,13 @@ class UploadBalancesController {
         $file_name = $file_details['name'];
         $extension = pathinfo($file_name, PATHINFO_EXTENSION);
 
-        # check if we have valid file extension
+        // check if we have valid file extension
         if(!in_array($extension, $allowed_extensions)) {
           $this->flash->set_flash_message('Invalid file uploaded. Only (.ods, .xlsx) file formats are allowed',1);
           Utilities::redirect($redirect_url);
         }
 
-        # upload file to server
+        // upload file to server
         $file_upload_path = __DIR__.'/../../../../bulkuploads';
         $storage = new \Upload\Storage\FileSystem($file_upload_path);
         $file = new \Upload\File('fileName', $storage);
@@ -74,7 +73,7 @@ class UploadBalancesController {
           Utilities::redirect($redirect_url);        
         }
 
-        # upload file.
+        // upload file.
         $new_filename = 'objectUploadDeb_'.time();
         $file->setName($new_filename);
         try {
@@ -84,10 +83,10 @@ class UploadBalancesController {
           Utilities::redirect($redirect_url);
         }
 
-        # get file path from uploaded operation.
+        // get file path from uploaded operation.
         $file_path = $file_upload_path.'/'.$new_filename.'.'.$uploaded_file_ext;
 
-        # initiate importer
+        // initiate importer
         $importer = new Importer($file_path);
         $imported_records = $importer->_import_data();
         if(count($imported_records)>301) {
@@ -95,14 +94,14 @@ class UploadBalancesController {
           Utilities::redirect($redirect_url);
         }
 
-        # validate imported leads.
+        // validate imported leads.
         $validation_response = $this->_validate_imported_records_debtors($imported_records);
         if($validation_response['status'] === false) {
           $this->flash->set_flash_message('Could not upload. You have errors in the file. Please check below.', 1);
           $upload_errors = $validation_response['errors'];
         } else {
           $cleaned_records = $validation_response['records'];
-          # hit api with data.
+          // hit api with data.
           $api_response = $this->customer_model->upload_debtors($cleaned_records,$upload_type);
           if($api_response['status'] === false) {
             $this->flash->set_flash_message('Unable to upload Customers Data. Please contact QwikBills administrator.',1);
@@ -115,7 +114,7 @@ class UploadBalancesController {
       }
     }
 
-    # prepare form variables.
+    // prepare form variables.
     $template_vars = array(
       'op_a' => array('-1' => 'Choose') + $op_a,
       'op' => $op,
@@ -124,7 +123,7 @@ class UploadBalancesController {
       'upload_errors' => $upload_errors,
     );
 
-    # build variables
+    // build variables
     $controller_vars = array(
       'page_title' => 'Upload Customers Data',
       'icon_name' => 'fa fa-smile-o',
@@ -136,12 +135,12 @@ class UploadBalancesController {
   // upload debtors action
   public function uploadCreditorsAction(Request $request) {
 
-    # variable assignments.
-    $unique_leads = $import_data = $form_errors = [];
+    // variable assignments.
+    $import_data = $form_errors = [];
     $upload_errors = [];
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
     $allowed_extensions = ['xls', 'ods', 'xlsx'];
-    $redirect_url = '/upload-debtors';
+    $redirect_url = '/upload-creditors';
     $op = -1;
 
     // form submit
@@ -160,13 +159,13 @@ class UploadBalancesController {
         $file_name = $file_details['name'];
         $extension = pathinfo($file_name, PATHINFO_EXTENSION);
 
-        # check if we have valid file extension
+        // check if we have valid file extension
         if(!in_array($extension, $allowed_extensions)) {
           $this->flash->set_flash_message('Invalid file uploaded. Only (.ods, .xlsx) file formats are allowed',1);
           Utilities::redirect($redirect_url);
         }
 
-        # upload file to server
+        // upload file to server
         $file_upload_path = __DIR__.'/../../../../bulkuploads';
         $storage = new \Upload\Storage\FileSystem($file_upload_path);
         $file = new \Upload\File('fileName', $storage);
@@ -178,44 +177,48 @@ class UploadBalancesController {
           Utilities::redirect($redirect_url);        
         }
 
-        # upload file.
-        $new_filename = 'objectUploadDeb_'.time();
+        // upload file.
+        $new_filename = 'objectUploadCredit_'.time();
         $file->setName($new_filename);
         try {
           $file->upload();
         } catch (\Exception $e) {
           $this->flash->set_flash_message('Unknown error. Unable to upload your file.',1);
-          Utilities::redirect($redirect_url);        
+          Utilities::redirect($redirect_url);
         }
 
-        # get file path from uploaded operation.
+        // get file path from uploaded operation.
         $file_path = $file_upload_path.'/'.$new_filename.'.'.$uploaded_file_ext;
 
-        # initiate importer
+        // initiate importer
         $importer = new Importer($file_path);
         $imported_records = $importer->_import_data();
+        if(count($imported_records)>301) {
+          $this->flash->set_flash_message('Only 300 rows are allowed per file upload.', 1);
+          Utilities::redirect($redirect_url);
+        }
 
-        # validate imported leads.
+        // validate imported leads.
         $validation_response = $this->_validate_imported_records_creditors($imported_records);
         if($validation_response['status'] === false) {
           $this->flash->set_flash_message('Could not upload. You have errors in the file. Please check below.', 1);
           $upload_errors = $validation_response['errors'];
         } else {
           $cleaned_records = $validation_response['records'];
-          # hit api with data.
-          $api_response = $this->customer_model->upload_debtors($cleaned_records,$upload_type);
+          // hit api with data.
+          $api_response = $this->supplier_model->upload_creditors($cleaned_records,$upload_type);
           if($api_response['status'] === false) {
-            $this->flash->set_flash_message('Unable to upload Customers Data. Please contact QwikBills administrator.',1);
+            $this->flash->set_flash_message('Unable to upload Suppliers Data. Please contact QwikBills administrator.',1);
             Utilities::redirect($redirect_url);
           } else {
-            $this->flash->set_flash_message('Customers Data Uploaded Successfully.');
+            $this->flash->set_flash_message('Suppliers Data Uploaded Successfully.');
             Utilities::redirect($redirect_url);
           }
         }
       }
     }
 
-    # prepare form variables.
+    // prepare form variables.
     $template_vars = array(
       'op_a' => array('-1' => 'Choose') + $op_a,
       'op' => $op,
@@ -224,7 +227,7 @@ class UploadBalancesController {
       'upload_errors' => $upload_errors,
     );
 
-    # build variables
+    // build variables
     $controller_vars = array(
       'page_title' => 'Upload Suppliers Data',
       'icon_name' => 'fa fa-users',
@@ -257,10 +260,6 @@ class UploadBalancesController {
         $balance = Utilities::clean_string($imported_record_details['Balance']);
         $credit_days = Utilities::clean_string($imported_record_details['CreditDays']);
 
-        // if($gst_no !== '' && Utilities::validate_gst_no($gst_no) === false) {
-        //   $error_flag = true;
-        //   $xl_errors[$key]['GSTNo'] = 'Invalid GST No. at Row - '.$row_no;
-        // }
         if($customer_type !== 'c' && $customer_type !== 'b') {
           $error_flag = true;
           $xl_errors[$key]['CustomerType'] = 'Invalid Customer type at Row - '.$row_no;
@@ -281,26 +280,6 @@ class UploadBalancesController {
           $error_flag = true;
           $xl_errors[$key]['Pincode'] = 'Invalid Pincode at Row - '.$row_no;
         }
-/*        if($phones !== '' && !ctype_digit(str_replace([' ', ',', '-'], ['','',''], $phones))) {
-          $error_flag = true;
-          $xl_errors[$key]['Phones'] = 'Invalid Phones at Row - '.$row_no;
-        }
-        if($mobile_no !== '' && !ctype_digit(str_replace([' ', ',', '-'], ['','',''], $mobile_no))) {
-          $error_flag = true;
-          $xl_errors[$key]['MobileNo'] = 'Invalid Mobile No. at Row - '.$row_no;
-        }*/
-/*        if($bill_no === '') {
-          $error_flag = true;
-          $xl_errors[$key]['BillNo'] = 'Invalid Bill No. at Row - '.$row_no;
-        }
-        if(!is_numeric($balance)) {
-          $error_flag = true;
-          $xl_errors[$key]['Balance'] = 'Invalid Balance at Row - '.$row_no;
-        }
-        if(!is_numeric($credit_days)) {
-          $error_flag = true;
-          $xl_errors[$key]['CreditDays'] = 'Invalid Credit Days at Row - '.$row_no;
-        }*/
         if($bill_no !== '' && !Utilities::validate_date($bill_date)) {
           $error_flag = true;
           $xl_errors[$key]['BillDate'] = 'Invalid Bill Date at Row - '.$row_no;
@@ -343,7 +322,6 @@ class UploadBalancesController {
       if($customer_name !== '') {
         $row_no = $key+2;
         $gst_no = Utilities::clean_string($imported_record_details['GSTNo']);
-        $customer_type = Utilities::clean_string($imported_record_details['CustomerType']);
         $address = Utilities::clean_string($imported_record_details['Address']);
         $city_name = Utilities::clean_string($imported_record_details['CityName']);
         $state_id = Utilities::clean_string($imported_record_details['StateCode']);
@@ -356,14 +334,6 @@ class UploadBalancesController {
         $balance = Utilities::clean_string($imported_record_details['Balance']);
         $credit_days = Utilities::clean_string($imported_record_details['CreditDays']);
 
-        if($gst_no !== '' && Utilities::validate_gst_no($gst_no) === false) {
-          $error_flag = true;
-          $xl_errors[$key]['GSTNo'] = 'Invalid GST No. at Row - '.$row_no;
-        }
-        if($customer_type !== 'c' || $customer_type !== 'b') {
-          $error_flag = true;
-          $xl_errors[$key]['CustomerType'] = 'Invalid Customer type at Row - '.$row_no;          
-        }
         if($city_name === '') {
           $error_flag = true;
           $xl_errors[$key]['CityName'] = 'Invalid City Name at Row - '.$row_no;
@@ -376,46 +346,25 @@ class UploadBalancesController {
           $error_flag = true;
           $xl_errors[$key]['CountryCode'] = 'Invalid Country Code at Row - '.$row_no;
         }
-        if($pincode !== '' && !is_numeric($pincode)) {
+        if($pincode !== '' && !ctype_digit(str_replace([' ', '', '-'], ['','',''], $pincode))) {
           $error_flag = true;
           $xl_errors[$key]['Pincode'] = 'Invalid Pincode at Row - '.$row_no;
         }
-        if($phones !== '' && !ctype_digit(str_replace([' ', ',', '-'], ['','',''], $phones))) {
-          $error_flag = true;
-          $xl_errors[$key]['Phones'] = 'Invalid Phones at Row - '.$row_no;
-        }
-        if($mobile_no !== '' && (!is_numeric($mobile_no) && strlen($mobile_no) !== 10)) {
-          $error_flag = true;
-          $xl_errors[$key]['MobileNo'] = 'Invalid Mobile No. at Row - '.$row_no;
-        }
-        if($bill_no === '') {
-          $error_flag = true;
-          $xl_errors[$key]['BillNo'] = 'Invalid Bill No. at Row - '.$row_no;
-        }
-        if(!Utilities::validate_date($bill_date)) {
+        if($bill_no !== '' && !Utilities::validate_date($bill_date)) {
           $error_flag = true;
           $xl_errors[$key]['BillDate'] = 'Invalid Bill Date at Row - '.$row_no;
-        }
-        if(!is_numeric($balance)) {
-          $error_flag = true;
-          $xl_errors[$key]['Balance'] = 'Invalid Balance at Row - '.$row_no;
-        }
-        if(!is_numeric($credit_days)) {
-          $error_flag = true;
-          $xl_errors[$key]['CreditDays'] = 'Invalid Credit Days at Row - '.$row_no;
         }
 
         if($error_flag === false) {
           $cleaned_array[$key]['CustomerName'] = $customer_name;
           $cleaned_array[$key]['GSTNo'] = $gst_no;
-          $cleaned_array[$key]['CustomerType'] = $customer_type;
           $cleaned_array[$key]['Address'] = $address;
           $cleaned_array[$key]['CityName'] = $city_name;
           $cleaned_array[$key]['StateCode'] = $state_id;
           $cleaned_array[$key]['CountryCode'] = $country_id;
           $cleaned_array[$key]['Pincode'] = $pincode;
           $cleaned_array[$key]['Phones'] = $phones;
-          $cleaned_array[$key]['MobileNo'] = $mobile_no;
+          $cleaned_array[$key]['MobileNo'] = substr($mobile_no,0,10);
           $cleaned_array[$key]['BillNo'] = $bill_no;
           $cleaned_array[$key]['BillDate'] = $bill_date;
           $cleaned_array[$key]['Balance'] = $balance;

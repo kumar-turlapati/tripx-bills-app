@@ -111,7 +111,13 @@
             <a href="/upload-debtors" title="Upload Customer's Data with Opening Balances">
               <i class="fa fa-upload"></i> Upload Customers Data
             </a>
-          </li>          
+          </li>
+          <?php /*
+          <li>
+            <a href="/upload-creditors" title="Upload Suppliers's Data with Opening Balances">
+              <i class="fa fa-upload"></i> Upload Suppliers Data
+            </a>
+          </li>*/ ?>       
           <li>
             <a href="/devices/list" title="Register devices to access the application">
               <i class="fa fa-lock"></i> Devices List

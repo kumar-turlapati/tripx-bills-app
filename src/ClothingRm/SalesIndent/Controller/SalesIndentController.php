@@ -511,6 +511,7 @@ class SalesIndentController {
 
     # this code is not mandatory. it will change per each item.
     $cleaned_params['locationCode'] = '';
+    $cleaned_params['name'] = $name;
 
     # validate location code
     # validate primary mobile number.
@@ -527,12 +528,11 @@ class SalesIndentController {
       $cleaned_params['alterMobileNo'] = $alter_mobile_no;
     }    
 
-    # validate name.
-    if( $name !== '' && !ctype_alnum(str_replace(' ', '', $name)) ) {
+/*    if( $name !== '' && !ctype_alnum(str_replace(' ', '', $name)) ) {
       $form_errors['name'] = 'Invalid name.';      
     } else {
       $cleaned_params['name'] = $name;
-    }
+    }*/    
 
     # validate item details.
     for($item_key=0;$item_key<count($item_details['itemName']);$item_key++) {

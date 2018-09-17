@@ -1,5 +1,22 @@
 <?php
   use Atawa\Utilities;
+  $query_params = '';  
+  if(isset($search_params['custName']) && $search_params['custName'] !='') {
+    $custName = $search_params['custName'];
+    $query_params[] = 'custName='.$custName;
+  } else {
+    $custName = '';
+  }
+  if(isset($search_params['stateCode']) && $search_params['stateCode'] !='') {
+    $stateCode = $search_params['stateCode'];
+    $query_params[] = 'stateCode='.$stateCode;
+  } else {
+    $stateCode = '';
+  }  
+  if(is_array($query_params) && count($query_params)>0) {
+    $query_params = '?'.implode('&', $query_params);
+  }
+  $pagination_url = $page_url = '/fin/cust-opbal/list';  
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -13,7 +30,37 @@
             </a> 
           </div>
         </div>
-        <h2 class="hdg-reports text-center">List of Customers Opening Balances</h2>
+        <div class="filters-block">
+          <div id="filters-form">
+            <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>" autocomplete="off">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-1 col-lg-1" style="padding-top:5px;"><b>Filter by</b></div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Customer Name" type="text" name="custName" id="custName" class="form-control" value="<?php echo $custName ?>">
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="stateCode" id="stateCode">
+                      <?php 
+                        foreach($states_a as $key=>$value):
+                          if((int)$stateCode === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+              </div>
+            </form>
+          </div>
+        </div>
         <div class="table-responsive">
           <table class="table table-striped table-hover font12">
             <thead>

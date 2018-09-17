@@ -293,4 +293,20 @@ class Supplier
 		}
 	}
 
+	public function upload_creditors($creditors=[], $upload_type='') {
+		$request_uri = 'upload-creditors';
+		# call api.
+		$api_caller = new ApiCaller();
+		$params = array(
+			'creditors' => $creditors,
+			'uploadType' => $upload_type
+		);
+		$response = $api_caller->sendRequest('post', $request_uri, $params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
 }
