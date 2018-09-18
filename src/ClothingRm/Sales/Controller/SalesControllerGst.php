@@ -332,11 +332,14 @@ class SalesControllerGst {
     }
 
     # ---------- get sales executive names from api -----------------------
-    $result = $this->user_model->get_users(['userType' => 4, 'locationCode' => $_SESSION['lc']]);
-    if($result['status']) {
-      $users = $result['users'];
-      foreach($users as $user_details) {
-        $sa_executives[$user_details['uuid']] = $user_details['userName'];
+    if($_SESSION['__utype'] !== 3) {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+    } else {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+    }
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
       }
     } else {
       $sa_executives = [];

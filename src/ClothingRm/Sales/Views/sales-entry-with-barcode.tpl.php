@@ -29,6 +29,7 @@
   $split_payment_cn = isset($form_data['splitPaymentCn']) ? $form_data['splitPaymentCn'] : '';
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
   $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';
+  $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'b2c';
 
   $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
   $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
@@ -60,8 +61,8 @@
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
               <thead>
                 <tr>
-                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:6%;padding-left:5px;">Scan Barcode</td>
-                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:20%;">
+                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Scan Barcode</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:10%;">
                     <input
                       type="text"
                       id="owBarcode"
@@ -71,12 +72,31 @@
                       <?php echo $from_indent ? 'disabled' : '' ?>
                     />
                   </td>
-                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:6%;padding-left:5px;">Store name</td>
-                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:20%;text-align:left;">
+
+                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;">Store Name</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
                         foreach($client_locations as $key=>$value): 
                           if($location_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>                    
+                  </td>
+
+                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Customer Type</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
+                    <select class="form-control" name="customerType" id="customerType">
+                      <?php 
+                        foreach($customer_types as $key=>$value): 
+                          if($customer_type === $key) {
                             $selected = 'selected="selected"';
                           } else {
                             $selected = '';
@@ -550,7 +570,7 @@
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Customer name</label>
-                  <input type="text" class="form-control noEnterKey cnameAc ?>" name="name" id="name" value="<?php echo $customer_name ?>" />
+                  <input type="text" class="form-control noEnterKey cnameAc" name="name" id="name" value="<?php echo $customer_name ?>" />
                   <?php if(isset($errors['name'])): ?>
                     <span class="error"><?php echo $errors['name'] ?></span>
                   <?php endif; ?>                  

@@ -100,6 +100,25 @@ function initializeJS() {
   }
 
   if( $('#owBarcode').length>0 ) {
+    $('#customerType').on('change', function(e){
+      if($('#tBodyowItems tr').length > 0) {
+        var customerType = $(this).val();
+        if(customerType === 'b2c') {
+          $('#siOtherInfoWindow').hide();
+          $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');
+        } else if(customerType === 'b2b') {
+          $('#siOtherInfoWindow').show();
+          $('#name').addClass('cnameAc');
+        } else {
+          $('#siOtherInfoWindow').hide();
+          $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');          
+        }
+      } else {
+        $(this).val('b2c');
+        alert('Scan Barcode first.');
+      }
+    });
+
     $('#owBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
        var barcode = $(this).val();
@@ -166,8 +185,16 @@ function initializeJS() {
       var upp = itemDetails.upp;
       var moq = itemDetails.mOq;
       var orderQty = (parseFloat(moq)*1).toFixed(2);
+      var customerType = $('#customerType').val();
 
-      $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems, #siOtherInfoWindow').show();
+      $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems').show();
+      if(customerType === 'b2c') {
+        $('#siOtherInfoWindow').hide();
+      } else if(customerType === 'b2b') {
+        $('#siOtherInfoWindow').show();        
+      } else {
+        $('#siOtherInfoWindow').hide();        
+      }
       
       if( $('#tr_'+barcode).length > 0) {
         var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
@@ -919,7 +946,7 @@ function initializeJS() {
       var packingCharges = returnNumber(parseFloat($('#packingCharges').val()));
       var shippingCharges = returnNumber(parseFloat($('#shippingCharges').val()));
       var insuranceCharges = returnNumber(parseFloat($('#insuranceCharges').val()));
-      var otherCharges = returnNumber(parseFloat($('#otherCharges').val()));      
+      var otherCharges = returnNumber(parseFloat($('#otherCharges').val()));
 
       var taxCalcOption = $('#taxCalcOption').val();
 

@@ -106,4 +106,9 @@ class Constants
       'payment' => 'Payment',
       'receipt' => 'Receipt',
     );
+
+    public static $CUSTOMER_TYPES = [
+      'b2c' => 'Business to Customer - B2C', 
+      'b2b' => 'Business to Business - B2B'
+    ];
 }

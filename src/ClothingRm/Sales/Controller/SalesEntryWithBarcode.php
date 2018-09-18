@@ -43,6 +43,7 @@ class salesEntryWithBarcode {
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = [];
+    $customer_types = Constants::$CUSTOMER_TYPES;
 
     $from_indent = false;
 
@@ -212,6 +213,7 @@ class salesEntryWithBarcode {
       'promo_key' => $promo_key,
       'from_indent' => $from_indent,
       'ic' => $indent_code,
+      'customer_types' => $customer_types,
     );
 
     return array($this->template->render_view('sales-entry-with-barcode', $template_vars),$controller_vars);
@@ -230,6 +232,8 @@ class salesEntryWithBarcode {
     $one_item_found = $split_payment_found = false;
 
     $coupon_code = '';
+    $customer_types = array_keys(Constants::$CUSTOMER_TYPES);
+
     $sale_date = Utilities::clean_string($form_data['saleDate']);
     $payment_method = (int)Utilities::clean_string($form_data['paymentMethod']);
     $discount_method = isset($form_data['discountMethod']) ? Utilities::clean_string($form_data['discountMethod']) : '';
@@ -247,6 +251,7 @@ class salesEntryWithBarcode {
     $referral_code = is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
     $from_indent = isset($form_data['fi']) ? 'y': 'n';
+    $customer_type = $form_data['customerType'];
 
     $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
     $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
@@ -255,35 +260,42 @@ class salesEntryWithBarcode {
     $transporter_name = Utilities::clean_string($form_data['transporterName']);
     $lr_no = Utilities::clean_string($form_data['lrNos']);
     $lr_date = Utilities::clean_string($form_data['lrDate']);
-    $chalan_no = Utilities::clean_string($form_data['challanNo']);    
+    $chalan_no = Utilities::clean_string($form_data['challanNo']);
 
-    # validate location code
+    // validate customer type
+    if( in_array($customer_type, $customer_types) ) {
+      $cleaned_params['customerType'] = $customer_type;
+    } else {
+      $form_errors['customerType'] = 'Invalid customer type.';      
+    }
+
+    // validate location code
     if( isset($form_data['locationCode']) && ctype_alnum($form_data['locationCode']) ) {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
       $form_errors['locationCode'] = 'Invalid location code.';
     }
 
-    # validate transaction details.
+    // validate transaction details.
     if( in_array($payment_method, array_keys($payment_methods_a)) === false ) {
       $form_errors['paymentMethod'] = 'Invalid payment method.';
     } else {
       $cleaned_params['paymentMethod'] = $payment_method;
     }
 
-    # validate mobile number.
+    // validate mobile number.
     if( $mobile_no !== '' && !is_numeric($mobile_no) && strlen($mobile_no) !== 10) {
       $form_errors['mobileNo'] = 'Invalid mobile number.';
     } else {
       $cleaned_params['mobileNo'] = $mobile_no;
     }
 
-    # validate name.
+    // validate name.
     if($name !== '') {
       $cleaned_params['name'] = $name;      
     }
 
-    # validate various charges.
+    //validate various charges.
     if($packing_charges !== '' && !is_numeric($packing_charges)) {
       $form_errors['packingCharges'] = 'Invalid input. Must be numeric.';
     } else {
@@ -305,13 +317,13 @@ class salesEntryWithBarcode {
       $cleaned_params['otherCharges'] = $other_charges;
     }    
 
-    # validate card no, auth code when the card value is more than zero
+    // validate card no, auth code when the card value is more than zero
     if( ($split_payment_card > 0 || $payment_method === 1) && ($card_no === '' || $auth_code === '') ) {
       $form_errors['cardNo'] = 'Card number is mandatory for Card or Split payment.';
       $form_errors['authCode'] = 'Auth code is mandatory for Card or Split payment.';
     }
 
-    # validate card no.
+    // validate card no.
     if($card_no !== '' && (!is_numeric($card_no) || strlen($card_no) !== 4) ) {
       $form_errors['cardNo'] = 'Invalid card number.';
     } else {
@@ -348,7 +360,7 @@ class salesEntryWithBarcode {
       }
     }
 
-    # validate item details.
+    // validate item details.
     for($item_key=0;$item_key<count($item_details['itemName']);$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
         $one_item_found = true;
@@ -432,7 +444,7 @@ class salesEntryWithBarcode {
     $net_pay = round($tot_billable_value + $tot_tax_value, 0);
     // dump('net pay is...'.$net_pay);
 
-    # if no items are available through an error.
+    // if no items are available through an error.
     if($one_item_found === false) {
       $form_errors['itemDetails']['itemName'][0] = 'Invalid item name.';
       $form_errors['itemDetails']['itemAvailQty'][0] = 'Invalid available qty.';
@@ -442,7 +454,7 @@ class salesEntryWithBarcode {
       $form_errors['itemDetails']['itemTaxPercent'][0] = 'Invalid tax rate.';      
     }
 
-    # validate payment method.
+    // validate payment method.
     if($payment_method === 2 && ($split_payment_card <= 0 && $split_payment_cash <= 0 && $split_payment_cn <= 0) ) {
       $form_errors['paymentMethod'] = 'Cash, Card or Cnote payment value is required.';
     } elseif($payment_method === 1 || $payment_method === 0) {
@@ -465,7 +477,7 @@ class salesEntryWithBarcode {
       $cleaned_params['promoCode'] = $promo_code;
     }
 
-    # add misc parameters.
+    // add misc parameters.
     $cleaned_params['saleDate'] = $sale_date;
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
     $cleaned_params['saExecutiveId'] = $executive_id;
