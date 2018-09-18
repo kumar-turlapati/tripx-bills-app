@@ -94,7 +94,7 @@ class salesEntryWithBarcode {
     }       
 
     # ---------- check for last bill printing ----
-    if( !is_null($request->get('lastBill')) && is_numeric($request->get('lastBill')) ) {
+    if( !is_null($request->get('lastBill')) ) {
       $bill_to_print = $request->get('lastBill');
     } else {
       $bill_to_print = '';

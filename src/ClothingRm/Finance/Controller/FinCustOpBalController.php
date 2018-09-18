@@ -190,6 +190,9 @@ class FinCustOpBalController {
       $page_error = $customers_list['apierror'];
     }
 
+    $states_a = Constants::$LOCATION_STATES;
+    asort($states_a);
+
      // prepare form variables.
     $template_vars = array(
       'page_error' => $page_error,
@@ -204,11 +207,12 @@ class FinCustOpBalController {
       'page_links_to_start' => $page_links_to_start,
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
+      'states_a' => array(0=>'All Locations') + $states_a,      
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Customers',
+      'page_title' => 'Customers Opening Balance List',
       'icon_name' => 'fa fa-smile-o',
     );
 
