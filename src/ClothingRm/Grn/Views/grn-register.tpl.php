@@ -29,35 +29,26 @@
   $current_date = date("d-m-Y");
   $page_url = '/grn/list';
 ?>
-
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12">
-    
-    <!-- Panel starts -->
     <section class="panelBox">
       <div class="panelBody">
         <?php echo Utilities::print_flash_message() ?>
-
         <?php if($page_error !== ''): ?>
           <div class="alert alert-danger" role="alert">
             <strong>Error!</strong> <?php echo $page_error ?> 
           </div>
         <?php endif; ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/inward-entry/list" class="btn btn-default">
-              <i class="fa fa-book"></i> Inward Register
+              <i class="fa fa-book"></i> Purchase Register
             </a>
             <a href="/purchase-return/register" class="btn btn-default">
               <i class="fa fa-book"></i> Purchase Return Register
             </a>            
           </div>
         </div>
-        <!-- Right links ends --> 
-
     		<div class="panel">
           <div class="panel-body">
         	<div id="filters-form">
@@ -74,7 +65,6 @@
         					  </div>
         				  </div>
         				</div>
-
         				<div class="col-sm-12 col-md-2 col-lg-2">
         					<div class="form-group">
         					  <div class="col-lg-12">
@@ -85,7 +75,6 @@
         					  </div>
         					</div>
         				</div>
-
         				<div class="col-sm-12 col-md-2 col-lg-2">
         					<div class="select-wrap">
         						<select class="form-control" name="supplierID" id="supplierID">
@@ -98,7 +87,6 @@
                   <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
         				</div>
         			</form>        
-    			  <!-- Form ends -->
     			</div>
           </div>
         </div>
@@ -148,13 +136,6 @@
                               <a class="btn btn-primary" href="/print-grn/<?php echo $grn_code ?>" title="Print GRN" target="_blank">
                                 <i class="fa fa-print"></i>
                               </a>                              
-                              <?php /*                
-                              <a class="btn btn-primary" href="/grn/update/<?php echo $grn_code ?>" title="Edit GRN Information">
-                                <i class="fa fa-pencil"></i>
-                              </a>
-                              <a class="btn btn-danger delGrn" href="javascrip:void(0)" title="Remove GRN" sid="<?php echo $grn_code ?>">
-                                <i class="fa fa-times"></i>
-                              </a>*/ ?>                      
                             <?php endif; ?>
                           </div>
                         </td>
@@ -169,6 +150,5 @@
         <?php endif; ?>        
       </div>
     </section>
-    <!-- Panel ends -->
   </div>
 </div>

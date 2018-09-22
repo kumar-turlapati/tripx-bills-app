@@ -75,7 +75,6 @@
                       $barcode = isset($form_data['itemDetails']['barcode'][$i]) ? $form_data['itemDetails']['barcode'][$i] : '';
                       if($item_qty > 0 && $item_rate > 0) {
                         $item_amount = round($item_qty*$item_rate,2);
-
                         $tot_item_amount += $item_amount;
                         $tot_bill_qty += $item_qty;
                       } else {
@@ -153,7 +152,7 @@
             </div>
           </div>
           <input type="hidden" name="ic" id="ic" value="<?php echo $indent_code ?>" />
-          <input type="hidden" name="in" id="in" value="<?php echo $indent_number ?>" />          
+          <input type="hidden" name="in" id="in" value="<?php echo $indent_number ?>" />
           <div class="text-center" style="margin-top: 20px;">
             <button class="btn btn-primary">
               <i class="fa fa-save"></i> Update Indent Status

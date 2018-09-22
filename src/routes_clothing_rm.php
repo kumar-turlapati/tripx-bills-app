@@ -102,6 +102,10 @@ $routes->add('inward_register', new Routing\Route('/inward-entry/list/{pageNo}/{
   'pageNo' => 1,
   'perPage' => 100,
 )));
+$routes->add('inward_entry_update_status', new Routing\Route('/inward-entry/update-status/{purchaseCode}', array(
+  '_controller' => 'ClothingRm\\Inward\\Controller\\InwardController::updateInwardStatusAction',
+  'purchaseCode' => null,
+)));
 $routes->add('inward_entry_bulk_upload', new Routing\Route('/inward-entry/bulk-upload', array(
   '_controller' => 'ClothingRm\\Inward\\Controller\\InwardBulkUploadController::inwardEntryBulkUploadAction',
 )));
