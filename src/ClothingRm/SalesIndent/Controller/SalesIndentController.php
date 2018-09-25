@@ -464,6 +464,103 @@ class SalesIndentController {
     return array($this->template->render_view('indents-list', $template_vars), $controller_vars);
   }
 
+  // mobile indent form
+  public function createIndentMobileView(Request $request) {
+
+    #------------------------------------- check for form Submission ------------------------
+    if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
+      $op = $form_data['op'];
+      if($op === 'SaveandCustomer') {
+        Utilities::redirect('/sales-indent/create/mobile/step2');
+      } elseif($op === 'SaveandItems') {
+        $validation = $this->_validate_mobile_indent_data($form_data);
+        if($validation['status']) {
+          $_SESSION['indentItemsM'][] = $validation['cleaned_params'];
+          $this->flash->set_flash_message('Item `'.$validation['cleaned_params']['itemName'].'` added successfully.');
+        } else {
+          $form_errors = $validation['form_errors'];
+          $form_error = count($form_errors > 0) ? implode(' | ', $form_errors) : ''; 
+          $this->flash->set_flash_message('Errors: '.$form_error, 1);
+        }
+        Utilities::redirect('/sales-indent/create/mobile');
+      }
+    }
+
+    # controller and template variables.
+    $controller_vars = array(
+      'disable_sidebar' => true,
+      'disable_footer' => true,
+      'show_page_name' => false,
+      'body_class_name' => 'loginPage',
+    );
+
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+    );
+
+    // render template
+    return array($this->template->render_view('indent-create-mobile-view', $template_vars), $controller_vars);    
+  }
+
+  public function createIndentMobileViewStep2(Request $request) {
+    if(isset($_SESSION['indentItemsM']) && count($_SESSION['indentItemsM']) > 0) {
+      $indent_items = $_SESSION['indentItemsM'];
+    } else {
+      $this->flash->set_flash_message('No items are available in indent.', 1);
+      Utilities::redirect('/sales-indent/create/mobile');
+    }
+    #------------------------------------- check for form Submission ------------------------
+    if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
+      $op = $form_data['op'];
+      if($op === 'SaveIndent') {
+        $cleaned_params = [];
+        $cleaned_params['name'] = Utilities::clean_string($form_data['customerName']);
+        $cleaned_params['remarks'] = Utilities::clean_string($form_data['remarks']);
+        $cleaned_params['locationCode'] = '';
+        $cleaned_params['indentDate'] = date("d-m-Y");
+        foreach($indent_items as $item_key => $indent_item_details) {
+          $cleaned_params['itemDetails']['itemName'][$item_key] = $indent_item_details['itemName'];
+          $cleaned_params['itemDetails']['itemSoldQty'][$item_key] = $indent_item_details['orderQty'];
+          $cleaned_params['itemDetails']['lotNo'][$item_key] = $indent_item_details['lotNo'];
+          $cleaned_params['itemDetails']['itemRate'][$item_key] = $indent_item_details['mrp'];          
+        }
+        $api_response = $this->sindent_model->create_sindent($cleaned_params);
+        if($api_response['status']) {
+          unset($_SESSION['indentItemsM']);
+          $this->flash->set_flash_message('Indent No. <b>`'.$api_response['indentNo'].'`</b> created successfully.');
+          Utilities::redirect('/sales-indent/create/mobile');
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error,1);
+          Utilities::redirect('/sales-indent/create/mobile/step2', 1);          
+        }
+      } elseif($op === 'CancelIndent') {
+        if(isset($_SESSION['indentItemsM'])) {
+          unset($_SESSION['indentItemsM']);
+          $this->flash->set_flash_message('Indent cancelled successfully');
+          Utilities::redirect('/sales-indent/create/mobile');
+        }
+      }
+    }    
+
+    # controller and template variables.
+    $controller_vars = array(
+      'disable_sidebar' => true,
+      'disable_footer' => true,
+      'show_page_name' => false,
+      'body_class_name' => 'loginPage',
+    );
+
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+    );
+
+    // render template
+    return array($this->template->render_view('indent-create-mobile-view2', $template_vars), $controller_vars);    
+  }
+
   // validate ar data
   private function _validate_ar_indent_data($form_data= []) {
     $cleaned_params = $form_errors = [];
@@ -527,12 +624,6 @@ class SalesIndentController {
     } else {
       $cleaned_params['alterMobileNo'] = $alter_mobile_no;
     }    
-
-/*    if( $name !== '' && !ctype_alnum(str_replace(' ', '', $name)) ) {
-      $form_errors['name'] = 'Invalid name.';      
-    } else {
-      $cleaned_params['name'] = $name;
-    }*/    
 
     # validate item details.
     for($item_key=0;$item_key<count($item_details['itemName']);$item_key++) {
@@ -629,5 +720,46 @@ class SalesIndentController {
     $form_data['itemDetails']['barcode'] = array_column($api_data['itemDetails'], 'barcode');
 
     return $form_data;
+  }
+
+  private function _validate_mobile_indent_data($form_data = []) {
+    $form_errors = $cleaned_params = [];
+    $item_name = Utilities::clean_string($form_data['itemName']);
+    $lot_no = Utilities::clean_string($form_data['lotNo']);
+    $order_qty = Utilities::clean_string($form_data['orderQty']);
+    $mrp = Utilities::clean_string($form_data['mrp']);
+
+    if($item_name === '') {
+      $form_errors['itemName'] = 'Item name is mandatory.';
+    } else {
+      $cleaned_params['itemName'] = $item_name;
+    }
+    if($lot_no === '') {
+      $form_errors['lotNo'] = 'Lot No. is mandatory.';
+    } else {
+      $cleaned_params['lotNo'] = $lot_no;
+    }
+    if(is_numeric($order_qty) && $order_qty >0) {
+      $cleaned_params['orderQty'] = $order_qty;
+    } else {
+      $form_errors['orderQty'] = 'Invalid Order Qty.';
+    }
+    if(is_numeric($mrp) && $mrp >0) {
+      $cleaned_params['mrp'] = $mrp;
+    } else {
+      $form_errors['mrp'] = 'Invalid MRP';      
+    }
+
+    if(count($form_errors)>0) {
+      return [
+        'status' => false,
+        'form_errors' => $form_errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
   }
 }

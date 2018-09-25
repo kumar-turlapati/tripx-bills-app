@@ -341,6 +341,60 @@ function initializeJS() {
       $('.saleItemQty').trigger('change');
     }
   }
+  if( $('#salesIndentMobileV').length>0 ) {
+    var lotNosResponse = [];
+    $('#mobileIndentItem').on('click', function(e){
+      e.preventDefault();
+      var itemName = jQuery('#itemName').val();
+      var bnoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");        
+      if(itemName !== '') {
+       var data = {itemName:itemName};
+       jQuery.ajax("/async/getItemBatchesByCode", {
+          data: data,
+          method:"POST",
+          success: function(lotNos) {
+            if(lotNos.status === 'success') {
+              var objLength = Object.keys(lotNos).length;
+              var lotNoRef = jQuery('#lotNo');
+              if(objLength>0) {
+                lotNoRef.empty().append(bnoFirstOption);
+                jQuery.each(lotNos.response.bcDetails, function (index, lotNoDetails) {
+                  lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                  jQuery(lotNoRef).append(
+                    jQuery("<option></option>").
+                    attr("value",lotNoDetails.lotNo).
+                    text(lotNoDetails.mOq + ' [ Available: ' + lotNoDetails.availableQty + ' ]')
+                  );
+                });
+                $('.itemOtherInfo, .formButtons').show();
+              }
+            } else {
+              alert('Item not available.');
+            }
+          },
+          error: function(e) {
+            alert('An error occurred while fetching Available Qty.');
+          }
+       });
+      } else if(parseInt(itemName.length) === 0){
+        alert('Item name required.');
+      }
+    });
+    $('.indentOrderQty').on('blur', function(e){
+      var lotNo = jQuery('#lotNo').val();
+      var orderQty = returnNumber(parseFloat($('#orderQty').val()));
+      if( (lotNo in lotNosResponse) && orderQty > 0) {
+        var availableQty = returnNumber(parseFloat(lotNosResponse[lotNo].availableQty));
+        var mrp = returnNumber(parseFloat(lotNosResponse[lotNo].mrp));
+        if(orderQty > availableQty) {
+          alert('Order Qty. must be less than or equal to available Qty.');
+          $(this).val('');
+          $(this).focus();
+        }
+        $('#mrp').val(mrp);
+      }
+    });
+  }
 
   $('.cancelButton').on('click', function(e) {
     var buttonId = $(this).attr('id');

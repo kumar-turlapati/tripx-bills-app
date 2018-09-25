@@ -36,7 +36,8 @@
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
           <li><a href="/fin/pc-voucher/create"><i class="fa fa-money"></i> Petty cash voucher</a></li>
           <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock adjustment</a></li>
-          <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>                  
+          <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>
+          <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales indent (Mobile V.)</a></li>
         </ul>
       </li>
       <li class="sub-menu">

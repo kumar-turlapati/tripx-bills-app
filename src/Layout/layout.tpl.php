@@ -4,11 +4,16 @@
   $role_id = isset($_SESSION['utype'])&&$_SESSION['utype']>0?$_SESSION['utype']:0;
   $bc = isset($_SESSION['bc'])&&$_SESSION['bc']>0?$_SESSION['bc']:0;
   if(
-      (isset($disable_sidebar) && $disable_sidebar===true) ||
-      (isset($disable_footer)  && $disable_footer===true)
+      (isset($disable_sidebar) && $disable_sidebar) ||
+      (isset($disable_footer)  && $disable_footer)
     ) {
     $main_content_margin = ' style="margin-left:0"';
-    $body_class = ' class="forgotPassword"';
+    if(isset($body_class_name) && $body_class_name !== '') {
+      $body_class_name = $body_class_name;
+    } else {
+      $body_class_name = '';
+    }
+    $body_class = ' class="'.$body_class_name.'"';
   } else {
     $main_content_margin = $body_class = '';
   }

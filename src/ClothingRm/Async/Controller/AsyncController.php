@@ -121,18 +121,31 @@ class AsyncController {
       }
     } elseif($api_string === 'getItemDetailsByCode') {
       $barcode =  Utilities::clean_string($request->get('bc'));
-      $locationCode = Utilities::clean_string($request->get('locationCode'));
+      $locationCode = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
       $skipLocation = !is_null($request->get('sl')) ? Utilities::clean_string($request->get('sl')) : false;
-      $ind = !is_null($request->get('ind')) ? Utilities::clean_string($request->get('ind')) : false;            
+      $ind = !is_null($request->get('ind')) ? Utilities::clean_string($request->get('ind')) : false;
+      $bch = !is_null($request->get('bch')) ? Utilities::clean_string($request->get('bch')) : false;
+
       $api_url = 'barcode/'.$barcode;
-      $params = ['locationCode' => $locationCode, 'skipLocation' => $skipLocation, 'ind' => $ind];
+      $params = ['locationCode' => $locationCode, 'skipLocation' => $skipLocation, 'ind' => $ind, 'bch' => $bch];
       $response = $api_caller->sendRequest('get',$api_url,$params,false);
       header("Content-type: application/json");
       if(is_array($response)) {
         echo json_encode($response);
       } else {
         echo $response;
-      } 
+      }
+    } elseif($api_string === 'getItemBatchesByCode') {
+      $item_name =  Utilities::clean_string($request->get('itemName'));
+      $api_url = 'barcode/ac/get-batches';
+      $params = ['itemName' => $item_name];
+      $response = $api_caller->sendRequest('get',$api_url,$params,false);
+      header("Content-type: application/json");
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     } elseif($api_string === 'bcAc' && !is_null($request->get('a'))) {
       $params['q'] = Utilities::clean_string($request->get('a'));
       $response = $api_caller->sendRequest('get','barcode/ac',$params,false);

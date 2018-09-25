@@ -617,6 +617,14 @@ $routes->add('list_sindents', new Routing\Route('/sales-indents/list/{pageNo}', 
   'pageNo' => null,
 )));
 
+$routes->add('create_sindent_mobile', new Routing\Route('/sales-indent/create/mobile', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentMobileView',
+)));
+$routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create/mobile/step2', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentMobileViewStep2',
+)));
+
+
 // reports
 $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',

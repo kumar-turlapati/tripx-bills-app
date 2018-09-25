@@ -19,6 +19,7 @@
         </a>
         <ul class="sub">
           <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>
+          <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales indent (Mobile V.)</a></li>          
         </ul>
       </li>
       <li class="sub-menu">
