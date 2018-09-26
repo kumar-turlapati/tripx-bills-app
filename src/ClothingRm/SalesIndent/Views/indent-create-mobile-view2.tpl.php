@@ -17,7 +17,7 @@
 ?>
 <section>
   <section class="wrapper">
-    <form class="login-form" method="POST" autocomplete="off" id="salesIndentMobileV">
+    <form class="login-form" method="POST" autocomplete="off" id="salesIndentMobileVStep2">
       <div class="login-wrap" style="padding-top:10px;">
         <h2 class="text-center" style="margin-bottom:0px;">
           <b>Sales Indent Entry - Mobile Ver.</b>
@@ -86,7 +86,9 @@
           </p>
         </div>
       </div>
-      <input type="hidden" name="mrp" id="mrp" value="" />
+      <input type="hidden" name="gLat" value="" />
+      <input type="hidden" name="gLng" value="" />
+      <input type="hidden" name="gAcc" value="" />      
     </form>
   </section>
 </section>

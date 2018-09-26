@@ -77,13 +77,13 @@
 			  <table style="width: 100%;" cellpadding=0 cellspacing=0>
 			    <thead>
 			      <tr>
-			        <th style="border-top:1px dotted #000;font-size:14px;text-align:left;" colspan="4">Item Name</th>
+			        <th style="border-top:1px dotted #000;font-size:14px;text-align:left;font-weight:bold;" colspan="4">Item Name</th>
 			      </tr>
 						<tr>
-			        <th style="text-align:left;border-bottom: 1px dotted #000;font-size:14px;">Qty.</th>
-			        <th style="text-align:left;border-bottom: 1px dotted #000;font-size:14px;">Rate</th>
-			        <th style="text-align:center;border-bottom: 1px dotted #000;font-size:14px;">Amount</th>
-			        <th style="text-align:right;border-bottom: 1px dotted #000;font-size:14px;">Disc.</th>			        
+			        <th style="text-align:left;border-bottom: 1px dotted #000;font-size:14px;font-weight:bold;">Qty.</th>
+			        <th style="text-align:left;border-bottom: 1px dotted #000;font-size:14px;font-weight:bold;">Rate</th>
+			        <th style="text-align:center;border-bottom: 1px dotted #000;font-size:14px;font-weight:bold;">Amount</th>
+			        <th style="text-align:right;border-bottom: 1px dotted #000;font-size:14px;font-weight:bold;">Disc.</th>			        
 						</tr>			      
 			    </thead>
 			    <tbody>
@@ -113,7 +113,7 @@
                   $taxable_gst_value[$tax_percent] = $tax_amount;
                 }
 					  ?>
-				      <tr><td colspan="4" style="font-size:14px;"><?php echo $item_details['itemName'] ?></td></tr>
+				      <tr><td colspan="4" style="font-size:14px;font-weight:bold;"><?php echo $item_details['itemName'] ?></td></tr>
 				      <tr style="font-weight:bold;">
 				        <td style="text-align:left;font-size:12px;"><?php echo $item_details['itemQty'] ?></td>
 				        <td style="text-align:left;font-size:12px;"><?php echo $mrp ?></td>
@@ -128,10 +128,10 @@
               <td style="border-top:1px dotted #000;font-weight:bold;">&nbsp;</td>
             </tr>
             <tr>
-              <td style="text-align:left;border-top:1px dotted #000;font-size:12px;">Total</td>
-              <td style="text-align:left;border-top:1px dotted #000;font-size:12px;text-align:right;">Disc.</td>
-              <td style="border-top:1px dotted #000;text-align:right;">GrandTot.</td>
-              <td style="border-top:1px dotted #000;text-align:right;">R.Off</td>
+              <td style="text-align:left;border-top:1px dotted #000;font-size:12px;font-weight:bold;">Total</td>
+              <td style="text-align:left;border-top:1px dotted #000;font-size:12px;text-align:right;font-weight:bold;">Disc.</td>
+              <td style="border-top:1px dotted #000;text-align:right;font-weight:bold;">GrandTot.</td>
+              <td style="border-top:1px dotted #000;text-align:right;font-weight:bold;">R.Off</td>
             </tr>
             <tr>
               <td style="text-align:left;border-top:1px dotted #000;font-size:12px;font-weight:bold;"><?php echo number_format($bill_amount,2,'.','') ?></td>
@@ -153,11 +153,11 @@
 			  </table>
         <table style="width:100%;font-size:12px;" cellpadding="0" cellspacing="0">
          <thead>
-            <th style="text-align:left;font-size:11px;">GST %</th>
-            <th style="text-align:left;font-size:11px;">Taxable (Rs.)</th>
-            <th style="text-align:left;font-size:11px;">IGST</th>
-            <th style="text-align:left;font-size:11px;">CGST</th>
-            <th style="text-align:left;font-size:11px;">SGST</th>
+            <th style="text-align:left;font-size:11px;font-weight:bold;">GST %</th>
+            <th style="text-align:left;font-size:11px;font-weight:bold;">Taxable (Rs.)</th>
+            <th style="text-align:left;font-size:11px;font-weight:bold;">IGST</th>
+            <th style="text-align:left;font-size:11px;font-weight:bold;">CGST</th>
+            <th style="text-align:left;font-size:11px;font-weight:bold;">SGST</th>
          </thead>
          <tbody>
             <?php
@@ -176,11 +176,11 @@
                 }                          
             ?>
               <tr>
-                  <td class="font11" style="text-align:left;font-size:11px;"><?php echo number_format($tax_percent, 2).'%' ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;" id="taxable_<?php echo $tax_code ?>_amount"><?php echo number_format($taxable_value,2,'.','') ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;" id="taxable_<?php echo $tax_code ?>_igst_value"><?php echo number_format($igst_amount,2,'.','')  ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;" id="taxable_<?php echo $tax_code ?>_cgst_value"><?php echo number_format($cgst_amount,2,'.','') ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;" id="taxable_<?php echo $tax_code ?>_sgst_value"><?php echo number_format($sgst_amount,2,'.','') ?></td>
+                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;"><?php echo number_format($tax_percent, 2).'%' ?></td>
+                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_amount"><?php echo number_format($taxable_value,2,'.','') ?></td>
+                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_igst_value"><?php echo number_format($igst_amount,2,'.','')  ?></td>
+                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_cgst_value"><?php echo number_format($cgst_amount,2,'.','') ?></td>
+                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_sgst_value"><?php echo number_format($sgst_amount,2,'.','') ?></td>
               </tr>
             <?php endforeach; ?>
 				    <tr>
@@ -190,69 +190,69 @@
         </table>
         <table style="width:100%;font-size:10px;" cellpadding="0" cellspacing="0">
          <thead>
-            <th style="text-align:center;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-top:1px dotted #000;border-bottom:1px dotted #000;">Paid through</th>
-            <th style="text-align:center;font-size:11px;width:40%;border-right:1px dotted #000;border-top:1px dotted #000;border-bottom:1px dotted #000;">Details</th>
-            <th style="text-align:center;font-size:11px;width:10%;border-right:1px dotted #000;border-top:1px dotted #000;border-bottom:1px dotted #000;">Amount(Rs.)</th>
+            <th style="text-align:center;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-top:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">Paid through</th>
+            <th style="text-align:center;font-size:11px;width:40%;border-right:1px dotted #000;border-top:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">Details</th>
+            <th style="text-align:center;font-size:11px;width:10%;border-right:1px dotted #000;border-top:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">Amount(Rs.)</th>
          </thead>
          <tbody>
           <?php if($payment_method === 0): ?>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CASH</td>
-              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-              <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo number_format($sale_details['netPay'], 2) ?></td>
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CASH</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+              <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo number_format($sale_details['netPay'], 2) ?></td>
             </tr>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CARD</td>
-              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;">-----</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CARD</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">-----</td>
             </tr>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CREDITVOC</td>
-              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;">-----</td>                
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CREDITVOC</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">-----</td>                
             </tr>            
           <?php endif; ?>
           <?php if($payment_method === 1): ?>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CASH</td>
-              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;">-----</td>                
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CASH</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">-----</td>                
             </tr>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CARD</td>
-              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo 'Card: '.$card_no .' <br /> Appr.Code: '.$auth_code ?></td>
-              <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo number_format($sale_details['netPay'], 2) ?></td>
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CARD</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo 'Card: '.$card_no .' <br /> Appr.Code: '.$auth_code ?></td>
+              <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo number_format($sale_details['netPay'], 2) ?></td>
             </tr>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CREDITVOC</td>
-              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;">-----</td>                
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CREDITVOC</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+              <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">-----</td>                
             </tr>
           <?php endif; ?>
           <?php if($payment_method === 2): ?>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CASH</td>
-              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-              <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo $sale_details['netPayCash'] > 0 ? number_format($sale_details['netPayCash'], 2): '' ?></td>  
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CASH</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+              <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo $sale_details['netPayCash'] > 0 ? number_format($sale_details['netPayCash'], 2): '' ?></td>  
             </tr>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CARD</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CARD</td>
               <?php if($sale_details['netPayCard'] > 0): ?>
-                <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo 'Card: '.$card_no .' <br /> Appr.Code: '.$auth_code ?></td>
-                <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo number_format($sale_details['netPayCard'], 2) ?></td>  
+                <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo 'Card: '.$card_no .' <br /> Appr.Code: '.$auth_code ?></td>
+                <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo number_format($sale_details['netPayCard'], 2) ?></td>  
               <?php else: ?>
-                <td style="text-align:center;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-                <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;">-----</td>
+                <td style="text-align:center;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+                <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">-----</td>
               <?php endif; ?>
             </tr>
             <tr>
-              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;">By CREDITVOC</td>
+              <td style="text-align:left;font-size:11px;width:40%;border-left:1px dotted #000;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">By CREDITVOC</td>
               <?php if($sale_details['netPayCn'] > 0): ?>
-                <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo 'CNN:'.$cn_no ?></td>
-                <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;"><?php echo number_format($sale_details['netPayCn'], 2) ?></td>  
+                <td style="text-align:left;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo 'CNN:'.$cn_no ?></td>
+                <td style="text-align:right;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;"><?php echo number_format($sale_details['netPayCn'], 2) ?></td>  
               <?php else: ?>
-                <td style="text-align:center;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;">&nbsp;</td>
-                <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;">-----</td>
+                <td style="text-align:center;font-size:11px;width:40%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">&nbsp;</td>
+                <td style="text-align:center;font-size:11px;width:20%;border-right:1px dotted #000;border-bottom:1px dotted #000;font-weight:bold;">-----</td>
               <?php endif; ?>   
             </tr>            
           <?php endif; ?>

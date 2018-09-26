@@ -355,7 +355,7 @@ class Utilities
       // exit;
 
       # check whether the device is allowed or not. Skip this for Administrator temporarily.
-/*      if( (int)$_SESSION['__utype'] !== 3 && $_SESSION['__just_logged_in'] === false) {
+      if( (int)$_SESSION['__utype'] !== 3 && $_SESSION['__just_logged_in'] === false) {
         if( !(isset($_SESSION['__bq_fp']) && isset($_SESSION['__allowed_devices']))) {
           Utilities::redirect('/login');
         } elseif($cookie_validation) {
@@ -374,7 +374,7 @@ class Utilities
           session_destroy();
           Utilities::redirect('/login');          
         }
-      }*/
+      }
 
       # redirect user to login if anything went wrong.
       if($cookie_validation) {

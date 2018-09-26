@@ -83,17 +83,3 @@
     </form>
   </section>
 </section>
-<?php /*
-              <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom:8px;">
-                <label class="control-label"><b>Customer name</b></label>
-                <input
-                  type="text"
-                  size="10"
-                  id="customerName"
-                  name="customerName"
-                  maxlength="10"
-                  style="font-weight:bold;font-size:14px;border:1px dashed;padding:5px;"
-                  class="form-control cnameAc noEnterKey"
-                />
-              </div>
-        */?>
