@@ -6,6 +6,14 @@
       </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
+          <i class="fa fa-bars"></i> Masters <span class="menu-arrow arrow_carrot-right"></span>
+        </a>
+        <ul class="sub">
+          <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
+        </ul>
+      </li>      
+      <li class="sub-menu">
+        <a href="javascript:void(0)">
           <i class="fa fa-book"></i> Registers <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">

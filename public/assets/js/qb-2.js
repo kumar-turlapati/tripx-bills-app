@@ -343,6 +343,7 @@ function initializeJS() {
   }
   if( $('#salesIndentMobileV').length>0 ) {
     var lotNosResponse = [];
+    // getGeoLocation();
     $('#mobileIndentItem').on('click', function(e){
       e.preventDefault();
       var itemName = jQuery('#itemName').val();
@@ -385,13 +386,17 @@ function initializeJS() {
       var orderQty = returnNumber(parseFloat($('#orderQty').val()));
       if( (lotNo in lotNosResponse) && orderQty > 0) {
         var availableQty = returnNumber(parseFloat(lotNosResponse[lotNo].availableQty));
+        var mOq = returnNumber(parseFloat(lotNosResponse[lotNo].mOq));
         var mrp = returnNumber(parseFloat(lotNosResponse[lotNo].mrp));
+        orderQty = returnNumber(parseFloat(orderQty*mOq).toFixed(2));
         if(orderQty > availableQty) {
           alert('Order Qty. must be less than or equal to available Qty.');
           $(this).val('');
           $(this).focus();
+          return false;
         }
         $('#mrp').val(mrp);
+        $('#orderQty').val(orderQty);
       }
     });
   }
@@ -1422,4 +1427,24 @@ function returnNumber(val) {
     return 0;
   }
   return val;
+}
+
+function getGeoLocation() {
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(successGeoLocation, failedGeoLocation);
+  } else {
+    alert("Geolocation is not supported by this browser. Please update your Browser.");
+  }
+}
+
+function successGeoLocation(position) {
+  $('#gLat').val(position.coords.latitude);
+  $('#gLng').val(position.coords.longitude);
+  $('#gAcc').val(position.coords.accuracy);
+}
+
+function failedGeoLocation(err) {
+  if(err.code == 1) {
+    alert("You must Allow Location Access to proceed further.");
+  }
 }
