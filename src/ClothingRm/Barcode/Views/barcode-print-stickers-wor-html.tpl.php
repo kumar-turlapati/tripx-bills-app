@@ -11,6 +11,7 @@
   $printable_array = [];
   $generator = new \Picqer\Barcode\BarcodeGeneratorPNG;
   $print_info = $_SESSION['printBarCodes'];
+
   foreach($print_info as $barcode => $print_qty_details) {
     $print_qty_details['barcode'] = $barcode;
     $print_qty = $print_qty_details[0];
@@ -105,11 +106,12 @@
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
         $print_item_mrp = number_format($print_qty_details[2],2,'.','');
         $mfg_date = date("m/y", strtotime($print_qty_details[3]));
+        $packed_qty = $print_qty_details[4];
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
     ?>
       <div>
         <div class="productName"><?php echo $print_item_name ?></div>
-        <div class="rate">Qty.: <?php echo $print_qty.' mtrs.' ?></div>
+        <div class="rate">Qty.: <?php echo $packed_qty.' mtrs.' ?></div>
         <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
         <div class="barCode"><?php echo $barcode ?></div>
         <div class="mfgDate"><?php echo 'Mfg. Date: '.$mfg_date ?></div>

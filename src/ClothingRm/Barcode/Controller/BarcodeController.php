@@ -88,6 +88,7 @@ class BarcodeController
         $tax_percents = array_column($purchase_details['itemDetails'],'taxPercent');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $barcodes = array_column($purchase_details['itemDetails'],'barcode');
+        $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
 
         $submitted_item_details = $purchase_details['itemDetails'];
 
@@ -107,11 +108,15 @@ class BarcodeController
         $form_data['hsnCodes'] = $hsn_codes;
         $form_data['itemCode'] = $item_codes;
         $form_data['barcode'] = $barcodes;
+        $form_data['packedQty'] = $packed_qtys;
       }
     }
 
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
+
+      // dump($form_data, $submitted_item_details);
+      // exit;
       
       # process form data on submit
       $form_processing = $this->_process_submitted_data($form_data, $submitted_item_details);
@@ -135,7 +140,7 @@ class BarcodeController
           $print_array = [];
           $index_key = 0;
           foreach($cleaned_params as $key => $print_qty) {
-            $print_array[$api_response['barcodes'][$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date];
+            $print_array[$api_response['barcodes'][$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date, $packed_qtys[$index_key]];
             $index_key++;
           }
         } else {
@@ -147,7 +152,7 @@ class BarcodeController
         $print_array = [];
         $index_key = 0;
         foreach($cleaned_params as $key => $print_qty) {
-          $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date];
+          $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date, $packed_qtys[$index_key]];
           $index_key++;
         }
       }

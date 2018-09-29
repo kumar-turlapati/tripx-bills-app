@@ -765,7 +765,7 @@ class Utilities
     return [
       'indent' => 'Indent Sticker',
       'mrp' => 'MRP Sticker',
-      // 'worate' => 'Sticker Without Rate',
+      'worate' => 'Sticker Without Rate',
     ];
   }
 }

@@ -66,6 +66,8 @@
   } else {
     $supply_type = 'intra';
   }
+
+  // dump($form_data);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -162,6 +164,11 @@
                     $barcode_text = '<span style="color:red;font-size:12px;">- Not Generated -</span>';
                     $barcode = '';
                   }
+                  if( isset($form_data['packedQty'][$i-1]) && $form_data['packedQty'][$i-1] !== '' ) {
+                    $packed_qty = $form_data['packedQty'][$i-1];
+                  } else {
+                    $packed_qty = 1;
+                  }                  
 
                   $billed_qty = $inward_qty-$free_qty;
                   $gross_amount = $billed_qty*$item_rate;
