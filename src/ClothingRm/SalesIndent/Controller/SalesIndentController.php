@@ -529,7 +529,9 @@ class SalesIndentController {
         $api_response = $this->sindent_model->create_sindent($cleaned_params);
         if($api_response['status']) {
           unset($_SESSION['indentItemsM']);
-          $this->flash->set_flash_message('Indent No. <b>`'.$api_response['indentNo'].'`</b> created successfully.');
+          $indent_no = $api_response['indentNo'];
+          $success_message = 'Indent saved successfully.<p style="font-size:12px;font-weight:bold;"><i class="fa fa-print"></i>&nbsp;<a href="/print-indent?indentNo='.$indent_no.'" target="_blank">Print with Rate</a> | <i class="fa fa-print"></i>&nbsp;<a href="/print-indent-wor?indentNo='.$indent_no.'" target="_blank">Print without Rate</a></p>';
+          $this->flash->set_flash_message($success_message);
           Utilities::redirect('/sales-indent/create/mobile');
         } else {
           $page_error = $api_response['apierror'];
