@@ -73,8 +73,8 @@ class BarcodeController
         }
         $client_details = Utilities::get_client_details();
         $client_business_state = $client_details['locState'];
-        $inward_entry_no =  ' - Inward Entry No. { '. $purchase_details['poNo'] .' }';
-        $mfg_date = date("m/Y", strtotime($purchase_details['purchaseDate']));
+        $inward_entry_no =  ' - PO No. { '. $purchase_details['poNo'] .' }';
+        $mfg_date = $purchase_details['purchaseDate'];
 
         # convert received item details to template item details.
         $item_names = array_column($purchase_details['itemDetails'],'itemName');
@@ -116,8 +116,9 @@ class BarcodeController
       # process form data on submit
       $form_processing = $this->_process_submitted_data($form_data, $submitted_item_details);
       if($form_processing['status'] === false) {
-        $this->flash->set_flash_message('Invalid form submission.', 1);
-        Utilities::redirect('/barcodes/list');        
+        $form_errors = json_encode($form_processing['form_errors']);
+        $this->flash->set_flash_message($form_errors, 1);
+        Utilities::redirect('/barcode/generate/'.$purchase_code);        
       } else {
         $new_barcodes = $form_processing['new_barcodes'];
         $print_barcodes = $form_processing['print_barcodes'];
@@ -149,16 +150,16 @@ class BarcodeController
           $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date];
           $index_key++;
         }
-        // dump($print_array, $item_names, $mrps);
-        // exit;
       }
+
+      $format = $form_processing['format'];
 
       if(count($print_array)>0) {
         if(isset($_SESSION['printBarCodes'])) {
           unset($_SESSION['printBarCodes']);
         }
         $_SESSION['printBarCodes'] = $print_array;
-        Utilities::redirect('/barcodes/print');
+        Utilities::redirect('/barcodes/print?format='.$format);
       }
     }
 
@@ -177,6 +178,7 @@ class BarcodeController
       'states_a' => array(0=>'Choose') + Constants::$LOCATION_STATES,
       'supply_type_a' => array('' => 'Choose', 'inter' => 'Interstate', 'intra' => 'Intrastate'),
       'client_business_state' => $client_business_state,
+      'sticker_print_type_a' => ['' => 'Choose'] + Utilities::get_barcode_sticker_print_formats(),
     );
 
     // build variables
@@ -488,6 +490,12 @@ class BarcodeController
 
   private function _process_submitted_data($form_data=[], $submitted_item_details=[]) {
     $new_barcodes = $form_errors = $print_barcodes = [];
+    $sticker_format_types = array_keys(Utilities::get_barcode_sticker_print_formats());
+    $print_format = isset($form_data['format']) ? Utilities::clean_string($form_data['format']) : '';
+
+    if($print_format === '' || !in_array($print_format, $sticker_format_types)) {
+      $form_errors['format'] = 'Please choose a sticker print format';
+    }
 
     # check whether we received correct data or not.
     foreach($submitted_item_details as $item_details) {
@@ -515,7 +523,7 @@ class BarcodeController
       }
     }
 
-    return ['status' => true, 'new_barcodes' => ['items' => $new_barcodes], 'print_barcodes' => $print_barcodes, 'cleaned_params' => $cleaned_params];
+    return ['status' => true, 'new_barcodes' => ['items' => $new_barcodes], 'print_barcodes' => $print_barcodes, 'cleaned_params' => $cleaned_params, 'format' => $print_format];
   }
 
   private function _validate_op_barcode_form($form_data = []) {

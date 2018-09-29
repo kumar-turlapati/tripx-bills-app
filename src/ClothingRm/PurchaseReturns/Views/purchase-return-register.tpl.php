@@ -34,10 +34,10 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/inward-entry/list" class="btn btn-default">
-              <i class="fa fa-book"></i> Inward Register 
+              <i class="fa fa-book"></i> Purchase Register 
             </a>            
             <a href="/inward-entry" class="btn btn-default">
-              <i class="fa fa-file-text-o"></i> New Inward Entry 
+              <i class="fa fa-file-text-o"></i> New Purchase Entry 
             </a>
             <a href="/grn/list" class="btn btn-default">
               <i class="fa fa-book"></i> GRN Register

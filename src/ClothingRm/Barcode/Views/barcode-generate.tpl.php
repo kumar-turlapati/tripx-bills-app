@@ -328,24 +328,24 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                    <label class="control-label">Credit period (in days)</label>
-                    <div class="select-wrap">
-                      <select class="form-control" name="creditDays" id="creditDays" disabled>
-                        <?php 
-                          foreach($credit_days_a as $key=>$value):
-                            if((int)$creditDays === $key) {
-                              $selected = 'selected="selected"';
-                            } else {
-                              $selected = '';
-                            }
-                        ?>
-                          <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                            <?php echo $value ?>
-                          </option>
-                        <?php endforeach; ?>
-                      </select>
-                    </div>
+                  <label class="control-label">Credit period (in days)</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="creditDays" id="creditDays" disabled>
+                      <?php 
+                        foreach($credit_days_a as $key=>$value):
+                          if((int)$creditDays === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
                   </div>
+                </div>
               </div>
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
@@ -396,6 +396,21 @@
                         <?php endforeach; ?>
                       </select>
                     </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sticker print type</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="format" id="format">
+                      <?php foreach($sticker_print_type_a as $key=>$value): ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($form_errors['format'])): ?>
+                    <span class="error"><?php echo $form_errors['format'] ?></span>
+                  <?php endif; ?>                  
                 </div>
               </div>
             </div>

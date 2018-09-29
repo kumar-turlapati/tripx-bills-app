@@ -37,7 +37,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/grn/list" class="btn btn-default"><i class="fa fa-book"></i> GRN Register</a>
-            <a href="/inward-entry/list" class="btn btn-default"><i class="fa fa-book"></i> Inward Register</a> 
+            <a href="/inward-entry/list" class="btn btn-default"><i class="fa fa-book"></i> Purchase Register</a> 
           </div>
         </div>
 

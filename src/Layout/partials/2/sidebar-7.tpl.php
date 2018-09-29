@@ -9,8 +9,8 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/inward-entry"><i class="fa fa-compass"></i> Inward entry</a></li>
-          <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Inward entry from files</a></li>          
+          <li><a href="/inward-entry"><i class="fa fa-compass"></i> Purchase entry</a></li>
+          <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase entry from files</a></li>          
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
           <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock adjustment</a></li>
         </ul>
@@ -20,7 +20,7 @@
           <i class="fa fa-book"></i> Registers <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Inward register</a></li>
+          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Purchase Register</a></li>
           <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN register</a></li>
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock transfer register</a></li>
           <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock adjustment register</a></li>

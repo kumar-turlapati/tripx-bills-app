@@ -11,7 +11,7 @@
         <ul class="sub">
           <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales register</a></li>
           <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales return register</a></li>
-          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Inward register</a></li>
+          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Purchase Register</a></li>
           <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN register</a></li>
           <li><a href="/fin/payment-vouchers"><i class="fa fa-inr"></i> Payments register</a></li> 
           <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit notes register</a></li>

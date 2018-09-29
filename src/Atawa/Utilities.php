@@ -761,4 +761,11 @@ class Utilities
     exit;
   }
 
+  public static function get_barcode_sticker_print_formats() {
+    return [
+      'indent' => 'Indent Sticker',
+      'mrp' => 'MRP Sticker',
+      // 'worate' => 'Sticker Without Rate',
+    ];
+  }
 }

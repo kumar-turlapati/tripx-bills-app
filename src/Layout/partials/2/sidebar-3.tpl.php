@@ -27,8 +27,8 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/inward-entry"><i class="fa fa-compass"></i> Inward entry</a></li>
-          <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Inward entry from files</a></li>          
+          <li><a href="/inward-entry"><i class="fa fa-compass"></i> Purchase entry</a></li>
+          <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase entry from files</a></li>          
           <?php /*<li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry</a></li> */ ?>
           <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry</a></li>          
           <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
@@ -47,7 +47,7 @@
         <ul class="sub">
           <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales register</a></li>
           <li><a href="/sales-return/list"><i class="fa fa-undo"></i> Sales return register</a></li>
-          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Inward register</a></li>
+          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Purchase Register</a></li>
           <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN register</a></li>
           <li><a href="/fin/payment-vouchers"><i class="fa fa-strikethrough"></i> Payments register</a></li> 
           <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit notes register</a></li>
