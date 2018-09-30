@@ -321,8 +321,9 @@ $routes->add('fin_cust_opbal_delete', new Routing\Route('/fin/cust-opbal/remove/
   '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalDeleteAction',
   'opBalCode' => null,
 )));
-$routes->add('fin_cust_opbal_list', new Routing\Route('/fin/cust-opbal/list', array(
+$routes->add('fin_cust_opbal_list', new Routing\Route('/fin/cust-opbal/list/{pageNo}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalListAction',
+  'pageNo' => null,
 )));
 $routes->add('fin_cust_opbal_import', new Routing\Route('/fin/cust-opbal/import', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalImportAction',
