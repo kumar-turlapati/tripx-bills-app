@@ -364,7 +364,8 @@ class SalesIndentController {
     $locations = $vouchers = $search_params = $indents_a = $agents_a = [];
     $campaigns_a = [];
     $campaign_code = $page_error = $agent_code = '';
-    
+    $status_a = [99 => 'All Indents', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
+
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
@@ -395,6 +396,7 @@ class SalesIndentController {
     $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
     $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
+    $status = $request->get('status') !== null && (int)$request->get('status') !== 99 ? Utilities::clean_string($request->get('status')) : '';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -403,6 +405,7 @@ class SalesIndentController {
       'perPage' => $per_page,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
+      'status' => $status,
     );
 
     $api_response = $this->sindent_model->get_all_indents($search_params);
@@ -452,6 +455,7 @@ class SalesIndentController {
       'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
+      'status_a' => $status_a,
     );
 
     // build variables

@@ -32,7 +32,12 @@
   } else {
     $agentCode = '';
   }
-
+  if(isset($search_params['status']) && $search_params['status'] !== '') {
+    $status = $search_params['status'];
+    $query_params[] = 'status='.$status;
+  } else {
+    $status = 99;
+  }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
@@ -110,10 +115,26 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
-                </div>                
+                </div>
+                <div class="col-sm-12 col-md-1 col-lg-1">
+                  <select class="form-control" name="status" id="status">
+                    <?php 
+                      foreach($status_a as $key => $value):
+                        if((int)$key === (int)$status) {
+                          $selected = 'selected="selected"';
+                        } else {
+                          $selected = '';
+                        }  
+                    ?>
+                     <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                        <?php echo $value ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
-            </div>
-           </form>
+              </div>
+            </form>
 			    </div>
         </div>
 

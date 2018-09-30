@@ -264,7 +264,7 @@ class UploadBalancesController {
           $error_flag = true;
           $xl_errors[$key]['CustomerType'] = 'Invalid Customer type at Row - '.$row_no;
         }
-        if($city_name === '') {
+/*        if($city_name === '') {
           $error_flag = true;
           $xl_errors[$key]['CityName'] = 'Invalid City Name at Row - '.$row_no;
         }
@@ -279,7 +279,7 @@ class UploadBalancesController {
         if($pincode !== '' && !ctype_digit(str_replace([' ', '', '-'], ['','',''], $pincode))) {
           $error_flag = true;
           $xl_errors[$key]['Pincode'] = 'Invalid Pincode at Row - '.$row_no;
-        }
+        }*/
         if($bill_no !== '' && !Utilities::validate_date($bill_date)) {
           $error_flag = true;
           $xl_errors[$key]['BillDate'] = 'Invalid Bill Date at Row - '.$row_no;
@@ -334,7 +334,7 @@ class UploadBalancesController {
         $balance = Utilities::clean_string($imported_record_details['Balance']);
         $credit_days = Utilities::clean_string($imported_record_details['CreditDays']);
 
-        if($city_name === '') {
+/*        if($city_name === '') {
           $error_flag = true;
           $xl_errors[$key]['CityName'] = 'Invalid City Name at Row - '.$row_no;
         }
@@ -349,7 +349,7 @@ class UploadBalancesController {
         if($pincode !== '' && !ctype_digit(str_replace([' ', '', '-'], ['','',''], $pincode))) {
           $error_flag = true;
           $xl_errors[$key]['Pincode'] = 'Invalid Pincode at Row - '.$row_no;
-        }
+        }*/
         if($bill_no !== '' && !Utilities::validate_date($bill_date)) {
           $error_flag = true;
           $xl_errors[$key]['BillDate'] = 'Invalid Bill Date at Row - '.$row_no;

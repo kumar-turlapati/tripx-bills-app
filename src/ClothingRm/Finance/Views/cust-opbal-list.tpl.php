@@ -79,7 +79,7 @@
             <tbody>
               <?php
                 if(count($customers)>0) {
-                    $cntr = 1;
+                    $cntr = $sl_no;;
                     $total_balance = 0;
                     foreach($customers as $balance_details):
                       $cust_name = $balance_details['customerName'];
@@ -137,6 +137,7 @@
             <?php } ?>
             </tbody>
           </table>
+          <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>          
         </div>
       </div>
     </section>

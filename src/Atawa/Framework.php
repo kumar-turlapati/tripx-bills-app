@@ -79,7 +79,9 @@ class Framework {
       // dump($e);
       return new Response('Not Found', 404);
     } catch (\Exception $e) {
-      dump($e);
+      if($_SERVER['SERVER_ADDR'] === '127.0.0.1') {
+        dump($e);
+      }
       return new Response('An error occurred', 500);
     }
   }

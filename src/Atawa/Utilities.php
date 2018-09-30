@@ -399,7 +399,7 @@ class Utilities
     return array(
       'c' => 'Cash',
       'b' => 'Bank',
-      'p' => 'PDC (Bank)',
+      // 'p' => 'PDC (Bank)',
     );
   }
 

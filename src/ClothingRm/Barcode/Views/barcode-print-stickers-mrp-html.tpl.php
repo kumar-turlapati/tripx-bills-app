@@ -39,7 +39,7 @@
       body {
         margin: 0px;
         font-family: arial,sans-serif;
-        line-height: 10px;
+        line-height: 9px;
       }
       * {
         -webkit-box-sizing: border-box;
@@ -67,7 +67,7 @@
         margin-right: 3.7px;
         border-radius: 3px;
         padding: 3px 8px 5px 8px;
-        font-size: 10px;
+        font-size: 9px;
       }
       .labelSheet >div img {
         max-width: 100%;
@@ -82,7 +82,7 @@
       }
       .rate {
         text-align: center;
-        font-size: 10px;
+        font-size: 9px;
       }
       .mfgDate {
         text-align: center;
