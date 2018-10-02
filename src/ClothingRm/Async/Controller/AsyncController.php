@@ -163,7 +163,16 @@ class AsyncController {
       $response = $api_caller->sendRequest('get','suppliers/ac/get-names',$params,false);
       if(count($response)>0 && is_array($response)) {
         echo implode($response,"\n");
-      }      
+      }
+    } elseif($api_string === 'getBillNos' && !is_null($request->get('custName'))) {
+      $params['customerName'] = urlencode(Utilities::clean_string($request->get('custName')));
+      $response = $api_caller->sendRequest('get','fin/receipts-get-billnos',$params,false);
+      header("Content-type: application/json");      
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     }
     exit;
   }

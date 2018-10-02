@@ -59,7 +59,7 @@
                     style="font-weight:bold;font-size:14px;border:1px dotted;padding:5px;"
                     class="form-control noEnterKey indentOrderQty"
                   />
-                </div>                
+                </div>        
               </div>
             </div>
           </div>

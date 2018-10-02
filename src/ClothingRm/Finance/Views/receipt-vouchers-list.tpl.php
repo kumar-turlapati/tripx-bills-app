@@ -1,15 +1,15 @@
 <?php
   use Atawa\Utilities;
   use Atawa\Constants;
-  
-  $current_date = date("d-m-Y");
 
+  $current_date = date("d-m-Y");
   $query_params = '';
+
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
     $fromDate = $search_params['fromDate'];
     $query_params[] = 'fromDate='.$fromDate;
   } else {
-    $fromDate = $current_date;
+    $fromDate = date("01-m-Y");
   }
   if(isset($search_params['toDate']) && $search_params['toDate'] !='' ) {
     $toDate = $search_params['toDate'];
@@ -17,10 +17,12 @@
   } else {
     $toDate = $current_date;
   }
-  if(!isset($bankCode)) {
-    $bankCode = '';
-  }
-  
+  if(isset($search_params['partyName']) && $search_params['partyName'] !='' ) {
+    $partyName = $search_params['partyName'];
+    $query_params[] = 'partyName='.$partyName;
+  } else {
+    $partyName = '';
+  }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
@@ -62,37 +64,8 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="select-wrap">
-                    <select class="form-control" name="partyCode" id="partyCode">
-                      <?php 
-                        foreach($parties as $key=>$value): 
-                          if($party_code === $key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }                      
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                      <?php endforeach; ?>
-                    </select>
-                   </div>
+                  <input type="text" class="form-control cnameAc noEnterKey" name="partyName" id="partyName" placeholder="Customer name" value="<?php echo $partyName ?>" />
                 </div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="select-wrap">                  
-                    <select class="form-control" name="bankCode" id="bankCode">
-                      <?php 
-                        foreach($bank_names as $key=>$value): 
-                          if($bankCode === $key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }                      
-                      ?>
-                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
-                      <?php endforeach; ?>                
-                    </select>
-                  </div>
-                </div>                       
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
             </div>
            </form>        
@@ -110,7 +83,6 @@
                 <th width="8%" class="text-center">Payment mode</span></th>                
                 <th width="20%" class="text-center">Party name</th>
                 <th width="8%" class="text-center">Bill No.</th>
-                <th width="20%" class="text-center">Bank name</th>
                 <th width="8%" class="text-center">Actions</th>
               </tr>
             </thead>
@@ -127,19 +99,17 @@
                     $payment_mode = 'Bank';
                   }
                   $party_name = $voucher_details['partyName'];
-                  $bank_name = $voucher_details['bankName'];
                   $bill_no = $voucher_details['billNo'];
               ?>
                 <tr class="font12">
-                  <td align="right"><?php echo $cntr ?></td>
-                  <td align="right"><?php echo $voucher_no ?></td>
-                  <td><?php echo $voucher_date ?></td>
-                  <td align="right"><?php echo number_format($amount,2) ?></td>
-                  <td align="center"><?php echo $payment_mode ?></td>                
-                  <td><?php echo $party_name ?></td>
-                  <td><?php echo $bill_no ?></td>
-                  <td><?php echo $bank_name ?></td>
-                  <td>
+                  <td align="right" class="valign-middle"><?php echo $cntr ?></td>
+                  <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
+                  <td class="valign-middle"><?php echo $voucher_date ?></td>
+                  <td align="right" class="valign-middle"><?php echo number_format($amount,2) ?></td>
+                  <td align="center" class="valign-middle"><?php echo $payment_mode ?></td>                
+                  <td class="valign-middle"><?php echo $party_name ?></td>
+                  <td class="valign-middle"><?php echo $bill_no ?></td>
+                  <td class="valign-middle">
                   <?php if($voucher_no>0): ?>
                     <div class="btn-actions-group" align="right">                    
                       <a class="btn btn-primary" href="/fin/receipt-voucher/update/<?php echo $voucher_no ?>" title="Edit Voucher">

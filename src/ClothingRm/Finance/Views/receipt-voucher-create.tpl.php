@@ -8,10 +8,10 @@
   } else {
     $tran_date = $current_date;
   }
-  if(isset($submitted_data['partyCode'])) {
-    $party_code = $submitted_data['partyCode'];
+  if(isset($submitted_data['partyName'])) {
+    $party_name = $submitted_data['partyName'];
   } else {
-    $party_code = '';
+    $party_name = '';
   }
   if(isset($submitted_data['billNo'])) {
     $bill_no = $submitted_data['billNo'];
@@ -38,30 +38,23 @@
   } else {
     $ref_no = '';
   }
-  if(isset($submitted_data['bankCode'])) {
-    $bank_code = $submitted_data['bankCode'];
+  if(isset($submitted_data['bankName'])) {
+    $bank_name = $submitted_data['bankName'];
   } else {
-    $bank_code = '';
+    $bank_name = '';
   }  
-
   if($mode==='b' || $mode==='p') {
     $div_style = '';
   } else {
     $div_style = 'display:none;';
   }
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
-    
-    <!-- Panel starts -->
     <section class="panel">
       <h2 class="hdg-reports text-center">Create Receipt Voucher</h2>
       <div class="panel-body">
-
         <?php echo Utilities::print_flash_message() ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/fin/receipt-vouchers" class="btn btn-default">
@@ -69,13 +62,9 @@
             </a>
           </div>
         </div>
-        <!-- Right links ends --> 
-        
-        <!-- Form starts -->
         <form class="form-validate form-horizontal" method="POST" id="receiptVocForm">
-
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">            
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Voucher date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -89,51 +78,60 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Party name & Ref. Number</label>
-              <select class="form-control" name="partyCode" id="partyCode">
-                <?php 
-                  foreach($parties as $key=>$value): 
-                    if($party_code === $key) {
-                      $selected = 'selected="selected"';
-                    } else {
-                      $selected = '';
-                    }                      
-                ?>
-                  <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                <?php endforeach; ?>
-              </select>
-              <?php if(isset($form_errors['partyCode'])): ?>
-                <span class="error"><?php echo $form_errors['partyCode'] ?></span>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label">Party name</label>
+              <input 
+                type="text" 
+                class="form-control cnameAc noEnterKey" 
+                name="partyName" 
+                id="partyName"
+                value="<?php echo $party_name ?>"
+              />
+              <?php if(isset($form_errors['partyName'])): ?>
+                <span class="error"><?php echo $form_errors['partyName'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-1 col-lg-1" style="padding:3px 0 0 0;">
+              <label>&nbsp;</label>
+              <button class="btn btn-sm btn-danger" id="custBillNos">Get Bill Nos.</button>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Bill no.</label>
-              <input 
-                type="text" class="form-control" name="billNo" id="billNo" 
-                value="<?php echo $bill_no ?>"
-              >
+              <div class="select-wrap">
+                <select
+                  class="form-control noEnterKey"
+                  name="billNo" 
+                  id="custBillNo"
+                  <?php echo $bill_no === '' ? 'disabled' : ''?>
+                >
+                  <option value="">Choose</option>
+                  <?php if($bill_no !== ''): ?>
+                    <option value="<?php echo $bill_no ?>" selected><?php echo $bill_no ?></option>
+                  <?php endif; ?>
+                </select>
+              </div>
               <?php if(isset($form_errors['billNo'])): ?>
                 <span class="error"><?php echo $form_errors['billNo'] ?></span>
               <?php endif; ?>
-            </div>                        
+            </div>
           </div>
-
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Payment method</label>
-              <select class="form-control" name="paymentMode" id="paymentMode">
-                <?php 
-                  foreach($payment_methods as $key=>$value): 
-                    if($mode === $key) {
-                      $selected = 'selected="selected"';
-                    } else {
-                      $selected = '';
-                    }                      
-                ?>
-                  <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                <?php endforeach; ?>              
-              </select>
+              <div class="select-wrap">              
+                <select class="form-control" name="paymentMode" id="paymentMode">
+                  <?php 
+                    foreach($payment_methods as $key=>$value): 
+                      if($mode === $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }                      
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>              
+                </select>
+              </div>
               <?php if(isset($form_errors['paymentMode'])): ?>
                 <span class="error"><?php echo $form_errors['paymentMode'] ?></span>
               <?php endif; ?>
@@ -141,7 +139,10 @@
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Amount</label>
               <input 
-                type="text" class="form-control" name="amount" id="amount" 
+                type="text" 
+                class="form-control noEnterKey" 
+                name="amount" 
+                id="amount"
                 value="<?php echo $amount ?>"
               >
               <?php if(isset($form_errors['amount'])): ?>
@@ -151,45 +152,47 @@
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Narration</label>
               <input 
-                type="text" class="form-control" name="narration" id="narration" 
-                value="<?php echo $narration ?>" maxlength="250"
+                type="text" 
+                class="form-control noEnterKey"
+                name="narration"
+                id="narration"
+                value="<?php echo $narration ?>" 
+                maxlength="250"
               >
               <?php if(isset($form_errors['narration'])): ?>
                 <span class="error"><?php echo $form_errors['narration'] ?></span>
               <?php endif; ?>
             </div>            
           </div>
-
           <div class="form-group" id="refInfo" style="<?php echo $div_style ?>">
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Bank name</label>
-              <select class="form-control" name="bankCode" id="bankCode">
-                <?php 
-                  foreach($bank_names as $key=>$value): 
-                    if($bank_code === $key) {
-                      $selected = 'selected="selected"';
-                    } else {
-                      $selected = '';
-                    }                      
-                ?>
-                  <option value="<?php echo $key ?>"><?php echo $value ?></option>
-                <?php endforeach; ?>                
-              </select>
-              <?php if(isset($form_errors['bankCode'])): ?>
-                <span class="error"><?php echo $form_errors['bankCode'] ?></span>
+              <input 
+                class="form-control"
+                name="bankName"
+                id="bankName"
+                value="<?php echo $bank_name ?>"
+                maxlength="20"
+              >
+              <?php if(isset($form_errors['bankName'])): ?>
+                <span class="error"><?php echo $form_errors['bankName'] ?></span>
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Reference/Cheque/DD No.</label>
               <input 
-                type="text" class="form-control" name="refNo" id="refNo" 
+                type="text"
+                class="form-control"
+                name="refNo"
+                id="refNo"
                 value="<?php echo $ref_no ?>"
+                maxlength="20"
               >
               <?php if(isset($form_errors['refNo'])): ?>
                 <span class="error"><?php echo $form_errors['refNo'] ?></span>
               <?php endif; ?>
             </div>                 
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">            
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15"> 
               <label class="control-label">Reference date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -210,10 +213,7 @@
             </button>
           </div>          
         </form>
-        <!-- Form ends -->
       </div>
     </section>
-    <!-- Panel ends --> 
   </div>
 </div>
-<!-- Basic Forms ends -->

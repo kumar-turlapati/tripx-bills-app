@@ -25,15 +25,15 @@ class ReceiptsController
 
   // receipts create action.
   public function receiptCreateAction(Request $request) {
-    $page_error = $page_success = $bank_code = '';
+    $page_error = $page_success = '';
     $submitted_data = $form_errors = [];
-    $customers = array(''=>'Choose');
     if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
       $validate_form = $this->_validate_form_data($request->request->all());
       $status = $validate_form['status'];
       if($status) {
-        $form_data = $validate_form['cleaned_params'];
-        $result = $this->fin_model->create_receipt_voucher($this->_map_voucher_data($form_data));
+        $mapped_data = $this->_map_voucher_data($validate_form['cleaned_params']);
+        $result = $this->fin_model->create_receipt_voucher($mapped_data);
         if($result['status']) {
           $message = 'Receipt voucher created successfully with Voucher No. ` '.$result['vocNo'].' `';
           $this->flash->set_flash_message($message);
@@ -45,23 +45,8 @@ class ReceiptsController
         }
       } else {
         $form_errors = $validate_form['errors'];
-        $submitted_data = $request->request->all();
+        $submitted_data = $form_data;
       }
-    }
-
-    # get party names
-    $cust_api_response = $this->fin_model->get_debtors();
-    if($cust_api_response['status']===true) {
-      $customers = array_merge($customers,$cust_api_response['data']);
-    }
-
-    # get bank names
-    $banks_list = $this->fin_model->banks_list();
-    if($banks_list['status']===false) {
-      $bank_names = array(''=>'Choose');
-    } else {
-      $bank_names = array(''=>'Choose') +
-                    Utilities::process_key_value_pairs($banks_list['banks'],'bankCode','bankName');
     }
 
     // prepare form variables.
@@ -70,9 +55,7 @@ class ReceiptsController
       'page_success' => $page_success,
       'form_errors' => $form_errors,
       'submitted_data' => $submitted_data,
-      'parties' => $customers,
-      'payment_methods' => array(''=>'Choose')+Utilities::get_fin_payment_methods(),
-      'bank_names' => $bank_names,
+      'payment_methods' => array(''=>'Choose') + Utilities::get_fin_payment_methods(),
     );
 
     // build variables
@@ -87,67 +70,53 @@ class ReceiptsController
 
   // receipts update action.
   public function receiptUpdateAction(Request $request) {
-    $page_error = $page_success = $bank_code = '';
-    $submitted_data = $form_errors = $customers = array();
-    $parties = array(''=>'Choose');
-    $voc_no = 0;
+    $page_error = $page_success = '';
+    $submitted_data = $form_errors = $form_data = [];
+    if( is_null($request->get('vocNo')) && is_numeric($request->get('vocNo'))) {
+      $this->flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
+      Utilities::redirect('/fin/receipt-vouchers');
+    } else {
+      $voc_no = Utilities::clean_string($request->get('vocNo'));
+    }
 
     if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
       $validate_form = $this->_validate_form_data($request->request->all());
       $status = $validate_form['status'];
       if($status) {
-        $form_data = $validate_form['cleaned_params'];
-        $result = $$this->fin_model->update_receipt_voucher($this->_map_voucher_data($form_data),$form_data['vocNo']);
-        if($result['status']===true) {
-          $message = 'Receipt voucher no. `'.$form_data['vocNo'].'` updated successfully';
+        $mapped_data = $this->_map_voucher_data($validate_form['cleaned_params']);
+        $result = $this->fin_model->update_receipt_voucher($mapped_data, $voc_no);
+        if($result['status']) {
+          $message = 'Receipt voucher update successfully.';
           $this->flash->set_flash_message($message);
+          Utilities::redirect('/fin/receipt-vouchers');
         } else {
-          $message = 'An error occurred while updating receipt voucher.';
-          $this->flash->set_flash_message($message,1);          
+          $page_error = $result['apierror'];
+          $this->flash->set_flash_message($page_error,1);
+          $submitted_data = $form_data;
         }
-        Utilities::redirect('/fin/receipt-vouchers');
       } else {
         $form_errors = $validate_form['errors'];
-        $submitted_data = $request->request->all();
+        $submitted_data = $form_data;
       }
     } elseif(!is_null($request->get('vocNo'))) {
       $voc_no = $request->get('vocNo');
-      $voucher_details = $$this->fin_model->get_receipt_voucher_details($voc_no);
+      $voucher_details = $this->fin_model->get_receipt_voucher_details($voc_no);
       if($voucher_details['status']===false) {
         $this->flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
         Utilities::redirect('/fin/receipt-vouchers');
       } else {
-        $submitted_data = $voucher_details['data'];
+        $form_data = $voucher_details['data'];
       }
-    } else {
-      $this->flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
-      Utilities::redirect('/fin/receipt-vouchers');
     }
-
-    # get party names
-    $cust_api_response = $this->fin_model->get_debtors();
-    if($cust_api_response['status']===true) {
-      $customers = array_merge($customers,$cust_api_response['data']);
-    }
-
-    # get bank names
-    $banks_list = $this->fin_model->banks_list();
-    if($banks_list['status']===false) {
-      $bank_names = array(''=>'Choose');
-    } else {
-      $bank_names = array(''=>'Choose')+
-                    Utilities::process_key_value_pairs($banks_list['banks'],'bankCode','bankName');
-    }    
 
      // prepare form variables.
     $template_vars = array(
       'page_error' => $page_error,
       'page_success' => $page_success,
       'form_errors' => $form_errors,
-      'submitted_data' => $submitted_data,
-      'parties' => $customers,
+      'submitted_data' => $form_data,
       'payment_methods' => array(''=>'Choose') +  Utilities::get_fin_payment_methods(),
-      'bank_names' => $bank_names,
       'voc_no' => $voc_no,
     );
 
@@ -164,24 +133,22 @@ class ReceiptsController
   // receipts list action
   public function receiptsListAction(Request $request) {
 
-    $parties = $vouchers = $search_params = $vouchers_a = $customers = array();
+    $parties = $vouchers = $search_params = $vouchers_a = $customers = [];
     $party_code = $bank_code = $page_error = '';
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
     // parse request parameters.
-    $from_date = $request->get('fromDate')!==null?Utilities::clean_string($request->get('fromDate')):date("d-m-Y");
-    $to_date = $request->get('toDate')!==null?Utilities::clean_string($request->get('toDate')):date("d-m-Y");
-    $party_code = $request->get('partyCode')!==null?Utilities::clean_string($request->get('partyCode')):'';
-    $bank_code = $request->get('bankCode')!==null?Utilities::clean_string($request->get('bankCode')):'';
-    $page_no = $request->get('pageNo')!==null?Utilities::clean_string($request->get('pageNo')):1;
+    $from_date = $request->get('fromDate')!==null ? Utilities::clean_string($request->get('fromDate')) : date("01-m-Y");
+    $to_date = $request->get('toDate')!==null ? Utilities::clean_string($request->get('toDate')) : date("d-m-Y");
+    $party_name = $request->get('partyName')!==null ? Utilities::clean_string($request->get('partyName')):'';
+    $page_no = $request->get('pageNo')!==null ? Utilities::clean_string($request->get('pageNo')) : 1;
     $per_page = 100;
 
     $search_params = array(
       'fromDate' => $from_date,
       'toDate' => $to_date,
-      'partyCode' => $party_code,
-      'bankCode' => $bank_code,
+      'partyName' => $party_name,
       'pageNo' => $page_no,
       'perPage' => $per_page,
     );
@@ -218,27 +185,8 @@ class ReceiptsController
       $page_error = $api_response['apierror'];
     }
 
-    # get party names
-    $cust_api_response = $this->fin_model->get_debtors();
-    if($cust_api_response['status']===true) {
-      $customers = array_merge($customers,$cust_api_response['data']);
-    }
-
-    // get bank names
-    $banks_list = $this->fin_model->banks_list();
-    if($banks_list['status']===false) {
-      $bank_names = array(''=>'Choose');
-    } else {
-      $bank_names = array(''=>'Choose')+
-                    Utilities::process_key_value_pairs($banks_list['banks'],'bankCode','bankName');
-    }    
-
      // prepare form variables.
     $template_vars = array(
-      'parties' => array(''=>'Party name')+$customers,
-      'bank_names' => array(''=>'Bank name')+$bank_names,
-      'party_code' => $party_code,
-      'bank_code' => $bank_code,
       'page_error' => $page_error,
       'vouchers' => $vouchers_a,
       'total_pages' => $total_pages ,
@@ -249,6 +197,7 @@ class ReceiptsController
       'page_links_to_start' => $page_links_to_start,
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
+      'search_params' => $search_params,
     );
 
     // build variables
@@ -316,21 +265,21 @@ class ReceiptsController
     // var_dump($form_data);
 
     $tran_date = Utilities::clean_string($form_data['tranDate']);
-    $party_code = Utilities::clean_string($form_data['partyCode']);
+    $party_name = Utilities::clean_string($form_data['partyName']);
     $bill_no = Utilities::clean_string($form_data['billNo']);
     $payment_method = Utilities::clean_string($form_data['paymentMode']);
     $amount = Utilities::clean_string($form_data['amount']);
     $narration = Utilities::clean_string($form_data['narration']);
-    $bank_code = Utilities::clean_string($form_data['bankCode']);
+    $bank_name = Utilities::clean_string($form_data['bankName']);
     $ref_no = Utilities::clean_string($form_data['refNo']);
     $ref_date = Utilities::clean_string($form_data['refDate']);
 
-    if($party_code===''&&($payment_method=='b'||$payment_method==='p')) {
-      $errors['partyCode'] = 'Party name is mandatory';
+    if($party_name === '') {
+      $errors['partyName'] = 'Party name is mandatory';
     } else {
-      $cleaned_params['partyCode'] = $party_code;
+      $cleaned_params['partyName'] = $party_name;
     }
-    if($bill_no==''&&($payment_method=='b'||$payment_method==='p')) {
+    if($bill_no === '') {
       $errors['billNo'] = 'Bill no. is mandatory';
     } else {
       $cleaned_params['billNo'] = $bill_no;
@@ -340,18 +289,11 @@ class ReceiptsController
     } else {
       $cleaned_params['amount'] = $amount;
     }
-
-    if(isset($form_data['vocNo']) && is_numeric($form_data['vocNo'])) {
-      $cleaned_params['vocNo'] = $form_data['vocNo'];
-    } else {
-      $cleaned_params['vocNo'] = 0;
-    }
-
-    if($payment_method==='b' || $payment_method==='p') {
-      if($bank_code==='') {
-        $errors['bankCode'] = 'Bank name is required for Bank or PDC payment modes';
+    if($payment_method ==='b' || $payment_method === 'p') {
+      if($bank_name === '') {
+        $errors['bankName'] = 'Bank name is required for Bank or PDC payment modes';
       } else {
-        $cleaned_params['bankCode'] = $bank_code;
+        $cleaned_params['bankName'] = $bank_name;
       }
       if($ref_no==='') {
         $errors['refNo'] = 'Ref. no is required for Bank or PDC payment modes';
@@ -375,16 +317,16 @@ class ReceiptsController
     }
   }
 
-  private function _map_voucher_data($form_data) {
+  private function _map_voucher_data($form_data = []) {
     $data_array = array();
     foreach($form_data as $key=>$value) {
-      if($key==='paymentMode') {
+      if($key === 'paymentMode') {
         switch($form_data[$key]) {
           case 'b':
             $data_array['paymentMode'] = 'bank';
             $data_array['refNo'] = $form_data['refNo'];
             $data_array['refDate'] = $form_data['refDate'];
-            $data_array['bankCode'] = $form_data['bankCode'];
+            $data_array['bankName'] = $form_data['bankName'];
             break;
           case 'c':
             $data_array['paymentMode'] = 'cash';
@@ -396,14 +338,13 @@ class ReceiptsController
             $data_array['isPdc'] = true;
             $data_array['refNo'] = $form_data['refNo'];
             $data_array['refDate'] = $form_data['refDate'];
-            $data_array['bankCode'] = $form_data['bankCode'];
+            $data_array['bankName'] = $form_data['bankName'];
             break;          
         }
-      } elseif($key!=='vocNo') {
+      } elseif($key !== 'vocNo') {
         $data_array[$key] = $value;
       }
     }
     return $data_array;
-  }  
-
+  }
 }

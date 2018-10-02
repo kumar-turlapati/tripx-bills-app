@@ -29,8 +29,8 @@
         <ul class="sub">
           <li><a href="/inward-entry"><i class="fa fa-compass"></i> Purchase entry</a></li>
           <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase entry from files</a></li>          
-          <?php /*<li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry</a></li> */ ?>
-          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry</a></li>          
+          <li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry w/o barcode</a></li>
+          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry w barcode</a></li>
           <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
           <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>

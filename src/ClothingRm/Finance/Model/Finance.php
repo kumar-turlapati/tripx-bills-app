@@ -184,11 +184,12 @@ class Finance
 		}
 	}
 
-	public function update_receipt_voucher($form_data=array(),$voc_no='') {
+	public function update_receipt_voucher($form_data = [], $voc_no = '') {
 		$client_id = Utilities::get_current_client_id();
 		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('put','fin/receipts/'.$voc_no.'/'.$client_id,$form_data);
+		$api_uri = 'fin/receipts/'.$voc_no.'/'.$client_id;
+		$response = $api_caller->sendRequest('put', $api_uri, $form_data);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return array('status'=>true);

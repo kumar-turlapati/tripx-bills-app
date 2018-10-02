@@ -409,6 +409,8 @@ function initializeJS() {
       window.location.href = '/inward-entry/bulk-upload';      
     } else if(buttonId === 'seWithBarcode') {
       window.location.href = '/sales/entry-with-barcode';
+    } else if(buttonId === 'seWoBarcode') {
+      window.location.href = '/sales/entry';      
     } else if(buttonId === 'ieWithBarcode') {
       window.location.href = '/sales-indent/create';
     } else if(buttonId === 'uploadCustomers') {
@@ -818,17 +820,21 @@ function initializeJS() {
       var paymentMethod = parseInt($(this).val());
       if(paymentMethod === 1 || paymentMethod === 2) {
         $('#containerCardNo, #containerAuthCode').show();
-      } else {
+      } else if(paymentMethod === 3) {
+        $('#containerCrDays').show();
         $('#containerCardNo, #containerAuthCode').hide();
+      } else {
+        $('#containerCardNo, #containerAuthCode, #containerCrDays').hide();
       }
       /* enable multiple pay options if it is split payment */
       if(paymentMethod === 2) {
         $('#splitPaymentWindow').show();
         $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo').attr('disabled', false);
+        $('#containerCrDays').hide();        
       } else {
         $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo').val('');
         $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo').attr('disabled', true);
-        $('#splitPaymentWindow').hide();        
+        $('#splitPaymentWindow').hide();
       }
     });
     
@@ -849,7 +855,7 @@ function initializeJS() {
       var lotNoRef = $('#lotNo_'+itemIndex);
       var bnoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");        
       var avaLots = $(lotNoRef).children('option').length;
-      if(itemName !== '' && parseInt(avaLots) === 1) {
+      if(itemName !== '') {
        var locationCode = $('#locationCode').val();
        if(locationCode == '') {
           alert('Please choose Store location first.');
@@ -870,7 +876,7 @@ function initializeJS() {
                 jQuery(lotNoRef).append(
                   jQuery("<option></option>").
                   attr("value",lotNoDetails.lotNo).
-                  text(lotNoDetails.lotNo)
+                  text(lotNoDetails.lotNo + ' [ Packing: ' + lotNoDetails.mOq + ' ]')
                 );
               });
             } else {
@@ -894,6 +900,7 @@ function initializeJS() {
       if(lotNo !== '') {
         if(Object.keys(lotNosResponse[lotNo]).length>0) {
           jQuery('#qtyava_'+itemIndex).val(lotNosResponse[lotNo].closingQty);
+          jQuery('#qty_'+itemIndex).val(lotNosResponse[lotNo].mOq);          
           jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].mrp);
           jQuery('#itemType_'+itemIndex).val(lotNosResponse[lotNo].itemType);
           jQuery('#saItemTax_'+itemIndex+' option[value="'+lotNosResponse[lotNo].taxPercent+'"]').attr('selected', 'selected');
@@ -1211,6 +1218,51 @@ function initializeJS() {
       }
     });   
   }
+  if($('#receiptVocForm').length>0) {
+    var billNosResponse = [];
+    $('#custBillNos').on('click', function(e){
+      e.preventDefault();
+      var customerName = jQuery('#partyName').val();
+      var billNoRef = $('#custBillNo');
+      var billNoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");        
+      var optionCount = $(billNoRef).children('option').length;
+      if(customerName !== '') {
+       var data = {custName:customerName};
+       jQuery.ajax("/async/getBillNos", {
+          data: data,
+          method:"POST",
+          success: function(billNos) {
+            if(billNos.status === 'success') {
+              var objLength = Object.keys(billNos.response).length;
+              if(parseInt(objLength) > 0) {
+                jQuery(billNoRef).empty().append(billNoFirstOption);
+                jQuery.each(billNos.response, function (index, billDetails) {
+                  billNosResponse[billDetails.billNo] = billDetails;
+                  jQuery(billNoRef).append(
+                    jQuery("<option></option>").
+                    attr("value",encodeHTML(billDetails.billNo)).
+                    text(billDetails.billNo + ' { ' + billDetails.balAmount + ' }')
+                  );
+                });
+                $('#custBillNo').attr('disabled', false);
+              }
+            } else if(billNos.status === 'failed') {
+              alert(billsNos.reason);
+            }
+          },
+          error: function(e) {
+            alert('An error occurred while fetching Batch Nos.');
+          }
+       });          
+      }
+    });
+    $('#custBillNo').on('change', function(e){
+      var billNo = $(this).val();
+      if(billNo !== '' && Object.keys(billNosResponse[billNo]).length>0) {
+        jQuery('#amount').val(billNosResponse[billNo].balAmount);
+      }
+    });
+  }
 }
 
 function sendOTP(fpType) {
@@ -1447,4 +1499,8 @@ function failedGeoLocation(err) {
   if(err.code == 1) {
     alert("You must Allow Location Access to proceed further.");
   }
+}
+
+function encodeHTML(s) {
+  return s.split('&').join('&amp;').split('<').join('&lt;').split('"').join('&quot;').split("'").join('&#39;');
 }

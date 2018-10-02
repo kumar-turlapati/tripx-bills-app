@@ -56,6 +56,11 @@
     <section class="panelBox">
       <div class="panelBody">
         <?php echo $flash_obj->print_flash_message(); ?>
+        <div class="global-links actionButtons clearfix"> 
+          <div class="pull-right text-right">
+            <a href="/sales/entry" class="btn btn-default"><i class="fa fa-inr"></i> Sales Entry W/o Barcode</a>
+          </div>
+        </div>        
         <form id="outwardEntryForm" method="POST" action="<?php echo $form_submit_url ?>">
           <div class="table-responsive">
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
@@ -106,7 +111,7 @@
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>
-                    </select>                    
+                    </select>
                   </td>                  
                 </tr>
               </thead>
@@ -453,7 +458,7 @@
                 </div>
               </div>
             </div>
-          </div>          
+          </div>
           <div class="panel" style="margin-bottom:10px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="paymentMethodWindow">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">

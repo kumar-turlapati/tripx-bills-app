@@ -5,66 +5,8 @@
   // dump($offers_raw);
   // exit;
 
-  if(isset($form_data['invoiceDate']) && $form_data['invoiceDate']!=='') {
-    $current_date = date("d-m-Y", strtotime($form_data['invoiceDate']));
-  } else {
-    $current_date = date("d-m-Y");
-  }
-  if(isset($form_data['paymentMethod'])) {
-    $payment_method = $form_data['paymentMethod'];
-  } else {
-    $payment_method = 0;
-  }
-  if(isset($form_data['discountMethod'])) {
-    $discount_method = $form_data['discountMethod'];
-  } else {
-    $discount_method = 0;
-  }
-  if(isset($form_data['mobileNo'])) {
-    $mobile_no = $form_data['mobileNo'];
-  } else {
-    $mobile_no = '';
-  }
-  if(isset($form_data['name'])) {
-    $customer_name = $form_data['name'];
-  } else {
-    $customer_name = '';
-  }
-  if(isset($form_data['cardNo'])) {
-    $card_number = $form_data['cardNo'];
-  } else {
-    $card_number = '';
-  }
-  if(isset($form_data['authCode'])) {
-    $card_auth_code = $form_data['authCode'];
-  } else {
-    $card_auth_code = '';
-  }
-  if(isset($form_data['couponCode'])) {
-    $coupon_code = $form_data['couponCode'];
-  } else {
-    $coupon_code = '';
-  }  
-  if(isset($form_data['taxCalcOption'])) {
-    $tax_calc_option = $form_data['taxCalcOption'];
-  } else {
-    $tax_calc_option = 'i';
-  }
-  if(isset($form_data['splitPaymentCash'])) {
-    $split_payment_cash = $form_data['splitPaymentCash'];
-  } else {
-    $split_payment_cash = '';
-  }
-  if(isset($form_data['splitPaymentCard'])) {
-    $split_payment_card = $form_data['splitPaymentCard'];
-  } else {
-    $split_payment_card = '';
-  }
-  if(isset($form_data['saExecutive'])) {
-    $executive_id = $form_data['saExecutive'];
-  } else {
-    $executive_id = '';
-  }
+  // dump($print_format, $bill_to_print);
+
   if(isset($form_data['locationCode'])) {
     $location_code = $form_data['locationCode'];
   } elseif($default_location !== '') {
@@ -72,30 +14,41 @@
   } else {
     $location_code = '';
   }
-  if(isset($form_data['cnNo'])) {
-    $cn_no = $form_data['cnNo'];
-  } else {
-    $cn_no = '';
-  }
-  if(isset($form_data['splitPaymentCn'])) {
-    $split_payment_cn = $form_data['splitPaymentCn'];
-  } else {
-    $split_payment_cn = '';
-  }
-  if(isset($form_data['promoCode'])) {
-    $promo_code = $form_data['promoCode'];
-  } else {
-    $promo_code = '';
-  }
-  if(isset($form_data['refCode'])) {
-    $referral_code = $form_data['refCode'];
-  } else {
-    $referral_code = '';
-  }
 
-  $card_and_auth_style = (int)$payment_method === 0 ? 'style="display:none;"' : '';
+  $current_date = isset($form_data['invoiceDate']) && $form_data['invoiceDate']!=='' ? date("d-m-Y", strtotime($form_data['invoiceDate'])) : date("d-m-Y");
+  $payment_method = isset($form_data['paymentMethod']) ? $form_data['paymentMethod'] : $payment_method = 0;
+  $discount_method = isset($form_data['discountMethod']) ? $form_data['discountMethod'] : $discount_method = 0;
+  $mobile_no = isset($form_data['mobileNo']) ? $form_data['mobileNo'] : '';
+  $customer_name = isset($form_data['name']) ? $form_data['name'] : '';
+  $card_number = isset($form_data['cardNo']) ? $form_data['cardNo'] : ''; 
+  $card_auth_code = isset($form_data['authCode']) ? $form_data['authCode'] : '';
+  $coupon_code = isset($form_data['couponCode']) ? $form_data['couponCode'] : '';
+  $tax_calc_option = isset($form_data['taxCalcOption']) ? $form_data['taxCalcOption'] : 'i';
+  $split_payment_cash = isset($form_data['splitPaymentCash']) ? $form_data['splitPaymentCash'] : '';
+  $split_payment_card = isset($form_data['splitPaymentCard']) ? $form_data['splitPaymentCard'] : '';
+  $executive_id = isset($form_data['saExecutive']) ? $form_data['saExecutive'] : '';
+  $cn_no = isset($form_data['cnNo']) ? $form_data['cnNo'] : '';
+  $split_payment_cn = isset($form_data['splitPaymentCn']) ? $form_data['splitPaymentCn'] : '';
+  $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
+  $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';
+  $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'b2c';
+  $credit_days = isset($form_data['saCreditDays']) ? $form_data['saCreditDays'] : '';
+
+  $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
+  $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
+  $insurance_charges = isset($form_data['insuranceCharges']) ? $form_data['shippingCharges'] : '';
+  $other_charges = isset($form_data['otherCharges']) ? $form_data['otherCharges'] : '';
+  $transporter_name = isset($form_data['transporterName']) ? $form_data['transporterName'] : '';
+  $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
+  $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
+  $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
+
+  $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
+  $credit_days_input_style = (int)$payment_method === 3 ? '' : 'style="display:none;"';
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
+
+  $form_submit_url = '/sales/entry';
 ?>
 
 <div class="row">
@@ -108,148 +61,11 @@
        
         <div class="global-links actionButtons clearfix"> 
           <div class="pull-right text-right">
-            <a href="/sales/list" class="btn btn-default"><i class="fa fa-inr"></i> Sales Register</a>
+            <a href="/sales/list" class="btn btn-default"><i class="fa fa-book"></i> Sales Register</a>&nbsp;&nbsp;
+            <a href="/sales/entry-with-barcode" class="btn btn-default"><i class="fa fa-inr"></i> Sales Entry with Barcode</a>            
           </div>
         </div>
-        <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="outwardEntryForm">
-          <div class="panel" style="margin-bottom:0px;">
-            <div class="panel-body">
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Date of sale (dd-mm-yyyy)</label>
-                  <div class="form-group">
-                    <div class="col-lg-12">
-                      <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
-                        <span class="add-on"><i class="fa fa-calendar"></i></span>
-                      </div>
-                      <?php if(isset($errors['saleDate'])): ?>
-                        <span class="error"><?php echo $errors['saleDate'] ?></span>
-                      <?php endif; ?>                  
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Store name (against which store this entry effects)</label>
-                  <div class="select-wrap">
-                    <select class="form-control" name="locationCode" id="locationCode">
-                      <?php 
-                        foreach($client_locations as $key=>$value): 
-                          if($location_code === $key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                  </div>
-                  <?php if(isset($form_errors['locationCode'])): ?>
-                    <span class="error"><?php echo $form_errors['locationCode'] ?></span>
-                  <?php endif; ?>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Sales executive name</label>
-                  <div class="select-wrap">                        
-                    <select 
-                      class="form-control"
-                      id="saExecutive" 
-                      name="saExecutive"
-                      style="font-size:12px;"
-                    >
-                      <?php
-                        foreach($sa_executives as $key=>$value):
-                          if($key === $executive_id) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>                            
-                    </select>
-                  </div>
-                </div>                
-              </div>
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Customer mobile number</label>
-                  <input type="text" class="form-control noEnterKey" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
-                  <?php if(isset($errors['mobileNo'])): ?>
-                    <span class="error"><?php echo $errors['mobileNo'] ?></span>
-                  <?php endif; ?>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Customer name</label>
-                  <input type="text" class="form-control noEnterKey" name="name" id="name" value="<?php echo $customer_name ?>" />
-                  <?php if(isset($errors['name'])): ?>
-                    <span class="error"><?php echo $errors['name'] ?></span>
-                  <?php endif; ?>                  
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Tax calculation method</label>
-                  <div class="select-wrap">                        
-                    <select 
-                      class="form-control taxCalcOption"
-                      id="taxCalcOption" 
-                      name="taxCalcOption"
-                      style="font-size:12px;"
-                    >
-                      <?php
-                        foreach($taxcalc_opt_a as $key=>$value):
-                          if($key === $tax_calc_option) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>                            
-                    </select>
-                  </div>
-                </div>                
-              </div>
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Referral code</label>
-                  <input type="text" class="form-control noEnterKey" name="refCode" id="refCode" value="<?php echo $referral_code ?>" />
-                  <span class="error" id="refCodeStatus" style="display: none;"></span>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Referral name</label>
-                  <input type="text" class="form-control noEnterKey" name="refMemberName" id="refMemberName" disabled />
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Promo code</label>
-                  <div class="select-wrap">                  
-                    <select class="form-control" name="promoCode" id="saPromoCode" style="border:2px dashed; color: #FFA902;">
-                      <?php 
-                        foreach($offers as $offer_code => $offer_name): 
-                          if($offer_code === $promo_code) {
-                            $selected = 'selected = selected';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $offer_code ?>" <?php echo $selected ?>><?php echo $offer_name ?></option>
-                      <?php endforeach; ?>
-                    </select>
-                  </div>
-                  <?php if(isset($errors['promoCode'])): ?>
-                    <span class="error"><?php echo $errors['promoCode'] ?></span>
-                  <?php endif; ?>
-                </div>               
-                <input type="hidden" class="form-control noEnterKey" name="refMemberMobile" id="refMemberMobile" disabled />
-              </div>   
-            </div>
-          </div>
+        <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="outwardEntryForm" action="<?php echo $form_submit_url ?>">
           <div class="table-responsive">
             <table class="table table-striped table-hover font12">
               <thead>
@@ -349,25 +165,13 @@
                       />
                     </td>
                     <td style="vertical-align:middle;" align="center">
-                      <div class="select-wrap">
-                        <select 
+                        <input 
                           class="form-control saleItemQty"
                           name="itemDetails[itemSoldQty][]"
                           id="qty_<?php echo $i-1 ?>"
-                          index="<?php echo $i-1 ?>"              
-                        >
-                          <?php 
-                            foreach($qtys_a as $key=>$value):
-                               if((int)$item_qty === (int)$key) {
-                                $selected = 'selected="selected"';
-                               } else {
-                                $selected = '';
-                               }                                 
-                          ?>
-                            <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
+                          index="<?php echo $i-1 ?>"
+                          value="<?php echo $item_qty ?>"
+                        />
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
@@ -545,7 +349,137 @@
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
           </div>
-          <div class="panel" style="margin-bottom:20px;">
+          <div class="panel" style="margin-bottom:10px;">
+            <div class="panel-body" style="border: 1px dotted;">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Packing charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="10"
+                    id="packingCharges"
+                    name="packingCharges"
+                    maxlength="10"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $packing_charges ?>"
+                    class="form-control"
+                  />
+                  <?php if(isset($errors['packingCharges'])): ?>
+                    <span class="error"><?php echo $errors['packingCharges'] ?></span>
+                  <?php endif; ?>                  
+                </div>                
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Shipping charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="10"
+                    id="shippingCharges"
+                    name="shippingCharges"
+                    maxlength="10"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $shipping_charges ?>"
+                    class="form-control"
+                  />
+                  <?php if(isset($errors['shippingCharges'])): ?>
+                    <span class="error"><?php echo $errors['shippingCharges'] ?></span>
+                  <?php endif; ?>                  
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Insurance charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="insuranceCharges"
+                    name="insuranceCharges"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $insurance_charges ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['insuranceCharges'])): ?>
+                    <span class="error"><?php echo $errors['insuranceCharges'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Other charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="otherCharges"
+                    name="otherCharges"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $other_charges ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['otherCharges'])): ?>
+                    <span class="error"><?php echo $errors['otherCharges'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Transporter name</label>
+                  <input 
+                    type="text"
+                    size="15"
+                    id="transporterName"
+                    name="transporterName"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $transporter_name ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['transporterName'])): ?>
+                    <span class="error"><?php echo $errors['transporterName'] ?></span>
+                  <?php endif; ?>                  
+                </div>                
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">L.R. No(s)</label>
+                  <input
+                    type="text"
+                    size="10"
+                    id="lrNos"
+                    name="lrNos"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $lr_no ?>"
+                    class="form-control"
+                  />
+                  <?php if(isset($errors['lrNo'])): ?>
+                    <span class="error"><?php echo $errors['lrNo'] ?></span>
+                  <?php endif; ?>                  
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">L.R. Date</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="lrDate"
+                    name="lrDate"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $insurance_charges ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['lrDate'])): ?>
+                    <span class="error"><?php echo $errors['lrDate'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">Challan no.</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="challanNo"
+                    name="challanNo"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $challan_no ?>"
+                    class="form-control"           
+                  />
+                  <?php if(isset($errors['challanNo'])): ?>
+                    <span class="error"><?php echo $errors['challanNo'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+              </div>
+            </div>
+          </div>          
+          <div class="panel" style="margin-bottom:10px;">
             <div class="panel-body" style="border: 2px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
@@ -567,6 +501,26 @@
                   <?php if(isset($errors['paymentMethod'])): ?>
                     <span class="error"><?php echo $errors['paymentMethod'] ?></span>
                   <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4" id="containerCrDays" <?php echo $credit_days_input_style ?>>
+                  <label class="control-label">Credit days</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="saCreditDays" id="saCreditDays">
+                      <?php 
+                        foreach($credit_days_a as $key=>$value):
+                          if((int)$credit_days === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($errors['saCreditDays'])): ?>
+                    <span class="error"><?php echo $errors['saCreditDays'] ?></span>
+                  <?php endif; ?>
                 </div>                
                 <div class="col-sm-12 col-md-4 col-lg-4" id="containerCardNo" <?php echo $card_and_auth_style ?>>
                   <label class="control-label">Card No.</label>
@@ -585,6 +539,165 @@
               </div>              
             </div>
           </div>
+          <div class="panel" style="margin-bottom:10px;">
+            <div class="panel-body" style="border: 2px dotted;">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Date of sale (dd-mm-yyyy)</label>
+                  <div class="form-group">
+                    <div class="col-lg-12">
+                      <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
+                        <span class="add-on"><i class="fa fa-calendar"></i></span>
+                      </div>
+                      <?php if(isset($errors['saleDate'])): ?>
+                        <span class="error"><?php echo $errors['saleDate'] ?></span>
+                      <?php endif; ?>                  
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Store name</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $key=>$value): 
+                          if($location_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($form_errors['locationCode'])): ?>
+                    <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sales executive name</label>
+                  <div class="select-wrap">                        
+                    <select 
+                      class="form-control"
+                      id="saExecutive" 
+                      name="saExecutive"
+                      style="font-size:12px;"
+                    >
+                      <?php
+                        foreach($sa_executives as $key=>$value):
+                          if($key === $executive_id) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>                            
+                    </select>
+                  </div>
+                </div>                
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Customer mobile number</label>
+                  <input type="text" class="form-control noEnterKey" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
+                  <?php if(isset($errors['mobileNo'])): ?>
+                    <span class="error"><?php echo $errors['mobileNo'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Customer name</label>
+                  <input type="text" class="form-control noEnterKey cnameAc" name="name" id="name" value="<?php echo $customer_name ?>" />
+                  <?php if(isset($errors['name'])): ?>
+                    <span class="error"><?php echo $errors['name'] ?></span>
+                  <?php endif; ?>                  
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Tax calculation method</label>
+                  <div class="select-wrap">                        
+                    <select 
+                      class="form-control taxCalcOption"
+                      id="taxCalcOption" 
+                      name="taxCalcOption"
+                      style="font-size:12px;"
+                    >
+                      <?php
+                        foreach($taxcalc_opt_a as $key=>$value):
+                          if($key === $tax_calc_option) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>                            
+                    </select>
+                  </div>
+                </div>                
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Referral code</label>
+                  <input type="text" class="form-control noEnterKey" name="refCode" id="refCode" value="<?php echo $referral_code ?>" />
+                  <span class="error" id="refCodeStatus" style="display: none;"></span>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Referral name</label>
+                  <input type="text" class="form-control noEnterKey" name="refMemberName" id="refMemberName" disabled />
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Promo code</label>
+                  <div class="select-wrap">                  
+                    <select class="form-control" name="promoCode" id="saPromoCode" style="border:2px dashed; color: #FFA902;">
+                      <?php 
+                        foreach($offers as $offer_code => $offer_name): 
+                          if($offer_code === $promo_code) {
+                            $selected = 'selected = selected';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $offer_code ?>" <?php echo $selected ?>><?php echo $offer_name ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($errors['promoCode'])): ?>
+                    <span class="error"><?php echo $errors['promoCode'] ?></span>
+                  <?php endif; ?>
+                </div>               
+                <input type="hidden" class="form-control noEnterKey" name="refMemberMobile" id="refMemberMobile" disabled />
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Customer type</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="customerType" id="customerType">
+                      <?php 
+                        foreach($customer_types as $key=>$value): 
+                          if($customer_type === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="text-center">
             <?php 
               if($promo_key !== '') {
@@ -598,16 +711,29 @@
             <button class="<?php echo $button_class ?>" id="SaveInvoice" name="op" value="SaveandPrintBill">
               <i class="<?php echo $button_icon ?>"></i> Save Bill &amp; Print
             </button>
+            <button class="btn btn-warning" id="SaveBill" name="op" value="SaveandPrintInvoice">
+              <i class="fa fa-save"></i> Save &amp; Print Invoice
+            </button>
+            <button class="btn btn-danger cancelButton" id="seWoBarcode">
+              <i class="fa fa-times"></i> Cancel
+            </button>                        
           </div>
         </form>
       </div>
     </section>
   </div>
 </div>
-<?php if($bill_to_print>0) : ?>
+<?php if($bill_to_print !== '' && $print_format === 'bill'): ?>
   <script>
     (function() {
-      var printUrl = '/print-sales-bill-small?billNo='+<?php echo $bill_to_print ?>;
+      var printUrl = '/print-sales-bill-small?billNo=<?php echo $bill_to_print ?>';
+      var printWindow = window.open(printUrl, "_blank", "left=0,top=0,width=300,height=300,toolbar=0,scrollbars=0,status=0");
+    })();
+  </script>
+<?php elseif($bill_to_print !== '' && $print_format === 'invoice'): ?>
+  <script>
+    (function() {
+      var printUrl = '/print-sales-bill?billNo=<?php echo $bill_to_print ?>';
       var printWindow = window.open(printUrl, "_blank", "left=0,top=0,width=300,height=300,toolbar=0,scrollbars=0,status=0");
     })();
   </script>

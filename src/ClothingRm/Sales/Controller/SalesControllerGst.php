@@ -40,15 +40,13 @@ class SalesControllerGst {
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = [];
+    $customer_types = Constants::$CUSTOMER_TYPES;    
 
     $page_error = $page_success = $promo_key = '';
 
     # ---------- end of initializing variables -----------------
-    for($i=1;$i<=500;$i++) {
-      if($i <= 365) {
-        $credit_days_a[$i] = $i;
-      }
-      $qtys_a[$i] = $i;
+    for($i=1;$i<=365;$i++) {
+      $credit_days_a[$i] = $i;
     }
 
     # ---------- get tax percents from api ----------------------
@@ -90,30 +88,30 @@ class SalesControllerGst {
       $sa_executives = [];
     }
 
-
-/*    $result = $this->user_model->get_users(['userType' => 4, 'locationCode' => $_SESSION['lc']]);
-    if($result['status']) {
-      $users = $result['users'];
-      foreach($users as $user_details) {
-        $sa_executives[$user_details['uuid']] = $user_details['userName'];
-      }
-    } else {
-      $sa_executives = [];
-    }*/       
-
     # ---------- check for last bill printing ----
-    if($request->get('lastBill') && is_numeric($request->get('lastBill'))) {
+    if($request->get('lastBill')) {
       $bill_to_print = $request->get('lastBill');
     } else {
-      $bill_to_print = 0;
+      $bill_to_print = '';
     }
-
+    if( !is_null($request->get('format')) && ($request->get('format') === 'bill' || $request->get('format') === 'invoice')) {
+      $print_format = $request->get('format');
+    } else {
+      $print_format = 'bill';
+    }    
     # ------------------------------------- check for form Submission --------------------------------
     # ------------------------------------------------------------------------------------------------
     if(count($request->request->all()) > 0) {
 
       $submitted_promo_key = !is_null($request->get('promoKey')) ? $request->get('promoKey') : '';
       $derived_promo_key = !is_null($request->get('promoCode')) ? md5($request->get('promoCode').$this->promo_key) : '';
+
+      $op = $request->get('op');
+      if($op === 'SaveandPrintInvoice') {
+        $print_format = 'invoice';
+      } else {
+        $print_format = 'bill';
+      }      
 
       // dump($submitted_promo_key, $derived_promo_key, $request->get('promoCode'));
 
@@ -124,7 +122,7 @@ class SalesControllerGst {
         $api_response = $this->sales->create_sale($cleaned_params);
         if($api_response['status']) {
           $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> created successfully.');
-          Utilities::redirect('/sales/entry?lastBill='.$api_response['billNo']);
+          Utilities::redirect('/sales/entry?lastBill='.$api_response['invoiceCode'].'&format='.$print_format);
         } else {
           $page_error = $api_response['apierror'];
           $this->flash->set_flash_message($page_error,1);  
@@ -145,6 +143,7 @@ class SalesControllerGst {
             $api_response = $this->sales->create_sale($cleaned_params);
             if($api_response['status']) {
               $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> created successfully.');
+              Utilities::redirect('/sales/entry?lastBill='.$api_response['invoiceCode'].'&format='.$print_format);              
             } else {
               $page_error = $api_response['apierror'];
               $this->flash->set_flash_message($page_error,1);
@@ -179,13 +178,14 @@ class SalesControllerGst {
     # ---------------- prepare form variables. ---------
     $template_vars = array(
       'payment_methods' => Constants::$PAYMENT_METHODS_RC,
-      'offers' => array(''=>'Choose')+$offers,
+      'offers' => array(''=>'Choose') + $offers,
       'offers_raw' => $offers_raw,
-      'qtys_a' => array(0=>'Choose')+$qtys_a,
+      'credit_days_a' => array(0=>'Choose') + $credit_days_a,
       'errors' => $form_errors,
       'page_error' => $page_error,
       'page_success' => $page_success,
       'btn_label' => 'Create Invoice',
+      'print_format' => $print_format,      
       'taxes' => $taxes,
       'form_data' => $form_data,
       'bill_to_print' => $bill_to_print,
@@ -195,6 +195,7 @@ class SalesControllerGst {
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'sa_executives' => $sa_executives,
       'promo_key' => $promo_key,
+      'customer_types' => $customer_types,      
     );
 
     return array($this->template->render_view('sales-entry-gst', $template_vars),$controller_vars);
@@ -250,7 +251,7 @@ class SalesControllerGst {
     if($request->get('lastBill') && is_numeric($request->get('lastBill'))) {
       $bill_to_print = $request->get('lastBill');
     } else {
-      $bill_to_print = 0;
+      $bill_to_print = '';
     }
 
     # ---------- check for print format ----
@@ -310,7 +311,7 @@ class SalesControllerGst {
     return array($this->template->render_view('sales-update-gst', $template_vars),$controller_vars);
   }  
 
-  # sales register
+  // sales register
   public function salesListAction(Request $request) {
 
     $total_pages = $total_records = $record_count = $page_no = 0;
@@ -454,7 +455,7 @@ class SalesControllerGst {
     return array($this->template->render_view('sales-register', $template_vars),$controller_vars);
   }
 
-  # search sale bills.
+  // search sale bills.
   public function saleBillsSearchAction(Request $request) {
     $search_params = $bills = [];
     $slno = 0;
@@ -513,7 +514,7 @@ class SalesControllerGst {
     return array($this->template->render_view('search-sale-bills', $template_vars),$controller_vars);    
   }
 
-  # remove sales transaction.
+  // remove sales transaction.
   public function salesRemoveAction(Request $request) {
     if($request->get('salesCode') && $request->get('salesCode')!='') {
       $sales_code = Utilities::clean_string($request->get('salesCode'));
@@ -545,10 +546,10 @@ class SalesControllerGst {
     Utilities::redirect('/sales/list');
   }
 
-  /******************************* private functions should go from here ******************************/
   private function _validate_form_data($form_data=[]) {
 
     // dump($form_data);
+    // exit;
     // $coupon_code = Utilities::clean_string($form_data['']);
 
     $cleaned_params = $form_errors = [];
@@ -558,6 +559,8 @@ class SalesControllerGst {
     $one_item_found = $split_payment_found = false;
 
     $coupon_code = '';
+    $customer_types = array_keys(Constants::$CUSTOMER_TYPES);
+
     $sale_date = Utilities::clean_string($form_data['saleDate']);
     $payment_method = (int)Utilities::clean_string($form_data['paymentMethod']);
     $discount_method = isset($form_data['discountMethod']) ? Utilities::clean_string($form_data['discountMethod']) : '';
@@ -571,45 +574,91 @@ class SalesControllerGst {
     $split_payment_cn = isset($form_data['splitPaymentCn']) ? Utilities::clean_string($form_data['splitPaymentCn']) : 0;
     $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
     $item_details = $form_data['itemDetails'];
-    $executive_id = Utilities::clean_string($form_data['saExecutive']);
+    $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
     $referral_code = is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
+    $from_indent = isset($form_data['fi']) ? 'y': 'n';
+    $customer_type = $form_data['customerType'];
+    $credit_days = isset($form_data['saCreditDays']) ? Utilities::clean_string($form_data['saCreditDays']) : 0;
 
-    # validate location code
+    $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
+    $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
+    $insurance_charges = Utilities::clean_string($form_data['insuranceCharges']);
+    $other_charges = Utilities::clean_string($form_data['otherCharges']);
+    $transporter_name = Utilities::clean_string($form_data['transporterName']);
+    $lr_no = Utilities::clean_string($form_data['lrNos']);
+    $lr_date = Utilities::clean_string($form_data['lrDate']);
+    $chalan_no = Utilities::clean_string($form_data['challanNo']);
+
+    // validate customer type
+    if( in_array($customer_type, $customer_types) ) {
+      $cleaned_params['customerType'] = $customer_type;
+    } else {
+      $form_errors['customerType'] = 'Invalid customer type.';      
+    }
+
+    // validate location code
     if( isset($form_data['locationCode']) && ctype_alnum($form_data['locationCode']) ) {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
       $form_errors['locationCode'] = 'Invalid location code.';
     }
 
-    # validate transaction details.
+    // validate transaction details.
     if( in_array($payment_method, array_keys($payment_methods_a)) === false ) {
       $form_errors['paymentMethod'] = 'Invalid payment method.';
     } else {
       $cleaned_params['paymentMethod'] = $payment_method;
     }
 
-    # validate mobile number.
+    // validate mobile number.
     if( $mobile_no !== '' && !is_numeric($mobile_no) && strlen($mobile_no) !== 10) {
       $form_errors['mobileNo'] = 'Invalid mobile number.';
     } else {
       $cleaned_params['mobileNo'] = $mobile_no;
     }
 
-    # validate name.
-    if( $name !== '' && !ctype_alpha(str_replace(' ', '', $name)) ) {
-      $form_errors['name'] = 'Invalid name.';      
-    } else {
+    // validate name.
+    if($name !== '') {
       $cleaned_params['name'] = $name;      
     }
 
-    # validate card no, auth code when the card value is more than zero
+    //validate various charges.
+    if($packing_charges !== '' && !is_numeric($packing_charges)) {
+      $form_errors['packingCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['packingCharges'] = $packing_charges;
+    }
+    if($shipping_charges !== '' && !is_numeric($shipping_charges)) {
+      $form_errors['shippingCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['shippingCharges'] = $shipping_charges;
+    }
+    if($insurance_charges !== '' && !is_numeric($insurance_charges)) {
+      $form_errors['insuranceCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['insuranceCharges'] = $insurance_charges;
+    }
+    if($other_charges !== '' && !is_numeric($other_charges)) {
+      $form_errors['otherCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['otherCharges'] = $other_charges;
+    }
+
+    // validate for credit days.
+    if( (int)$payment_method === 3 && (int)$credit_days === 0) {
+      $form_errors['saCreditDays'] = 'Credit days are required for Credit payment method.';
+    } else {
+      $cleaned_params['saCreditDays'] = $credit_days;
+    }
+
+    // validate card no, auth code when the card value is more than zero
     if( ($split_payment_card > 0 || $payment_method === 1) && ($card_no === '' || $auth_code === '') ) {
       $form_errors['cardNo'] = 'Card number is mandatory for Card or Split payment.';
       $form_errors['authCode'] = 'Auth code is mandatory for Card or Split payment.';
     }
 
-    # validate card no.
+    // validate card no.
     if($card_no !== '' && (!is_numeric($card_no) || strlen($card_no) !== 4) ) {
       $form_errors['cardNo'] = 'Invalid card number.';
     } else {
@@ -646,8 +695,8 @@ class SalesControllerGst {
       }
     }
 
-    # validate item details.
-    for($item_key=0;$item_key<=9;$item_key++) {
+    // validate item details.
+    for($item_key=0;$item_key<count($item_details['itemName']);$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
         $one_item_found = true;
 
@@ -721,7 +770,7 @@ class SalesControllerGst {
         }        
 
         # validate if sold qty. is more than available qty.
-        if($item_sold_qty>$item_ava_qty) {
+        if($item_sold_qty > $item_ava_qty) {
           $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid sold qty.';
         }
       }
@@ -730,7 +779,7 @@ class SalesControllerGst {
     $net_pay = round($tot_billable_value + $tot_tax_value, 0);
     // dump('net pay is...'.$net_pay);
 
-    # if no items are available through an error.
+    // if no items are available through an error.
     if($one_item_found === false) {
       $form_errors['itemDetails']['itemName'][0] = 'Invalid item name.';
       $form_errors['itemDetails']['itemAvailQty'][0] = 'Invalid available qty.';
@@ -740,7 +789,7 @@ class SalesControllerGst {
       $form_errors['itemDetails']['itemTaxPercent'][0] = 'Invalid tax rate.';      
     }
 
-    # validate payment method.
+    // validate payment method.
     if($payment_method === 2 && ($split_payment_card <= 0 && $split_payment_cash <= 0 && $split_payment_cn <= 0) ) {
       $form_errors['paymentMethod'] = 'Cash, Card or Cnote payment value is required.';
     } elseif($payment_method === 1 || $payment_method === 0) {
@@ -763,12 +812,17 @@ class SalesControllerGst {
       $cleaned_params['promoCode'] = $promo_code;
     }
 
-    # add misc parameters.
+    // add misc parameters.
     $cleaned_params['saleDate'] = $sale_date;
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
     $cleaned_params['saExecutiveId'] = $executive_id;
     $cleaned_params['cnNo'] = $cn_no;
     $cleaned_params['refCode'] = $referral_code;
+    $cleaned_params['transporterName'] = $transporter_name;
+    $cleaned_params['lrNos'] = $lr_no;
+    $cleaned_params['lrDate'] = $lr_date;
+    $cleaned_params['challanNo'] = $chalan_no;
+    $cleaned_params['fromIndent'] = $from_indent;
 
     # return response.
     if(count($form_errors)>0) {
@@ -782,7 +836,7 @@ class SalesControllerGst {
         'cleaned_params' => $cleaned_params,
       ];
     }
-  }
+  }  
 
   private function _apply_promo_code($form_data=[], $promo_code='', $offers_raw=[]) {
     $sel_promo_type = '';
