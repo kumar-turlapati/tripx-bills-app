@@ -263,7 +263,8 @@
                   <th style="width:60px;" class="text-center purItem">HSN / SAC Code</th>                  
                   <th style="width:50px;" class="text-center">Received<br />qty.</th>
                   <th style="width:50px" class="text-center">Free<br />qty.</th>
-                  <th style="width:50px" class="text-center">Billed<br />qty.</th>                  
+                  <th style="width:50px" class="text-center">Billed<br />qty.</th>
+                  <th style="width:50px" class="text-center">Packed<br />qty.</th>                                   
                   <th style="width:50px" class="text-center">Lot no.</th>
                   <th style="width:55px" class="text-center">MRP<br />( in Rs. )</th>
                   <th style="width:55px" class="text-center">Rate / Unit<br />( in Rs. )</th>
@@ -324,7 +325,12 @@
                     $hsn_code = $form_data['hsnCodes'][$i-1];
                   } else {
                     $hsn_code = '';
-                  }                  
+                  }
+                  if( isset($form_data['packedQty'][$i-1]) && $form_data['packedQty'][$i-1] !== '' ) {
+                    $packed_qty = $form_data['packedQty'][$i-1];
+                  } else {
+                    $packed_qty = '';
+                  }
 
                   $billed_qty = $inward_qty-$free_qty;
 
@@ -357,6 +363,7 @@
                   <td style="width:50px;text-align:right;"><?php echo number_format($inward_qty,2) ?></td>
                   <td style="width:50px;text-align:right;"><?php echo number_format($free_qty,2) ?></td>
                   <td style="width:55px;text-align:right;"><?php echo number_format($billed_qty,2) ?></td>
+                  <td style="width:55px;text-align:right;"><?php echo number_format($packed_qty,2) ?></td>                  
                   <td style="width:50px;text-align:right;"><?php echo $lot_no ?></td>
                   <td style="width:55px;text-align:right;"><?php echo number_format($mrp,2) ?></td>
                   <td style="width:55px;text-align:right;"><?php echo number_format($item_rate,2) ?></td>
@@ -377,24 +384,24 @@
                 $net_pay = $grand_total+$adjustment+$round_off;
               ?>
                 <tr>
-                  <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
+                  <td colspan="12" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
                   <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2),2) ?></td>
                 </tr>
                 <tr>
-                  <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
+                  <td colspan="12" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
                   <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount,2),2) ?></td>
                 </tr>
                 <tr>
-                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">(+ or -) Round off</td>
+                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="12" align="right">(+ or -) Round off</td>
                   <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo round($round_off,2) ?></td>
                 </tr>
                 <tr>
-                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">Total Amount</td>
+                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="12" align="right">Total Amount</td>
                   <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2) ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="11">
+                  <td style="vertical-align:middle;text-align:right;" colspan="12">
                     <textarea
                       class="form-control noEnterKey"
                       rows="3"

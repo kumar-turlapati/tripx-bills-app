@@ -335,7 +335,8 @@ class InwardController
         $item_rates = array_column($purchase_details['itemDetails'],'itemRate');
         $discounts = array_column($purchase_details['itemDetails'],'discount');                
         $tax_percents = array_column($purchase_details['itemDetails'],'taxPercent');
-        $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');        
+        $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
+        $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
 
         # unser item details from api data.
         unset($purchase_details['itemDetails']);
@@ -358,6 +359,7 @@ class InwardController
         $form_data['mrp'] = $mrps;
         $form_data['itemDiscount'] = $discounts;  
         $form_data['hsnCodes'] = $hsn_codes;
+        $form_data['packedQty'] = $packed_qtys;        
         if($form_data['grnFlag'] === 'yes') {
           $is_grn_generated = true;
         } else {
