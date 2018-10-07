@@ -78,10 +78,8 @@
     $dor = '';
   }
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
-    <!-- Panel starts -->
     <section class="panel">
       <h2 class="hdg-reports text-center">Create Customer</h2>
       <div class="panel-body">
@@ -217,7 +215,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">GST No.</label>
               <input 
                 type="text" 
@@ -230,6 +228,52 @@
                 <span class="error"><?php echo $errors['gstNo'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php 
+                    foreach($client_locations as $key=>$value): 
+                      if($location_code === $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Marketing executive name</label>
+              <div class="select-wrap">                        
+                <select 
+                  class="form-control"
+                  id="maExecutive" 
+                  name="maExecutive"
+                  style="font-size:12px;"
+                >
+                  <?php
+                    foreach($ma_executives as $key=>$value):
+                      if($key === $executive_id) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>                            
+                </select>
+              </div>
+            </div>            
           </div>
           <div id="bioContainer">
             <h3 class="hdg-reports text-center">Personal Details</h3>
@@ -327,7 +371,7 @@
                   </div>
                 </div>
               </div>
-            </div>       
+            </div>
           </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save"><i class="fa fa-save"></i> Save</button>

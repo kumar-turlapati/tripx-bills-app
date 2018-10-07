@@ -27,37 +27,108 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/inward-entry"><i class="fa fa-compass"></i> Purchase entry</a></li>
-          <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase entry from files</a></li>          
-          <li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry w/o barcode</a></li>
-          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry w barcode</a></li>
-          <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
-          <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
-          <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
-          <li><a href="/fin/pc-voucher/create"><i class="fa fa-money"></i> Petty cash voucher</a></li>
-          <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock adjustment</a></li>
-          <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>
-          <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales indent (Mobile V.)</a></li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-compass"></i> Purchases <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/inward-entry"><i class="fa fa-keyboard-o"></i> Purchase entry</a></li>
+              <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase file upload</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-inr"></i> Sales <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/sales/entry"><i class="fa fa-keyboard-o"></i> Sales Entry - Manual</a></li>
+              <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
+              <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
+              <li><a href="/fin/pc-voucher/create"><i class="fa fa-sticky-note-o"></i> Petty cash voucher</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>
+              <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales indent (Mobile V.)</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-database"></i> Inventory <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
+              <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock adjustment</a></li>
+            </ul>
+          </li>
         </ul>
-      </li>
+      </li>      
       <li class="sub-menu">
         <a href="javascript:void(0)">
           <i class="fa fa-book"></i> Registers <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales register</a></li>
-          <li><a href="/sales-return/list"><i class="fa fa-undo"></i> Sales return register</a></li>
-          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Purchase Register</a></li>
-          <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN register</a></li>
-          <li><a href="/fin/payment-vouchers"><i class="fa fa-strikethrough"></i> Payments register</a></li> 
-          <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit notes register</a></li>
-          <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock transfer register</a></li>          
-          <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty cash register</a></li>
-          <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty cash book</a></li>
-          <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock adjustment register</a></li>
-          <li><a href="/purchase-return/register"><i class="fa fa-laptop"></i> Purchase return register</a></li>
-          <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes register</a></li>
-          <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales indent register</a></li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-compass"></i> Purchases <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Purchase Register</a></li>
+              <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN Register</a></li>
+              <li><a href="/purchase-return/register"><i class="fa fa-undo"></i> Purchase Returns Reg.</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-inr"></i> Sales <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales Register</a></li>
+              <li><a href="/sales-return/list"><i class="fa fa-repeat"></i> Sales Return Register</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/fin/payment-vouchers"><i class="fa fa-strikethrough"></i> Payments Register</a></li>
+              <li><a href="/fin/receipt-vouchers"><i class="fa fa-check"></i> Receipts Register</a></li>
+              <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
+              <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
+              <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-database"></i> Inventory <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Tran. Register</a></li>          
+              <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock Adj. Register</a></li>
+              <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>
+            </ul>            
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales indent register</a></li>
+            </ul>
+          </li>
         </ul>
       </li>
       <li class="sub-menu">
@@ -68,9 +139,9 @@
           <?php /*
           <li><a href="/inventory/item-threshold-list"><i class="fa fa-list-ol"></i> Threshold Qtys.</a></li>
           <li><a href="/inventory/track-item"><i class="fa fa-exchange"></i> Item Track</a></li>*/ ?>
-          <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Inventory openings</a></li>          
-          <li><a href="/inventory/available-qty"><i class="fa fa-cubes"></i> Stock in hand</a></li>
-          <li><a href="/barcode/opbal"><i class="fa fa-barcode"></i> Barcodes for opening</a></li>          
+          <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Inventory Openings</a></li>          
+          <li><a href="/inventory/available-qty"><i class="fa fa-cubes"></i> Stock in Hand</a></li>
+          <li><a href="/barcode/opbal"><i class="fa fa-barcode"></i> Barcodes for Opening</a></li>          
         </ul>
       </li>
       <li class="sub-menu">
@@ -100,25 +171,41 @@
       </li>      
       <li class="sub-menu">
         <a href="javascript:" class="">
-          <i class="fa fa-cogs"></i> Admin Panel <span class="menu-arrow arrow_carrot-right"></span> 
+          <i class="fa fa-key"></i> Admin Panel <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li>
-            <a href="/upload-inventory" title="Upload inventory and opening balances">
-              <i class="fa fa-upload"></i> Upload Inventory
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-cogs"></i> Settings <span class="menu-arrow arrow_carrot-right"></span>
             </a>
+            <ul class="sub">
+              <li><a href="/finy/list"><i class="fa fa-angle-right"></i> Financial Years</a></li>          
+              <li><a href="/finy-slnos/list"><i class="fa fa-angle-right"></i> FY Serial Nos.</a></li>
+            </ul>
           </li>
-          <li>
-            <a href="/upload-debtors" title="Upload Customer's Data with Opening Balances">
-              <i class="fa fa-upload"></i> Upload Customers Data
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-upload"></i> Data Uploads <span class="menu-arrow arrow_carrot-right"></span>
             </a>
+            <ul class="sub">
+              <li>
+                <a href="/upload-inventory" title="Upload inventory and opening balances">
+                  <i class="fa fa-database"></i> Upload Inventory
+                </a>
+              </li>
+              <li>
+                <a href="/upload-debtors" title="Upload Customer's Data with Opening Balances">
+                  <i class="fa fa-smile-o"></i> Upload Customers Data
+                </a>
+              </li>
+              <?php /*
+              <li>
+                <a href="/upload-creditors" title="Upload Suppliers's Data with Opening Balances">
+                  <i class="fa fa-upload"></i> Upload Suppliers Data
+                </a>
+              </li>*/ ?>
+            </ul>
           </li>
-          <?php /*
-          <li>
-            <a href="/upload-creditors" title="Upload Suppliers's Data with Opening Balances">
-              <i class="fa fa-upload"></i> Upload Suppliers Data
-            </a>
-          </li>*/ ?>       
           <li>
             <a href="/devices/list" title="Register devices to access the application">
               <i class="fa fa-lock"></i> Devices List

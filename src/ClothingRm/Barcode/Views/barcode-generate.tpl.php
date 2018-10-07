@@ -91,7 +91,16 @@
             <table class="table table-striped table-hover item-detail-table font12" id="purchaseTable">
               <thead>
                 <tr>
-                  <th style="width:35%" class="text-center valign-middle">Item name</th>
+                  <th style="width:5%;text-align:center">
+                    <input 
+                      type="checkbox"
+                      id="checkAllOpBarcodes"
+                      name="checkAllOpBarcodes"
+                      style="visibility:visible;text-align:center;margin:0px;position:relative;vertical-align:middle;margin-top:10px;"
+                      title="Select all items in this page"
+                    />
+                  </th>                  
+                  <th style="width:25%" class="text-center valign-middle">Item name</th>
                   <th style="width:15%;" class="text-center valign-middle">HSN / SAC Code</th>                  
                   <th style="width:10%;" class="text-center valign-middle">Lot no.</th>
                   <th style="width:10%;" class="text-center valign-middle">Qty.</th>
@@ -190,8 +199,19 @@
                   }
 
                   $items_total_qty += $billed_qty;
+                  $item_key = $item_code.'__'.$lot_no;
               ?>
                 <tr class="purchaseItemRow font12">
+                  <td align="center">
+                    <input
+                      type="checkbox"
+                      id="requestedItem_<?php echo $item_key ?>"
+                      name="requestedItems[]"
+                      value="<?php echo $item_key ?>"
+                      style="visibility:visible;text-align:center;margin:0px;position:relative;vertical-align:middle;margin-top:10px;"
+                      class="requestedItem"
+                    />
+                  </td>
                   <td align="left" class="valign-middle"><?php echo $item_name ?></td>
                   <td align="left" class="valign-middle"><?php echo $hsn_code ?></td>                  
                   <td class="valign-middle"><?php echo $lot_no ?></td>

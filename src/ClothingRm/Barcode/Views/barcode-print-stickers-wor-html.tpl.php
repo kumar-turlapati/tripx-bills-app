@@ -12,6 +12,9 @@
   $generator = new \Picqer\Barcode\BarcodeGeneratorPNG;
   $print_info = $_SESSION['printBarCodes'];
 
+  // dump($print_info);
+  // exit;
+
   foreach($print_info as $barcode => $print_qty_details) {
     $print_qty_details['barcode'] = $barcode;
     $print_qty = $print_qty_details[0];

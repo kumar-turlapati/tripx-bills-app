@@ -92,7 +92,13 @@ class BarcodeController
 
         $submitted_item_details = $purchase_details['itemDetails'];
 
-        # unser item details from api data.
+        # unset item details from api data.
+        $purchase_item_details = $purchase_details['itemDetails'];
+        foreach($purchase_item_details as $key => $purchase_items) {
+          $item_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['itemName'];
+          $mrps_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['mrp'];
+          $packed_qtys_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['packedQty'];
+        }
         unset($purchase_details['itemDetails']);
 
         # create form data variable.
@@ -115,9 +121,19 @@ class BarcodeController
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
 
-      // dump($form_data, $submitted_item_details);
-      // exit;
-      
+      # validate form data using checkboxes.
+      if(isset($form_data['requestedItems']) && count($form_data['requestedItems']) > 0) {
+        foreach($form_data['stickerQty'] as $key => $value) {
+          if(in_array($key, $form_data['requestedItems']) === false) {
+            $form_data['stickerQty'][$key] = 0;
+          }
+        }
+      } else {
+        $this->flash->set_flash_message('Please choose an item name to generate / print Barcode.',1);
+        Utilities::redirect('/barcode/generate/'.$purchase_code);         
+      }
+
+
       # process form data on submit
       $form_processing = $this->_process_submitted_data($form_data, $submitted_item_details);
       if($form_processing['status'] === false) {
@@ -131,31 +147,35 @@ class BarcodeController
       }
 
       // dump($new_barcodes, $print_barcodes, $cleaned_params);
-      // exit;
 
       if(is_array($new_barcodes['items']) && count($new_barcodes['items']) > 0) {
         # hit api and create barcodes.
         $api_response = $this->bc_model->generate_barcode($purchase_code, $new_barcodes);
         if($api_response['status'] && count($api_response['barcodes'])>0) {
           $print_array = [];
-          $index_key = 0;
           foreach($cleaned_params as $key => $print_qty) {
-            $print_array[$api_response['barcodes'][$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date, $packed_qtys[$index_key]];
-            $index_key++;
+            if($print_qty > 0) {
+              $print_array[$api_response['barcodes'][$key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key]];
+            }
           }
         } else {
-          $message = $result['apierror'];
+          $message = $api_response['apierror'];
           $this->flash->set_flash_message($message,1);
-          Utilities::redirect('/barcodes/list');          
+          Utilities::redirect('/barcode/generate/'.$purchase_code);
         }
       } else {
         $print_array = [];
         $index_key = 0;
         foreach($cleaned_params as $key => $print_qty) {
-          $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names[$index_key], $mrps[$index_key], $mfg_date, $packed_qtys[$index_key]];
-          $index_key++;
+          if($print_qty > 0) {
+            $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key]];
+            $index_key++;
+          }
         }
       }
+
+      // dump($print_array);
+      // exit;
 
       $format = $form_processing['format'];
 
@@ -520,10 +540,15 @@ class BarcodeController
     # process submitted data
     foreach($form_data['stickerQty'] as $sticker_key => $sticker_qty) {
       if(isset($form_data['genBarcodes'][$sticker_key]) && 
-         $form_data['genBarcodes'][$sticker_key] === '') 
+         $form_data['genBarcodes'][$sticker_key] === '' &&
+         $form_data['stickerQty'][$sticker_key] > 0
+        ) 
       {
         $new_barcodes[] = $sticker_key;
-      } elseif(is_numeric($form_data['genBarcodes'][$sticker_key])) {
+      } elseif(
+                is_numeric($form_data['genBarcodes'][$sticker_key]) && 
+                $form_data['stickerQty'][$sticker_key] > 0
+              ) {
         $print_barcodes[] = $form_data['genBarcodes'][$sticker_key];
       }
     }

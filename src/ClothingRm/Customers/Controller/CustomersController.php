@@ -10,15 +10,17 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Customers\Model\Customers;
+use User\Model\User;
 
 class CustomersController
 {
-	protected $template, $customer_api_call, $flash_obj;
+	protected $template, $customer_api_call, $flash_obj, $user_model;
 
 	public function __construct() {
     $this->template = new Template(__DIR__.'/../Views/');
     $this->customer_api_call = new Customers;
     $this->flash_obj = new Flash;
+    $this->user_model = new User;
 	}
 
   public function customerCreateAction(Request $request) {
@@ -33,6 +35,18 @@ class CustomersController
     $ages_a[0] = 'Choose';
     for($i=1;$i<=150;$i++) {
       $ages_a[$i] = $i;
+    }
+
+    # ---------- get location codes from api -------------
+    $client_locations = Utilities::get_client_locations();
+    
+    # ---------- get marketing users from api ------------
+    $result = $this->user_model->get_users(['userType' => 10]);
+    if($result['status']) {
+      $users_a = $result['users'];
+      foreach($users_a as $user_details) {
+        $users[$user_details['uuid']] = $user_details['userName'];
+      }
     }
 
     $client_details = Utilities::get_client_details();
@@ -73,6 +87,9 @@ class CustomersController
       'states' => [0=>'Choose'] + $states_a,
       'countries' => [0=>'Choose'] + $countries_a,
       'client_business_state' => $client_business_state,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'ma_executives' => $users,
     );
       
     # build variables
@@ -99,6 +116,18 @@ class CustomersController
     for($i=1;$i<=150;$i++) {
         $ages_a[$i] = $i;
     }
+
+    # ---------- get location codes from api -------------
+    $client_locations = Utilities::get_client_locations();
+
+    # ---------- get marketing users from api ------------
+    $result = $this->user_model->get_users(['userType' => 10]);
+    if($result['status']) {
+      $users_a = $result['users'];
+      foreach($users_a as $user_details) {
+        $users[$user_details['uuid']] = $user_details['userName'];
+      }
+    }    
 
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];    
@@ -150,6 +179,9 @@ class CustomersController
       'states' => [0=>'Choose'] + $states_a,
       'countries' => [0=>'Choose'] + $countries_a,
       'client_business_state' => $client_business_state,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'ma_executives' => ['Choose'] + $users,
     );
 
     # build variables

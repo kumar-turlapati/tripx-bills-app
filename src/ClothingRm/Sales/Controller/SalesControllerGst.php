@@ -70,7 +70,7 @@ class SalesControllerGst {
     # ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations();
 
-    # ---------- get business users ----------------------------
+    # ---------- get business users --------------------------------
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
     } else {

@@ -259,6 +259,7 @@ class UploadBalancesController {
         $bill_date = Utilities::clean_string($imported_record_details['BillDate']);
         $balance = Utilities::clean_string($imported_record_details['Balance']);
         $credit_days = Utilities::clean_string($imported_record_details['CreditDays']);
+        $sexe_id = Utilities::clean_string($imported_record_details['SalesExecutiveId']);
 
         if($customer_type !== 'c' && $customer_type !== 'b') {
           $error_flag = true;
@@ -284,6 +285,10 @@ class UploadBalancesController {
           $error_flag = true;
           $xl_errors[$key]['BillDate'] = 'Invalid Bill Date at Row - '.$row_no;
         }
+        if($sexe_id !== '' && !Utilities::validateEmail($sexe_id)) {
+          $error_flag = true;
+          $xl_errors[$key]['SalesExecutiveId'] = 'Invalid Sales Executive ID. The ID should be in email format. - '.$row_no;
+        }
 
         if($error_flag === false) {
           $cleaned_array[$key]['CustomerName'] = $customer_name;
@@ -300,6 +305,7 @@ class UploadBalancesController {
           $cleaned_array[$key]['BillDate'] = $bill_date;
           $cleaned_array[$key]['Balance'] = $balance;
           $cleaned_array[$key]['CreditDays'] = $credit_days;
+          $cleaned_array[$key]['SalesExecutiveId'] = $sexe_id;
         }
       }
     }

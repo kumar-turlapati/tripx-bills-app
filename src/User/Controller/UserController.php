@@ -30,7 +30,7 @@ class UserController {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
         $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
       }
-    }    
+    }
 
     if(count($request->request->all()) > 0) {
       $validate_form = $this->_validate_form_data($request->request->all(),false,$user_model);

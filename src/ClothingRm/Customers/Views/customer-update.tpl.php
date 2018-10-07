@@ -1,8 +1,19 @@
 <?php
-
+  
+  // dump($submitted_data);
+  
+  if(isset($submitted_data['locationCode'])) {
+    $location_code = $submitted_data['locationCode'];
+  } elseif($default_location !== '') {
+    $location_code = $default_location;
+  } else {
+    $location_code = '';
+  }
   if(isset($submitted_data['customerType']) && $submitted_data['customerType'] !== '' ) {
     $customer_type = $submitted_data['customerType'];
+    $bio_container_style = ' style="display:none;"';
   } else {
+    $bio_container_style = '';
     $customer_type = 'c';
   }
   if(isset($submitted_data['customerName']) && $submitted_data['customerName'] !== '' ) {
@@ -49,7 +60,7 @@
     $gst_no = $submitted_data['gstNo'];
   } else {
     $gst_no = '';
-  }  
+  }
 
   # bio details
   if(isset($submitted_data['age']) && $submitted_data['age'] !== '' ) {
@@ -77,11 +88,11 @@
   } else {
     $dor = '';
   }
+  
+  $executive_id = isset($form_data['maExecutive']) ? $form_data['maExecutive'] : '';
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
-    <!-- Panel starts -->
     <section class="panel">
       <h2 class="hdg-reports text-center">Create Customer</h2>
       <div class="panel-body">
@@ -208,7 +219,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">GST No.</label>
               <input 
                 type="text" 
@@ -221,8 +232,54 @@
                 <span class="error"><?php echo $errors['gstNo'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php 
+                    foreach($client_locations as $key=>$value): 
+                      if($location_code === $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Marketing executive name</label>
+              <div class="select-wrap">                        
+                <select 
+                  class="form-control"
+                  id="maExecutive" 
+                  name="maExecutive"
+                  style="font-size:12px;"
+                >
+                  <?php
+                    foreach($ma_executives as $key=>$value):
+                      if($key === $executive_id) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>                            
+                </select>
+              </div>
+            </div>
           </div>
-          <div id="bioContainer">
+          <div id="bioContainer" <?php echo $bio_container_style ?>>
             <h3 class="hdg-reports text-center">Personal Details</h3>
             <div class="form-group">
               <div class="col-sm-12 col-md-4 col-lg-4">

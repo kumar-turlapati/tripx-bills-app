@@ -34,6 +34,32 @@ $routes->add('dashboard', new Routing\Route('/dashboard', array(
   '_controller' => 'User\\Controller\\DashBoardController::indexAction',
 )));
 
+// fin year routes
+$routes->add('finy_add', new Routing\Route('/finy/create', array(
+  '_controller' => 'Settings\\Controller\\FinyController::createFinYear',
+)));
+$routes->add('finy_update', new Routing\Route('/finy/update/{finyCode}', array(
+  '_controller' => 'Settings\\Controller\\FinyController::updateFinYear',
+  'finyCode' => null,
+)));
+$routes->add('finy_list', new Routing\Route('/finy/list', array(
+  '_controller' => 'Settings\\Controller\\FinyController::listFinYears',
+)));
+$routes->add('finy_set_active', new Routing\Route('/finy/set-active', array(
+  '_controller' => 'Settings\\Controller\\FinyController::setActiveFinYear',
+)));
+
+$routes->add('finy_slnos_add', new Routing\Route('/finy-slnos/create', array(
+  '_controller' => 'Settings\\Controller\\FinySlnosController::createFinySlnos',
+)));
+$routes->add('finy_slnos_update', new Routing\Route('/finy-slnos/update/{finySlnoCode}', array(
+  '_controller' => 'Settings\\Controller\\FinySlnosController::updateFinySlnos',
+  'finySlnoCode' => null,
+)));
+$routes->add('finy_slnos_list', new Routing\Route('/finy-slnos/list', array(
+  '_controller' => 'Settings\\Controller\\FinySlnosController::listFinySlnos',
+)));
+
 // products or services list
 $routes->add('products_list', new Routing\Route('/products/list/{pageNo}/{perPage}', array(
   '_controller' => 'ClothingRm\\Products\\Controller\\ProductsController::listProductsOrServices',
