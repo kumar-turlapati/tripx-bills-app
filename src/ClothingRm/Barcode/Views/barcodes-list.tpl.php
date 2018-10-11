@@ -129,6 +129,12 @@
                   } else {
                     $po_string = '';
                   }
+
+                  if($purchase_code !== '' && !is_null($purchase_code)) {
+                    $print_url = '/barcode/generate/'.$purchase_code;
+                  } else {
+                    $print_url = '/barcode/opbal';
+                  }
               ?>
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
@@ -144,7 +150,7 @@
                   <td class="valign-middle" align="right"><?php echo $mrp ?></td>
                   <td class="valign-middle">
                     <div class="btn-actions-group" align="right">                    
-                      <a class="btn btn-primary" href="/barcode/generate/<?php echo $purchase_code ?>?l=<?php echo $location_code ?>" title="Print Barcodes" target="_blank">
+                      <a class="btn btn-primary" href="<?php echo $print_url ?>" title="Print Barcodes" target="_blank">
                         <i class="fa fa-print"></i>
                       </a>
                     </div>

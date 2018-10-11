@@ -258,7 +258,7 @@ class BarcodeController
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
-    }    
+    }
 
     // parse request parameters.
     $per_page = 100;
@@ -267,7 +267,7 @@ class BarcodeController
     $po_no = $request->get('poNo') !== null ? Utilities::clean_string($request->get('poNo')):'';
     $lot_no = $request->get('lotNo')!== null ? Utilities::clean_string($request->get('lotNo')) : '';
     $item_name = $request->get('itemName')!== null ? Utilities::clean_string($request->get('itemName')) : '';
-    $location_code = $request->get('locationCode')!== null ? Utilities::clean_string($request->get('locationCode')) : '';
+    $location_code = $request->get('locationCode')!== null ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
     $search_params = array(
       'barcode' => $barcode,
       'poNo' => $po_no,
