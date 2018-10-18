@@ -103,7 +103,7 @@
                 endforeach; 
               ?>
             <?php else: ?>
-                <tr><td colspan="4" align="center" class="font14">No Brands / Manufacturers are available.</td></tr>
+                <tr><td colspan="4" align="center" class="font14">No records found.</td></tr>
             <?php endif; ?>
             </tbody>
           </table>

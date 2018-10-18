@@ -49,7 +49,12 @@
     $gst_no = $submitted_data['gstNo'];
   } else {
     $gst_no = '';
-  }  
+  }
+  if(isset($submitted_data['locationCode']) && $submitted_data['locationCode'] !== '') {
+    $location_code = $submitted_data['locationCode'];
+  } else {
+    $location_code = '';
+  }
 
   # bio details
   if(isset($submitted_data['age']) && $submitted_data['age'] !== '' ) {

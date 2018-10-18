@@ -24,7 +24,7 @@ class CustomersController
 	}
 
   public function customerCreateAction(Request $request) {
-    $form_errors = $submitted_data = [];
+    $form_errors = $submitted_data = $users = [];
     $page_error = $page_success = $cust_code = '';
     $redirect_url = '/customers/create';
 
