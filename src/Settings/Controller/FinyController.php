@@ -244,10 +244,10 @@ class FinyController {
    3. GRN                   => GRN =>  40000000
    4. Sales Invoice         => SIN =>  10000000
    5. Sales Return          => SRN =>  30000000
-   6. Debit Note            => DNO =>  90000000
+   6. Debit Note            => DNO =>  80000000
        1) Auto
        2) Manual
-   7. Credit Note           => CNO =>  80000000
+   7. Credit Note           => CNO =>  90000000
        1) Auto
        2) Manual
    8. Stock Transfer        => STR => 130000000

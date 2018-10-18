@@ -29,6 +29,10 @@
   } else {
     $grn_no = '';
   }
+  $taxable_amount = $return_details['taxableAmount'];
+  $tax_amount = $return_details['taxAmount'];
+  $round_off = $return_details['roundOff'];
+  $netpay = $return_details['netpay'];
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -93,8 +97,16 @@
                 </td>
               </tr>
               <tr>
-                <td colspan="4" style="font-weight:bold;font-size:18px;text-align:right;">RETURN VALUE</td>
-                <td align="right" style="font-size:18px;font-weight:bold;"><?php echo number_format($total_return_value, 2, '.', '')?></td>
+                <td style="font-weight:bold;font-size:16px;text-align:right;" colspan="2">Taxable Amount (in Rs.)</td>
+                <td style="font-weight:bold;font-size:16px;text-align:right;">G.S.T (in Rs.)</td>
+                <td style="font-weight:bold;font-size:16px;text-align:right;">Round Off (in Rs.)</td>
+                <td style="font-weight:bold;font-size:16px;text-align:right;">Return Value (in Rs.)</td>
+              </tr>
+              <tr>
+                <td style="font-size:18px;font-weight:bold;text-align:right;" colspan="2"><?php echo number_format($total_return_value, 2, '.', '')?></td>
+                <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($round_off, 2, '.', '')?></td>                
+                <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($tax_amount, 2, '.', '')?></td>
+                <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($netpay, 2, '.', '')?></td>                
               </tr>
             </tbody>
           </table>

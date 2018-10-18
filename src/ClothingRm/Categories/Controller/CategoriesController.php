@@ -26,6 +26,14 @@ class CategoriesController
     $submitted_data = $form_errors = array();
     $status_options = array(''=>'Select','1'=>'Active','0'=>'Inactive');
 
+    # ---------- get location codes from api -----------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();
       $form_validation = $this->_validate_form_data($submitted_data);
@@ -51,6 +59,10 @@ class CategoriesController
       'submitted_data' => $submitted_data,
       'form_errors' => $form_errors,
       'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     # build variables
@@ -66,6 +78,14 @@ class CategoriesController
   public function updateCategory(Request $request) {
     $submitted_data = $form_errors = array();
     $status_options = array(''=>'Select','1'=>'Active','0'=>'Inactive');
+
+    # ---------- get location codes from api -----------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
 
     $category_code = $request->get('categoryCode');
     $category_details = $this->categories_model->get_category_details($category_code);
@@ -100,6 +120,10 @@ class CategoriesController
       'submitted_data' => $submitted_data,
       'form_errors' => $form_errors,
       'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     # build variables
@@ -190,6 +214,8 @@ class CategoriesController
     } else {
       $errors['status'] = 'Invalid status.';
     }
+
+    $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
 
     if(count($errors)>0) {
       return array(

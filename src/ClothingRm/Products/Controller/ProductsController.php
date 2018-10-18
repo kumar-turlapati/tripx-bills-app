@@ -32,8 +32,16 @@ class ProductsController {
     $create_url = '/products/create';
     $update_url = '/products/update';
     $list_url = '/products/list';
-    
-    # initiate classes.
+
+    # ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
+
+    // initiate classes.
     $products_api_call = new Products;
     $flash = new Flash;
 
@@ -66,7 +74,7 @@ class ProductsController {
       $page_title = 'Create Product / Service';
     }
 
-    $categories_a = $categories_a+$products_api_call->get_product_categories();
+    $categories_a = $categories_a + $products_api_call->get_product_categories();
 
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
@@ -112,6 +120,10 @@ class ProductsController {
       'presc_options_a' => [0 => 'No', 1 => 'Yes'],
       'item_types_a' => ['p' => 'Product', 's' => 'Service'],
       'tax_rates_a' => ['' => 'Choose'] + $taxes,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     // build variables

@@ -10,7 +10,6 @@
     $status = '';
   }
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
@@ -40,12 +39,33 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php 
+                    foreach($client_locations as $key=>$value): 
+                      $location_key_a = explode('`', $key);
+                      if($location_code === $location_key_a[0]) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
+            </div>            
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="status" id="status">
                   <?php 
-                    foreach($status_options as $key=>$value):
-                      if((int)$status === (int)$key) {
+                    foreach($status_options as $key => $value):
+                      if($status === $key) {
                         $selected = 'selected="selected"';
                       } else {
                         $selected = '';

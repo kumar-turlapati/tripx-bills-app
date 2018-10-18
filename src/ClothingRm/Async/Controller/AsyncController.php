@@ -164,6 +164,12 @@ class AsyncController {
       if(count($response)>0 && is_array($response)) {
         echo implode($response,"\n");
       }
+    } elseif($api_string === 'brandAc' && !is_null($request->get('a'))) {
+      $params['q'] = Utilities::clean_string($request->get('a'));
+      $response = $api_caller->sendRequest('get','mfg/ac/get-names',$params,false);
+      if(count($response)>0 && is_array($response)) {
+        echo implode($response,"\n");
+      }
     } elseif($api_string === 'getBillNos' && !is_null($request->get('custName'))) {
       $params['customerName'] = urlencode(Utilities::clean_string($request->get('custName')));
       $response = $api_caller->sendRequest('get','fin/receipts-get-billnos',$params,false);
@@ -173,6 +179,15 @@ class AsyncController {
       } else {
         echo $response;
       }
+    } elseif($api_string === 'getSuppBillNos' && !is_null($request->get('suppCode'))) {
+      $params['supplierCode'] = Utilities::clean_string($request->get('suppCode'));
+      $response = $api_caller->sendRequest('get','fin/payments-get-billnos',$params,false);
+      header("Content-type: application/json");      
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }      
     }
     exit;
   }

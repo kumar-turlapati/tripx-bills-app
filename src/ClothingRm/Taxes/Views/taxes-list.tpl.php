@@ -19,8 +19,8 @@
             <thead>
               <tr>
                 <th width="5%" class="text-center">Sno.</th>
-                <th width="50%">Tax name</th>
-                <th width="10%">Tax percent</th>
+                <th width="50%" class="text-center">Tax Name</th>
+                <th width="10%" class="text-center">Tax Percent</th>
                 <th width="10%" class="text-center">Actions</th>
               </tr>
             </thead>
@@ -39,10 +39,10 @@
                   }
               ?>
                   <tr class="text-right font12">
-                    <td align="center valign-middle"><?php echo $cntr ?></td>
+                    <td class="text-right valign-middle"><?php echo $cntr ?></td>
                     <td class="text-left valign-middle"><?php echo $tax_name ?></td>
                     <td class="text-right valign-middle"><?php echo $tax_percent.' %' ?></td>
-                    <td>
+                    <td class="valign-middle">
                       <div class="btn-actions-group">
                         <?php if($tax_code !== ''): ?>
                           <a class="btn btn-primary" href="/taxes/update/<?php echo $tax_code ?>" title="Edit Taxes">

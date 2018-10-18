@@ -87,9 +87,10 @@
             <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable">
               <thead>
                 <tr>
-                  <th style="width:300px;" class="text-center purItem">Item name</th>
+                  <th style="width:250px;" class="text-center purItem">Item name</th>
                   <th style="width:50px;" class="text-center purItem">Lot No.</th>
                   <th style="width:80px;" class="text-center purItem">HSN / SAC Code</th>                  
+                  <th style="width:100px;" class="text-center">Packed<br />/unit</th>                  
                   <th style="width:50px;" class="text-center">Purchased<br />qty.</th>
                   <th style="width:50px" class="text-center">Return<br />qty.</th>
                   <th style="width:55px" class="text-center">MRP<br />( in Rs. )</th>
@@ -160,7 +161,12 @@
                     $hsn_code = $form_data['hsnCodes'][$i-1];
                   } else {
                     $hsn_code = '';
-                  }                     
+                  }
+                  if( isset($form_data['packedQty'][$i-1]) && $form_data['packedQty'][$i-1] !== '' ) {
+                    $packed_qty = $form_data['packedQty'][$i-1];
+                  } else {
+                    $packed_qty = '';
+                  }                  
 
                   $billed_qty = $inward_qty-$free_qty;
                   $gross_amount = $billed_qty*$item_rate;
@@ -170,6 +176,9 @@
                   $items_total += $item_amount;
                   $total_tax_amount += $tax_amount;
                   $total_disc_amount += $item_discount;
+
+                  $inward_qty1 = $inward_qty;
+                  $inward_qty = $inward_qty * $packed_qty;
 
                   $total_item_qty += $inward_qty;
 
@@ -183,9 +192,10 @@
                     $taxable_values[$tax_percent] = $item_amount;
                     $taxable_gst_value[$tax_percent] = $tax_amount;
                   }
+                  $packed_string = $inward_qty1.' * '.$packed_qty;
               ?>
                 <tr class="purchaseItemRow">
-                  <td style="width:200px;">
+                  <td style="width:150px;">
                     <input 
                       type="text" 
                       name="itemName[]" 
@@ -226,6 +236,9 @@
                     <?php if( isset($form_errors['itemDetails'][$i-1]['hsnSacCode']) ) :?>
                       <span class="error">Invalid</span>
                     <?php endif; ?>
+                  </td>
+                  <td 
+                    style="text-align:right;width:80px;font-weight:bold;vertical-align:middle;"><?php echo $packed_string ?>
                   </td>                  
                   <td style="width:50px;">
                     <input
@@ -233,7 +246,7 @@
                       class="form-control inwRcvdQty noEnterKey"
                       name="inwardQty[]"
                       placeholder="Rcvd."
-                      style="width:60px;font-size:12px;"
+                      style="width:60px;font-size:12px;text-align:right;"
                       id="inwRcvdQty_<?php echo $i ?>"
                       value="<?php echo $inward_qty ?>"
                       disabled         
@@ -367,21 +380,21 @@
               ?>
                 <tr>
                   <td colspan="2" style="font-weight:bold;font-size:16px;text-align:center;">Total Qty.</td>
-                  <td colspan="2" style="font-weight:bold;font-size:16px;text-align:center;">Taxable (in Rs.)</td>
+                  <td colspan="3" style="font-weight:bold;font-size:16px;text-align:center;">Taxable (in Rs.)</td>
                   <td colspan="2" style="font-weight:bold;font-size:16px;text-align:center;">GST (in Rs.)</td>
                   <td colspan="2" style="font-weight:bold;font-size:16px;text-align:center;">Roundoff (in Rs.)</td>
                   <td colspan="3" style="font-weight:bold;font-size:16px;text-align:center;">Net Pay (in Rs.)</td>
                 </tr>
                 <tr>
                   <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo $total_item_qty ?></td>
-                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($items_total, 2),'2','.','') ?></td>
+                  <td colspan="3" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($items_total, 2),'2','.','') ?></td>
                   <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($total_tax_amount),'2','.','') ?></td>
                   <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($round_off, 2),'2','.','') ?></td>
                   <td colspan="3" style="font-weight:bold;font-size:20px;text-align:center;color:#225992"><?php echo number_format(round($net_pay, 2),'2','.','') ?></td>                  
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;font-size:14px;" align="center">Notes / Comments</td>
-                  <td colspan="10" style="vertical-align:middle;text-align:left;height:25px;"><?php echo $remarks ?></td>
+                  <td colspan="11" style="vertical-align:middle;text-align:left;height:25px;"><?php echo $remarks ?></td>
                 </tr>
               </tbody>
             </table>

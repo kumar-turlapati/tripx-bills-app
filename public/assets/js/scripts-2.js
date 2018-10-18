@@ -341,6 +341,7 @@ function initializeJS() {
       $('.saleItemQty').trigger('change');
     }
   }
+
   if( $('#salesIndentMobileV').length>0 ) {
     var lotNosResponse = [];
     // getGeoLocation();
@@ -445,6 +446,20 @@ function initializeJS() {
           return;
         }
       });
+    });
+  }
+
+  if($('#searchPurchaseBills').length > 0) {
+    $('#searchBy').on('change', function(e){
+      var searchBy = $(this).val();
+      if(searchBy === 'itemname') {
+        $('#svProducts').show();
+        $('#svAll').hide();
+      } else {
+        $('#svProducts').hide();
+        $('#svAll').show();
+      }
+      $('#searchValue, #searchValueP').val('');      
     });
   }
 
@@ -611,6 +626,26 @@ function initializeJS() {
       minChars:1,
       'max': 0,
     });            
+  }
+
+  // brand names autocomplete
+  if(jQuery('.brandAc').length>0) {
+    $('.brandAc').autocomplete("/async/brandAc", {
+      width: 300,
+      cacheLength:0,
+      selectFirst:false,
+      minChars:1,
+      extraParams:{
+        locationCode: function() {
+           if($('#locationCode').length>0) {
+            return $('#locationCode').val()
+           } else {
+            return '';
+           }
+        }
+      },
+      'max': 0,
+    });
   }
 
   // customername auto complete
@@ -800,12 +835,6 @@ function initializeJS() {
         }
 
         $('#taxable_'+taxCode+'_amount').text(totalTaxable);
-
-        // var array = [];
-        // $('.inwItemTax option[value="'+taxRate+'"]').each(function() {
-        //     console.log($(this).val(), $(this).text());
-        //     array[ $(this).val()] = $(this).text();
-        // });
       });
     }
   }
@@ -814,6 +843,20 @@ function initializeJS() {
   if( $('#outwardEntryForm').length>0 ) {
 
     var lotNosResponse = [];
+
+    $('#customerType').on('change', function(e){
+      var customerType = $(this).val();
+      if(customerType === 'b2c') {
+        $('#siOtherInfoWindow').hide();
+        $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');
+      } else if(customerType === 'b2b') {
+        $('#siOtherInfoWindow').show();
+        $('#name').addClass('cnameAc');
+      } else {
+        $('#siOtherInfoWindow').hide();
+        $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');          
+      }
+    });
 
     // show Card No and authcode if Payment mode is credit. Show Split Payment inputs as well
     $('#saPaymentMethod').on('change', function(){
@@ -913,9 +956,11 @@ function initializeJS() {
       var itemIndex = jQuery(this).attr('index');      
       updateSaleItemRow(itemIndex);
     });
+
     $('#outwardEntryForm').on('change', '.taxCalcOption', function(){
       updateSaleItemTotal();
     });
+
     $('#outwardEntryForm').on('change', '.saleItemQty', function(){
       var itemIndex = jQuery(this).attr('index');      
       updateSaleItemRow(itemIndex);
@@ -987,7 +1032,7 @@ function initializeJS() {
 
     // update applicable tax
     function updateApplicableTax(itemIndex, taxableAmount, reqQty) {
-      if(parseFloat(reqQty)>0) {
+/*      if(parseFloat(reqQty)>0) {
         jQuery.ajax("/async/get-tax-percent?taxableValue="+taxableAmount+'&reqQty='+reqQty, {
           success: function(response) {
             if(response.status === 'success') {
@@ -999,7 +1044,7 @@ function initializeJS() {
             alert('Unable to update applicable tax percent.');
           }
         });
-      }
+      }*/
     }
 
     // update sale item total.
@@ -1208,7 +1253,7 @@ function initializeJS() {
   }
 
   // payment and receipt vouchers js.
-  if( $('#paymentVocForm').length>0  || $('#receiptVocForm').length>0) {
+  if( $('#paymentVocForm').length > 0  || $('#receiptVocForm').length > 0) {
     $('#paymentMode').on("change", function(e){
       var paymentMode = $(this).val();
       if(paymentMode==='b' || paymentMode==='p') {
@@ -1218,7 +1263,8 @@ function initializeJS() {
       }
     });   
   }
-  if($('#receiptVocForm').length>0) {
+
+  if($('#receiptVocForm').length > 0) {
     var billNosResponse = [];
     $('#custBillNos').on('click', function(e){
       e.preventDefault();
@@ -1257,6 +1303,51 @@ function initializeJS() {
       }
     });
     $('#custBillNo').on('change', function(e){
+      var billNo = $(this).val();
+      if(billNo !== '' && Object.keys(billNosResponse[billNo]).length>0) {
+        jQuery('#amount').val(billNosResponse[billNo].balAmount);
+      }
+    });
+  }
+
+  if( $('#debitVocEntryForm').length > 0 ) {
+    var billNosResponse = [];    
+    $('#supplierCode').on('change', function(e){
+      e.preventDefault();
+      var supplierCode = $(this).val();
+      var billNoRef = $('#suppBillNo');
+      var billNoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");        
+      var optionCount = $(billNoRef).children('option').length;
+      if(supplierCode !== '') {
+       var data = {suppCode:supplierCode};
+       jQuery.ajax("/async/getSuppBillNos", {
+          data: data,
+          method:"POST",
+          success: function(billNos) {
+            if(billNos.status === 'success') {
+              var objLength = Object.keys(billNos.response).length;
+              if(parseInt(objLength) > 0) {
+                jQuery(billNoRef).empty().append(billNoFirstOption);
+                jQuery.each(billNos.response, function (index, billDetails) {
+                  billNosResponse[billDetails.billNo] = billDetails;
+                  jQuery(billNoRef).append(
+                    jQuery("<option></option>").
+                    attr("value",encodeHTML(billDetails.billNo)).
+                    text(billDetails.billNo + ' { ' + billDetails.balAmount + ' }')
+                  );
+                });
+              }
+            } else if(billNos.status === 'failed') {
+              alert(billsNos.reason);
+            }
+          },
+          error: function(e) {
+            alert('An error occurred while fetching Batch Nos.');
+          }
+       });          
+      }
+    });
+    $('#suppBillNo').on('change', function(e){
       var billNo = $(this).val();
       if(billNo !== '' && Object.keys(billNosResponse[billNo]).length>0) {
         jQuery('#amount').val(billNosResponse[billNo].balAmount);

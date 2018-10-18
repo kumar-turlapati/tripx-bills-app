@@ -94,7 +94,7 @@
             <a href="/grn/list" class="btn btn-default">
               <i class="fa fa-book"></i> GRN Register
             </a>
-            <a href="/purchase/list" class="btn btn-default">
+            <a href="/inward-entry/list" class="btn btn-default">
               <i class="fa fa-book"></i> Purchase Register
             </a>            
           </div>

@@ -10,7 +10,7 @@
         </a>
         <ul class="sub">
           <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
-          <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty members</a></li>          
+          <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>          
         </ul>
       </li>
       <li class="sub-menu">
@@ -18,10 +18,9 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/sales/entry"><i class="fa fa-inr"></i> Sales entry w/o barcode</a></li>
-          <li><a href="/sales/entry-with-barcode"><i class="fa fa-inr"></i> Sales entry w barcode</a></li>
-          <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
-          <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Petty cash voucher</a></li>
+          <li><a href="/sales/entry"><i class="fa fa-keyboard-o"></i> Sales Entry - Manual</a></li>
+          <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>          <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
+          <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Petty Cash Voucher</a></li>
         </ul>
       </li>
       <li class="sub-menu">
@@ -29,13 +28,13 @@
           <i class="fa fa-book"></i> Registers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales register</a></li>
-          <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales return register</a></li>
-          <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit notes register</a></li>
-          <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock transfer register</a></li>
-          <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty cash register</a></li>
-          <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty cash book</a></li>
-          <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes register</a></li>          
+          <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales Register</a></li>
+          <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales Return Register</a></li>
+          <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
+          <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Transfer Register</a></li>
+          <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
+          <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
+          <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>          
         </ul>
       </li>
       <li class="sub-menu">

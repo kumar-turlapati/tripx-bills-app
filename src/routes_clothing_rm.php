@@ -2,6 +2,7 @@
 
 use Symfony\Component\Routing;
 use Symfony\Component\HttpFoundation\Response;
+
 $routes = new Routing\RouteCollection();
 
 /* default routes available in every routes file */
@@ -89,6 +90,20 @@ $routes->add('categories_list', new Routing\Route('/categories/list/{pageNo}/{pe
   'perPage' => 100,
 )));
 
+// mfg list
+$routes->add('create_mfg', new Routing\Route('/mfg/create', array(
+  '_controller' => 'ClothingRm\\Mfg\\Controller\\MfgController::createMfg',
+)));
+$routes->add('update_mfg', new Routing\Route('/mfg/update/{mfgCode}', array(
+  '_controller' => 'ClothingRm\\Mfg\\Controller\\MfgController::updateMfg',
+  'mfgCode' => null,
+)));
+$routes->add('mfgs_list', new Routing\Route('/mfgs/list/{pageNo}/{perPage}', array(
+  '_controller' => 'ClothingRm\\Mfg\\Controller\\MfgController::listMfgs',
+  'pageNo' => 1,
+  'perPage' => 100,
+)));
+
 // supplier routes
 $routes->add('suppliers_create', new Routing\Route('/suppliers/create', array(
   '_controller' => 'ClothingRm\\Suppliers\\Controller\\SupplierController::supplierCreateAction',
@@ -134,6 +149,9 @@ $routes->add('inward_entry_update_status', new Routing\Route('/inward-entry/upda
 )));
 $routes->add('inward_entry_bulk_upload', new Routing\Route('/inward-entry/bulk-upload', array(
   '_controller' => 'ClothingRm\\Inward\\Controller\\InwardBulkUploadController::inwardEntryBulkUploadAction',
+)));
+$routes->add('purch_bill_search', new Routing\Route('/purchases/search-bills', array(
+  '_controller' => 'ClothingRm\\Inward\\Controller\\InwardController::searchInwardAction',
 )));
 
 // purchase returns
@@ -419,6 +437,24 @@ $routes->add('cn_list', new Routing\Route('/fin/credit-notes/{pageNo}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\CreditNotesController::cnListAction',
   'pageNo' => null,
 )));
+
+// Debit notes
+$routes->add('dn_create', new Routing\Route('/fin/debit-note/create', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\DebitNotesController::dnCreateAction',
+)));
+$routes->add('dn_update', new Routing\Route('/fin/debit-note/update/{dnCode}', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\DebitNotesController::dnUpdateAction',
+  'dnNo' => null,
+)));
+$routes->add('dn_delete', new Routing\Route('/fin/debit-note/delete/{dnCode}', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\DebitNotesController::dnDeleteAction',
+  'dnCode' => null,
+)));
+$routes->add('dn_list', new Routing\Route('/fin/debit-notes/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\DebitNotesController::dnListAction',
+  'pageNo' => null,
+)));
+
 
 // Petty cash vouchers
 $routes->add('pc_voc_create', new Routing\Route('/fin/pc-voucher/create', array(

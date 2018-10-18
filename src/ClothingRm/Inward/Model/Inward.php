@@ -55,7 +55,97 @@ class Inward
 		}
 	}
 
-	public function updateInwardAfterGrn($params=array(), $inward_code='') {
+	public function get_purchase_details($purchase_code='', $by_po_no=false) {
+		// fetch client id
+		$client_id = Utilities::get_current_client_id();
+		$params['clientID'] = $client_id;
+		if($by_po_no) {
+			$params['poNo'] = $purchase_code;
+		} else {
+			$params['purchaseCode'] = $purchase_code;
+		}
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get', 'purchases', $params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'purchaseDetails' => $response['response']['purchaseDetails'],
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}
+	}
+
+	public function get_purchases($page_no=1, $per_page=50, $search_params=[]) {
+
+		$params = array();
+		$params['pageNo']  = $page_no;
+		$params['perPage'] = $per_page;
+		if(count($search_params)>0) {
+			if(isset($search_params['fromDate'])) {
+				$fromDate = Utilities::clean_string($search_params['fromDate']);
+				$params['fromDate'] = $fromDate;
+			}
+			if(isset($search_params['toDate'])) {
+				$toDate = Utilities::clean_string($search_params['toDate']);
+				$params['toDate'] = $toDate;
+			}			
+			if(isset($search_params['supplierID'])) {
+				$supplierID = Utilities::clean_string($search_params['supplierID']);
+				$params['supplierID'] = $supplierID;
+			}			
+		}
+
+		// dump($search_params);
+		// exit;
+
+		// fetch client id
+		$client_id = Utilities::get_current_client_id();
+		$params['clientID'] = $client_id;
+
+		// dump($params);
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get', 'purchases/register', $params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'purchases' => $response['response']['purchases'], 
+				'total_pages' => $response['response']['total_pages'],
+				'total_records' => $response['response']['total_records'],
+				'record_count' =>  $response['response']['this_page']
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}	
+	}
+
+	public function search_purchase_bills($search_params = []) {
+		$request_uri = 'inward-entry/search';
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$request_uri,$search_params);
+		$status = $response['status'];
+		if($status === 'success') {
+			return array('status'=>true, 'bills' => $response['response']);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
+
+/*	public function updateInwardAfterGrn($params=[], $inward_code='') {
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'inw-update-after-grn/'.$inward_code.'/'.$client_id;
 
@@ -68,5 +158,5 @@ class Inward
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);
 		}		
-	}
+	}*/	
 }

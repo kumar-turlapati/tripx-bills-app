@@ -95,36 +95,37 @@ class PaymentsController
     $parties = array(''=>'Choose');
     $voc_no = 0;
 
+    if(!is_null($request->get('vocNo'))) {
+      $voc_no = $request->get('vocNo');
+      $voucher_details = $this->fin_model->get_payment_voucher_details($voc_no);
+      if($voucher_details['status']===false) {
+        $this->flash->set_flash_message('Invalid voucher number (or) voucher does not exists',1);         
+        Utilities::redirect('/fin/payment-vouchers');
+      } else {
+        $submitted_data = $voucher_details['data'];
+      }
+    } else {
+      $flash->set_flash_message('Invalid voucher number (or) voucher does not exists',1);         
+      Utilities::redirect('/fin/payment-vouchers');
+    }    
+
     if(count($request->request->all()) > 0) {
       $validate_form = $this->_validate_form_data($request->request->all());
       $status = $validate_form['status'];
       if($status) {
         $form_data = $validate_form['cleaned_params'];
         $result = $this->fin_model->update_payment_voucher($this->_map_voucher_data($form_data),$form_data['vocNo']);
-        if($result['status']===true) {
+        if($result['status']) {
           $message = 'Payment voucher no. `'.$form_data['vocNo'].'` updated successfully';
           $this->flash->set_flash_message($message);
         } else {
-          $message = 'An error occurred while updating payment voucher.';
-          $this->flash->set_flash_message($message,1);          
+          $this->flash->set_flash_message($result['apierror'],1);
         }
-        Utilities::redirect('/fin/payment-vouchers');
+        Utilities::redirect('/fin/payment-voucher/update/'.$voc_no);
       } else {
         $form_errors = $validate_form['errors'];
         $submitted_data = $request->request->all();
       }
-    } elseif(!is_null($request->get('vocNo'))) {
-      $voc_no = $request->get('vocNo');
-      $voucher_details = $this->fin_model->get_payment_voucher_details($voc_no);
-      if($voucher_details['status']===false) {
-        $flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
-        Utilities::redirect('/fin/payment-vouchers');
-      } else {
-        $submitted_data = $voucher_details['data'];
-      }
-    } else {
-      $flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
-      Utilities::redirect('/fin/payment-vouchers');
     }
 
     # get party names
@@ -316,10 +317,10 @@ class PaymentsController
     } else {
       $cleaned_params['billNo'] = $bill_no;
     }
-    if(!is_numeric($amount)) {
-      $errors['amount'] = 'Invalid amount';
-    } else {
+    if(is_numeric($amount) && $amount > 0) {
       $cleaned_params['amount'] = $amount;
+    } else {
+      $errors['amount'] = 'Invalid amount';
     }
 
     if(isset($form_data['vocNo']) && is_numeric($form_data['vocNo'])) {

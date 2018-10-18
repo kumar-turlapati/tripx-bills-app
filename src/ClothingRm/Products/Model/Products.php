@@ -118,7 +118,7 @@ class Products
 	/**
 	 * Create Product
 	**/
-	public function createProduct($params = array()) {
+	public function createProduct($params = []) {
 		$valid_result = $this->_validateFormData($params);
 		if($valid_result['status'] === false) {
 			return $valid_result;

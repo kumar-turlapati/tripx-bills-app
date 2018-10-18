@@ -5,11 +5,6 @@
   } else {
     $sel_status = 1;
   }
-  if(isset($submitted_data['mfgCode'])) {
-    $sel_mfg_code = $submitted_data['mfgCode'];
-  } else {
-    $sel_mfg_code = '';
-  }
   if(isset($submitted_data['mrp'])) {
     $sel_mrp = $submitted_data['mrp'];
   } else {
@@ -45,11 +40,18 @@
   } else {
     $rack_no = '';
   }
-  if(isset($submitted_data['brandID']) && $submitted_data['brandID'] !== '') {
-    $brand_code = $submitted_data['brandID'];
+  if(isset($submitted_data['mfgName']) && $submitted_data['mfgName'] !== '') {
+    $brand_code = $submitted_data['mfgName'];
   } else {
     $brand_code = '';
   }
+  if(isset($submitted_data['locationID']) && (int)$submitted_data['locationID'] > 0) {
+    $location_code = $location_codes[$submitted_data['locationID']];
+  } else {
+    $location_code = '';
+  }
+
+  // dump($submitted_data, $location_ids, $location_codes);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -175,7 +177,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="itemStatus" id="itemStatus">
@@ -195,30 +197,53 @@
                 <span class="error"><?php echo $errors['status'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Brand name</label>
               <input 
                 type="text" 
-                class="form-control noEnterKey"
-                name="brandCode" 
-                id="brandCode" 
+                class="form-control noEnterKey brandAc"
+                name="brandCode"
+                id="brandCode"
                 value="<?php echo $brand_code ?>"
               >
               <?php if(isset($errors['brandCode'])): ?>
                 <span class="error"><?php echo $errors['brandCode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Rack no.</label>
-              <input 
+              <input
                 type="text" 
                 class="form-control noEnterKey"
-                name="rackNo" 
-                id="rackNo" 
+                name="rackNo"
+                id="rackNo"
                 value="<?php echo $rack_no ?>"
               >
               <?php if(isset($errors['rack_no'])): ?>
                 <span class="error"><?php echo $errors['rack_no'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php 
+                    foreach($client_locations as $key=>$value): 
+                      $location_key_a = explode('`', $key);
+                      if($location_code === $location_key_a[0]) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>
           </div>

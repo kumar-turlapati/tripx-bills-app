@@ -65,7 +65,7 @@
         </div>
         <form class="form-validate form-horizontal" method="POST" id="paymentVocForm">
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">            
+            <div class="col-sm-12 col-md-4 col-lg-4">            
               <label class="control-label">Voucher date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -79,7 +79,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Party name</label>
               <select class="form-control" name="partyCode" id="partyCode">
                 <?php 
@@ -97,7 +97,7 @@
                 <span class="error"><?php echo $form_errors['partyCode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Bill no.</label>
               <input 
                 type="text" class="form-control" name="billNo" id="billNo" 
@@ -108,7 +108,6 @@
               <?php endif; ?>
             </div>                        
           </div>
-
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Payment method</label>
@@ -149,7 +148,6 @@
               <?php endif; ?>
             </div>            
           </div>
-
           <div class="form-group" id="refInfo" style="<?php echo $div_style ?>">
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Bank name</label>

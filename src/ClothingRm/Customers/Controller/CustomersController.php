@@ -114,13 +114,18 @@ class CustomersController
 
     $ages_a[0] = 'Choose';
     for($i=1;$i<=150;$i++) {
-        $ages_a[$i] = $i;
+      $ages_a[$i] = $i;
     }
 
-    # ---------- get location codes from api -------------
-    $client_locations = Utilities::get_client_locations();
+    # ---------- get location codes from api -----------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
 
-    # ---------- get marketing users from api ------------
+    # ---------- get marketing users from api ----------------
     $result = $this->user_model->get_users(['userType' => 10]);
     if($result['status']) {
       $users_a = $result['users'];
@@ -182,6 +187,8 @@ class CustomersController
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'ma_executives' => ['Choose'] + $users,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     # build variables
@@ -282,7 +289,7 @@ class CustomersController
     return array($this->template->render_view('customers-list', $template_vars), $controller_vars);
   }
 
-  # private functions should go from here.
+  // private functions should go from here.
   private function _validate_form_data($form_data=[]) {
     $form_errors = $cleaned_params = [];
 

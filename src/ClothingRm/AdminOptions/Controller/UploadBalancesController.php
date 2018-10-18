@@ -259,7 +259,7 @@ class UploadBalancesController {
         $bill_date = Utilities::clean_string($imported_record_details['BillDate']);
         $balance = Utilities::clean_string($imported_record_details['Balance']);
         $credit_days = Utilities::clean_string($imported_record_details['CreditDays']);
-        $sexe_id = Utilities::clean_string($imported_record_details['SalesExecutiveId']);
+        $sexe_id = Utilities::clean_string($imported_record_details['SalesExecutiveLoginId']);
 
         if($customer_type !== 'c' && $customer_type !== 'b') {
           $error_flag = true;

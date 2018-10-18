@@ -57,9 +57,13 @@ class LoginController
   public function logoutAction(Request $request) {
     $expires_in = time()-200400;
     $flash = new Flash;
-    if (setcookie('__ata__','',$expires_in)) {
+    if(setcookie('__ata__','',$expires_in)) {
       unset($_SESSION);
       $_SESSION['__logged_out'] = true;
+
+      // hit api and log out user completely.
+      $api_response = $this->login_model->logout();      
+
       Utilities::redirect('/login');
     } else {
       $flash->set_flash_message('Unable to Logout. Please contact administrator',1);

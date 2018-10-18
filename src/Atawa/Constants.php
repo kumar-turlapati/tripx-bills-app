@@ -126,4 +126,11 @@ class Constants
     'PCA' => 'Petty Cash',
     'SAD' => 'Stock Adjustment',
   ];
+
+  public static $INW_SEARCH_OPTIONS = [
+    'billno' => 'Bill No.',
+    'date' => 'Bill Date',
+    'suppname' => 'Supplier Name',
+    'itemname' => 'Item Name',
+  ];
 }

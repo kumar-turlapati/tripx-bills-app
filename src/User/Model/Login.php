@@ -42,54 +42,6 @@ class Login
 		}
 	}	
 
-	private function setLoginCookie($response=[]) {
-		$devices_a = [];
-		if (
-					isset($response['access_token']) &&
-					isset($response['token_type']) &&
-					isset($response['refresh_token']) &&
-					isset($response['scope']) &&
-					isset($response['expires_in']) &&
-					isset($response['uid']) && 
-					isset($response['ccode']) &&
-					isset($response['uname']) &&
-					isset($response['utype']) &&
-					isset($response['bc']) &&
-					isset($response['lc']) &&
-					isset($response['lname']) &&
-					isset($response['devices'])
-			 )
-		{
-			$expires_in = time()+(int)$response['expires_in'];
-			$fin_year = isset($response['finY'])?$response['finY']:'';
-			$cookie_string = $response['access_token'].'##'.$response['refresh_token'].'##'.$expires_in.
-											 '##'.$response['cname'].'##'.$response['ccode'].'##'.$response['uid'].
-											 '##'.$response['uname'].'##'.$response['utype'].'##'.$response['bc'].
-											 '##'.$response['lc'].'##'.$response['lname'];
-
-			if(isset($_SESSION['__allowed_devices'])) {
-				unset($_SESSION['__allowed_devices']);
-				unset($_SESSION['__just_logged_in']);				
-			}
-			$devices_a = count($response['devices']) > 0 ? array_column($response['devices'],'device_name') : [];
-			// dump($devices_a);
-			$_SESSION['__allowed_devices'] = $devices_a;
-			$_SESSION['__just_logged_in'] = true;
-
-			// dump($_SESSION, 'Kumar');
-
-			// set cookie
-			if (setcookie('__ata__',base64_encode($cookie_string),$expires_in,'/')) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-
-	}
-
 	public function sendOTP($email_id='') {
 		$api_caller = new ApiCaller();
 		$request_array = array(
@@ -110,7 +62,58 @@ class Login
 		return $api_response;
 	}	
 
+	public function logout() {
+		$api_caller = new ApiCaller();
+		$request_array = ['action' => 'logout'];
+		$api_response = $api_caller->sendRequest('post', 'logout', $request_array);
+		return $api_response;
+	}
 
+	private function setLoginCookie($response=[]) {
+		$devices_a = [];
+		if (
+					isset($response['access_token']) &&
+					isset($response['token_type']) &&
+					isset($response['refresh_token']) &&
+					isset($response['scope']) &&
+					isset($response['expires_in']) &&
+					isset($response['uid']) && 
+					isset($response['ccode']) &&
+					isset($response['uname']) &&
+					isset($response['utype']) &&
+					isset($response['bc']) &&
+					isset($response['lc']) &&
+					isset($response['lname']) &&
+					isset($response['devices'])
+			 )
+		{
+			// $expires_in = time() + (int)$response['expires_in'];
+			$expires_in = time()+(int)$response['expires_in'];			
+			$fin_year = isset($response['finY']) ? $response['finY']:'';
+			$cookie_string = $response['access_token'].'##'.$response['refresh_token'].'##'.$expires_in.
+											 '##'.$response['cname'].'##'.$response['ccode'].'##'.$response['uid'].
+											 '##'.$response['uname'].'##'.$response['utype'].'##'.$response['bc'].
+											 '##'.$response['lc'].'##'.$response['lname'];
 
+			if(isset($_SESSION['__allowed_devices'])) {
+				unset($_SESSION['__allowed_devices']);
+				unset($_SESSION['__just_logged_in']);				
+			}
+			$devices_a = count($response['devices']) > 0 ? array_column($response['devices'],'device_name') : [];
+			// dump($devices_a);
+			$_SESSION['__allowed_devices'] = $devices_a;
+			$_SESSION['__just_logged_in'] = true;
 
+			// dump($_SESSION, 'Kumar');
+
+			// set cookie
+			if (setcookie('__ata__',base64_encode($cookie_string),0,'/')) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}	
 }

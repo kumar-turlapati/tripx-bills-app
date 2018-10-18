@@ -99,7 +99,6 @@ class ApiCaller
 
 		$response = false;
 		$data = json_decode($api_response, true);
-		// dump($data);
 
 		if( is_array($data) && count($data)>0 && $data['status']==='failed' ) {
 			$response = array('status'=>$data['status'], 'reason'=>$data['errorcode'].'#'.$data['errortext']);

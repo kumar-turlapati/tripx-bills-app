@@ -38,6 +38,7 @@ class PurchaseReturnsController
     $taxes_a = $taxes = $taxes_raw = [];
     $form_errors = $form_data = [];
     $api_error = '';
+    $total_item_rows = 0;
     
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
@@ -90,6 +91,7 @@ class PurchaseReturnsController
         $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $lot_nos = array_column($purchase_details['itemDetails'],'lotNo');
+        $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');        
 
         $total_item_rows = is_array($item_names) && count($item_names) > 0 ? count($item_names) : 30;
 
@@ -112,11 +114,15 @@ class PurchaseReturnsController
         $form_data['itemDiscount'] = $discounts;
         $form_data['hsnCodes'] = $hsn_codes;
         $form_data['lotNos'] = $lot_nos;
-        $form_data['itemCode'] = $item_codes;        
+        $form_data['itemCode'] = $item_codes;
+        $form_data['packedQty'] = $packed_qtys;
       } else {
         $this->flash->set_flash_message($purchase_response['apierror'], 1);
         Utilities::redirect('/purchase-return/entry');
       }
+    } else {
+      $this->flash->set_flash_message('Invalid Purchase Code (or) Invalid entry', 1);
+      Utilities::redirect('/purchase-return/register');      
     }
 
     # check if form is submitted.
@@ -130,7 +136,7 @@ class PurchaseReturnsController
         if($api_response['status']) {
           $message = 'Purchase return entry created successfully with code ` '.$api_response['returnCode'].' `';
           $this->flash->set_flash_message($message);
-          Utilities::redirect('/purchase-return-register');
+          Utilities::redirect('/purchase-return/register');
         } else {
           $api_error = $api_response['apierror'];
           $form_data = $submitted_data;
@@ -145,7 +151,7 @@ class PurchaseReturnsController
     # theme variables.
     $controller_vars = array(
       'page_title' => 'Purchase Return Entry',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-undo',
     );
     $template_vars = array(
       'utilities' => new Utilities,
@@ -188,7 +194,7 @@ class PurchaseReturnsController
     # theme variables.
     $controller_vars = array(
       'page_title' => 'Purchase Return Entry - View',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-undo',
     );
     $template_vars = array(
       'utilities' => new Utilities,
@@ -287,7 +293,7 @@ class PurchaseReturnsController
     # build variables
     $controller_vars = array(
       'page_title' => 'Purchase Return Register',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-undo',
     );
 
     # render template

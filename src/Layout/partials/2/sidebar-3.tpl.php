@@ -11,6 +11,7 @@
         <ul class="sub">
           <li><a href="/products/list"><i class="fa fa-cubes"></i> Products</a></li>
           <li><a href="/categories/list"><i class="fa fa-window-restore"></i> Product Categories</a></li>
+          <li><a href="/mfgs/list"><i class="fa fa-thumbs-o-up"></i> Brands / Mfgs.</a></li>
           <li><a href="/suppliers/list"><i class="fa fa-address-card"></i> Suppliers</a></li>
           <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
           <li><a href="/taxes/list"><i class="fa fa-scissors"></i> Taxes</a></li>
@@ -32,8 +33,8 @@
               <i class="fa fa-compass"></i> Purchases <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/inward-entry"><i class="fa fa-keyboard-o"></i> Purchase entry</a></li>
-              <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase file upload</a></li>
+              <li><a href="/inward-entry"><i class="fa fa-keyboard-o"></i> Purchase Entry</a></li>
+              <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase File Upload</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -52,7 +53,7 @@
             <ul class="sub">
               <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
               <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
-              <li><a href="/fin/pc-voucher/create"><i class="fa fa-sticky-note-o"></i> Petty cash voucher</a></li>
+              <li><a href="/fin/pc-voucher/create"><i class="fa fa-sticky-note-o"></i> Petty Cash</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -60,8 +61,8 @@
               <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>
-              <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales indent (Mobile V.)</a></li>
+              <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales Indent</a></li>
+              <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales Indent (Mobile V.)</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -69,8 +70,8 @@
               <i class="fa fa-database"></i> Inventory <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
-              <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock adjustment</a></li>
+              <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock Transfer</a></li>
+              <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock Adjustment</a></li>
             </ul>
           </li>
         </ul>
@@ -126,7 +127,7 @@
               <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales indent register</a></li>
+              <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales Indent Register</a></li>
             </ul>
           </li>
         </ul>
@@ -140,7 +141,7 @@
           <li><a href="/inventory/item-threshold-list"><i class="fa fa-list-ol"></i> Threshold Qtys.</a></li>
           <li><a href="/inventory/track-item"><i class="fa fa-exchange"></i> Item Track</a></li>*/ ?>
           <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Inventory Openings</a></li>          
-          <li><a href="/inventory/available-qty"><i class="fa fa-cubes"></i> Stock in Hand</a></li>
+          <li><a href="/inventory/available-qty"><i class="fa fa-cubes"></i> Stock In Hand</a></li>
           <li><a href="/barcode/opbal"><i class="fa fa-barcode"></i> Barcodes for Opening</a></li>          
         </ul>
       </li>
@@ -149,7 +150,8 @@
           <i class="fa fa-search"></i> Search <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/sales/search-bills"><i class="fa fa-square-o"></i> Sale Bills</a></li>
+          <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Sale Bills</a></li>
+          <li><a href="/purchases/search-bills"><i class="fa fa-laptop"></i> Purchase Bills</a></li>          
         </ul>
       </li>
       <li class="sub-menu">
@@ -157,8 +159,8 @@
           <i class="fa fa-lemon-o"></i> Promo Offers <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/promo-offers/entry"><i class="fa fa-plus-circle"></i> Create promo offer</a></li>
-          <li><a href="/promo-offers/list"><i class="fa fa-list"></i> Promo offers list</a></li>          
+          <li><a href="/promo-offers/entry"><i class="fa fa-plus-circle"></i> Create Promo Offer</a></li>
+          <li><a href="/promo-offers/list"><i class="fa fa-list"></i> Promo Offers List</a></li>          
         </ul>
       </li>
       <li class="sub-menu">

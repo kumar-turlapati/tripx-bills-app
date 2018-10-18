@@ -12,7 +12,6 @@ use Atawa\Flash;
 
 use ClothingRm\Barcode\Model\Barcode;
 use ClothingRm\Grn\Model\GrnNew;
-use ClothingRm\Purchases\Model\Purchases;
 use ClothingRm\Inward\Model\Inward;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Taxes\Model\Taxes;
@@ -26,7 +25,7 @@ class BarcodeController
     $this->template = new Template(__DIR__.'/../Views/');
     $this->bc_model = new Barcode;
     $this->flash = new Flash;
-    $this->purchase_model = new Purchases;
+    $this->inward_model = new Inward;
     $this->supplier_model = new Supplier;
     $this->taxes_model = new Taxes;
     $this->openings_model = new Openings;
@@ -57,7 +56,7 @@ class BarcodeController
       }
 
       $purchase_code = Utilities::clean_string($request->get('purchaseCode'));
-      $purchase_response = $this->purchase_model->get_purchase_details($purchase_code);
+      $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
 
       if($purchase_response['status'] === false) {
         $this->flash->set_flash_message('Invalid PO Number (or) PO does not exists.', 1);

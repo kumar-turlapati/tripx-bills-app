@@ -2,12 +2,10 @@
   
   // dump($submitted_data);
   
-  if(isset($submitted_data['locationCode'])) {
-    $location_code = $submitted_data['locationCode'];
-  } elseif($default_location !== '') {
-    $location_code = $default_location;
+  if(isset($submitted_data['locationID'])) {
+    $location_id = $submitted_data['locationID'];
   } else {
-    $location_code = '';
+    $location_id = 0;
   }
   if(isset($submitted_data['customerType']) && $submitted_data['customerType'] !== '' ) {
     $customer_type = $submitted_data['customerType'];
@@ -88,8 +86,13 @@
   } else {
     $dor = '';
   }
-  
-  $executive_id = isset($form_data['maExecutive']) ? $form_data['maExecutive'] : '';
+  if(isset($submitted_data['uuid']) && $submitted_data['uuid'] !== '') {
+    $uuid = $submitted_data['uuid'];
+  } else {
+    $uuid = '';
+  }
+
+  $executive_id = isset($submitted_data['maExecutive']) ? $submitted_data['maExecutive'] : '';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -104,7 +107,7 @@
             </a>
           </div>
         </div>
-        <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="customerForm">
+        <form class="form-validate form-horizontal" method="POST" id="customerForm" autocomplete="off">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Customer type</label>
@@ -237,14 +240,15 @@
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
-                    foreach($client_locations as $key=>$value): 
-                      if($location_code === $key) {
+                    foreach($client_locations as $location_key => $value):
+                      $location_key_a = explode('`', $location_key);
+                      if((int)$location_id === (int)$location_key_a[1]) {
                         $selected = 'selected="selected"';
                       } else {
                         $selected = '';
                       }
                   ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                   <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
                       <?php echo $value ?>
                     </option>
                   <?php endforeach; ?>
@@ -265,7 +269,7 @@
                 >
                   <?php
                     foreach($ma_executives as $key=>$value):
-                      if($key === $executive_id) {
+                      if($key == $uuid) {
                         $selected = 'selected="selected"';
                       } else {
                         $selected = '';
@@ -378,7 +382,9 @@
             </div>       
           </div>
           <div class="text-center">
-            <button class="btn btn-success" id="Save"><i class="fa fa-save"></i> Save</button>
+            <button class="btn btn-success" id="Save">
+              <i class="fa fa-save"></i> Save
+            </button>
           </div>
         </form>
       </div>

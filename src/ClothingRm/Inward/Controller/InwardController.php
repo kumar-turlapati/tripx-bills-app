@@ -9,7 +9,6 @@ use Atawa\Constants;
 use Atawa\Template;
 use Atawa\Flash;
 
-use ClothingRm\Purchases\Model\Purchases;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Taxes\Model\Taxes;
 use ClothingRm\Inward\Model\Inward;
@@ -25,11 +24,10 @@ class InwardController
     $this->taxes_model = new Taxes;
     $this->inward_model = new Inward;
     $this->flash = new Flash;
-    $this->purchase_model = new Purchases;
     $this->user_model = new User;
   }
 
-  # inward entry action
+  // inward entry action
   public function inwardEntryAction(Request $request) {
 
     $credit_days_a = $suppliers_a = $payment_methods = $client_locations = [];
@@ -129,7 +127,7 @@ class InwardController
     return array($this->template->render_view('inward-entry',$template_vars),$controller_vars);
   }
   
-  # inward entry update action
+  // inward entry update action
   public function inwardEntryUpdateAction(Request $request) {
 
     # initiate variables.
@@ -175,7 +173,7 @@ class InwardController
       Utilities::redirect('/inward-entry');
     } else {
       $purchase_code = Utilities::clean_string($request->get('purchaseCode'));
-      $purchase_response = $this->purchase_model->get_purchase_details($purchase_code);
+      $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
       // dump($purchase_response);
       // exit;
 
@@ -221,7 +219,7 @@ class InwardController
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
           $this->flash->set_flash_message($page_error, 1);
-          Utilities::redirect('/purchase/list');
+          Utilities::redirect('/inward-entry/list');
         } else {
           $is_grn_generated = false;
         }
@@ -294,7 +292,7 @@ class InwardController
     return array($this->template->render_view('inward-entry-update',$template_vars),$controller_vars);
   }
 
-  # inward entry view action
+  // inward entry view action
   public function inwardEntryViewAction(Request $request) {
 
     # initiate variables.
@@ -318,7 +316,7 @@ class InwardController
       Utilities::redirect('/inward-entry');
     } else {
       $purchase_code = Utilities::clean_string($request->get('purchaseCode'));
-      $purchase_response = $this->purchase_model->get_purchase_details($purchase_code);
+      $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
       if($purchase_response['status']===true) {
         $purchase_details = $purchase_response['purchaseDetails'];
         $total_item_rows = count($purchase_details['itemDetails']);
@@ -409,7 +407,7 @@ class InwardController
     return array($this->template->render_view('inward-entry-view',$template_vars),$controller_vars);
   }
 
-  # inward list action
+  // inward list action
   public function inwardListAction(Request $request) {
 
     $suppliers = $search_params = $suppliers_a = $purchases_a = [];
@@ -440,7 +438,7 @@ class InwardController
       $suppliers_a = array(''=>'All Suppliers')+$suppliers['suppliers'];
     }
 
-    $purchase_api_call = $this->purchase_model->get_purchases($page_no,$per_page,$search_params);
+    $purchase_api_call = $this->inward_model->get_purchases($page_no,$per_page,$search_params);
     $api_status = $purchase_api_call['status'];        
 
     # check api status
@@ -506,6 +504,7 @@ class InwardController
     return array($this->template->render_view('inward-register',$template_vars),$controller_vars);
   }
 
+  // update inward status accept or reject.
   public function updateInwardStatusAction(Request $request) {
 
     # allow this option only to the administrator.
@@ -558,7 +557,7 @@ class InwardController
       Utilities::redirect('/inward-entry/list');
     } else {
       $purchase_code = Utilities::clean_string($request->get('purchaseCode'));
-      $purchase_response = $this->purchase_model->get_purchase_details($purchase_code);
+      $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
       // dump($purchase_response);
       // exit;
 
@@ -605,7 +604,7 @@ class InwardController
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
           $this->flash->set_flash_message($page_error, 1);
-          Utilities::redirect('/purchase/list');
+          Utilities::redirect('/inward-entry/list');
         } else {
           $is_grn_generated = false;
         }
@@ -673,8 +672,63 @@ class InwardController
       'errors' => $form_errors,
     );
 
-    return array($this->template->render_view('change-inward-status', $template_vars),$controller_vars);    
-  }  
+    return array($this->template->render_view('change-inward-status', $template_vars),$controller_vars);
+  }
+
+  public function searchInwardAction(Request $request) {
+
+    $search_params = $bills = $form_data = $form_errors = [];
+    $slno = 0;
+    
+    $search_by_a = Constants::$INW_SEARCH_OPTIONS;
+
+    // get location codes from api
+    $client_locations = Utilities::get_client_locations();
+
+    // check for filter variables.
+    if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
+      $validation = $this->_validate_search_form_data($form_data, $search_by_a, $client_locations);
+      if($validation['status']) {
+        $search_params = $validation['cleaned_params'];
+        $api_response = $this->inward_model->search_purchase_bills($search_params);
+        if($api_response['status']) {
+          if(count($api_response['bills'])>0) {
+            $bills = $api_response['bills'];
+          } else {
+            $page_error = $api_response['apierror'];
+            $this->flash->set_flash_message($page_error, 1);
+          }
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
+        }
+      } else {
+        $page_error = 'You have errors in the Form. Please check before you submit.';
+        $form_errors = $validation['errors'];
+        $this->flash->set_flash_message($page_error, 1);      
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'bills' => $bills,
+      'form_data' => $form_data,
+      'form_errors' => $form_errors,
+      'search_by_a' => [''=>'Choose'] + $search_by_a,
+      'sl_no' => 1,
+      'client_locations' => $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+    );
+
+    // theme variables.
+    $controller_vars = array(
+      'page_title' => 'Purchases - Search Bills',
+      'icon_name' => 'fa fa-search',
+    );
+
+    return array($this->template->render_view('search-purchase-bills', $template_vars), $controller_vars);
+  }
 
   // validate form data
   private function _validate_form_data($form_data=[], $is_grn_generated=false) {
@@ -852,9 +906,50 @@ class InwardController
         'cleaned_params' => $cleaned_params,
       ];
     }
-  }  
+  }
 
-  # map uploaded data with current form data.
+  // validate search form data
+  private function _validate_search_form_data($form_data=[], $search_by_a=[], $client_locations=[]) {
+    $cleaned_params = $form_errors = [];
+
+    $search_by = Utilities::clean_string($form_data['searchBy']);
+    if($search_by === 'itemname') {
+      $search_value = Utilities::clean_string($form_data['searchValueP']);
+    } else {
+      $search_value = Utilities::clean_string($form_data['searchValue']);
+    }
+    
+    $location_code = Utilities::clean_string($form_data['locationCode']);
+
+    if($search_by !== '' && in_array($search_by, array_keys($search_by_a))) {
+      $cleaned_params['searchBy'] = $search_by;
+    } else {
+      $form_errors['searchBy'] = 'Invalid';
+    }
+
+    if($location_code !== '' && in_array($location_code, array_keys($client_locations))) {
+      $cleaned_params['locationCode'] = $location_code;
+    } else {
+      $form_errors['locationCode'] = 'Invalid';
+    }
+
+    $cleaned_params['searchValue'] = $search_value;
+    $cleaned_params['locationCode'] = $location_code;
+
+    if(count($form_errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $form_errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
+  }
+
+  // map uploaded data with current form data.
   private function _map_uploaded_data_with_form_data($uploaded_data=[]) {
     // dump($uploaded_data);
     $form_data = [];
