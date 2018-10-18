@@ -9,7 +9,6 @@ use Atawa\Constants;
 use Atawa\Template;
 use Atawa\Flash;
 
-use ClothingRm\Purchases\Model\Purchases;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Taxes\Model\Taxes;
 use ClothingRm\Inward\Model\Inward;
@@ -26,7 +25,6 @@ class PurchaseReturnsController
     $this->taxes_model = new Taxes;
     $this->inward_model = new Inward;
     $this->flash = new Flash;
-    $this->purchase_model = new Purchases;
     $this->user_model = new User;
     $this->pr_model = new PurchaseReturns;
   }
@@ -72,7 +70,7 @@ class PurchaseReturnsController
     # get purchase details if purchase code is available.
     if( !is_null($request->get('pc')) ) {
       $purchase_code = Utilities::clean_string($request->get('pc'));
-      $purchase_response = $this->purchase_model->get_purchase_details($purchase_code);
+      $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
       if($purchase_response['status']) {
         $purchase_details = $purchase_response['purchaseDetails'];
 
