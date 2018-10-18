@@ -189,7 +189,7 @@ class MfgController
         $this->flash->set_flash_message($page_error);
       }
     } else {
-      $page_error = $mfgs_list['apierror'];
+      $page_error = $api_response['apierror'];
       $this->flash->set_flash_message($page_error);      
     }
 
