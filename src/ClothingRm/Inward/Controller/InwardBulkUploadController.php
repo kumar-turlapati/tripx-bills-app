@@ -10,7 +10,6 @@ use Atawa\Template;
 use Atawa\Flash;
 use Atawa\Importer;
 
-use ClothingRm\Purchases\Model\Purchases;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Taxes\Model\Taxes;
 use ClothingRm\Inward\Model\Inward;
@@ -26,7 +25,6 @@ class InwardBulkUploadController
     $this->taxes_model = new Taxes;
     $this->inward_model = new Inward;
     $this->flash = new Flash;
-    $this->purchase_model = new Purchases;
     $this->user_model = new User;
   }
 

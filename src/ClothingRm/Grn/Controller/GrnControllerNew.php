@@ -10,7 +10,7 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Grn\Model\GrnNew;
-use ClothingRm\Purchases\Model\Purchases;
+use ClothingRm\Inward\Model\Inward;
 use ClothingRm\Suppliers\Model\Supplier;
 
 class GrnControllerNew 
@@ -20,7 +20,7 @@ class GrnControllerNew
   public function __construct() {
     $this->template = new Template(__DIR__.'/../Views/');
     $this->flash = new Flash;
-    $this->purchase_model = new Purchases;
+    $this->inward_model = new Inward;
     $this->supplier_model = new Supplier;
     $this->grn_model = new GrnNew;    
   }
@@ -67,7 +67,7 @@ class GrnControllerNew
     }
 
     # get PO Details based on PO Number;
-    $purchase_response = $this->purchase_model->get_purchase_details($po_no,true);
+    $purchase_response = $this->inward_model->get_purchase_details($po_no,true);
 
     if($purchase_response['status']===true) {
 
