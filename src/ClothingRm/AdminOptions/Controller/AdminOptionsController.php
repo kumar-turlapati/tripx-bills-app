@@ -10,22 +10,22 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Sales\Model\Sales;
-use ClothingRm\Purchases\Model\Purchases;
 use ClothingRm\Inventory\Model\Inventory;
+use ClothingRm\Inward\Model\Inward;
 use User\Model\User;
 
 class AdminOptionsController
 {
-	protected $views_path, $template, $sales_model, $purch_model, $flash;
+	protected $views_path, $template, $sales_model, $inward_model, $flash;
 
 	public function __construct() {
 		$this->views_path = __DIR__.'/../Views/';
 		$this->template = new Template($this->views_path);
-		$this->sales_model = new Sales();
-		$this->purch_model = new Purchases();
-    $this->inv_model = new Inventory();
-    $this->user_model = new User();
-		$this->flash = new Flash();
+		$this->sales_model = new Sales;
+    $this->inward_model = new Inward;
+    $this->inv_model = new Inventory;
+    $this->user_model = new User;
+		$this->flash = new Flash;
 	}
 
   # ask for bill no
@@ -44,7 +44,7 @@ class AdminOptionsController
     			$page_error = 'Invalid Bill No.';
     		}    		
     	} elseif($bill_type === 'purc') {
-    		$bill_details = $this->purch_model->get_purchase_details($bill_no, true);
+    		$bill_details = $this->inward_model->get_purchase_details($bill_no, true);
     		if($bill_details['status']) {
     			Utilities::redirect('/admin-options/edit-po?poNo='.$bill_no);
     		} else {

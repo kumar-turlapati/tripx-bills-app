@@ -12,17 +12,17 @@ use Atawa\Flash;
 
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Finance\Model\DebitNote;
-use ClothingRm\Purchases\Model\Purchases;
+use ClothingRm\Inward\Model\Inward;
 
 class DebitNotesController {
 
-	protected $template, $dn_model, $flash, $purchase_model;
+	protected $template, $dn_model, $flash, $inward_model;
 
 	public function __construct() {
     $this->template = new Template(__DIR__.'/../Views/');
     $this->dn_model = new DebitNote;
     $this->flash = new Flash;
-    $this->purchase_model = new Purchases;
+    $this->inward_model = new Purchases;
     $this->supplier_model = new Supplier;       
 	}
 
@@ -36,7 +36,7 @@ class DebitNotesController {
     // get purchase details if purchase code is available.
     if( !is_null($request->get('pc')) ) {
       $purchase_code = Utilities::clean_string($request->get('pc'));
-      $purchase_response = $this->purchase_model->get_purchase_details($purchase_code);
+      $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
       if($purchase_response['status']) {
         $purchase_details = $purchase_response['purchaseDetails'];
       } else {

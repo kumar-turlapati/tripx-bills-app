@@ -108,6 +108,7 @@
               <li><a href="/fin/payment-vouchers"><i class="fa fa-strikethrough"></i> Payments Register</a></li>
               <li><a href="/fin/receipt-vouchers"><i class="fa fa-check"></i> Receipts Register</a></li>
               <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
+              <li><a href="/fin/credit-notes"><i class="fa fa-minus-square"></i> Debit Notes Register</a></li>
               <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
               <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
             </ul>

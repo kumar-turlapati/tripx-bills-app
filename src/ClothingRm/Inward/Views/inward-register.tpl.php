@@ -157,9 +157,12 @@
                           <a class="btn btn-primary" href="/inward-entry/view/<?php echo $purchase_code ?>" title="View purchase order">
                             <i class="fa fa-eye"></i>
                           </a>
-                          <a class="btn btn-warning" href="/purchase-return/entry?pc=<?php echo $purchase_code ?>" title="Purchase Return and Auto Debit Note.">
+                          <a class="btn btn-warning" href="/purchase-return/entry?pc=<?php echo $purchase_code ?>" title="Purchase Return and Auto Debit Note">
                             <i class="fa fa-undo"></i>
-                          </a>                          
+                          </a>
+                          <a class="btn btn-success" href="/fin/debit-note/create?pc=<?php echo $purchase_code ?>" title="Raise a Debit Note">
+                            <i class="fa fa-minus-square"></i>
+                          </a>                                                   
                         <?php endif; ?>
                       </div>
                     </td>
