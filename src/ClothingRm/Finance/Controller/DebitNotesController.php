@@ -22,7 +22,7 @@ class DebitNotesController {
     $this->template = new Template(__DIR__.'/../Views/');
     $this->dn_model = new DebitNote;
     $this->flash = new Flash;
-    $this->inward_model = new Purchases;
+    $this->inward_model = new Inward;
     $this->supplier_model = new Supplier;       
 	}
 

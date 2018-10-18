@@ -91,13 +91,13 @@
             <thead>
               <tr>
                 <th width="5%" class="text-center">Sno.</th>
-                <th width="30%" class="text-center">Supplier Name</th>
+                <th width="25%" class="text-center">Supplier Name</th>
                 <th width="10%" class="text-center">PO No.</span></th>
                 <th width="8%" class="text-center">PO Date</th>
                 <th width="10%" class="text-center">Amount</th>
                 <th width="13%" class="text-center">GRN No. / Date</th>
                 <th width="10%" class="text-center">Status</th>                
-                <th width="13%" class="text-center">Actions</th>
+                <th width="18%" class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
