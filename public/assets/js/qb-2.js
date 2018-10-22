@@ -86,6 +86,10 @@ function initializeJS() {
    }
   });
 
+  if( $('#dfyDashboard').length > 0 ) {
+    $.post('/async/finyDefault', $('#dfyDashboard').serialize());
+  }
+
   if($('#checkAllOpBarcodes').length>0) {
     $('#checkAllOpBarcodes').on('click', function(e) {
       var that = this;
