@@ -750,11 +750,12 @@ class InwardController
       $cleaned_params['supplierID'] = Utilities::clean_string($form_data['supplierID']);
     }
 
+    $cleaned_params['poNo'] = Utilities::clean_string($form_data['poNo']);
+
 /*    # validate PO No
     if( isset($form_data['poNo']) && $form_data['poNo'] === '') {
       $form_errors['poNo'] = 'PO number is mandatory.';
     } else {
-      $cleaned_params['poNo'] = Utilities::clean_string($form_data['poNo']);
     }*/
 
     # validate payment method

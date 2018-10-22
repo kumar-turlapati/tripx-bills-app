@@ -155,6 +155,8 @@
                     name="poNo" 
                     id="poNo" 
                     value="<?php echo $po_no ?>"
+                    placeholder="{{ Will be generated automatically }}"
+                    readonly                    
                   >
                   <?php if(isset($form_errors['poNo'])): ?>
                       <span class="error"><?php echo $form_errors['poNo'] ?></span>
