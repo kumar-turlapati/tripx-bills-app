@@ -1,5 +1,5 @@
 <?php
-
+  
   if(isset($submitted_data['returnDate']) && $submitted_data['returnDate']!=='') {
     $current_date = date("d-m-Y", strtotime($submitted_data['returnDate']));
   } else {
@@ -67,6 +67,9 @@
                       <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="returnDate" id="returnDate" />
                       <span class="add-on"><i class="fa fa-calendar"></i></span>
                     </div>
+                    <?php if(isset($errors['returnDate'])): ?>
+                      <span class="error"><?php echo $errors['returnDate'] ?></span>
+                    <?php endif; ?>                     
                   </div>
                   <div class="col-sm-12 col-md-4 col-lg-4">
                     <label class="control-label">MRN No. (Auto)</label>

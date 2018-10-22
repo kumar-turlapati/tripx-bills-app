@@ -326,7 +326,13 @@ class PurchaseReturnsController
     $form_errors = $cleaned_params = [];
     $is_one_item_found = false;
 
-    $cleaned_params['returnDate'] = Utilities::clean_string($submitted_data['returnDate']);
+    $return_date = Utilities::clean_string($submitted_data['returnDate']);
+    if(Utilities::is_valid_fin_date($return_date)) {
+      $cleaned_params['returnDate'] = $return_date;
+    } else {
+      $form_errors['returnDate'] = 'Purchase Return Date is out of Financial year dates.';
+    }
+
     $cleaned_params['items'] = [];
     $return_qtys = $submitted_data['returnQty'];
 

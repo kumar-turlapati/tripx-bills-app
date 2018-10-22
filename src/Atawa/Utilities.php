@@ -768,4 +768,19 @@ class Utilities
       'worate' => 'Sticker Without Rate',
     ];
   }
+
+  public static function is_valid_fin_date($tran_date='') {
+    if( isset($_SESSION['finy_s_date']) && isset($_SESSION['finy_e_date']) ) {
+      $start_date_ts = strtotime($_SESSION['finy_s_date']);
+      $end_date_ts = strtotime($_SESSION['finy_e_date']);
+      $tran_date_ts = strtotime($tran_date);
+      if($tran_date_ts >= $start_date_ts && $tran_date_ts <= $end_date_ts) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
 }

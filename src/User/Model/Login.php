@@ -88,8 +88,8 @@ class Login
 			 )
 		{
 			// $expires_in = time() + (int)$response['expires_in'];
-			$expires_in = time()+(int)$response['expires_in'];			
-			$fin_year = isset($response['finY']) ? $response['finY']:'';
+			$expires_in = time()+(int)$response['expires_in'];
+
 			$cookie_string = $response['access_token'].'##'.$response['refresh_token'].'##'.$expires_in.
 											 '##'.$response['cname'].'##'.$response['ccode'].'##'.$response['uid'].
 											 '##'.$response['uname'].'##'.$response['utype'].'##'.$response['bc'].

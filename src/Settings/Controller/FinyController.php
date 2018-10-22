@@ -255,4 +255,7 @@ class FinyController {
   10. Receipt               => RCP =>  60000000
   11. Petty Cash            => PCA =>  70000000
   12. Stock Adjustment      => SAD => 140000000
+
+  SELECT voc_type, slno_aic, slno_text FROM `hos_master_fin_year_slnos_list` slnolist INNER JOIN hos_master_fin_year_slnos slnomaster ON slnomaster.finy_slno_id = slnolist.finy_slno_id WHERE slnolist.status = 1
+
 */

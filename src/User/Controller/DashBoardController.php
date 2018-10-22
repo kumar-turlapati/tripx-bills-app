@@ -12,13 +12,11 @@ class DashBoardController
 {
 	protected $views_path;
 
-	public function __construct() 
- 	{
+	public function __construct() {
 		$this->views_path = __DIR__.'/../Views/';
 	}
 
   public function indexAction(Request $request) {
-
     // prepare form variables.
     $template_vars = array(
       'cal_months' => Utilities::get_calender_months(),

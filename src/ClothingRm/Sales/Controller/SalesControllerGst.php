@@ -813,7 +813,12 @@ class SalesControllerGst {
     }
 
     // add misc parameters.
-    $cleaned_params['saleDate'] = $sale_date;
+    if(Utilities::is_valid_fin_date($sale_date)) {
+      $cleaned_params['saleDate'] = $sale_date;
+    } else {
+      $form_errors['saleDate'] = 'Invoice Date is out of Financial year dates.';
+    }
+
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
     $cleaned_params['saExecutiveId'] = $executive_id;
     $cleaned_params['cnNo'] = $cn_no;

@@ -184,6 +184,7 @@
             <ul class="sub">
               <li><a href="/finy/list"><i class="fa fa-angle-right"></i> Financial Years</a></li>          
               <li><a href="/finy-slnos/list"><i class="fa fa-angle-right"></i> FY Serial Nos.</a></li>
+              <li><a href="/finy/set-active"><i class="fa fa-angle-right"></i> Set Active FY</a></li> 
             </ul>
           </li>
           <li class="sub-menu">

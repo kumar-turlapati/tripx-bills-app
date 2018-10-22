@@ -736,7 +736,12 @@ class InwardController
     $form_errors = $cleaned_params = [];
     $is_one_item_found = false;
 
-    $cleaned_params['purchaseDate'] = Utilities::clean_string($form_data['purchaseDate']);
+    $purchase_date = Utilities::clean_string($form_data['purchaseDate']);
+    if(Utilities::is_valid_fin_date($purchase_date)) {
+      $cleaned_params['purchaseDate'] = $purchase_date;
+    } else {
+      $form_errors['purchaseDate'] = 'PO Date is out of Financial year dates.';
+    }
 
     # validate supplier name
     if( isset($form_data['supplierID']) && $form_data['supplierID'] === '') {
@@ -745,12 +750,12 @@ class InwardController
       $cleaned_params['supplierID'] = Utilities::clean_string($form_data['supplierID']);
     }
 
-    # validate PO No
+/*    # validate PO No
     if( isset($form_data['poNo']) && $form_data['poNo'] === '') {
       $form_errors['poNo'] = 'PO number is mandatory.';
     } else {
       $cleaned_params['poNo'] = Utilities::clean_string($form_data['poNo']);
-    }
+    }*/
 
     # validate payment method
     if( isset($form_data['paymentMethod']) && (int)$form_data['paymentMethod'] === 1) {

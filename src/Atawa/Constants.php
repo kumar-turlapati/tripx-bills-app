@@ -125,6 +125,7 @@ class Constants
     'RCP' => 'Receipt',
     'PCA' => 'Petty Cash',
     'SAD' => 'Stock Adjustment',
+    'IND' => 'Sales Indent',
   ];
 
   public static $INW_SEARCH_OPTIONS = [

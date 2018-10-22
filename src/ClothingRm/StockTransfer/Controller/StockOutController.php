@@ -319,7 +319,12 @@ class StockOutController
     }
 
     # add misc parameters.
-    $cleaned_params['transferDate'] = $transfer_date;
+    if(Utilities::is_valid_fin_date($transfer_date)) {
+      $cleaned_params['transferDate'] = $transfer_date;
+    } else {
+      $form_errors['transferDate'] = 'Stock Transfer Date is out of Financial year dates.';
+    }
+
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
 
     # return response.

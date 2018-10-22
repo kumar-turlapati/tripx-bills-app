@@ -14,19 +14,12 @@ class SalesReturns
 		if($valid_result['status'] === false) {
 			return $valid_result;
 		} else {
-			$return_items = $valid_result['return_items'];
-			$request_params['returnDetails'] = $return_items;
-		}
-
-		if(isset($params['returnDate']) && $params['returnDate'] !== '') {
-			$request_params['returnDate'] = Utilities::clean_string($params['returnDate']);
+			$request_params['returnDetails'] = $valid_result['cleaned_params']['return_items'];
+			$request_params['returnDate'] = $valid_result['cleaned_params']['return_date'];
 		}
 
 		$client_id = Utilities::get_current_client_id();
 		$end_point = 'sales-return/'.$client_id.'/'.$sales_code;
-
-		// dump($request_params);
-		// exit;
 
 		// call api.
 		$api_caller = new ApiCaller();
@@ -75,10 +68,18 @@ class SalesReturns
 		}		
 	}	
 
-	private function _validateFormData($params=array(), $sale_item_details=array()) {
+	private function _validateFormData($params=[], $sale_item_details=[]) {
 
-		$errors = $filter_items = array();
+		$errors = $filter_items = [];
 		$return_items = $params['itemInfo'];
+
+		$return_date = Utilities::clean_string($params['returnDate']);
+    if(Utilities::is_valid_fin_date($return_date)) {
+      $cleaned_params['returnDate'] = $return_date;
+    } else {
+      $errors['returnDate'] = 'Sales Return Date is out of Financial year dates.';
+    }
+
 		unset($params['itemInfo']);
 		unset($params['returnDate']);
 		unset($params['status']);
@@ -130,13 +131,17 @@ class SalesReturns
 			$errors['itemDetails'] = 'No Items are available for return.';
 		}
 
+		$cleaned_params = [];
+		$cleaned_params['return_items'] = $filter_items;
+		$cleaned_params['return_date'] = $return_date;
+
 		// dump($filter_items);
 		// exit;
 
 		if(count($errors)>0) {
 			return array('status' =>false,'errors'=>$errors);
 		} else {
-			return array('status' =>true,'errors'=>$errors,'return_items'=>$filter_items);
+			return array('status' =>true,'errors'=>$errors, 'cleaned_params' => $cleaned_params);
 		}
 	}
 

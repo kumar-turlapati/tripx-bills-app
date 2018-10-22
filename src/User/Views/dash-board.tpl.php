@@ -26,6 +26,7 @@
   }
 ?>
 <div>
+  <form id="dfyForm"><input type="hidden" name="dfyDashboard" id="dfyDashboard" /></form>
   <?php if( count($tabs) > 0):?>
     <ul class="nav nav-tabs" role="tablist" id="dbContainer">
     <?php foreach($tabs as $key => $tab_details): ?>

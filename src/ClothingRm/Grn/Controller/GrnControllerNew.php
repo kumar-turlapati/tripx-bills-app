@@ -327,12 +327,19 @@ class GrnControllerNew
   /******************************* Private functions should start from here ***********************/
   private function _validate_form_data($submitted_data=[]) {
     $form_errors = $cleaned_params = [];
+
+    $grn_date = Utilities::clean_string($submitted_data['grnDate']);
+    if(Utilities::is_valid_fin_date($grn_date)) {
+      $cleaned_params['grnDate'] = $grn_date;
+    } else {
+      $form_errors['grnDate'] = 'GRN Date is out of Financial year dates.';
+    }    
+
     if(isset($submitted_data['billNo']) && $submitted_data['billNo'] != '' ) {
       $cleaned_params['billNo'] = Utilities::clean_string($submitted_data['billNo']);
     } else {
       $form_errors['billNo'] = 'Bill No. is mandatory for GRN';
     }
-
     if( isset($submitted_data['acceptedQty']) && count($submitted_data['acceptedQty'])>0 ) {
       foreach($submitted_data['acceptedQty'] as $item_code=>$qty) {
         if(!is_numeric($qty)  || $qty<0) {
