@@ -1,12 +1,17 @@
 $(window).load(function() {
   $(".se-pre-con").fadeOut("slow");
   setTimeout(function(){
-    var bQi = new Fingerprint2();
-    bQi.get(function(_bq_result) {
-      $('#__bq_pub').val(_bq_result);
-      $.post('/id__mapper', $('#bQ').serialize());
-    });
+    if($('#bQ').length > 0) {
+      var bQi = new Fingerprint2();
+      bQi.get(function(_bq_result) {
+        $('#__bq_pub').val(_bq_result);
+        $.post('/id__mapper', $('#bQ').serialize());
+      });
+    }
   }, 100);
+  if($('#qbMain').length > 0) {
+    var qbTimer = setInterval(function(){$.ajax({type: "POST",url: "/__id__lo",success: function (response) {if(response === 'expired') {clearInterval(qbTimer);window.location.href = '/force-logout';}}});}, 10000);
+  }
 });
 
 function initializeJS() {
@@ -24,18 +29,18 @@ function initializeJS() {
     jQuery('.sub', last).slideUp(200);
     var sub = jQuery(this).next();
     if (sub.is(":visible")) {
-        jQuery(this).find('.menu-arrow').addClass('arrow_carrot-right');            
-        sub.slideUp(200);
+      jQuery(this).find('.menu-arrow').addClass('arrow_carrot-right');            
+      sub.slideUp(200);
     } else {
-        jQuery(this).find('.menu-arrow').addClass('arrow_carrot-down');            
-        sub.slideDown(200);
+      jQuery(this).find('.menu-arrow').addClass('arrow_carrot-down');            
+      sub.slideDown(200);
     }
     var o = (jQuery(this).offset());
     diff = 200 - o.top;
     if(diff>0)
-        jQuery("#sidebar").scrollTo("-="+Math.abs(diff),500);
+      jQuery("#sidebar").scrollTo("-="+Math.abs(diff),500);
     else
-        jQuery("#sidebar").scrollTo("+="+Math.abs(diff),500);
+      jQuery("#sidebar").scrollTo("+="+Math.abs(diff),500);
   });
 
   jQuery(function() {
@@ -75,8 +80,6 @@ function initializeJS() {
       jQuery("#container").removeClass("sidebar-closed");
     }
   });
-
-  /**********************************************************************************************************************************************/
 
   // Prevent Enter key while submitting form
   $(document).on('keypress keydown keyup', '.noEnterKey', function(e){
@@ -628,6 +631,15 @@ function initializeJS() {
       cacheLength:0,
       selectFirst:false,
       minChars:1,
+      extraParams:{
+        locationCode: function() {
+           if($('#locationCode').length>0) {
+            return $('#locationCode').val()
+           } else {
+            return '';
+           }
+        }
+      },
       'max': 0,
     });            
   }
@@ -686,6 +698,20 @@ function initializeJS() {
       } else {
         $('#bioContainer').show();
       }
+    });
+  }
+
+  if($('#editPOAfterGRN').length>0) {
+    $('#grnDelete').on('click', function(e){
+      e.preventDefault();
+      bootbox.confirm("Are you sure. You want to delete and re-create GRN for this PO?", function(result) {
+        if(result===true) {
+          $(this).attr('disabled', true);
+          $('#editPOAfterGRN').submit();
+        } else {
+          return;
+        }
+      });
     });
   }
 

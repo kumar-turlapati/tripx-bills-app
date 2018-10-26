@@ -12,6 +12,8 @@ use Atawa\Flash;
 use ClothingRm\Sales\Model\Sales;
 use ClothingRm\Inventory\Model\Inventory;
 use ClothingRm\Inward\Model\Inward;
+use ClothingRm\Suppliers\Model\Supplier;
+use ClothingRm\Grn\Model\GrnNew;
 use User\Model\User;
 
 class AdminOptionsController
@@ -26,76 +28,137 @@ class AdminOptionsController
     $this->inv_model = new Inventory;
     $this->user_model = new User;
 		$this->flash = new Flash;
+    $this->supplier_model = new Supplier;
+    $this->grn_model = new GrnNew;
 	}
 
-  # ask for bill no
-	public function askForBillNo(Request $request) { 
-		
-		$page_error = $page_title = $bill_no = '';
-
-    if(count($request->request->all()) > 0) {
-    	$bill_no = Utilities::clean_string($request->get('editBillNo'));
-    	$bill_type = Utilities::clean_string($request->get('billType'));
-    	if($bill_type === 'sale') {
-    		$bill_details = $this->sales_model->get_sales_details($bill_no,true);
-    		if($bill_details['status']) {
-    			Utilities::redirect('/admin-options/edit-sales-bill?billNo='.$bill_no);
-    		} else {
-    			$page_error = 'Invalid Bill No.';
-    		}    		
-    	} elseif($bill_type === 'purc') {
-    		$bill_details = $this->inward_model->get_purchase_details($bill_no, true);
-    		if($bill_details['status']) {
-    			Utilities::redirect('/admin-options/edit-po?poNo='.$bill_no);
-    		} else {
-          $this->flash->set_flash_message('Invalid PO No. (or) PO does not exist.',1);
-          Utilities::redirect('/admin-options/enter-bill-no?billType=purc');
-    		}
-    	}
+  public function orgSummary(Request $request) {
+    $org_summary = Utilities::get_org_summary();
+    if($org_summary === false) {
+      
     }
 
-    # check for filter variables.
-    if(!is_null($request->get('billType')) && 
-    	  $request->get('billType')!=='' &&
-    	  ($request->get('billType') === 'sale' || $request->get('billType') === 'purc')
-    	) {
-    	$bill_type = Utilities::clean_string($request->get('billType'));
-    } else {
-    	$bill_type = 'sale';
-    }
-
-    switch ($bill_type) {
-    	case 'sale':
-    		$page_title = 'Edit Sales Bill';
-    		$label_name = 'Enter bill no. to edit';
-    		$icon_name = 'fa fa-inr';
-    		break;
-    	case 'purc':
-    		$page_title = 'Edit Purchase Bill';
-    		$label_name = 'Enter PO no. to edit';
-    		$icon_name = 'fa fa-compass';
-    		break;
-    }
-
-     // prepare form variables.
+    // prepare form variables.
     $template_vars = array(
-    	'label_name' => $label_name,
-    	'page_error' => $page_error,
-    	'bill_no' => $bill_no,
-    	'bill_type' => $bill_type,
+      'org_summary' => $org_summary,
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => $page_title,
-      'icon_name' => $icon_name,
+      'page_title' => 'Organization Summary',
+      'icon_name' => 'fa fa-ravelry',
     );
 
     // render template
-    return array($this->template->render_view('ask-for-billno',$template_vars),$controller_vars);
-	}
+    return array($this->template->render_view('org-summary',$template_vars),$controller_vars);
 
-  # edit sales bill with limited information
+  }
+
+  public function deleteGRN(Request $request) {
+    $form_errors = $submitted_data = $suppliers = [];
+    $client_locations = $suppliers_a = [];
+
+    // get location codes
+    $client_locations = Utilities::get_client_locations();
+
+    // get suppliers from the portal
+    $suppliers = $this->supplier_model->get_suppliers(0,0,[]);
+    if($suppliers['status']) {
+      $suppliers_a += $suppliers['suppliers'];
+    }
+
+    // check for form Submission
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $form_validation = $this->_validate_po_details($submitted_data, $client_locations);
+      if($form_validation['status']===false) {
+        $form_errors = $form_validation['errors'];
+      } else {
+        $api_response = $this->grn_model->deleteGRN($form_validation['cleaned_params']);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('GRN Deleted successfully. PO No `'.$form_validation['cleaned_params']['poNo'].'` is editable now.');
+          Utilities::redirect('/admin-options/delete-grn');
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
+        }
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'errors' => $form_errors,
+      'submitted_data' => $submitted_data,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'suppliers' => array(''=>'Choose')+$suppliers_a,
+      'flash_obj' => $this->flash,
+      'voc_type' => 'GRN',
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Delete GRN',
+      'icon_name' => 'fa fa-laptop',
+    );
+
+    // render template
+    return array($this->template->render_view('inward-info',$template_vars),$controller_vars);    
+  }
+
+  public function deletePO(Request $request) {
+    $form_errors = $submitted_data = $suppliers = [];
+    $client_locations = $suppliers_a = [];
+
+    // get location codes
+    $client_locations = Utilities::get_client_locations();
+
+    // get suppliers from the portal
+    $suppliers = $this->supplier_model->get_suppliers(0,0,[]);
+    if($suppliers['status']) {
+      $suppliers_a += $suppliers['suppliers'];
+    }
+
+    // check for form Submission
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $form_validation = $this->_validate_po_details($submitted_data, $client_locations);
+      if($form_validation['status']===false) {
+        $form_errors = $form_validation['errors'];
+      } else {
+        $api_response = $this->inward_model->delete_po($form_validation['cleaned_params']);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('PO deleted successfully');
+          Utilities::redirect('/admin-options/delete-po');
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
+        }
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'errors' => $form_errors,
+      'submitted_data' => $submitted_data,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'suppliers' => array(''=>'Choose')+$suppliers_a,
+      'flash_obj' => $this->flash,
+      'voc_type' => 'PO',
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Delete Purchase Order',
+      'icon_name' => 'fa fa-keyboard-o',
+    );
+
+    // render template
+    return array($this->template->render_view('inward-info',$template_vars),$controller_vars);    
+  }
+
+  // edit sales bill with limited information
 	public function editSalesBillAction(Request $request) {
 
     $errors = $sales_details = $submitted_data = array();
@@ -185,7 +248,7 @@ class AdminOptionsController
     return array($this->template->render_view('edit-sale-bill',$template_vars),$controller_vars);
 	}
 
-  # update business information
+  // update business information
 	public function editBusinessInfoAction(Request $request) {
 
     $form_data = $states = $form_errors = array();
@@ -238,11 +301,9 @@ class AdminOptionsController
     return array($this->template->render_view('edit-business-info',$template_vars),$controller_vars);
 	}
 
-  # delete Sale Bill
+  // delete Sale Bill
   public function deleteSaleBill(Request $request) {
-
     $page_error = $page_title = $bill_no = '';
-
     if(count($request->request->all()) > 0) {
       $bill_no = Utilities::clean_string($request->get('delSaleBill'));
       $bill_details = $this->sales_model->get_sales_details($bill_no,true);
@@ -283,11 +344,10 @@ class AdminOptionsController
 
     // render template
     return array($this->template->render_view('delete-sale-bill',$template_vars),$controller_vars);
-  }  
+  }
 
-  # validation of business info.
-  private function _validate_businessinfo($form_data=array()) {
-    
+  // validation of business info.
+  private function _validate_businessinfo($form_data=[]) {
     $cleaned_params = $errors = array();
     $image_data = '';
 
@@ -345,6 +405,110 @@ class AdminOptionsController
     } else {
       return array('status'=>true, 'cleaned_params'=>$cleaned_params);
     }
+  }
 
+  // validation for ask poinfo
+  private function _validate_po_details($form_data=[], $locations=[]) {
+    $cleaned_params = $errors = [];
+
+    $voc_no = isset($form_data['vocNo']) ? Utilities::clean_string($form_data['vocNo']) : '';
+    $supplier_id = isset($form_data['supplierID']) ? Utilities::clean_string($form_data['supplierID']) : '';
+    $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : '';
+    $location_keys = array_keys($locations);
+
+    if($voc_no === '') {
+      $errors['vocNo'] = 'PO No. is required.';
+    } else {
+      $cleaned_params['vocNo'] = $voc_no;
+    }
+    if($supplier_id === '') {
+      $errors['supplierID'] = 'Supplier name is required.';
+    } else {
+      $cleaned_params['supplierID'] = $supplier_id;
+    }
+    if(in_array($location_code, $location_keys)) {
+      $cleaned_params['locationCode'] = $location_code;
+    } else {
+      $errors['locationCode'] = 'Invalid store name.';
+    }
+    if(count($errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
   }
 }
+
+/*
+  // ask for bill no
+  public function askForBillNo(Request $request) { 
+    
+    $page_error = $page_title = $bill_no = '';
+
+    if(count($request->request->all()) > 0) {
+      $bill_no = Utilities::clean_string($request->get('editBillNo'));
+      $bill_type = Utilities::clean_string($request->get('billType'));
+      if($bill_type === 'sale') {
+        $bill_details = $this->sales_model->get_sales_details($bill_no,true);
+        if($bill_details['status']) {
+          Utilities::redirect('/admin-options/edit-sales-bill?billNo='.$bill_no);
+        } else {
+          $page_error = 'Invalid Bill No.';
+        }       
+      } elseif($bill_type === 'purc') {
+        $bill_details = $this->inward_model->get_purchase_details($bill_no, true);
+        if($bill_details['status']) {
+          Utilities::redirect('/admin-options/edit-po?poNo='.$bill_no);
+        } else {
+          $this->flash->set_flash_message('Invalid PO No. (or) PO does not exist.',1);
+          Utilities::redirect('/admin-options/enter-bill-no?billType=purc');
+        }
+      }
+    }
+
+    # check for filter variables.
+    if(!is_null($request->get('billType')) && 
+        $request->get('billType')!=='' &&
+        ($request->get('billType') === 'sale' || $request->get('billType') === 'purc')
+      ) {
+      $bill_type = Utilities::clean_string($request->get('billType'));
+    } else {
+      $bill_type = 'sale';
+    }
+
+    switch ($bill_type) {
+      case 'sale':
+        $page_title = 'Edit Sales Bill';
+        $label_name = 'Enter bill no. to edit';
+        $icon_name = 'fa fa-inr';
+        break;
+      case 'purc':
+        $page_title = 'Edit Purchase Bill';
+        $label_name = 'Enter PO no. to edit';
+        $icon_name = 'fa fa-compass';
+        break;
+    }
+
+     // prepare form variables.
+    $template_vars = array(
+      'label_name' => $label_name,
+      'page_error' => $page_error,
+      'bill_no' => $bill_no,
+      'bill_type' => $bill_type,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => $page_title,
+      'icon_name' => $icon_name,
+    );
+
+    // render template
+    return array($this->template->render_view('ask-for-billno',$template_vars),$controller_vars);
+  }*/

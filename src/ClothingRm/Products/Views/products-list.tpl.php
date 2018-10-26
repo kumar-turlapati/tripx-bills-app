@@ -5,7 +5,7 @@
   $query_params = '';  
   if(isset($search_params['medname']) && $search_params['medname'] !='') {
     $medname = $search_params['medname'];
-    $query_params[] = 'medName='.$medname;
+    $query_params[] = 'psName='.$medname;
   } else {
     $medname = '';
   }
@@ -15,6 +15,12 @@
   } else {
     $category = '';
   }
+  if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
+    $locationCode = $search_params['locationCode'];
+    $query_params[] = 'locationCode='.$locationCode;
+  } else {
+    $locationCode = $default_location;
+  }  
   if($query_params != '') {
     $query_params = '?'.implode('&', $query_params);
   }
@@ -44,17 +50,36 @@
     					  <label class="control-label text-right"><b>Filter by</b></label>          
               </div>
     				  <div class="col-sm-12 col-md-2 col-lg-2">
-    					 <input placeholder="Product name" type="text" name="medname" id="medname" class="form-control" value="<?php echo $medname ?>">
+    					 <input placeholder="Product name" type="text" name="psName" id="psName" class="form-control" value="<?php echo $medname ?>">
     				  </div>
     				  <div class="col-sm-12 col-md-2 col-lg-2">
       					<div class="select-wrap">
       						<select class="form-control" name="category" id="category">
       						  <?php foreach($categories as $key=>$value): ?>
-      							<option value="<?php echo $key ?>"><?php echo $value ?></option>
+      							   <option value="<?php echo $key ?>"><?php echo $value ?></option>
       						  <?php endforeach; ?>
       						</select>
       					 </div>
     				  </div>
+              <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="select-wrap">
+                  <select class="form-control" name="locationCode" id="locationCode">
+                    <?php 
+                      foreach($client_locations as $location_key=>$value):
+                        $location_key_a = explode('`', $location_key);
+                        if($locationCode === $location_key_a[0]) {
+                          $selected = 'selected="selected"';
+                        } else {
+                          $selected = '';
+                        }  
+                    ?>
+                     <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                        <?php echo $value ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                 </div>
+              </div>              
               <div class="col-sm-12 col-md-3 col-lg-3">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>

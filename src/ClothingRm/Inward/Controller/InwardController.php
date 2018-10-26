@@ -195,7 +195,7 @@ class InwardController
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
 
-        $total_item_rows = count($item_names);
+        // $total_item_rows = count($item_names);
 
         # unset item details from api data.
         unset($purchase_details['itemDetails']);

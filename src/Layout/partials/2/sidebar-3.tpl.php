@@ -198,16 +198,15 @@
                 </a>
               </li>
               <li>
-                <a href="/upload-debtors" title="Upload Customer's Data with Opening Balances">
+                <a href="/upload-debtors" title="Upload Customers Data with Opening Balances">
                   <i class="fa fa-smile-o"></i> Upload Customers Data
                 </a>
               </li>
-              <?php /*
               <li>
-                <a href="/upload-creditors" title="Upload Suppliers's Data with Opening Balances">
-                  <i class="fa fa-upload"></i> Upload Suppliers Data
+                <a href="/upload-creditors" title="Upload Suppliers Data with Opening Balances">
+                  <i class="fa fa-group"></i> Upload Suppliers Data
                 </a>
-              </li>*/ ?>
+              </li>
             </ul>
           </li>
           <li>

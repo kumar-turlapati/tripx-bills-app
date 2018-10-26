@@ -325,60 +325,64 @@ class Utilities
     }
   }
 
-  public static function check_access_token() 
-  {
-      $cookie_validation = true; $cookie_string_a = false; $current_time = time();
+  public static function check_access_token() {
+    $cookie_validation = true; 
+    $cookie_string_a = false; 
+    $current_time = time();
 
-      # check cookie exists.
-      if(!isset($_COOKIE['__ata__']) || $_COOKIE['__ata__']=='') {
+    // validate last user logged in time.
+    Utilities::check_user_inactivity();      
+
+    // check cookie exists.
+    if(!isset($_COOKIE['__ata__']) || $_COOKIE['__ata__']=='') {
+      $cookie_validation = false;
+    } else {
+      # check cookie is properly formatted and valid.
+      $cookie_string_a = explode("##",base64_decode(strip_tags($_COOKIE['__ata__'])));
+      if(!is_array($cookie_string_a) || count($cookie_string_a)<4) {
         $cookie_validation = false;
       } else {
-        # check cookie is properly formatted and valid.
-        $cookie_string_a = explode("##",base64_decode(strip_tags($_COOKIE['__ata__'])));
-        if(!is_array($cookie_string_a) || count($cookie_string_a)<4) {
-          $cookie_validation = false;
-        } else {
-          $_SESSION['__utype'] = $cookie_string_a[7];
-        }
-        # check if expiry time sets.
-        if(is_numeric($cookie_string_a[2])) {
-          $expiry_time = $cookie_string_a[2];
-          if($expiry_time<time()) {
-            $cookie_validation = false;
-          }
-        } else {
+        $_SESSION['__utype'] = $cookie_string_a[7];
+      }
+      # check if expiry time sets.
+      if(is_numeric($cookie_string_a[2])) {
+        $expiry_time = $cookie_string_a[2];
+        if($expiry_time<time()) {
           $cookie_validation = false;
         }
+      } else {
+        $cookie_validation = false;
       }
+    }
 
-      // dump($_SESSION);
-      // exit;
+    // dump($_SESSION);
+    // exit;
 
-      # check whether the device is allowed or not. Skip this for Administrator temporarily.
-      if( (int)$_SESSION['__utype'] !== 3 && $_SESSION['__just_logged_in'] === false) {
-        if( !(isset($_SESSION['__bq_fp']) && isset($_SESSION['__allowed_devices']))) {
-          Utilities::redirect('/login');
-        } elseif($cookie_validation) {
-          $this_device_id = $_SESSION['__bq_fp'];
-          $allowed_devices = $_SESSION['__allowed_devices'];
-          if(!in_array($this_device_id, $allowed_devices)) {
-            #unset cookie immediately
-            setcookie('__ata__','',time()-86400);
-            unset($_SESSION['ccode'], $_SESSION['uid'], $_SESSION['uname'], 
-                  $_SESSION['utype'], $_SESSION['bc'], $_SESSION['lc'], 
-                  $_SESSION['lname'], $_SESSION['token_valid'], $_SESSION['cname']
-                );
-            Utilities::redirect('/error-device');
-          }
-        } else {
-          session_destroy();
-          Utilities::redirect('/login');          
+    // check whether the device is allowed or not. Skip this for Administrator temporarily.
+    if( (int)$_SESSION['__utype'] !== 3 && $_SESSION['__just_logged_in'] === false) {
+      if( !(isset($_SESSION['__bq_fp']) && isset($_SESSION['__allowed_devices']))) {
+        Utilities::redirect('/login');
+      } elseif($cookie_validation) {
+        $this_device_id = $_SESSION['__bq_fp'];
+        $allowed_devices = $_SESSION['__allowed_devices'];
+        if(!in_array($this_device_id, $allowed_devices)) {
+          #unset cookie immediately
+          setcookie('__ata__','',time()-86400);
+          unset($_SESSION['ccode'], $_SESSION['uid'], $_SESSION['uname'], 
+                $_SESSION['utype'], $_SESSION['bc'], $_SESSION['lc'], 
+                $_SESSION['lname'], $_SESSION['token_valid'], $_SESSION['cname']
+              );
+          Utilities::redirect('/error-device');
         }
+      } else {
+        session_destroy();
+        Utilities::redirect('/login');
       }
+    }
 
-      # redirect user to login if anything went wrong.
-      if($cookie_validation) {
-        $_SESSION['token_valid'] = true;
+    // redirect user to login if anything went wrong.
+    if($cookie_validation) {
+      if(!isset($_SESSION['uid'])) {
         $_SESSION['cname'] = $cookie_string_a[3];
         $_SESSION['ccode'] = $cookie_string_a[4];
         $_SESSION['uid'] = $cookie_string_a[5];
@@ -387,12 +391,15 @@ class Utilities
         $_SESSION['bc'] = $cookie_string_a[8];
         $_SESSION['lc'] = $cookie_string_a[9]; 
         $_SESSION['lname'] = $cookie_string_a[10];
-        return true;
-      } else {
-        unset($_SESSION['token_valid']);
-        unset($_SESSION['cname']);
-        Utilities::redirect('/login');
       }
+      $_SESSION['token_valid'] = true;
+      $_SESSION['last_access_time'] = $current_time;
+      return true;
+    } else {
+      unset($_SESSION['token_valid']);
+      unset($_SESSION['cname']);
+      Utilities::redirect('/login');
+    }
   }
 
   public static function get_fin_payment_methods() {
@@ -783,4 +790,36 @@ class Utilities
       return false;
     }
   }
+
+  public static function get_org_summary() {
+    $api_caller = new ApiCaller();
+    $response = $api_caller->sendRequest('get', 'org-summary', []);
+    if($response['status'] === 'success') {
+      return $response['response'];
+    } elseif($response['status'] === 'failed') {
+      return false;
+    }
+  }
+
+  public static function check_user_inactivity($async = false) {
+    $current_time = time();
+    if(isset($_SESSION['last_access_time']) && $_SESSION['last_access_time'] > 0) {
+      $inactive_period = Constants::$GET_SESSION_INACTIVE_PERIOD;
+      $session_life = $current_time - $_SESSION['last_access_time'];
+      if($session_life >= $inactive_period) {
+        // logout from api.
+        $login_model = new \User\Model\Login;
+        $api_response = $login_model->logout();
+        session_destroy();
+        if($async === false) {
+          Utilities::redirect('/force-logout');
+        } else {
+          return 'expired';
+        }
+      } else {
+        return md5(time().'QwikBills.V.1.0');
+      }
+    }
+  }
+
 }

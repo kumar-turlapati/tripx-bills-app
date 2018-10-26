@@ -8,28 +8,13 @@ use Atawa\Utilities;
 class Products 
 {
 
-	public function get_products($page_no=1, $per_page=100, $search_params=array()) {
+	public function get_products($page_no=1, $per_page=100, $search_params=[]) {
 
 		$params = array();
 		$params['pageNo']  = $page_no;
 		$params['perPage'] = $per_page;
 		if(count($search_params)>0) {
-			if(isset($search_params['medname'])) {
-				$med_name = Utilities::clean_string($search_params['medname']);
-				$params['medName'] = $med_name;
-			}
-			if(isset($search_params['composition'])) {
-				$composition = Utilities::clean_string($search_params['composition']);
-				$params['composition'] = $composition;
-			}
-			if(isset($search_params['category'])) {
-				$category = Utilities::clean_string($search_params['category']);
-				$params['category'] = $category;
-			}
-			if(isset($search_params['mfg'])) {
-				$mfg = Utilities::clean_string($search_params['mfg']);
-				$params['mfg'] = $mfg;
-			}
+			$params = array_merge($params, $search_params);
 		}
 
 		// call api.

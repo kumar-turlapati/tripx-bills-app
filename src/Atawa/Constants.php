@@ -134,4 +134,6 @@ class Constants
     'suppname' => 'Supplier Name',
     'itemname' => 'Item Name',
   ];
+
+  public static $GET_SESSION_INACTIVE_PERIOD = 3600;
 }

@@ -25,7 +25,7 @@ class GrnControllerNew
     $this->grn_model = new GrnNew;    
   }
 
-  // Grn entry Action
+  // GRN entry Action
   public function grnEntryCreateAction(Request $request) {
     
     if( is_null($request->get('poNo')) ) {
@@ -156,7 +156,7 @@ class GrnControllerNew
     return array($this->template->render_view('grn-create',$template_vars),$controller_vars);
   }
 
-  // Grn list action
+  // GRN list action
   public function grnListAction(Request $request) {
     $suppliers= $search_params = $suppliers_a = $grns_a = array();
 
@@ -264,7 +264,7 @@ class GrnControllerNew
     return array($this->template->render_view('grn-register',$template_vars),$controller_vars);
   }
 
-  // Grn view action
+  // GRN view action
   public function grnViewAction(Request $request) {
     # initialize variables.
     $po_no = '';
@@ -324,7 +324,7 @@ class GrnControllerNew
     return array($this->template->render_view('grn-view-new',$template_vars),$controller_vars);    
   }
 
-  /******************************* Private functions should start from here ***********************/
+  // Validate form data
   private function _validate_form_data($submitted_data=[]) {
     $form_errors = $cleaned_params = [];
 

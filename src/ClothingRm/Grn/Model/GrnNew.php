@@ -7,7 +7,7 @@ use Atawa\Utilities;
 
 class GrnNew
 {
-	# create GRN api.
+	// create GRN api.
 	public function createGRN($params=array()) {
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'grn/v2/'.$client_id;
@@ -22,7 +22,7 @@ class GrnNew
 		}
 	}
 
-	# get GRN Details by GRN No or GRN Code
+	// get GRN Details by GRN No or GRN Code
 	public function get_grn_details($grn_code='') {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
@@ -45,7 +45,7 @@ class GrnNew
 		}
 	}
 
-	# Get GRNs from the portal
+	// Get GRNs from the portal
 	public function get_grns($page_no=1,$per_page=100,$search_params=[]) {
 		$params = [];
 		$params['pageNo']  = $page_no;
@@ -90,6 +90,18 @@ class GrnNew
 				'apierror' => $response['reason']
 			);
 		}	
-	}	
+	}
 
+	// delete GRN
+	public function deleteGRN($params = []) {
+		$request_uri = 'grn/delete';
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post',$request_uri,$params);
+		$status = $response['status'];
+		if($status === 'success') {
+			return array('status' => true);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}	
 }

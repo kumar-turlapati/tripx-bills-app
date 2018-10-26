@@ -24,6 +24,9 @@ $routes->add('send_otp', new Routing\Route('/send-otp', array(
 $routes->add('qbId', new Routing\Route('/id__mapper', array(
   '_controller' => 'User\\Controller\\LoginController::idMapper',
 )));
+$routes->add('auto_logout', new Routing\Route('/__id__lo', array(
+  '_controller' => 'User\\Controller\\LoginController::autoLogout',
+)));
 
 $routes->add('logout', new Routing\Route('/logout', array(
   '_controller' => 'User\\Controller\\LoginController::logoutAction',
@@ -502,17 +505,17 @@ $routes->add('users_create', new Routing\Route('/users/create', array(
 )));
 
 // Admin Options
-$routes->add('adminOptions_askForBillNo', new Routing\Route('/admin-options/enter-bill-no', array(
-  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::askForBillNo',
+$routes->add('adminOptions_deleteGRN', new Routing\Route('/admin-options/delete-grn', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deleteGRN',
+)));
+$routes->add('adminOptions_deletePO', new Routing\Route('/admin-options/delete-po', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deletePO',
+)));
+$routes->add('adminOptions_deletePO', new Routing\Route('/admin-options/org-summary', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::orgSummary',
 )));
 $routes->add('adminOptions_editBusinessInfo', new Routing\Route('/admin-options/edit-business-info', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editBusinessInfoAction',
-)));
-$routes->add('adminOptions_editSalesBill', new Routing\Route('/admin-options/edit-sales-bill', array(
-  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editSalesBillAction',
-)));
-$routes->add('adminOptions_deleteSaleBill', new Routing\Route('/admin-options/delete-sale-bill', array(
-  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deleteSaleBill',
 )));
 
 // file uploader
@@ -559,6 +562,9 @@ $routes->add('error_page_404', new Routing\Route('/error-404', array(
 )));
 $routes->add('error_device', new Routing\Route('/error-device', array(
   '_controller' => 'User\\Controller\\DashBoardController::errorActionDevice',
+)));
+$routes->add('force_logout', new Routing\Route('/force-logout', array(
+  '_controller' => 'User\\Controller\\DashBoardController::forceLogoutAction',
 )));
 
 // Stock transfer routes.
@@ -820,4 +826,15 @@ $routes->add('report_inventoryProfitability', new Routing\Route('/inventory-prof
 )));
 $routes->add('report_momComparison', new Routing\Route('/mom-comparison', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::momComparison',
-)));*/
+)));
+
+$routes->add('adminOptions_editSalesBill', new Routing\Route('/admin-options/edit-sales-bill', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editSalesBillAction',
+)));
+$routes->add('adminOptions_deleteSaleBill', new Routing\Route('/admin-options/delete-sale-bill', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deleteSaleBill',
+)));
+$routes->add('adminOptions_editPOAfterGRN', new Routing\Route('/admin-options/edit-po', array(
+  '_controller' => 'PharmaRetail\\AdminOptions\\Controller\\AdminOptionsController::editPoAction',
+)));
+*/

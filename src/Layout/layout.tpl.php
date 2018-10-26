@@ -25,7 +25,7 @@
 <?php include "partials/head.tpl.php" ?>
 <!--head end-->
 
-<body<?php echo $body_class ?>>
+<body<?php echo $body_class ?> id="qbMain">
 
 <?php if(isset($disable_layout) && $disable_layout): ?>
 
@@ -44,9 +44,10 @@
     <?php if( !isset($disable_sidebar) ): ?>
       <!--sidebar start-->
       <?php include "partials/$bc/sidebar-$role_id.tpl.php"; ?>
-      <form id="bQ"><input type="hidden" name="__bq_pub" id="__bq_pub" value="" /></form>
       <!--sidebar end-->
     <?php endif; ?>
+
+    <form id="bQ"><input type="hidden" name="__bq_pub" id="__bq_pub" value="" /></form>
     
     <!--main content start-->
     <section id="main-content"<?php echo $main_content_margin ?>>

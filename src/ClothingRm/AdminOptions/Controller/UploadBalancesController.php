@@ -32,12 +32,15 @@ class UploadBalancesController {
   // upload debtors action
   public function uploadDebtorsAction(Request $request) {
     // variable assignments.
-    $import_data = $form_errors = [];
+    $import_data = $form_errors = $form_data = [];
     $upload_errors = [];
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
     $allowed_extensions = ['xls', 'ods', 'xlsx'];
     $redirect_url = '/upload-debtors';
     $op = -1;
+
+    # ---------- get location codes from api -------------
+    $client_locations = Utilities::get_client_locations();
 
     // form submit
     if(count($request->request->all()) > 0) {
@@ -120,7 +123,9 @@ class UploadBalancesController {
       'op' => $op,
       'flash' => $this->flash,
       'form_errors' => $form_errors,
+      'form_data' => $form_data,
       'upload_errors' => $upload_errors,
+      'client_locations' => array(''=>'Choose') + $client_locations,
     );
 
     // build variables
@@ -136,12 +141,15 @@ class UploadBalancesController {
   public function uploadCreditorsAction(Request $request) {
 
     // variable assignments.
-    $import_data = $form_errors = [];
+    $import_data = $form_errors = $form_data = [];
     $upload_errors = [];
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
     $allowed_extensions = ['xls', 'ods', 'xlsx'];
     $redirect_url = '/upload-creditors';
     $op = -1;
+
+    # ---------- get location codes from api -------------
+    $client_locations = Utilities::get_client_locations();
 
     // form submit
     if(count($request->request->all()) > 0) {
@@ -224,7 +232,9 @@ class UploadBalancesController {
       'op' => $op,
       'flash' => $this->flash,
       'form_errors' => $form_errors,
+      'form_data' => $form_data,
       'upload_errors' => $upload_errors,
+      'client_locations' => array(''=>'Choose') + $client_locations,      
     );
 
     // build variables
@@ -392,17 +402,26 @@ class UploadBalancesController {
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
 
     $op = Utilities::clean_string($form_data['op']);
+    $location_code = Utilities::clean_string($form_data['locationCode']);
+
+    # ---------- get location codes from api -------------
+    $client_location_keys = array_keys(Utilities::get_client_locations()); 
 
     # check uploaded file information
     $file_details = $_FILES['fileName'];
     $file_name = $file_details['name'];
     if(trim($file_name) === '') {
-      $form_errors['fileName'] = 'Please upload a file.';
+      $form_errors['fileName'] = 'Invalid file upload.';
     }
     if( $op < 0 || !in_array($op, array_keys($op_a)) ) {
-      $form_errors['op'] = 'Please choose an option';
+      $form_errors['op'] = 'Upload action is required.';
     } else {
       $cleaned_params['op'] = $op;
+    }
+    if($location_code !== '' && in_array($location_code, $client_location_keys)) {
+      $cleaned_params['locationCode'] = $location_code;
+    } else {
+      $form_errors['locationCode'] = 'Invalid store name.';
     }
 
     if(count($form_errors)>0) {

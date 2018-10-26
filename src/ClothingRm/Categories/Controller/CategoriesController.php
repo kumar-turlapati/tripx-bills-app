@@ -120,10 +120,10 @@ class CategoriesController
       'submitted_data' => $submitted_data,
       'form_errors' => $form_errors,
       'flash_obj' => $this->flash,
-      'client_locations' => array(''=>'Choose') + $client_locations,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'location_ids' => $location_ids,
-      'location_codes' => $location_codes,      
+      'location_codes' => $location_codes,
     );
 
     # build variables

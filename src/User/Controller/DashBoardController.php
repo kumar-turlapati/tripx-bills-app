@@ -61,6 +61,19 @@ class DashBoardController
     return array($template->render_view('error-device',$template_vars),$controller_vars);    
   }
 
+  public function forceLogoutAction() {
+    $controller_vars = array(
+      'page_title' => 'Auto Logout',
+      'disable_layout' => true,
+    );
+
+    $template_vars = array(
+    );
+
+    $template = new Template($this->views_path);
+    return array($template->render_view('force-logout', $template_vars), $controller_vars);    
+  }
+
   /** 404 error template **/
   public function errorActionNotFound() {
 

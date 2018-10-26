@@ -71,7 +71,7 @@ class LoginController
     }
   }
 
-  /* forgot password */
+  // forgot password
   public function forgotPasswordAction(Request $request) {
 
     # initialize variables.
@@ -184,7 +184,7 @@ class LoginController
     exit;
   }
 
-  # redirect the user to dashboard based on category.
+  // redirect the user to dashboard based on category.
   private function _redirect_to_dashboard() {
     $bc = isset($_SESSION['bc'])&&$_SESSION['bc']>0?$_SESSION['bc']:0;
     if((int)$bc === 3) {
@@ -206,4 +206,8 @@ class LoginController
     exit;
   }
 
+  public function autoLogout(Request $request) {
+    echo Utilities::check_user_inactivity(true);
+    exit;
+  }  
 }

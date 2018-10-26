@@ -33,17 +33,17 @@ class Framework {
     $this->matcher->getContext()->fromRequest($request);
     $path = $request->getPathInfo();
 
-    # validate access token before loading any route except listed routes here.
-    if($path !== '/login' && $path !== '/forgot-password' && $path !== '/send-otp' && $path !== '/reset-password' && $path !== '' && $path !== '/error-device' && $path !== '/id__mapper') {
-      # check device information.
+    // validate access token before loading any route except listed routes here.
+    if(in_array($path, $this->_skip_routes_for_token_validation()) === false) {
+      // check device information.
       Utilities::check_device_name();
 
-      # check access token
+      // check access token
       Utilities::check_access_token();
 
       # check ACL.
-      $role_id = isset($_SESSION['utype'])&&$_SESSION['utype']>0?$_SESSION['utype']:0;
-      Utilities::acls($role_id, $path);          
+      $role_id = isset($_SESSION['utype'])&&$_SESSION['utype']>0?$_SESSION['utype'] : 0;
+      Utilities::acls($role_id, $path);
     }
 
     try {
@@ -84,5 +84,15 @@ class Framework {
       }
       return new Response('An error occurred', 500);
     }
+  }
+
+  private function _skip_routes_for_token_validation() {
+    return [
+      '/login', '/forgot-password', '/send-otp',
+      '/reset-password', '/error-device', '',
+      '/id__mapper',
+      '/force-logout',
+      '/__id__lo',
+    ];
   }
 }

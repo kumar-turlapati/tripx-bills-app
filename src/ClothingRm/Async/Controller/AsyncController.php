@@ -35,8 +35,9 @@ class AsyncController {
         $response = $api_caller->sendRequest('get',$end_point,$params,false,true);
         Utilities::print_json_response($response,false);
       }
-    } elseif($api_string==='itemsAc') {
-      $params['q'] = $request->get('a');
+    } elseif($api_string === 'itemsAc') {
+      $params['q'] = Utilities::clean_string($request->get('a'));
+      $params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
       $response = $api_caller->sendRequest('get','products/ac',$params,false);
       if(count($response)>0 && is_array($response)) {
         echo implode($response,"\n");

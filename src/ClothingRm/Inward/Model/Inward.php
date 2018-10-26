@@ -145,18 +145,16 @@ class Inward
 		}
 	}
 
-/*	public function updateInwardAfterGrn($params=[], $inward_code='') {
-		$client_id = Utilities::get_current_client_id();
-		$request_uri = 'inw-update-after-grn/'.$inward_code.'/'.$client_id;
-
-		# call api.
+	public function delete_po($form_data=[]) {
+		$request_uri = 'purchases/delete';
+		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('put',$request_uri,$params);
+		$response = $api_caller->sendRequest('post',$request_uri,$form_data);
 		$status = $response['status'];
-		if ($status === 'success') {
+		if($status === 'success') {
 			return array('status'=>true);
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);
-		}		
-	}*/	
+		}
+	}
 }

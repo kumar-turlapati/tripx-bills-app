@@ -138,31 +138,41 @@ class ProductsController {
   }
 
   public function listProductsOrServices(Request $request) {
-    $products_list = $search_params = $products = array();
-    $categories = array(''=>'Choose');
+    $categories = array(''=>'All Categories');
+
+    $products_list = $search_params = $products = $location_ids = $location_codes = [];
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
     $show_add_link = false;
 
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+
     $flash = new Flash;        
     $product_api_call = new Products;
+    $search_params = [];
 
-    $page_no = !is_null($request->get('pageNo')) ? $request->get('pageNo') : 1;
-    $per_page = !is_null($request->get('perPage')) ? $request->get('perPage') : 100;
+    $page_no = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
+    $per_page = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 100;
+    $ps_name = !is_null($request->get('psName')) ? Utilities::clean_string($request->get('psName')) : '';
+    $category = !is_null($request->get('category')) ? Utilities::clean_string($request->get('category')) : '';
+    $mfg = !is_null($request->get('mfg')) ? Utilities::clean_string($request->get('mfg')) : '';
+    $location_code = $request->get('locationCode')!== null ? Utilities::clean_string($request->get('locationCode')) : $default_location;
 
-    if(count($request->request->all()) > 0) {
-      $search_params = $request->request->all();
-    } elseif($request->get('medname')) {
-      $search_params['medname'] = $request->get('medname');
-    } elseif($request->get('composition')) {
-      $search_params['composition'] =  $request->get('composition');
-    } elseif($request->get('category')) {
-      $search_params['category'] =  $request->get('category');
-    } elseif($request->get('mfg')) {
-      $search_params['mfg'] =  $request->get('mfg');            
-    } else {
-      $search_params = array();
+    $search_params = [
+      'psName' => $ps_name,
+      'category' => $category,
+      'mfg' => $mfg,
+      'locationCode' => $location_code,
+      'medname' => $ps_name,
+    ];
+
+    # ---------- get location codes from api -----------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
     }
 
     $products_list = $product_api_call->get_products($page_no, $per_page, $search_params);
@@ -173,7 +183,7 @@ class ProductsController {
     if($api_status) {
       // check whether we got products or not.
       if(count($products_list['products']) >0) {
-        $categories = array(''=>'Choose')+$product_api_call->get_product_categories();
+        $categories = array('' => 'All Categories')+$product_api_call->get_product_categories();
         $slno = Utilities::get_slno_start(count($products_list['products']), $per_page, $page_no);
         $to_sl_no = $slno+$per_page;
         $slno++;
@@ -220,7 +230,11 @@ class ProductsController {
       'search_params' => $search_params,
       'page_error' => $page_error,
       'page_success' => $page_success,
-      'flash_obj'  => $flash
+      'flash_obj'  => $flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     // render template

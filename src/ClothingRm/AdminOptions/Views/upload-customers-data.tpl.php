@@ -1,6 +1,9 @@
 <?php
 	use Atawa\CrmUtilities;
 	use Atawa\Utilities;
+
+  $location_code = isset($form_data['locationCode']) ? $form_data['locationCode'] : '';
+  $op = isset($form_data['op']) ? $form_data['op'] : '';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -33,11 +36,40 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php 
+                    foreach($client_locations as $key=>$value): 
+                      if($location_code === $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Upload action</label>
               <div class="select-wrap">
                 <select class="form-control" id="op" name="op">
-                  <?php foreach($op_a as $key=>$value): ?>
-                    <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                  <?php 
+                    foreach($op_a as $key => $value):
+                      if($op == $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }                      
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                   <?php endforeach; ?>
                 </select>
               </div>
