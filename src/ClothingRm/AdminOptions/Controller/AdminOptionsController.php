@@ -32,11 +32,9 @@ class AdminOptionsController
     $this->grn_model = new GrnNew;
 	}
 
+  // delete Org. Summary
   public function orgSummary(Request $request) {
     $org_summary = Utilities::get_org_summary();
-    if($org_summary === false) {
-      
-    }
 
     // prepare form variables.
     $template_vars = array(
@@ -46,14 +44,14 @@ class AdminOptionsController
     // build variables
     $controller_vars = array(
       'page_title' => 'Organization Summary',
-      'icon_name' => 'fa fa-ravelry',
+      'icon_name' => 'fa fa-server',
     );
 
     // render template
     return array($this->template->render_view('org-summary',$template_vars),$controller_vars);
-
   }
 
+  // delete GRN
   public function deleteGRN(Request $request) {
     $form_errors = $submitted_data = $suppliers = [];
     $client_locations = $suppliers_a = [];
@@ -106,6 +104,7 @@ class AdminOptionsController
     return array($this->template->render_view('inward-info',$template_vars),$controller_vars);    
   }
 
+  // delete PO
   public function deletePO(Request $request) {
     $form_errors = $submitted_data = $suppliers = [];
     $client_locations = $suppliers_a = [];
@@ -158,95 +157,49 @@ class AdminOptionsController
     return array($this->template->render_view('inward-info',$template_vars),$controller_vars);    
   }
 
-  // edit sales bill with limited information
-	public function editSalesBillAction(Request $request) {
+  // delete Invoice
+  public function deleteInvoice(Request $request) {
+    $form_errors = $submitted_data = [];
 
-    $errors = $sales_details = $submitted_data = array();
-    $page_error = $page_success = '';
+    // get location codes
+    $client_locations = Utilities::get_client_locations();
 
-    if($request->get('billNo') && $request->get('billNo')!=='') {
-      $bill_no = Utilities::clean_string($request->get('billNo'));
-      $sales_response = $this->sales_model->get_sales_details($bill_no,true);
-      if($sales_response['status']===true) {
-        $sales_details = $sales_response['saleDetails'];
-      } else {
-        $page_error = $sales_response['apierror'];
-        $flash->set_flash_message($page_error,1);
-        Utilities::redirect('/admin-options/enter-bill-no');
-      }
-    } else {
-      $this->flash->set_flash_message('Invalid Bill No. (or) Bill does not exist.',1);
-      Utilities::redirect('/admin-options/enter-bill-no');
-    }
-
+    // check for form Submission
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
-      $sales_code = $sales_details['invoiceCode'];
-      $sales_response = $this->sales_model->updateSale($submitted_data,$sales_code);
-     	$status = $sales_response['status'];
-     	if($status===false) {
-        if(isset($sales_response['errors'])) {
-          if(isset($sales_response['errors']['itemDetails'])) {
-            $page_error = $sales_response['errors']['itemDetails'];
-            unset($sales_response['errors']['itemDetails']);
-          }
-          $errors = $sales_response['errors'];
-        } elseif(isset($sales_response['apierror'])) {
-          $page_error = $sales_response['apierror'];
+      $form_validation = $this->_validate_invoice_details($submitted_data, $client_locations);
+      if($form_validation['status']===false) {
+        $form_errors = $form_validation['errors'];
+      } else {
+        $api_response = $this->sales_model->remove_sales_transaction($submitted_data);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('Invoice Deleted successfully.');
+          Utilities::redirect('/admin-options/delete-invoice');
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
         }
-     	} else {
-        $this->flash->set_flash_message('Sales transaction with Bill No. <b>'.$sales_details['billNo']. '</b> updated successfully');
-        $redirect_url = '/admin-options/edit-sales-bill?billNo='.$bill_no;
-        Utilities::redirect($redirect_url);
-     	}
+      }
+    }    
 
-    } elseif(count($sales_details)>0) {
-      $submitted_data = $sales_details;
-    }
-
-    $qtys_a = array(0=>'Sel');
-		$doctors_a = array(-1=>'Choose', 0=>'D.M.O')+$this->sales_model->get_doctors();
-    $ages_a[0] = 'Choose';
-    for($i=1;$i<=150;$i++) {
-      $ages_a[$i] = $i;
-    }
-    for($i=1;$i<=365;$i++) {
-      $credit_days_a[$i] = $i;
-    }
-    for($i=1;$i<=500;$i++) {
-      $qtys_a[$i] = $i;
-    }
-
-    // prepare form variables.
+     // prepare form variables.
     $template_vars = array(
-	    'sale_types' => Constants::$SALE_TYPES,
-	    'sale_modes' => Constants::$SALE_MODES,
-	    'status' => Constants::$RECORD_STATUS,
-	    'doctors' => $doctors_a,
-	    'age_categories' => Constants::$AGE_CATEGORIES,
-	    'genders' => array(''=>'Choose') + Constants::$GENDERS,
-	    'payment_methods' => Constants::$PAYMENT_METHODS,
-	    'ages' => $ages_a,
-	    'credit_days_a' => array(0=>'Choose') +$credit_days_a,
-	    'qtys_a' => $qtys_a,
-	    'yes_no_options' => array(''=>'Choose', 1=>'Yes', 0=>'No'),
-	    'errors' => $errors,
-	    'page_error' => $page_error,
-	    'page_success' => $page_success,
-	    'btn_label' => 'Edit sale transaction',
-	    'submitted_data' => $submitted_data,
-	    'flash' => $this->flash,
+      'errors' => $form_errors,
+      'submitted_data' => $submitted_data,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'flash_obj' => $this->flash,
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Edit Sales Bill',
+      'page_title' => 'Delete Invoice',
       'icon_name' => 'fa fa-inr',
     );
 
     // render template
-    return array($this->template->render_view('edit-sale-bill',$template_vars),$controller_vars);
-	}
+    return array($this->template->render_view('delete-invoice',$template_vars),$controller_vars);
+  }  
 
   // update business information
 	public function editBusinessInfoAction(Request $request) {
@@ -300,51 +253,6 @@ class AdminOptionsController
     // render template
     return array($this->template->render_view('edit-business-info',$template_vars),$controller_vars);
 	}
-
-  // delete Sale Bill
-  public function deleteSaleBill(Request $request) {
-    $page_error = $page_title = $bill_no = '';
-    if(count($request->request->all()) > 0) {
-      $bill_no = Utilities::clean_string($request->get('delSaleBill'));
-      $bill_details = $this->sales_model->get_sales_details($bill_no,true);
-      if($bill_details['status']) {
-        # delete sale bill api.
-        $api_response = $this->sales_model->removeSalesTransaction($bill_details['saleDetails']['invoiceCode']);
-        $status = $api_response['status'];
-        if($status===false) {
-          if(isset($api_response['errors'])) {
-            if(isset($api_response['errors']['itemDetails'])) {
-              $page_error = $api_response['errors']['itemDetails'];
-              unset($api_response['errors']['itemDetails']);
-            }
-            $errors = $api_response['errors'];
-          } elseif(isset($api_response['apierror'])) {
-            $page_error = $api_response['apierror'];
-          }
-        } else {
-          $this->flash->set_flash_message('Sales transaction with Bill No. <b>'.$bill_no. '</b> deleted successfully');
-          Utilities::redirect('/admin-options/delete-sale-bill');
-        }
-      } else {
-        $page_error = 'Invalid Bill No. (or) Bill does not exist.';
-      }
-    }
-
-     // prepare form variables.
-    $template_vars = array(
-      'page_error' => $page_error,
-      'bill_no' => $bill_no,
-    );
-
-    // build variables
-    $controller_vars = array(
-      'page_title' => 'Delete Sale Bill',
-      'icon_name' => 'fa fa-times',
-    );
-
-    // render template
-    return array($this->template->render_view('delete-sale-bill',$template_vars),$controller_vars);
-  }
 
   // validation of business info.
   private function _validate_businessinfo($form_data=[]) {
@@ -443,6 +351,36 @@ class AdminOptionsController
       ];
     }
   }
+
+  private function _validate_invoice_details($form_data=[], $locations=[]) {
+    $cleaned_params = $errors = [];
+
+    $voc_no = isset($form_data['vocNo']) ? Utilities::clean_string($form_data['vocNo']) : '';
+    $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : '';
+    $location_keys = array_keys($locations);
+
+    if($voc_no === '') {
+      $errors['vocNo'] = 'Invoice Number is required.';
+    } else {
+      $cleaned_params['vocNo'] = $voc_no;
+    }
+    if(in_array($location_code, $location_keys)) {
+      $cleaned_params['locationCode'] = $location_code;
+    } else {
+      $errors['locationCode'] = 'Invalid Store Name.';
+    }
+    if(count($errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
+  }
 }
 
 /*
@@ -511,4 +449,122 @@ class AdminOptionsController
 
     // render template
     return array($this->template->render_view('ask-for-billno',$template_vars),$controller_vars);
-  }*/
+  }
+
+    if(count($request->request->all()) > 0) {
+      $bill_no = Utilities::clean_string($request->get('delSaleBill'));
+      $bill_details = $this->sales_model->get_sales_details($bill_no,true);
+      if($bill_details['status']) {
+        # delete sale bill api.
+        $api_response = $this->sales_model->removeSalesTransaction($bill_details['saleDetails']['invoiceCode']);
+        $status = $api_response['status'];
+        if($status===false) {
+          if(isset($api_response['errors'])) {
+            if(isset($api_response['errors']['itemDetails'])) {
+              $page_error = $api_response['errors']['itemDetails'];
+              unset($api_response['errors']['itemDetails']);
+            }
+            $errors = $api_response['errors'];
+          } elseif(isset($api_response['apierror'])) {
+            $page_error = $api_response['apierror'];
+          }
+        } else {
+          $this->flash->set_flash_message('Sales transaction with Bill No. <b>'.$bill_no. '</b> deleted successfully');
+          Utilities::redirect('/admin-options/delete-invoice');
+        }
+      } else {
+        $page_error = 'Invalid Bill No. (or) Bill does not exist.';
+      }
+    }
+
+  // edit sales bill with limited information
+  public function editSalesBillAction(Request $request) {
+
+    $errors = $sales_details = $submitted_data = array();
+    $page_error = $page_success = '';
+
+    if($request->get('billNo') && $request->get('billNo')!=='') {
+      $bill_no = Utilities::clean_string($request->get('billNo'));
+      $sales_response = $this->sales_model->get_sales_details($bill_no,true);
+      if($sales_response['status']===true) {
+        $sales_details = $sales_response['saleDetails'];
+      } else {
+        $page_error = $sales_response['apierror'];
+        $flash->set_flash_message($page_error,1);
+        Utilities::redirect('/admin-options/enter-bill-no');
+      }
+    } else {
+      $this->flash->set_flash_message('Invalid Bill No. (or) Bill does not exist.',1);
+      Utilities::redirect('/admin-options/enter-bill-no');
+    }
+
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $sales_code = $sales_details['invoiceCode'];
+      $sales_response = $this->sales_model->updateSale($submitted_data,$sales_code);
+      $status = $sales_response['status'];
+      if($status===false) {
+        if(isset($sales_response['errors'])) {
+          if(isset($sales_response['errors']['itemDetails'])) {
+            $page_error = $sales_response['errors']['itemDetails'];
+            unset($sales_response['errors']['itemDetails']);
+          }
+          $errors = $sales_response['errors'];
+        } elseif(isset($sales_response['apierror'])) {
+          $page_error = $sales_response['apierror'];
+        }
+      } else {
+        $this->flash->set_flash_message('Sales transaction with Bill No. <b>'.$sales_details['billNo']. '</b> updated successfully');
+        $redirect_url = '/admin-options/edit-sales-bill?billNo='.$bill_no;
+        Utilities::redirect($redirect_url);
+      }
+
+    } elseif(count($sales_details)>0) {
+      $submitted_data = $sales_details;
+    }
+
+    $qtys_a = array(0=>'Sel');
+    $doctors_a = array(-1=>'Choose', 0=>'D.M.O')+$this->sales_model->get_doctors();
+    $ages_a[0] = 'Choose';
+    for($i=1;$i<=150;$i++) {
+      $ages_a[$i] = $i;
+    }
+    for($i=1;$i<=365;$i++) {
+      $credit_days_a[$i] = $i;
+    }
+    for($i=1;$i<=500;$i++) {
+      $qtys_a[$i] = $i;
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'sale_types' => Constants::$SALE_TYPES,
+      'sale_modes' => Constants::$SALE_MODES,
+      'status' => Constants::$RECORD_STATUS,
+      'doctors' => $doctors_a,
+      'age_categories' => Constants::$AGE_CATEGORIES,
+      'genders' => array(''=>'Choose') + Constants::$GENDERS,
+      'payment_methods' => Constants::$PAYMENT_METHODS,
+      'ages' => $ages_a,
+      'credit_days_a' => array(0=>'Choose') +$credit_days_a,
+      'qtys_a' => $qtys_a,
+      'yes_no_options' => array(''=>'Choose', 1=>'Yes', 0=>'No'),
+      'errors' => $errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => 'Edit sale transaction',
+      'submitted_data' => $submitted_data,
+      'flash' => $this->flash,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Edit Sales Bill',
+      'icon_name' => 'fa fa-inr',
+    );
+
+    // render template
+    return array($this->template->render_view('edit-sale-bill',$template_vars),$controller_vars);
+  }
+
+  */

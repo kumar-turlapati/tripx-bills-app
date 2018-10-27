@@ -140,7 +140,7 @@ class GrnControllerNew
     # theme variables.
     $controller_vars = array(
       'page_title' => 'Godown Receipt Note',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-gavel',
     );
     $template_vars = array(
       'utilities' => new Utilities,      
@@ -257,7 +257,7 @@ class GrnControllerNew
     // build variables
     $controller_vars = array(
       'page_title' => 'GRN Register',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-gavel',
     );
 
     // render template
@@ -317,7 +317,7 @@ class GrnControllerNew
     // build variables
     $controller_vars = array(
       'page_title' => 'View GRN Entry',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-gavel',
     );
 
     // render template

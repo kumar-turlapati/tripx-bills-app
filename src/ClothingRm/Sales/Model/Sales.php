@@ -165,28 +165,28 @@ class Sales {
 			return array('status' => false, 'apierror' => $response['reason']);
 		}
 	}
+
+	// Remove Sales Transaction.
+	public function remove_sales_transaction($params=[]) {
+		$client_id = Utilities::get_current_client_id();
+		$end_point = 'sales-entry/'.$client_id;
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('delete',$end_point,$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
+
+
 }
 
 
-// /**
-// * Remove Sales Transaction.
-// **/
-// public function removeSalesTransaction($sales_code='') {
 
-// $client_id = Utilities::get_current_client_id();
-// $end_point = 'sales-entry/'.$client_id.'/'.$sales_code;
-// $params = array();
-
-// // call api.
-// $api_caller = new ApiCaller();
-// $response = $api_caller->sendRequest('delete',$end_point,$params);
-// $status = $response['status'];
-// if ($status === 'success') {
-// return array('status' => true);
-// } elseif($status === 'failed') {
-// return array('status' => false, 'apierror' => $response['reason']);
-// }
-// }
 
 // public function get_sales_summary_bymon($search_params) {
 

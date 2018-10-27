@@ -511,12 +511,15 @@ $routes->add('adminOptions_deleteGRN', new Routing\Route('/admin-options/delete-
 $routes->add('adminOptions_deletePO', new Routing\Route('/admin-options/delete-po', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deletePO',
 )));
-$routes->add('adminOptions_deletePO', new Routing\Route('/admin-options/org-summary', array(
+$routes->add('adminOptions_deleteInvoice', new Routing\Route('/admin-options/delete-invoice', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deleteInvoice',
+)));
+$routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-summary', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::orgSummary',
 )));
-$routes->add('adminOptions_editBusinessInfo', new Routing\Route('/admin-options/edit-business-info', array(
-  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editBusinessInfoAction',
-)));
+// $routes->add('adminOptions_editBusinessInfo', new Routing\Route('/admin-options/edit-business-info', array(
+//   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editBusinessInfoAction',
+// )));
 
 // file uploader
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(

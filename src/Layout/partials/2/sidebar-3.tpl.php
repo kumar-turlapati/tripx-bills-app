@@ -86,8 +86,8 @@
               <i class="fa fa-compass"></i> Purchases <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Purchase Register</a></li>
-              <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN Register</a></li>
+              <li><a href="/inward-entry/list"><i class="fa fa-laptop"></i> Purchase Register</a></li>
+              <li><a href="/grn/list"><i class="fa fa-gavel"></i> GRN Register</a></li>
               <li><a href="/purchase-return/register"><i class="fa fa-undo"></i> Purchase Returns Reg.</a></li>
             </ul>
           </li>
@@ -209,11 +209,26 @@
               </li>
             </ul>
           </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-times"></i> Delete Vouchers <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/admin-options/delete-grn"><i class="fa fa-gavel"></i> Delete GRN</a></li>          
+              <li><a href="/admin-options/delete-po"><i class="fa fa-laptop"></i> Delete PO</a></li>
+              <li><a href="/admin-options/delete-invoice"><i class="fa fa-inr"></i> Delete Invoice</a></li> 
+            </ul>
+          </li>
           <li>
             <a href="/devices/list" title="Register devices to access the application">
-              <i class="fa fa-lock"></i> Devices List
+              <i class="fa fa-lock"></i> Devices Registered
             </a>
           </li>
+          <li>
+            <a href="/admin-options/org-summary" title="Organization Summary">
+              <i class="fa fa-server"></i> Organization Summary
+            </a>
+          </li>          
           <li>
             <a href="/users/list" title="Manage users who use this app">
               <i class="fa fa-user-circle"></i> System Users
