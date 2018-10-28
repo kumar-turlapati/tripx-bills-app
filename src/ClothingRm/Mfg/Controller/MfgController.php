@@ -186,7 +186,7 @@ class MfgController
         $record_count = $api_response['mfgs']['this_page'];
       } else {
         $page_error = $api_response['apierror'];
-        $this->flash->set_flash_message($page_error);
+        $this->flash->set_flash_message($page_error, 1);
       }
     } else {
       $page_error = $api_response['apierror'];

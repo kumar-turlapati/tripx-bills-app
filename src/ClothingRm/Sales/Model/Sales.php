@@ -27,6 +27,9 @@ class Sales {
 	public function get_sales($page_no=1, $per_page=200, $search_params=[]) {
 		$client_id = Utilities::get_current_client_id();
 
+		$search_params['pageNo'] = $page_no;
+		$search_params['perPage'] = $per_page;
+
 		// call api.
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get','sales-register/'.$client_id,$search_params);

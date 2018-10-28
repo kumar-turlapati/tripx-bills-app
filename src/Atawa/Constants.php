@@ -136,4 +136,6 @@ class Constants
   ];
 
   public static $GET_SESSION_INACTIVE_PERIOD = 3600;
+
+  public static $REPORTS_ERROR_MESSAGE = '<i class="fa fa-exclamation-triangle"></i> No data is available. Change report filters and try again.';
 }

@@ -339,8 +339,6 @@ $routes->add('list_campaigns', new Routing\Route('/campaigns/list', array(
   '_controller' => 'Campaigns\\Controller\\CampaignsController::listCampaigns',
 )));
 
-/******************************************* Finance routes ***********************************************/
-
 // Supplier opening balance
 $routes->add('fin_supp_opbal_create', new Routing\Route('/fin/supp-opbal/create', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierOpBalCreateAction',
@@ -376,21 +374,8 @@ $routes->add('fin_cust_opbal_import', new Routing\Route('/fin/cust-opbal/import'
   '_controller' => 'ClothingRm\\Finance\\Controller\\FinCustOpBalController::customerOpBalImportAction',
 )));
 
-// Supplier outstanding
-$routes->add('fin_supp_billwise_outstanding', new Routing\Route('/fin/billwise-outstanding', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierBillwiseOsAction',
-)));
-$routes->add('fin_supp_ason_outstanding', new Routing\Route('/fin/supp-outstanding-ason', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierBillwiseAsonAction',
-)));
-$routes->add('fin_supp_ledger', new Routing\Route('/fin/supplier-ledger', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierLedger',
-)));
 
 // Receivables
-$routes->add('fin_receivables', new Routing\Route('/fin/receivables-ason', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\ReceiptsController::receivablesListAsonAction',
-)));
 $routes->add('receipt_voc_create', new Routing\Route('/fin/receipt-voucher/create', array(
 '_controller' => 'ClothingRm\\Finance\\Controller\\ReceiptsController::receiptCreateAction',
 )));
@@ -517,9 +502,7 @@ $routes->add('adminOptions_deleteInvoice', new Routing\Route('/admin-options/del
 $routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-summary', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::orgSummary',
 )));
-// $routes->add('adminOptions_editBusinessInfo', new Routing\Route('/admin-options/edit-business-info', array(
-//   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editBusinessInfoAction',
-// )));
+
 
 // file uploader
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(
@@ -650,6 +633,42 @@ $routes->add('barcode_opening', new Routing\Route('/barcode/opbal/{pageNo}', arr
   'pageNo' => null,
 )));
 
+// sales indent
+$routes->add('create_sindent', new Routing\Route('/sales-indent/create', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndent',
+)));
+$routes->add('update_sindent', new Routing\Route('/sales-indent/update/{indentCode}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndent',
+  'indentCode' => null,
+)));
+$routes->add('change_sindent_status', new Routing\Route('/sales-indent/update-status/{indentCode}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndentStatus',
+  'indentCode' => null,
+)));
+$routes->add('list_sindents', new Routing\Route('/sales-indents/list/{pageNo}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::listIndents',
+  'pageNo' => null,
+)));
+$routes->add('create_sindent_mobile', new Routing\Route('/sales-indent/create/mobile', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentMobileView',
+)));
+$routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create/mobile/step2', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentMobileViewStep2',
+)));
+
+// reports
+$routes->add('report_sales_register', new Routing\Route('/reports/sales-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printSalesRegister',
+)));
+
+return $routes;
+
+
+
+
+
+/*
+
 // lead routes.
 $routes->add('lead_create', new Routing\Route('/lead/create', array(
   '_controller' => 'Leads\\Controller\\LeadsController::leadCreateAction',
@@ -671,31 +690,6 @@ $routes->add('lead_details', new Routing\Route('/lead/details/{leadCode}', array
 $routes->add('lead_import', new Routing\Route('/lead/import', array(
   '_controller' => 'Leads\\Controller\\LeadsController::importLeadsAction',
 )));
-
-// sales indent
-$routes->add('create_sindent', new Routing\Route('/sales-indent/create', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndent',
-)));
-$routes->add('update_sindent', new Routing\Route('/sales-indent/update/{indentCode}', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndent',
-  'indentCode' => null,
-)));
-$routes->add('change_sindent_status', new Routing\Route('/sales-indent/update-status/{indentCode}', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndentStatus',
-  'indentCode' => null,
-)));
-$routes->add('list_sindents', new Routing\Route('/sales-indents/list/{pageNo}', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::listIndents',
-  'pageNo' => null,
-)));
-
-$routes->add('create_sindent_mobile', new Routing\Route('/sales-indent/create/mobile', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentMobileView',
-)));
-$routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create/mobile/step2', array(
-  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentMobileViewStep2',
-)));
-
 
 // reports
 $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
@@ -764,8 +758,6 @@ $routes->add('report_printIndentWr', new Routing\Route('/print-indent-wor', arra
 $routes->add('report_printIndentsAgentwise', new Routing\Route('/print-indents-agentwise', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentsAgentwise',
 )));
-
-return $routes;
 
 /*
 $routes->add('report_printSalesReturnBill', new Routing\Route('/print-sales-return-bill', array(
@@ -840,4 +832,21 @@ $routes->add('adminOptions_deleteSaleBill', new Routing\Route('/admin-options/de
 $routes->add('adminOptions_editPOAfterGRN', new Routing\Route('/admin-options/edit-po', array(
   '_controller' => 'PharmaRetail\\AdminOptions\\Controller\\AdminOptionsController::editPoAction',
 )));
+// Supplier outstanding
+$routes->add('fin_supp_billwise_outstanding', new Routing\Route('/fin/billwise-outstanding', array(
+'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierBillwiseOsAction',
+)));
+$routes->add('fin_supp_ason_outstanding', new Routing\Route('/fin/supp-outstanding-ason', array(
+'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierBillwiseAsonAction',
+)));
+$routes->add('fin_supp_ledger', new Routing\Route('/fin/supplier-ledger', array(
+'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierLedger',
+)));
+$routes->add('fin_receivables', new Routing\Route('/fin/receivables-ason', array(
+'_controller' => 'ClothingRm\\Finance\\Controller\\ReceiptsController::receivablesListAsonAction',
+)));
+// $routes->add('adminOptions_editBusinessInfo', new Routing\Route('/admin-options/edit-business-info', array(
+//   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editBusinessInfoAction',
+// )));
+
 */
