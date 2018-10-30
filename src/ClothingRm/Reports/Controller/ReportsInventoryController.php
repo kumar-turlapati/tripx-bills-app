@@ -127,7 +127,7 @@ class ReportsInventoryController {
       $pdf->Cell($item_widths[2],6,$lot_no,'RTB',0,'L');
       $pdf->Cell($item_widths[3],6,number_format($tax_percent,2,'.',''),'RTB',0,'R');            
       $pdf->Cell($item_widths[4],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[5],6,number_format($purchase_rate,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($closing_rate,2,'.',''),'RTB',0,'R');
       $pdf->Cell($item_widths[6],6,number_format($amount,2,'.',''),'RTB',0,'R');
       $pdf->Cell($item_widths[7],6,number_format($mrp,2,'.',''),'RTB',0,'R');
     }
