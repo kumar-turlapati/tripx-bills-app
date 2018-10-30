@@ -104,16 +104,16 @@ class ReportsInventoryController {
       $upp = $item_details['upp'] + 0;
 
       # calculate landing cost
-      $amount_gross = round($closing_qty*$closing_rate,2);
-      $tax_amount = 0;
+      // $amount_gross = round($closing_qty*$closing_rate,2);
+      // $tax_amount = 0;
 /*      if($amount_gross>0 && $tax_percent>0) {
         $tax_amount = round( ($amount_gross*$tax_percent)/100, 2);
       } else {
         $tax_amount = 0;
       }*/
-      $landing_cost = $amount_gross + $tax_amount;
-      $purchase_rate = round($landing_cost/$closing_qty, 2);
-      $amount = round($closing_qty * $purchase_rate, 2);
+      // $landing_cost = $amount_gross + $tax_amount;
+      // $purchase_rate = round($landing_cost/$closing_qty, 2);
+      $amount = round($closing_qty * $closing_rate, 2);
 
       // dump($landing_cost, $purchase_rate, $amount);
       // exit;
