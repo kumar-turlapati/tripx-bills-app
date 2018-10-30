@@ -168,6 +168,310 @@ class SalesReportsController {
     return [$this->template->render_view('print-sales-register', $template_vars), $controller_vars];
   }
 
+  public function daySalesReport(Request $request) {
+    
+    $default_location = $_SESSION['lc'];
+    $client_locations = Utilities::get_client_locations();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_day_sales($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = 'Invalid Form Data.';
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/day-sales');        
+      }
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_sales_summary_byday($form_data);
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-register');
+      } else {
+        $day_summary = $sales_api_response['summary'];
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+        $heading1 = 'Day Sales Report';
+        $heading2 = 'Date: '.$form_data['saleDate'];
+        if($location_name !== '') {
+          $heading1 .= ' - '.$location_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2] ];
+
+        $cash_sales = $day_summary[0]['cashSales'];
+        $card_sales = $day_summary[0]['cardSales'];
+        $split_sales = $day_summary[0]['splitSales'];
+        $credit_sales = $day_summary[0]['creditSales'];
+        $cash_in_hand = $day_summary[0]['cashInHand'];
+        $sales_return = $day_summary[0]['returnAmount'];
+        $day_sales = $cash_sales + $card_sales + $split_sales + $credit_sales;
+        $total_sales = $day_sales - $sales_return;        
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        Utilities::download_as_CSV_attachment('DaySalesReport', $csv_headings, $day_summary);
+        return;
+      }
+
+      // dump($total_records);
+      // exit;
+
+      // start PDF printing.
+
+      $item_widths = array(10,45,35);
+      $totals_width = $item_widths[0]+$item_widths[1];
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('P','A4');
+
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,0,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading2,'',1,'C');
+      
+      $pdf->SetFont('Arial','',13);
+
+      $pdf->Ln(5);
+      $pdf->Cell($item_widths[0],6,'a)','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Cash Sale','RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,number_format($cash_sales,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
+      $pdf->Cell($item_widths[0],6,'b)','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Card Sale','RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,number_format($card_sales,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();                
+      $pdf->Cell($item_widths[0],6,'c)','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Split Sale','RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,number_format($split_sales,2,'.',''),'RTB',0,'R');      
+
+      $pdf->Ln();                
+      $pdf->Cell($item_widths[0],6,'d)','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Credit Sale','RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,number_format($credit_sales,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B');          
+      $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'(a) + (b) + (c) + (d)','RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($day_sales,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','');          
+      $pdf->Cell($item_widths[0],6,'e)','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Sales Return (-)','LRTB',0,'L');
+      $pdf->Cell($item_widths[2],6,number_format($sales_return,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B');              
+      $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
+      $pdf->Cell($item_widths[1],6,'Total Sales','RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($total_sales,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B');              
+      $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
+      $pdf->Cell($item_widths[1],6,'Cash in hand (a)-(e)','RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($cash_sales-$sales_return,2,'.',''),'RTB',0,'R');        
+
+      $pdf->Output();
+    }
+
+    $controller_vars = array(
+      'page_title' => 'Day Sales Report',
+      'icon_name' => 'fa fa-inr',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+    );
+
+    // render template
+    return [$this->template->render_view('day-sales-report', $template_vars), $controller_vars];    
+  }
+
+  public function salesSummaryByMonth(Request $request) {
+
+    $default_location = $_SESSION['lc'];
+    $client_locations = Utilities::get_client_locations();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_sales_summary_bymon($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = 'Invalid Form Data.';
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/day-sales');        
+      }
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_sales_summary_bymon($form_data);
+      // dump($sales_api_response);
+      // exit;
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-summary-by-month');
+      } else {
+        $month_summary = $sales_api_response['summary']['daywiseSales'];
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+        $month_name = date('F', mktime(0, 0, 0, $form_data['month'], 10));        
+        $heading1 = 'Daywise Sales Summary';
+        $heading2 = 'for the month of '.$month_name.', '.$form_data['year'];
+        if($location_name !== '') {
+          $heading1 .= ' - '.$location_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2] ];
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        Utilities::download_as_CSV_attachment('DaywiseSalesSummary', $csv_headings, $month_summary);
+        return;
+      }
+
+      // start PDF printing.
+      $item_widths = array(17,18,18,18,18,18,21,21,21,23);
+      $totals_width = $item_widths[0]+$item_widths[1];
+      $slno = 0;
+
+      $discount_label = '**Discount amount is shown for information purpose only. It was already included in Cash/Card/Cnote Sale';
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('P','A4');
+
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,0,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading2,'',1,'C');
+
+      $pdf->SetFont('Arial','B',8);
+      $pdf->Ln(5);
+      $pdf->Cell($item_widths[0],6,'Date','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'CashSales','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'CardSales','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'SplitSales','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'CreditSales','RTB',0,'C');      
+      $pdf->Cell($item_widths[5],6,'TotalSales','RT',0,'C');  
+      $pdf->Cell($item_widths[6],6,'CashPaymnts','RTB',0,'C');
+      $pdf->Cell($item_widths[7],6,'CardPaymnts','RTB',0,'C');
+      $pdf->Cell($item_widths[8],6,'CnotePaymnts','RTB',0,'C');
+      $pdf->Cell($item_widths[9],6,'Discount**','RTB',0,'C');
+      $pdf->SetFont('Arial','',8);
+
+      $tot_cash_sales = $tot_split_sales = $tot_card_sales = $tot_credit_sales = $tot_sales = 0;
+      $tot_discounts = $tot_discount_bills = 0;
+      $tot_cash_payments = $tot_card_payments = $tot_cnote_payments = 0;
+
+      foreach($month_summary as $day_details) {
+        $date = date("d-m-Y", strtotime($day_details['tranDate']));
+        $week = date("l", strtotime($day_details['tranDate']));
+        $day_sales = $day_details['cashSales'] + $day_details['splitSales'] + $day_details['cardSales'] + $day_details['creditSales'];
+
+        $tot_cash_sales += $day_details['cashSales'];
+        $tot_card_sales += $day_details['cardSales'];
+        $tot_split_sales += $day_details['splitSales'];
+        $tot_credit_sales += $day_details['creditSales'];
+
+        $tot_cash_payments += $day_details['cashPayments'];
+        $tot_card_payments += $day_details['cardPayments'];
+        $tot_cnote_payments += $day_details['cnotePayments'];
+
+        $tot_discounts += $day_details['discountGiven'];
+        $tot_discount_bills += $day_details['totalDiscountBills'];
+
+        $cash_sales = $day_details['cashSales'] > 0 ? number_format($day_details['cashSales'],2,'.','') : '';
+        $card_sales = $day_details['cardSales'] > 0 ? number_format($day_details['cardSales'],2,'.','') : '';
+        $split_sales = $day_details['splitSales'] > 0 ? number_format($day_details['splitSales'],2,'.','') : '';
+        $credit_sales = $day_details['creditSales'] > 0 ? number_format($day_details['creditSales'],2,'.','') : '';
+
+        $cash_payments = $day_details['cashPayments'] > 0 ? number_format($day_details['cashPayments'],2,'.','') : '' ;
+        $card_payments = $day_details['cardPayments'] > 0 ? number_format($day_details['cardPayments'],2,'.','') : '' ;
+        $cnote_payments = $day_details['cnotePayments'] > 0 ? number_format($day_details['cnotePayments'],2,'.','') : '' ;
+
+        $total_sales = number_format($day_details['cashSales'] + $day_details['cardSales'] + $day_details['splitSales'],2,'.','');
+        $discount_string = number_format($day_details['discountGiven'],2,'.','').' ('.$day_details['totalDiscountBills'].')';
+
+        $pdf->Ln();
+        $pdf->Cell($item_widths[0],6,$date,'LRTB',0,'L');
+        $pdf->Cell($item_widths[1],6,$cash_sales,'RTB',0,'R');
+        $pdf->Cell($item_widths[2],6,$card_sales,'RTB',0,'R');
+        $pdf->Cell($item_widths[3],6,$split_sales,'RTB',0,'R');
+        $pdf->Cell($item_widths[4],6,$credit_sales,'RTB',0,'R');
+        $pdf->Cell($item_widths[5],6,$total_sales,'RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,$cash_payments,'RTB',0,'R');
+        $pdf->Cell($item_widths[7],6,$card_payments,'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,$cnote_payments,'RTB',0,'R');
+        $pdf->Cell($item_widths[9],6,$discount_string,'RTB',0,'R');
+      }
+
+      $tot_sales = $tot_cash_sales + $tot_credit_sales + $tot_split_sales + $tot_card_sales;
+
+      $pdf->SetFont('Arial','B',8);      
+      $pdf->Ln();
+      $pdf->Cell($item_widths[0],6,'TOTALS','LTB',0,'R');
+      $pdf->Cell($item_widths[1],6,number_format($tot_cash_sales,2,'.',''),'LRTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($tot_card_sales,2,'.',''),'RTB',0,'R');        
+      $pdf->Cell($item_widths[3],6,number_format($tot_split_sales,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[4],6,number_format($tot_credit_sales,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($tot_sales,2,'.',''),'RTB',0,'R');        
+      $pdf->Cell($item_widths[6],6,number_format($tot_cash_payments,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[7],6,number_format($tot_card_payments,2,'.',''),'RTB',0,'R');        
+      $pdf->Cell($item_widths[8],6,number_format($tot_cnote_payments,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[9],6,'*****','RTB',1,'R');    
+      $pdf->Cell(array_sum($item_widths),6,$discount_label,'',0,'R');
+      
+      $pdf->Output();      
+    }
+
+
+    // controller variables.
+    $controller_vars = array(
+      'page_title' => 'Sales Summary Report - By Month',
+      'icon_name' => 'fa fa-inr',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'months' => Utilities::get_calender_months(), 
+      'years' => Utilities::get_calender_years(1),
+      'def_month' => date("m"),
+      'def_year' => date("Y"),
+    );
+
+    // render template
+    return [$this->template->render_view('sales-summary-by-month', $template_vars), $controller_vars];
+  }
+
+
   private function _get_sales_executives() {
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
@@ -202,10 +506,50 @@ class SalesReportsController {
       $cleaned_params['toDate'] = '';
     }
 
-    $cleaned_params['format'] =  $form_data['format'];
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+    $cleaned_params['saExecutiveCode'] = Utilities::clean_string($form_data['saExecutiveCode']);
 
     return ['status' => true, 'cleaned_params' => $cleaned_params];
   }
+
+  private function _validate_form_data_day_sales($form_data = []) {
+    $cleaned_params = [];
+    if($form_data['locationCode'] !== '') {
+      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    } else {
+      $cleaned_params['locationCode'] = '';
+    }
+    if($form_data['saleDate'] !== '') {
+      $cleaned_params['saleDate'] = Utilities::clean_string($form_data['saleDate']);
+    } else {
+      $cleaned_params['saleDate'] = '';
+    }
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+
+    return ['status' => true, 'cleaned_params' => $cleaned_params];
+  }
+
+  private function _validate_form_data_sales_summary_bymon($form_data = []) {
+    $cleaned_params = [];
+    if($form_data['locationCode'] !== '') {
+      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    } else {
+      $cleaned_params['locationCode'] = '';
+    }
+    if($form_data['month'] !== '') {
+      $cleaned_params['month'] = Utilities::clean_string($form_data['month']);
+    } else {
+      $cleaned_params['month'] = date("m");
+    }
+    if($form_data['year'] !== '') {
+      $cleaned_params['year'] = Utilities::clean_string($form_data['year']);
+    } else {
+      $cleaned_params['year'] = date("Y");
+    }    
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+
+    return ['status' => true, 'cleaned_params' => $cleaned_params];
+  }  
 
   private function _format_data_for_sales_register($total_records = []) {
     $new_records = [];

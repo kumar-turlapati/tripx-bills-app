@@ -443,7 +443,6 @@ $routes->add('dn_list', new Routing\Route('/fin/debit-notes/{pageNo}', array(
   'pageNo' => null,
 )));
 
-
 // Petty cash vouchers
 $routes->add('pc_voc_create', new Routing\Route('/fin/pc-voucher/create', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::pettyCashVoucherCreateAction',
@@ -660,12 +659,28 @@ $routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create
 $routes->add('report_sales_register', new Routing\Route('/reports/sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printSalesRegister',
 )));
+$routes->add('report_day_sales_summary', new Routing\Route('/reports/day-sales', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::daySalesReport',
+)));
+$routes->add('report_sales_summary_month', new Routing\Route('/reports/sales-summary-by-month', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesSummaryByMonth',
+)));
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
 )));
 
-return $routes;
+$routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',
+  'reportName' => null,
+)));
+$routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
+)));
+$routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
+)));
 
+return $routes;
 
 
 
@@ -699,9 +714,7 @@ $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportN
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',
   'reportName' => null,
 )));
-$routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
-)));
+
 $routes->add('report_indentItemAvail', new Routing\Route('/indent-item-avail', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemAvailability',
 )));
@@ -720,9 +733,7 @@ $routes->add('report_indentRegister', new Routing\Route('/indent-register', arra
 $routes->add('report_dispatchSummary', new Routing\Route('/indent-dispatch-summary', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentDispatchSummary',
 )));
-$routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
-)));
+
 
 
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(

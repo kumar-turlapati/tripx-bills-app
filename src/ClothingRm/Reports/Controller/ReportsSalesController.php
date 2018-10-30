@@ -10,13 +10,13 @@ use Atawa\PDF;
 
 use ClothingRm\Sales\Model\Sales;
 
-class ReportsSalesController
-{
+class ReportsSalesController {
 
   protected $views_path;
 
   public function __construct() {
     $this->views_path = __DIR__.'/../Views/';
+    $this->sales_model = new Sales;
   }
 
   public function salesRegister(Request $request) {
@@ -28,8 +28,7 @@ class ReportsSalesController
     $totals_width = $item_widths[0]+$item_widths[1]+$item_widths[2];
     $slno=0;
 
-    # inititate Sales Model
-    $sales_api = new \ClothingRm\Sales\Model\Sales;
+    // inititate Sales Model
     $search_params = array(
       'fromDate' => $from_date,
       'toDate' => $to_date,
@@ -41,6 +40,8 @@ class ReportsSalesController
       die("<h1>No data is available. Change Report Filters and Try again</h1>");
     } else {
       $sales_transactions = $sales_response['sales'];
+
+      // prepare header rows.
       $locations = Utilities::get_client_locations(false, true);
       if(is_array($locations) && count($locations)>0 && $location_code !== '') {
         $location_name = $locations[$location_code];
@@ -79,7 +80,7 @@ class ReportsSalesController
     $pdf->Cell($item_widths[5],6,'TotAmt','RTB',0,'C');
     $pdf->Cell($item_widths[6],6,'RndOff','RTB',0,'C');  
     $pdf->Cell($item_widths[7],6,'NetPay','RTB',0,'C');
-    $pdf->Cell($item_widths[8],6,'CustomerName','RTB',0,'C');        
+    $pdf->Cell($item_widths[8],6,'CustomerName','RTB',0,'C');
     $pdf->SetFont('Arial','',9);
 
     $tot_bill_amount = $tot_discount = $tot_total_amount = $tot_round_off = $tot_net_pay = 0;
@@ -122,7 +123,9 @@ class ReportsSalesController
 
     $pdf->Output();
   }
+}
 
+/*
   public function printSalesSummaryByMonth(Request $request) {
     $month = $request->get('month');
     $year = $request->get('year');
@@ -236,77 +239,77 @@ class ReportsSalesController
 
   public function printDaySalesSummary(Request $request) {
 
-        $date = $request->get('date');
+    $date = $request->get('date');
 
-        $item_widths = array(10,45,35);
-        $totals_width = $item_widths[0]+$item_widths[1];
-        $slno=0;       
+    $item_widths = array(10,45,35);
+    $totals_width = $item_widths[0]+$item_widths[1];
+    $slno=0;       
 
-        # inititate Sales Model
-        $sales_api = new \ClothingRm\Sales\Model\Sales;
+    # inititate Sales Model
+    $sales_api = new \ClothingRm\Sales\Model\Sales;
 
-        $search_params = array(
-            'saleDate' => $date,
-        );
+    $search_params = array(
+      'saleDate' => $date,
+    );
 
-        $sales_response = $sales_api->get_sales_summary_byday($search_params);
-        // dump($sales_response);
-        // exit;
-        if($sales_response['status']===false) {
-            die("<h1>No data is available. Change Report Filters and Try again</h1>");
-        } else {
-            $sales_summary = $sales_response['summary'];
-            $cash_sales = $sales_summary[0]['cashSales'];
-            $card_sales = $sales_summary[0]['cardSales'];
-            $split_sales = $sales_summary[0]['splitSales'];
-            $cash_in_hand = $sales_summary[0]['cashInHand'];
-            $day_sales = $cash_sales+$card_sales+$split_sales;
+    $sales_response = $sales_api->get_sales_summary_byday($search_params);
+    // dump($sales_response);
+    // exit;
+    if($sales_response['status']===false) {
+        die("<h1>No data is available. Change Report Filters and Try again</h1>");
+    } else {
+        $sales_summary = $sales_response['summary'];
+        $cash_sales = $sales_summary[0]['cashSales'];
+        $card_sales = $sales_summary[0]['cardSales'];
+        $split_sales = $sales_summary[0]['splitSales'];
+        $cash_in_hand = $sales_summary[0]['cashInHand'];
+        $day_sales = $cash_sales+$card_sales+$split_sales;
 
-            $heading1 = 'Day Sales Summary';
-            $heading2 = date('jS F, Y', strtotime($date));
-        }
+        $heading1 = 'Day Sales Summary';
+        $heading2 = date('jS F, Y', strtotime($date));
+    }
 
-        # start PDF printing.
-        $pdf = PDF::getInstance();
-        $pdf->AliasNbPages();
-        $pdf->AddPage('P','A4');
+    # start PDF printing.
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P','A4');
 
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(0,0,$heading1,'',1,'C');
-        $pdf->SetFont('Arial','B',11);
-        $pdf->Ln(5);
-        $pdf->Cell(0,0,$heading2,'',1,'C');
-        
-        $pdf->SetFont('Arial','',13);
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    
+    $pdf->SetFont('Arial','',13);
 
-        $pdf->Ln(5);
-        $pdf->Cell($item_widths[0],6,'a)','LRTB',0,'C');
-        $pdf->Cell($item_widths[1],6,'Cash Sale','RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,number_format($cash_sales,2),'RTB',0,'R');
+    $pdf->Ln(5);
+    $pdf->Cell($item_widths[0],6,'a)','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Cash Sale','RTB',0,'L');
+    $pdf->Cell($item_widths[2],6,number_format($cash_sales,2),'RTB',0,'R');
 
-        $pdf->Ln();
-        $pdf->Cell($item_widths[0],6,'b)','LRTB',0,'C');
-        $pdf->Cell($item_widths[1],6,'Card Sale','RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,number_format($card_sales,2),'RTB',0,'R');
+    $pdf->Ln();
+    $pdf->Cell($item_widths[0],6,'b)','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Card Sale','RTB',0,'L');
+    $pdf->Cell($item_widths[2],6,number_format($card_sales,2),'RTB',0,'R');
 
-        $pdf->Ln();                
-        $pdf->Cell($item_widths[0],6,'c)','LRTB',0,'C');
-        $pdf->Cell($item_widths[1],6,'Split Sale','RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,number_format($split_sales,2),'RTB',0,'R');
+    $pdf->Ln();                
+    $pdf->Cell($item_widths[0],6,'c)','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Split Sale','RTB',0,'L');
+    $pdf->Cell($item_widths[2],6,number_format($split_sales,2),'RTB',0,'R');
 
-        $pdf->Ln();
-        $pdf->SetFont('Arial','B');          
-        $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');
-        $pdf->Cell($item_widths[1],6,'(a)+(b)+(c)','RTB',0,'R');
-        $pdf->Cell($item_widths[2],6,number_format($day_sales,2),'RTB',0,'R');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B');          
+    $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'(a)+(b)+(c)','RTB',0,'R');
+    $pdf->Cell($item_widths[2],6,number_format($day_sales,2),'RTB',0,'R');
 
-        $pdf->Ln();
-        $pdf->SetFont('Arial','B');              
-        $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
-        $pdf->Cell($item_widths[1],6,'Cash in hand','RTB',0,'R');
-        $pdf->Cell($item_widths[2],6,number_format($cash_in_hand,2),'RTB',0,'R');        
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B');              
+    $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
+    $pdf->Cell($item_widths[1],6,'Cash in hand','RTB',0,'R');
+    $pdf->Cell($item_widths[2],6,number_format($cash_in_hand,2),'RTB',0,'R');        
 
-        $pdf->Output();
+    $pdf->Output();
   }
 
   public function patientBillSummary(Request $request) {
@@ -875,7 +878,7 @@ class ReportsSalesController
     $pdf->Output();    
   }
 
-  /** Month-over-month comparison **/
+  /** Month-over-month comparison
   public function momComparison(Request $request) {
 
     # inititate Sales Model
@@ -1073,5 +1076,4 @@ class ReportsSalesController
     $pdf->Cell($line_width,6,'** Up: Increase in Sales on the same day of previous month, Down: Decrease in Sales on the same day of previous month.','',1,'L');
 
     $pdf->Output();
-  }
-}
+  }*/
