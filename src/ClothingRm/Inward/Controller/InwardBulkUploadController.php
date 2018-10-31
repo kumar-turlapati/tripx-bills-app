@@ -153,11 +153,11 @@ class InwardBulkUploadController
     }
 
     # validate PO No
-    if( isset($form_data['poNo']) && $form_data['poNo'] === '') {
+/*    if( isset($form_data['poNo']) && $form_data['poNo'] === '') {
       $form_errors['poNo'] = 'PO number is mandatory.';
     } else {
       $cleaned_params['poNo'] = Utilities::clean_string($form_data['poNo']);
-    }
+    }*/
 
     # validate payment method
     if( isset($form_data['paymentMethod']) && (int)$form_data['paymentMethod'] === 1) {
@@ -257,6 +257,9 @@ class InwardBulkUploadController
             $item_discount = (float)Utilities::clean_string($item_details['DiscountAmount']);
             $hsn_sac_code = Utilities::clean_string($item_details['HsnSacCode']);
             $packed_qty = Utilities::clean_string($item_details['PackedQty']);
+            $category_name = Utilities::clean_string($item_details['CategoryName']);
+            $rack_no = Utilities::clean_string($item_details['RackNo']);
+            $brand_name = Utilities::clean_string($item_details['BrandName']);
 
             if($item_name === '') {
               $form_errors['itemDetails'][$key]['itemName'] = 'Matched item name is required.';
@@ -310,6 +313,21 @@ class InwardBulkUploadController
               }
             } else {
               $imported_records[$key]['HsnSacCode'] = '';
+            }
+            if($category_name !== '') {
+              $imported_records[$key]['CategoryName'] = $category_name;
+            } else {
+              $imported_records[$key]['CategoryName'] = '';
+            }
+            if($rack_no !== '') {
+              $imported_records[$key]['RackNo'] = $rack_no;
+            } else {
+              $imported_records[$key]['RackNo'] = '';
+            }
+            if($brand_name !== '') {
+              $imported_records[$key]['BrandName'] = $brand_name;
+            } else {
+              $imported_records[$key]['BrandName'] = '';
             }
           }
           $cleaned_params['itemDetails'] = $imported_records;

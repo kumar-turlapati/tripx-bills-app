@@ -787,8 +787,9 @@ function initializeJS() {
       var itemRate = parseFloat( returnNumber($('#inwItemRate_'+rowId).val()) );
       var inwItemDiscount = parseFloat( returnNumber($('#inwItemDiscount_'+rowId).val()) );
       var inwItemTax = parseFloat( returnNumber($('#inwItemTax_'+rowId).val()) );
+      var packedQty = parseFloat( returnNumber($('#packed_'+rowId).val()) );
 
-      var billedQty = rcvdQty - freeQty;
+      var billedQty = (rcvdQty - freeQty)*packedQty;
       var inwItemGrossAmount = parseFloat( returnNumber(billedQty*itemRate) );
       var inwItemAmount = parseFloat( returnNumber(inwItemGrossAmount-inwItemDiscount) );
       var inwItemTaxAmount = parseFloat((inwItemAmount * inwItemTax) / 100).toFixed(2);
@@ -846,8 +847,8 @@ function initializeJS() {
             var rowId = idArray[1];
             var thisGrossAmount = $('#inwItemAmount_'+rowId).val();
 
-            totalTaxable = parseFloat(totalTaxable) + parseFloat(thisGrossAmount); 
-            totalTax = parseFloat(totalTax) + parseFloat($(this).val());
+            totalTaxable = (parseFloat(totalTaxable) + parseFloat(thisGrossAmount)).toFixed(2); 
+            totalTax = (parseFloat(totalTax) + parseFloat($(this).val())).toFixed(2);
           }
         });
 
@@ -1047,7 +1048,6 @@ function initializeJS() {
       var taxableAmount = parseFloat(grossAmount - discount).toFixed(2);
       var taxAmount = (taxableAmount * taxPercent/100).toFixed(2);
       var itemType = $('#itemType_'+itemIndex).val();
-
 
       $('#taxAmount_'+itemIndex).val(taxAmount);
       $('#grossAmount_'+itemIndex).text(grossAmount);

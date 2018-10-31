@@ -11,7 +11,10 @@ class Inward
 	// create inward entry in the system
 	public function createInward($params=array()) {
 		$client_id = Utilities::get_current_client_id();
-		$request_uri = 'inward-entry/'.$client_id;		
+		$request_uri = 'inward-entry/'.$client_id;
+
+		// echo json_encode($params);
+		// exit;
 
 		# call api.
 		$api_caller = new ApiCaller();

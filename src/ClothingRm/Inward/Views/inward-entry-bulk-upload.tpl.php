@@ -132,6 +132,7 @@
                 </div>
               </div>
               <div class="form-group">
+                <?php /*
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Purchaser order (PO) No.</label>
                   <input 
@@ -144,7 +145,7 @@
                   <?php if(isset($form_errors['poNo'])): ?>
                       <span class="error"><?php echo $form_errors['poNo'] ?></span>
                   <?php endif; ?>              
-                </div>
+                </div> */?>
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Payment method</label>
                   <div class="select-wrap">

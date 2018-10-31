@@ -72,12 +72,12 @@ class InwardController
       $validation_status = $this->_validate_form_data($submitted_data,false);
       if($validation_status['status']===true) {
         $cleaned_params = $validation_status['cleaned_params'];
-        # hit api
+        // hit api
         $api_response = $this->inward_model->createInward($cleaned_params);
-        if($api_response['status']===true) {
+        if($api_response['status']) {
           $message = 'Inward entry created successfully with entry code ` '.$api_response['inwardCode'].' `';
           $this->flash->set_flash_message($message);
-          Utilities::redirect('inward-entry');
+          Utilities::redirect('/inward-entry');
         } else {
           $api_error = $api_response['apierror'];
           $form_data = $submitted_data;
@@ -88,18 +88,23 @@ class InwardController
       }
 
     # check whether the redirection is from bulk upload form.
-    } elseif(!is_null($request->get('bupToken')) && 
+    } else {
+      if(!is_null($request->get('bupToken')) && 
               $request->get('bupToken') !== '' &&
               isset($_SESSION['inwardBulkUpload']['token']) && 
               $_SESSION['inwardBulkUpload']['token'] === $request->get('bupToken')
-            ) {
-      if(!is_null($request->get('tr')) && (int)$request->get('tr') <= 150) {
-        $total_item_rows = (int)$request->get('tr');
+        ) {
+        if(!is_null($request->get('tr')) && (int)$request->get('tr') <= 150) {
+          $total_item_rows = (int)$request->get('tr');
+        } else {
+          $total_item_rows = 50;
+        }
+        $uploaded_data = $_SESSION['inwardBulkUpload']['uploadedData'];
+        $form_data = $this->_map_uploaded_data_with_form_data($uploaded_data);
+        unset($_SESSION['inwardBulkUpload']);
       } else {
         $total_item_rows = 50;
       }
-      $uploaded_data = $_SESSION['inwardBulkUpload']['uploadedData'];
-      $form_data = $this->_map_uploaded_data_with_form_data($uploaded_data);
     }
 
     # theme variables.
@@ -194,8 +199,9 @@ class InwardController
         $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
-
-        // $total_item_rows = count($item_names);
+        if(count($item_names)>50) {
+          $total_item_rows = count($item_names);
+        }
 
         # unset item details from api data.
         unset($purchase_details['itemDetails']);
@@ -798,6 +804,9 @@ class InwardController
       $item_discounts = $form_data['itemDiscount'];
       $item_hsnsac_codes_a = $form_data['hsnSacCode'];
       $packed_qty_a = $form_data['packedQty'];
+      // $rack_nos_a = $form_data['rackNo'];
+      $category_names_a = $form_data['categoryName'];
+      $brand_names_a = $form_data['brandName'];
 
       foreach($item_names_a as $key=>$item_name) {
         if($item_name !== '') {
@@ -813,8 +822,14 @@ class InwardController
           $discount_amount = Utilities::clean_string($item_discounts[$key]);
           $hsn_sac_code = Utilities::clean_string($item_hsnsac_codes_a[$key]);
           $packed_qty = Utilities::clean_string($packed_qty_a[$key]);
+          // $rack_no = Utilities::clean_string($rack_nos_a[$key]);
+          $category_name = Utilities::clean_string($category_names_a[$key]);
+          $brand_name = Utilities::clean_string($brand_names_a[$key]);
 
           $cleaned_params['itemDetails']['itemName'][] = $item_name;
+          $cleaned_params['itemDetails']['categoryName'][] = $category_name;
+          $cleaned_params['itemDetails']['brandName'][] = $brand_name;
+          // $cleaned_params['itemDetails']['rackNo'][] = $rack_no;
 
           if( !is_numeric($inward_qty) ) {
             $form_errors['itemDetails'][$key]['inwardQty'] = 'Invalid item qty';
@@ -963,7 +978,7 @@ class InwardController
     $form_data['creditDays'] = $uploaded_data['creditDays'];
     $form_data['paymentMethod'] = $uploaded_data['paymentMethod'];
     $form_data['supplierID'] = $uploaded_data['supplierID'];
-    $form_data['poNo'] = $uploaded_data['poNo'];
+    $form_data['poNo'] = '';
     $form_data['locationCode'] = $uploaded_data['locationCode'];
     $form_data['supplyType'] = $uploaded_data['supplyType'];
     $form_data['supplierStateID'] = $uploaded_data['supplierStateID'];
@@ -977,7 +992,10 @@ class InwardController
       $form_data['taxPercent'][$key] = $item_details['TaxPercent'];
       $form_data['itemDiscount'][$key] = $item_details['DiscountAmount'];
       $form_data['hsnCodes'][$key] = $item_details['HsnSacCode'];
-      $form_data['packedQty'][$key] = $item_details['PackedQty'];      
+      $form_data['packedQty'][$key] = $item_details['PackedQty'];
+      $form_data['categoryName'][$key] = $item_details['CategoryName'];
+      $form_data['rackNo'][$key] = $item_details['RackNo'];
+      $form_data['brandName'][$key] = $item_details['BrandName'];
     }
     return $form_data;
   }
