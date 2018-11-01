@@ -19,13 +19,13 @@ class ReportsInventoryController {
   // Print Stock Report
   public function stockReport(Request $request) {
 
-    $item_widths = array(10,60,28,15,20,20,20,17);
+    $item_widths = array(10,48,28,13,18,20,20,17,17);
 
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3];
     
     $totals_width1 = $item_widths[5] + $item_widths[6];
     
-    $slno = $tot_amount = $tot_qty = 0; 
+    $slno = $tot_amount = $tot_qty = $tot_amount_mrp = 0; 
     $total_items = [];
     $client_locations = Utilities::get_client_locations();
 
@@ -85,10 +85,11 @@ class ReportsInventoryController {
     $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
     $pdf->Cell($item_widths[2],6,'Lot No.','RTB',0,'C');
     $pdf->Cell($item_widths[3],6,'GST(%)','RTB',0,'C');        
-    $pdf->Cell($item_widths[4],6,'Closing Qty.','RTB',0,'C');        
+    $pdf->Cell($item_widths[4],6,'Clos.Qty.','RTB',0,'C');        
     $pdf->Cell($item_widths[5],6,'Rate/Unit','RTB',0,'C');
     $pdf->Cell($item_widths[6],6,'Amount','RTB',0,'C');
-    $pdf->Cell($item_widths[7],6,'M.R.P','RTB',0,'C');    
+    $pdf->Cell($item_widths[7],6,'M.R.P','RTB',0,'C');
+    $pdf->Cell($item_widths[8],6,'Amount','RTB',0,'C');    
     
     $pdf->SetFont('Arial','',9);
 
@@ -114,11 +115,13 @@ class ReportsInventoryController {
       // $landing_cost = $amount_gross + $tax_amount;
       // $purchase_rate = round($landing_cost/$closing_qty, 2);
       $amount = round($closing_qty * $closing_rate, 2);
+      $mrp_amount = round($closing_qty * $mrp, 2);
 
       // dump($landing_cost, $purchase_rate, $amount);
       // exit;
 
       $tot_amount += $amount;
+      $tot_amount_mrp += $mrp_amount;      
       $tot_qty += $closing_qty;
       
       $pdf->Ln();
@@ -130,14 +133,15 @@ class ReportsInventoryController {
       $pdf->Cell($item_widths[5],6,number_format($closing_rate,2,'.',''),'RTB',0,'R');
       $pdf->Cell($item_widths[6],6,number_format($amount,2,'.',''),'RTB',0,'R');
       $pdf->Cell($item_widths[7],6,number_format($mrp,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($mrp_amount,2,'.',''),'RTB',0,'R');      
     }
 
     $pdf->Ln();
     $pdf->SetFont('Arial','B',10);
-    $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
+    $pdf->Cell($totals_width,6,'T O T A L S','LTB',0,'R');
     $pdf->Cell($item_widths[4],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
-    $pdf->SetFont('Arial','B',11);    
-    $pdf->Cell($item_widths[5]+$item_widths[5],6,number_format($tot_amount,2,'.',''),'LRTB',0,'R');    
+    $pdf->Cell($item_widths[5]+$item_widths[5],6,number_format($tot_amount,2,'.',''),'RTB',0,'R');    
+    $pdf->Cell($item_widths[7]+$item_widths[8],6,number_format($tot_amount_mrp,2,'.',''),'RTB',0,'R');
 
     $pdf->Output(); 
   }  

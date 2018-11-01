@@ -549,7 +549,7 @@ class SalesReportsController {
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
     return ['status' => true, 'cleaned_params' => $cleaned_params];
-  }  
+  }
 
   private function _format_data_for_sales_register($total_records = []) {
     $new_records = [];

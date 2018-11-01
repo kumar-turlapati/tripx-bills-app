@@ -246,8 +246,7 @@
               <i class="fa fa-database"></i> Inventory&nbsp;&amp;&nbsp;Stores <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/report-options/stock-report"><i class="fa fa-angle-right"></i> Stock Report</a></li>
-              <li><a href="/report-options/opening-balances"><i class="fa fa-angle-right"></i> Op.Bal Report</a></li>              
+              <li><a href="/reports/stock-report"><i class="fa fa-angle-right"></i> Stock Report</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -281,3 +280,8 @@
     </ul>
   </div>
 </aside>
+
+<?php
+/*
+<li><a href="/report-options/opening-balances"><i class="fa fa-angle-right"></i> Op.Bal Report</a></li>
+*/ ?>

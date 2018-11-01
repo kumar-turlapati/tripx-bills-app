@@ -665,25 +665,26 @@ $routes->add('report_day_sales_summary', new Routing\Route('/reports/day-sales',
 $routes->add('report_sales_summary_month', new Routing\Route('/reports/sales-summary-by-month', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesSummaryByMonth',
 )));
-$routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
+$routes->add('report_stock', new Routing\Route('/reports/stock-report', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::stockReport',
 )));
 
 $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',
   'reportName' => null,
 )));
-$routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
+$routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
 )));
-$routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
-)));
+
+// $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
+//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
+// )));
+// $routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
+//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
+// )));
 
 return $routes;
-
-
-
 
 /*
 
@@ -862,5 +863,4 @@ $routes->add('fin_receivables', new Routing\Route('/fin/receivables-ason', array
 // $routes->add('adminOptions_editBusinessInfo', new Routing\Route('/admin-options/edit-business-info', array(
 //   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editBusinessInfoAction',
 // )));
-
 */
