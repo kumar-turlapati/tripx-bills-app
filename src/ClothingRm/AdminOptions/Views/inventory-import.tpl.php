@@ -1,5 +1,4 @@
 <?php
-	use Atawa\CrmUtilities;
 	use Atawa\Utilities;
 ?>
 <div class="row">

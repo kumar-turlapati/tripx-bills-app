@@ -570,4 +570,17 @@ class Inventory
 		}
 	}
 
+	public function update_cat_brand($form_data=[]) {
+		$end_point = '/inventory/update-cat-brand';
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post',$end_point,$form_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}		
+	}
+
 }

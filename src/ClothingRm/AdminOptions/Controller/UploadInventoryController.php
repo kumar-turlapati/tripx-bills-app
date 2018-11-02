@@ -13,6 +13,7 @@ use Atawa\Importer;
 use Spreadsheet_Excel_Reader;
 
 use ClothingRm\Openings\Model\Openings;
+use ClothingRm\Inventory\Model\Inventory;
 use User\Model\User;
 
 class UploadInventoryController
@@ -24,11 +25,12 @@ class UploadInventoryController
 		$this->views_path = __DIR__.'/../Views/';
 		$this->template = new Template($this->views_path);
     $this->openings_model = new Openings;
+    $this->inven_model = new Inventory;
 		$this->flash = new Flash;
     $this->user_model = new User;    
 	}
 
-  # upload inventory action
+  // upload inventory action
   public function uploadInventoryAction(Request $request) {
 
     # variable assignments.
@@ -109,10 +111,10 @@ class UploadInventoryController
           # hit api with data.
           $api_response = $this->openings_model->upload_inventory($cleaned_records,$upload_type,$location_code);
           if($api_response['status']===false) {
-            $this->flash->set_flash_message('Unable to upload inventory. Please contact Atawa administrator.',1);
+            $this->flash->set_flash_message('Unable to update inventory. Please contact QwikBills administrator.',1);
             Utilities::redirect($redirect_url);
           } else {
-            $this->flash->set_flash_message('Inventory uploaded successfully.');
+            $this->flash->set_flash_message('Inventory updated successfully.');
             Utilities::redirect($redirect_url);
           }
         }
@@ -138,7 +140,82 @@ class UploadInventoryController
     return array($this->template->render_view('inventory-import', $template_vars), $controller_vars);
   }
 
-  # validating imported leads.
+  public function updateCategoryBrandAction(Request $request) {
+
+    $allowed_extensions = ['xls', 'ods', 'xlsx'];
+    $redirect_url = '/update-category-brand';
+
+    // form submit
+    if(count($request->request->all()) > 0) {
+
+      # check uploaded file information
+      $file_details = $_FILES['fileName'];
+      $file_name = $file_details['name'];
+      $extension = pathinfo($file_name, PATHINFO_EXTENSION);
+
+      # check if we have valid file extension
+      if(!in_array($extension, $allowed_extensions)) {
+        $this->flash->set_flash_message('Invalid file uploaded. Only (.ods, .xls, .xlsx) file formats are allowed',1);
+        Utilities::redirect($redirect_url);
+      }
+
+      # upload file to server
+      $file_upload_path = __DIR__.'/../../../../bulkuploads';
+      $storage = new \Upload\Storage\FileSystem($file_upload_path);
+      $file = new \Upload\File('fileName', $storage);
+
+      $uploaded_file_name = $file->getNameWithExtension();
+      $uploaded_file_ext = $file->getExtension();
+      if(!in_array($uploaded_file_ext, $allowed_extensions)) {
+        $this->flash->set_flash_message('Invalid file extension',1);
+        Utilities::redirect($redirect_url);        
+      }
+
+      # upload file.
+      $new_filename = 'objectUpload_'.time();
+      $file->setName($new_filename);
+      try {
+        $file->upload();
+      } catch (\Exception $e) {
+        $this->flash->set_flash_message('Unknown error. Unable to upload your file.',1);
+        Utilities::redirect($redirect_url);        
+      }
+
+      # get file path from uploaded operation.
+      $file_path = $file_upload_path.'/'.$new_filename.'.'.$uploaded_file_ext;
+
+      # initiate importer
+      $importer = new Importer($file_path);
+      $imported_records = $importer->_import_data();
+      if(is_array($imported_records) && count($imported_records)>0) {
+        // hit api with data.
+        $api_response = $this->inven_model->update_cat_brand($imported_records);
+        if($api_response['status'] === false) {
+          $this->flash->set_flash_message('Unable to upload inventory. Please contact QwikBills administrator.',1);
+          Utilities::redirect($redirect_url);
+        } else {
+          $this->flash->set_flash_message('Inventory updated successfully.');
+          Utilities::redirect($redirect_url);
+        }
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash' => $this->flash,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Update Category & Brand Information in Item Master from Excel File',
+      'icon_name' => 'fa fa-database',
+    );
+
+    return array($this->template->render_view('update-category-brand', $template_vars), $controller_vars);    
+  }
+
+
+  // validating imported leads.
   private function _validate_imported_records($imported_records=[]) {
     $one_d_array = array_keys($imported_records[0]);
     $cleaned_array = [];

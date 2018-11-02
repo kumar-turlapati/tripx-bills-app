@@ -507,6 +507,9 @@ $routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-su
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadInventoryController::uploadInventoryAction',
 )));
+$routes->add('update_cat_brand', new Routing\Route('/update-category-brand', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadInventoryController::updateCategoryBrandAction',
+)));
 $routes->add('upload_debtors', new Routing\Route('/upload-debtors', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadBalancesController::uploadDebtorsAction',
 )));
