@@ -187,30 +187,30 @@ $routes->add('grn_list', new Routing\Route('/grn/list', array(
 )));
 
 // Sales routes
-$routes->add('sales_entry_gst', new Routing\Route('/sales/entry', array(
-  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesControllerGst::salesEntryGstAction',
+$routes->add('sales_entry_wo_barcode', new Routing\Route('/sales/entry', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::salesEntryAction',
 )));
-$routes->add('sales_update', new Routing\Route('/sales/update/{salesCode}', array(
-  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesControllerGst::salesUpdateGstAction',
-  'salesCode' => null,
-)));
-$routes->add('sales_list', new Routing\Route('/sales/list/{pageNo}', array(
-  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesControllerGst::salesListAction',
-  'pageNo' => null,
-)));
-$routes->add('sales_bill_search', new Routing\Route('/sales/search-bills', array(
-  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesControllerGst::saleBillsSearchAction',
-)));
-$routes->add('sales_remove', new Routing\Route('/sales/remove/{salesCode}', array(
-  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesControllerGst::salesRemoveAction',
-  'salesCode' => null,
-)));
-$routes->add('sales_view', new Routing\Route('/sales/view/{salesCode}', array(
-  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesControllerGst::salesViewAction',
+$routes->add('sales_update_wo_barcode', new Routing\Route('/sales/update/{salesCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::salesUpdateAction',
   'salesCode' => null,
 )));
 $routes->add('sales_entry_with_barcode', new Routing\Route('/sales/entry-with-barcode', array(
   '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWithBarcode::salesEntryAction',
+)));
+$routes->add('sales_update_with_barcode', new Routing\Route('/sales/update-with-barcode/{salesCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWithBarcode::salesUpdateAction',
+  'salesCode' => null,
+)));
+$routes->add('sales_list', new Routing\Route('/sales/list/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::salesListAction',
+  'pageNo' => null,
+)));
+$routes->add('sales_bill_search', new Routing\Route('/sales/search-bills', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::saleBillsSearchAction',
+)));
+$routes->add('sales_view', new Routing\Route('/sales/view-invoice/{salesCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::salesViewAction',
+  'salesCode' => null,
 )));
 
 // Sales Return routes

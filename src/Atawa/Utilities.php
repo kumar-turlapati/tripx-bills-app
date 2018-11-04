@@ -822,4 +822,10 @@ class Utilities
     }
   }
 
+  public static function is_admin() {
+    if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 3) {
+      return true;
+    }
+    return false;
+  }
 }

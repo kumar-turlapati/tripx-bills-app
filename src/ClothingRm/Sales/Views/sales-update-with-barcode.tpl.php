@@ -22,11 +22,8 @@
   $card_auth_code = isset($form_data['authCode']) ? $form_data['authCode'] : '';
   $coupon_code = isset($form_data['couponCode']) ? $form_data['couponCode'] : '';
   $tax_calc_option = isset($form_data['taxCalcOption']) ? $form_data['taxCalcOption'] : 'i';
-  $split_payment_cash = isset($form_data['splitPaymentCash']) ? $form_data['splitPaymentCash'] : '';
-  $split_payment_card = isset($form_data['splitPaymentCard']) ? $form_data['splitPaymentCard'] : '';
   $executive_id = isset($form_data['saExecutive']) ? $form_data['saExecutive'] : '';
-  $cn_no = isset($form_data['cnNo']) ? $form_data['cnNo'] : '';
-  $split_payment_cn = isset($form_data['splitPaymentCn']) ? $form_data['splitPaymentCn'] : '';
+  $cn_no = isset($form_data['cnNo']) && $form_data['cnNo'] > 0 ? $form_data['cnNo'] : '';
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
   $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';
   $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'b2c';
@@ -40,16 +37,34 @@
   $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
 
+  if(isset($form_data['splitPaymentCash']) && $form_data['splitPaymentCash']>0) {
+    $split_payment_cash =  $form_data['splitPaymentCash'];
+  } elseif(isset($form_data['netPayCash']) && $form_data['netPayCash']>0) {
+    $split_payment_cash = $form_data['netPayCash'];
+  } else {
+    $split_payment_cash = '';
+  }
+  if(isset($form_data['splitPaymentCard']) && $form_data['splitPaymentCard']>0) {
+    $split_payment_card =  $form_data['splitPaymentCard'];
+  } elseif(isset($form_data['netPayCard']) && $form_data['netPayCard']>0) {
+    $split_payment_card = $form_data['netPayCard'];
+  } else {
+    $split_payment_card = '';
+  }
+  if(isset($form_data['splitPaymentCn']) && $form_data['splitPaymentCn']>0) {
+    $split_payment_cn =  $form_data['splitPaymentCn'];
+  } elseif(isset($form_data['netPayCn']) && $form_data['netPayCn']>0) {
+    $split_payment_cn = $form_data['netPayCn'];
+  } else {
+    $split_payment_cn = '';
+  }  
+
   $card_and_auth_style = (int)$payment_method === 0 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
 
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
 
-  if($from_indent) {
-    $form_submit_url = '/sales/entry-with-barcode?ic='.$ic;
-  } else {
-    $form_submit_url = '/sales/entry-with-barcode';
-  }
+  $form_submit_url = '/sales/update-with-barcode/'.$ic;
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -58,10 +73,11 @@
         <?php echo $flash_obj->print_flash_message(); ?>
         <div class="global-links actionButtons clearfix"> 
           <div class="pull-right text-right">
-            <a href="/sales/entry" class="btn btn-default"><i class="fa fa-inr"></i> Sales Entry W/o Barcode</a>
+            <a href="/sales/entry" class="btn btn-default"><i class="fa fa-inr"></i> Sales Entry W/o Barcode</a>&nbsp;
+            <a href="/sales/list" class="btn btn-default"><i class="fa fa-book"></i> Sales Register</a>            
           </div>
         </div>        
-        <form id="outwardEntryForm" method="POST" action="<?php echo $form_submit_url ?>">
+        <form id="outwardEntryForm" method="POST">
           <div class="table-responsive">
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
               <thead>
@@ -149,8 +165,8 @@
                       $lot_no = isset($form_data['itemDetails']['lotNo'][$i]) ? $form_data['itemDetails']['lotNo'][$i] : '';
                       $barcode = isset($form_data['itemDetails']['barcode'][$i]) ? $form_data['itemDetails']['barcode'][$i] : '';                      
                       if($item_qty > 0 && $item_rate > 0) {
-                        $item_amount = $item_qty * $item_rate;
-                        $taxable_amount = $item_amount - $item_discount;
+                        $item_amount = round($item_qty*$item_rate, 2);
+                        $taxable_amount = round($item_amount-$item_discount, 2);
                         $tax_amount = round(($taxable_amount*$tax_percent)/100, 2);
 
                         $tot_item_amount += $item_amount;
@@ -329,7 +345,7 @@
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
           </div>
-          <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0  && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
+          <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0 && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
@@ -700,16 +716,15 @@
               }
             ?>
             <button class="<?php echo $button_class ?>" id="SaveInvoice" name="op" value="SaveandPrintBill">
-              <i class="<?php echo $button_icon ?>"></i> Save &amp; Print Bill
+              <i class="<?php echo $button_icon ?>"></i> Save Bill & Print
             </button>
             <button class="btn btn-danger cancelButton" id="seWithBarcode">
               <i class="fa fa-times"></i> Cancel
-            </button>
+            </button>            
             <?php /*
             <button class="btn btn-warning" id="SaveBill" name="op" value="SaveandPrintInvoice">
               <i class="fa fa-save"></i> Save &amp; Print Invoice
-            </button>
-            */ ?>            
+            </button> */?>
           </div>
           <?php if($from_indent): ?>
             <input type="hidden" name="fi" id="fi" value="" />

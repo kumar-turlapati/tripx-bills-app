@@ -38,6 +38,9 @@
     $query_params = '?'.implode('&', $query_params);
   }
   $page_url = '/sales/list';
+
+  // dump($sales);
+  // exit;
 ?>
 
 <div class="row">
@@ -202,15 +205,24 @@
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>
                         <a class="btn btn-danger" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Sale Bill - Small format">
-                          <i class="fa fa-files-o"></i>
+                          <i class="fa fa-print"></i>
                         </a>
                         <a class="btn btn-primary" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
                           <i class="fa fa-undo"></i>
-                        </a>                          
+                        </a>
+                        <?php if(Utilities::is_admin()): ?>
+                          <a class="btn btn-warning" href="/sales/update-with-barcode/<?php echo $sales_code ?>" title="Edit Invoice Using Barcode">
+                            <i class="fa fa-pencil"></i>
+                          </a>
+                          <a class="btn btn-info" href="/sales/update/<?php echo $sales_code ?>" title="Edit Invoice Without Barcode">
+                            <i class="fa fa-pencil"></i>
+                          </a>
+                        <?php endif; ?>
+                        <a class="btn btn-default" href="/sales/view-invoice/<?php echo $sales_code ?>" title="View Sales Invoice">
+                          <i class="fa fa-eye"></i>
+                        </a>                        
                         <?php /*
-                        <a class="btn btn-primary" href="/sales/update/<?php echo $sales_code ?>" title="Edit Sales Transaction">
-                          <i class="fa fa-pencil"></i>
-                        </a>*/ ?>
+                        */ ?>
                         <?php /*
                         <a class="btn btn-primary" href="javascript: printSalesBill(<?php echo $sales_details['billNo'] ?>)" title="Print Sales Bill - Normal format">
                           <i class="fa fa-print"></i>

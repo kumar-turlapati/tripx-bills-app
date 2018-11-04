@@ -16,7 +16,7 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
-  $page_url = '/sales/list';
+  $page_url = '/reports/sales-register';
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -90,7 +90,7 @@
                 </div>
       				</div>
               <div class="form-group text-center">
-                <?php include_once __DIR__."/../../../../Layout/helpers/filter-buttons.helper.php" ?>
+                <?php include_once __DIR__."/../../../../Layout/helpers/filter-buttons-reports.helper.php" ?>
               </div>
     			  </form>
     			</div>

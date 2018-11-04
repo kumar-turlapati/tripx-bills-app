@@ -160,7 +160,7 @@ class SalesReportsController {
       'flash_obj' => $this->flash,
       'client_locations' => array(''=>'All Stores') + $client_locations,
       'default_location' => $default_location,
-      'sa_executives' => $sa_executives,
+      'sa_executives' => array('' => 'All Executives') + $sa_executives,
       'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
     );
 

@@ -15,7 +15,7 @@
     $location_code = '';
   }
 
-  $current_date = isset($form_data['invoiceDate']) && $form_data['invoiceDate']!=='' ? date("d-m-Y", strtotime($form_data['invoiceDate'])) : date("d-m-Y");
+  $current_date = isset($form_data['saleDate']) && $form_data['saleDate']!=='' ? date("d-m-Y", strtotime($form_data['saleDate'])) : date("d-m-Y");
   $payment_method = isset($form_data['paymentMethod']) ? $form_data['paymentMethod'] : $payment_method = 0;
   $discount_method = isset($form_data['discountMethod']) ? $form_data['discountMethod'] : $discount_method = 0;
   $mobile_no = isset($form_data['mobileNo']) ? $form_data['mobileNo'] : '';
@@ -24,15 +24,34 @@
   $card_auth_code = isset($form_data['authCode']) ? $form_data['authCode'] : '';
   $coupon_code = isset($form_data['couponCode']) ? $form_data['couponCode'] : '';
   $tax_calc_option = isset($form_data['taxCalcOption']) ? $form_data['taxCalcOption'] : 'i';
-  $split_payment_cash = isset($form_data['splitPaymentCash']) ? $form_data['splitPaymentCash'] : '';
-  $split_payment_card = isset($form_data['splitPaymentCard']) ? $form_data['splitPaymentCard'] : '';
   $executive_id = isset($form_data['saExecutive']) ? $form_data['saExecutive'] : '';
   $cn_no = isset($form_data['cnNo']) ? $form_data['cnNo'] : '';
-  $split_payment_cn = isset($form_data['splitPaymentCn']) ? $form_data['splitPaymentCn'] : '';
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
   $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';
   $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'b2c';
   $credit_days = isset($form_data['saCreditDays']) ? $form_data['saCreditDays'] : '';
+
+  if(isset($form_data['splitPaymentCash']) && $form_data['splitPaymentCash']>0) {
+    $split_payment_cash =  $form_data['splitPaymentCash'];
+  } elseif(isset($form_data['netPayCash']) && $form_data['netPayCash']>0) {
+    $split_payment_cash = $form_data['netPayCash'];
+  } else {
+    $split_payment_cash = '';
+  }
+  if(isset($form_data['splitPaymentCard']) && $form_data['splitPaymentCard']>0) {
+    $split_payment_card =  $form_data['splitPaymentCard'];
+  } elseif(isset($form_data['netPayCard']) && $form_data['netPayCard']>0) {
+    $split_payment_card = $form_data['netPayCard'];
+  } else {
+    $split_payment_card = '';
+  }
+  if(isset($form_data['splitPaymentCn']) && $form_data['splitPaymentCn']>0) {
+    $split_payment_cn =  $form_data['splitPaymentCn'];
+  } elseif(isset($form_data['netPayCn']) && $form_data['netPayCn']>0) {
+    $split_payment_cn = $form_data['netPayCn'];
+  } else {
+    $split_payment_cn = '';
+  }  
 
   $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
   $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
@@ -48,7 +67,7 @@
   $credit_days_input_style = (int)$payment_method === 3 ? '' : 'style="display:none;"';
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
 
-  $form_submit_url = '/sales/entry';
+  $form_submit_url = '/sales/update/'.$ic;
 ?>
 
 <div class="row">
@@ -86,7 +105,7 @@
                 <?php
                   $tot_item_amount = $tot_taxable_amount = $tot_tax_amount = $tot_discount = 0;
                   $tot_bill_qty = 0;
-                  for($i=1;$i<=10;$i++):
+                  for($i=1; $i<=$no_of_rows; $i++):
                     $ex_index = $i-1;
                     if(isset($form_data['itemDetails'])) {
                       $item_name = isset($form_data['itemDetails']['itemName'][$ex_index]) ? $form_data['itemDetails']['itemName'][$ex_index] : '';
@@ -349,7 +368,7 @@
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
           </div>
-          <div class="panel" style="margin-bottom:10px;display:none;" id="siOtherInfoWindow">
+          <div class="panel" style="margin-bottom:10px;<?php echo $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
@@ -711,9 +730,10 @@
             <button class="<?php echo $button_class ?>" id="SaveInvoice" name="op" value="SaveandPrintBill">
               <i class="<?php echo $button_icon ?>"></i> Save Bill &amp; Print
             </button>
+            <?php /*
             <button class="btn btn-warning" id="SaveBill" name="op" value="SaveandPrintInvoice">
               <i class="fa fa-save"></i> Save &amp; Print Invoice
-            </button>
+            </button> */ ?>
             <button class="btn btn-danger cancelButton" id="seWoBarcode">
               <i class="fa fa-times"></i> Cancel
             </button>                        

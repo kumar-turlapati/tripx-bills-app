@@ -151,7 +151,7 @@
           <i class="fa fa-search"></i> Search <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Sale Bills</a></li>
+          <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Invoices</a></li>
           <li><a href="/purchases/search-bills"><i class="fa fa-laptop"></i> Purchase Bills</a></li>          
         </ul>
       </li>
@@ -254,11 +254,9 @@
               <i class="fa fa-inr"></i> Sales <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">
-              <li><a href="/report-options/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
-              <li><a href="/report-options/itemwise-sales-report"><i class="fa fa-angle-right"></i> Itemwise Sales</a></li>
-              <li><a href="/report-options/itemwise-sales-returns"><i class="fa fa-angle-right"></i> Itemwise Sales Returns</a></li>
-              <li><a href="/report-options/sales-return-register"><i class="fa fa-angle-right"></i> Sales Return Register</a></li>
-              <li><a href="/report-options/day-sales-report"><i class="fa fa-angle-right"></i> Sales by Day</a></li>              
+              <li><a href="/reports/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
+              <li><a href="/reports/sales-summary-by-month"><i class="fa fa-angle-right"></i> Sales Summary</a></li>              
+              <li><a href="/reports/day-sales"><i class="fa fa-angle-right"></i> Sales by Day</a></li>
             </ul>            
           </li>
           <li class="sub-menu">

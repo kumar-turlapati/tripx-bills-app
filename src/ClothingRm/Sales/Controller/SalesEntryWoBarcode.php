@@ -17,7 +17,7 @@ use ClothingRm\PromoOffers\Model\PromoOffers;
 use BusinessUsers\Model\BusinessUsers;
 use User\Model\User;
 
-class SalesControllerGst {
+class SalesEntryWoBarcode {
 	protected $views_path;
 
 	public function __construct() {
@@ -33,8 +33,8 @@ class SalesControllerGst {
     $this->bu_model = new BusinessUsers;    
 	}
 
-  # create sales transaction
-  public function salesEntryGstAction(Request $request) {
+  // create sales transaction
+  public function salesEntryAction(Request $request) {
 
     # -------- initialize variables ---------------------------
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
@@ -48,6 +48,8 @@ class SalesControllerGst {
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
     }
+
+    $no_of_rows = 15;
 
     # ---------- get tax percents from api ----------------------
     $taxes_a = $this->taxes_model->list_taxes();
@@ -195,31 +197,50 @@ class SalesControllerGst {
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'sa_executives' => $sa_executives,
       'promo_key' => $promo_key,
-      'customer_types' => $customer_types,      
+      'customer_types' => $customer_types,
+      'no_of_rows' => $no_of_rows,
     );
 
-    return array($this->template->render_view('sales-entry-gst', $template_vars),$controller_vars);
+    return array($this->template->render_view('sales-entry-wo-barcode', $template_vars),$controller_vars);
   }
 
-  # update sales transaction
-  public function salesUpdateGstAction(Request $request) {
+  // update sales transaction
+  public function salesUpdateAction(Request $request) {
+
+    if(!Utilities::is_admin()) {
+      $this->flash->set_flash_message(Constants::$ACCESS_DENIED, 1);
+      Utilities::redirect('/sales/list');
+    }
 
     # -------- initialize variables ---------------------------
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
-    $form_data = $errors = $form_errors = [];
+    $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = [];
+    $customer_types = Constants::$CUSTOMER_TYPES;    
 
-    $page_error = $page_success = '';
+    $page_error = $page_success = $promo_key = '';
 
-    $offers = [1 => 'Coupon Code', 2 => 'Promo Offer', 3 => 'Credit Note'];
+    if($request->get('salesCode') && $request->get('salesCode')!=='') {
+      $sales_code = Utilities::clean_string($request->get('salesCode'));
+      $sales_response = $this->sales->get_sales_details($sales_code);
+      if($sales_response['status']) {
+        $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
+      } else {
+        $page_error = $sales_response['apierror'];
+        $flash->set_flash_message($page_error,1);
+        Utilities::redirect('/sales/list');
+      }
+    } else {
+      $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
+      Utilities::redirect('/sales/list');
+    }    
 
     # ---------- end of initializing variables -----------------
-    for($i=1;$i<=500;$i++) {
-      if($i<=365) {
-        $credit_days_a[$i] = $i;
-      }
-      $qtys_a[$i] = $i;
+    for($i=1;$i<=365;$i++) {
+      $credit_days_a[$i] = $i;
     }
+
+    $no_of_rows = 15;
 
     # ---------- get tax percents from api ----------------------
     $taxes_a = $this->taxes_model->list_taxes();
@@ -235,80 +256,262 @@ class SalesControllerGst {
     if($offers_response['status'] && count($offers_response['response']['offers'])>0 ) {
       $offers_raw = $offers_response['response']['offers'];
       foreach($offers_raw as $offer_details) {
-        $offers[$offer_details['promoCode']] = $offer_details['offerName'];
+        $offers[$offer_details['promoCode']] = $offer_details['promoCode'];
       }
     }
 
     # ---------- get location codes from api -----------------------
-    $client_locations_resp = $this->user_model->get_client_locations();
-    if($client_locations_resp['status']) {
-      foreach($client_locations_resp['clientLocations'] as $loc_details) {
-        $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
+    $client_locations = Utilities::get_client_locations();
+
+    # ---------- get business users --------------------------------
+    if($_SESSION['__utype'] !== 3) {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+    } else {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+    }
+
+    // dump($sexe_response);
+    // exit;
+
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
       }
-    }    
+    } else {
+      $sa_executives = [];
+    }
 
     # ---------- check for last bill printing ----
-    if($request->get('lastBill') && is_numeric($request->get('lastBill'))) {
+    if($request->get('lastBill')) {
       $bill_to_print = $request->get('lastBill');
     } else {
       $bill_to_print = '';
     }
-
-    # ---------- check for print format ----
-    if( $request->get('pFormat') && $request->get('lastBill') && is_numeric($request->get('lastBill')) ) {
-      $print_format = 'bill';
+    if( !is_null($request->get('format')) && ($request->get('format') === 'bill' || $request->get('format') === 'invoice')) {
+      $print_format = $request->get('format');
     } else {
-      $print_format = '';
-    }
-
+      $print_format = 'bill';
+    }    
     # ------------------------------------- check for form Submission --------------------------------
     # ------------------------------------------------------------------------------------------------
     if(count($request->request->all()) > 0) {
-      $form_data = $request->request->all();
-      $validation = $this->_validate_form_data($form_data);
-      if( $validation['status'] === false ) {
-        $form_errors = $validation['errors'];
-        $this->flash->set_flash_message('You have errors in this Bill. Please fix them before saving this transaction.',1);
+
+      $submitted_promo_key = !is_null($request->get('promoKey')) ? $request->get('promoKey') : '';
+      $derived_promo_key = !is_null($request->get('promoCode')) ? md5($request->get('promoCode').$this->promo_key) : '';
+
+      $op = $request->get('op');
+      if($op === 'SaveandPrintInvoice') {
+        $print_format = 'invoice';
       } else {
-        # hit api and process sales transaction.
-        $cleaned_params = $validation['cleaned_params'];
-        $api_response = $this->sales->create_sale($cleaned_params);
-        if($api_response['status'] === true) {
-          $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> created successfully.');
-          Utilities::redirect('/sales/entry');
+        $print_format = 'bill';
+      }      
+
+      // dump($submitted_promo_key, $derived_promo_key, $request->get('promoCode'));
+
+      # check whether the url contains promo code or not.
+      if(in_array($request->get('promoCode'), $offers) && $submitted_promo_key === $derived_promo_key && $submitted_promo_key !== '' && $derived_promo_key !== '') {
+
+        $cleaned_params = $request->request->all();
+        $api_response = $this->sales->update_sale($cleaned_params, $sales_code);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> updated successfully.');
+          Utilities::redirect('/sales/entry?lastBill='.$api_response['invoiceCode'].'&format='.$print_format);
         } else {
           $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error,1);  
+        }
+
+      } else {
+      # if no promo code is available process the transaction as is.
+        $form_data = $request->request->all();
+        $validation = $this->_validate_form_data($form_data);
+        if( $validation['status'] === false ) {
+          $form_errors = $validation['errors'];
+          $this->flash->set_flash_message('You have errors in this Bill. Please fix them before saving this transaction.',1);
+        } else {
+          # check if any promo code is applied.
+          $cleaned_params = $validation['cleaned_params'];
+          $promo_code = $cleaned_params['promoCode'];
+          if($promo_code === '') {
+            $api_response = $this->sales->update_sale($cleaned_params, $sales_code);
+            if($api_response['status']) {
+              $this->flash->set_flash_message('Sales transaction with Bill No. <b>`'.$api_response['billNo'].'`</b> updated successfully.');
+              Utilities::redirect('/sales/entry?lastBill='.$api_response['invoiceCode'].'&format='.$print_format);              
+            } else {
+              $page_error = $api_response['apierror'];
+              $this->flash->set_flash_message($page_error,1);
+              $form_data = $cleaned_params;  
+            }
+          # if applied we will validate and re-process the form.
+          } else {
+            $promo_code_processing = $this->_apply_promo_code($cleaned_params, $promo_code, $offers_raw, $offers);
+            // dump($promo_code_processing);
+            // exit;
+            # if the promo code applied successfully reload the page with processed data.
+            if($promo_code_processing['status']) {
+              $cleaned_params['itemDetails'] = $promo_code_processing['processed_data'];
+              $this->flash->set_flash_message("Promo Code `$promo_code` applied successfully. Click on <span style='color:red;font-weight:bold;'><i class='fa fa-save'></i> Save Bill &amp; Print</span> button at the bottom of this page to save this transaction.");
+              $promo_key = md5($promo_code.$this->promo_key);
+            } else {
+              $promo_error = $promo_code_processing['reason'];
+              $this->flash->set_flash_message("Unable to apply Promo Code : $promo_error", 1);  
+            }
+            $form_data = $cleaned_params;
+          }
         }
       }
     }
 
     # --------------- build variables -----------------
     $controller_vars = array(
-      'page_title' => 'Create Invoice',
+      'page_title' => 'Update Invoice',
       'icon_name' => 'fa fa-inr',
     );
     
     # ---------------- prepare form variables. ---------
     $template_vars = array(
       'payment_methods' => Constants::$PAYMENT_METHODS_RC,
-      'offers' => array(0=>'Choose')+$offers,
+      'offers' => array(''=>'Choose') + $offers,
       'offers_raw' => $offers_raw,
-      'qtys_a' => array(0=>'Choose')+$qtys_a,
+      'credit_days_a' => array(0=>'Choose') + $credit_days_a,
       'errors' => $form_errors,
       'page_error' => $page_error,
       'page_success' => $page_success,
-      'btn_label' => 'Create Invoice',
+      'btn_label' => 'Update Invoice',
+      'print_format' => $print_format,      
       'taxes' => $taxes,
       'form_data' => $form_data,
       'bill_to_print' => $bill_to_print,
-      'print_format' => $print_format,
       'taxcalc_opt_a' => array('e'=>'Exluding Item Rate', 'i' => 'Including Item Rate'),
       'flash_obj' => $this->flash,
       'client_locations' => array(''=>'Choose') + $client_locations,
-      'sa_executives' => array('' => 'Choose'),
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'sa_executives' => $sa_executives,
+      'promo_key' => $promo_key,
+      'customer_types' => $customer_types,
+      'no_of_rows' => $no_of_rows,
+      'ic' => $sales_code,      
     );
 
-    return array($this->template->render_view('sales-update-gst', $template_vars),$controller_vars);
+    return array($this->template->render_view('sales-update-wo-barcode', $template_vars),$controller_vars);
+  }
+
+  // update sales transaction
+  public function salesViewAction(Request $request) {
+
+    # -------- initialize variables ---------------------------
+    $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
+    $form_data = $errors = $form_errors = $offers = [];
+    $taxes = $loc_states = [];
+    $customer_types = Constants::$CUSTOMER_TYPES;    
+
+    $page_error = $page_success = $promo_key = '';
+
+    if($request->get('salesCode') && $request->get('salesCode')!=='') {
+      $sales_code = Utilities::clean_string($request->get('salesCode'));
+      $sales_response = $this->sales->get_sales_details($sales_code);
+      if($sales_response['status']) {
+        $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
+      } else {
+        $page_error = $sales_response['apierror'];
+        $flash->set_flash_message($page_error,1);
+        Utilities::redirect('/sales/list');
+      }
+    } else {
+      $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
+      Utilities::redirect('/sales/list');
+    }    
+
+    # ---------- end of initializing variables -----------------
+    for($i=1;$i<=365;$i++) {
+      $credit_days_a[$i] = $i;
+    }
+
+    $no_of_rows = 15;
+
+    # ---------- get tax percents from api ----------------------
+    $taxes_a = $this->taxes_model->list_taxes();
+    if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
+      $taxes_raw = $taxes_a['taxes'];
+      foreach($taxes_a['taxes'] as $tax_details) {
+        $taxes[$tax_details['taxCode']] = $tax_details['taxPercent'];
+      }
+    }
+
+    # ---------- get live offers from api -------------------------
+    $offers_response = $this->offers_model->getLivePromoOffers();
+    if($offers_response['status'] && count($offers_response['response']['offers'])>0 ) {
+      $offers_raw = $offers_response['response']['offers'];
+      foreach($offers_raw as $offer_details) {
+        $offers[$offer_details['promoCode']] = $offer_details['promoCode'];
+      }
+    }
+
+    # ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations();
+
+    # ---------- get business users --------------------------------
+    if($_SESSION['__utype'] !== 3) {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+    } else {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+    }
+
+    // dump($sexe_response);
+    // exit;
+
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
+      }
+    } else {
+      $sa_executives = [];
+    }
+
+    # ---------- check for last bill printing ----
+    if($request->get('lastBill')) {
+      $bill_to_print = $request->get('lastBill');
+    } else {
+      $bill_to_print = '';
+    }
+    if( !is_null($request->get('format')) && ($request->get('format') === 'bill' || $request->get('format') === 'invoice')) {
+      $print_format = $request->get('format');
+    } else {
+      $print_format = 'bill';
+    }    
+
+    # --------------- build variables -----------------
+    $controller_vars = array(
+      'page_title' => 'View Invoice',
+      'icon_name' => 'fa fa-inr',
+    );
+    
+    # ---------------- prepare form variables. ---------
+    $template_vars = array(
+      'payment_methods' => Constants::$PAYMENT_METHODS_RC,
+      'offers' => array(''=>'Choose') + $offers,
+      'offers_raw' => $offers_raw,
+      'credit_days_a' => array(0=>'Choose') + $credit_days_a,
+      'errors' => $form_errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => 'Update Invoice',
+      'print_format' => $print_format,      
+      'taxes' => $taxes,
+      'form_data' => $form_data,
+      'bill_to_print' => $bill_to_print,
+      'taxcalc_opt_a' => array('e'=>'Exluding Item Rate', 'i' => 'Including Item Rate'),
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'sa_executives' => $sa_executives,
+      'promo_key' => $promo_key,
+      'customer_types' => $customer_types,
+      'no_of_rows' => count($form_data['itemDetails']['itemName']),
+      'ic' => $sales_code,      
+    );
+
+    return array($this->template->render_view('sales-view-invoice', $template_vars),$controller_vars);
   }  
 
   // sales register
@@ -455,7 +658,7 @@ class SalesControllerGst {
     return array($this->template->render_view('sales-register', $template_vars),$controller_vars);
   }
 
-  // search sale bills.
+  // search sale bills
   public function saleBillsSearchAction(Request $request) {
     $search_params = $bills = [];
     $slno = 0;
@@ -514,38 +717,7 @@ class SalesControllerGst {
     return array($this->template->render_view('search-sale-bills', $template_vars),$controller_vars);    
   }
 
-  // remove sales transaction.
-  public function salesRemoveAction(Request $request) {
-    if($request->get('salesCode') && $request->get('salesCode')!='') {
-      $sales_code = Utilities::clean_string($request->get('salesCode'));
-    } else {
-      Utilities::set_flash_message("Invalid Sales Code",1);
-      Utilities::redirect('/sales/list');
-    }
-
-    # initiate sales model.
-    $sales = new Sales; 
-    
-    $sales_response = $sales->get_sales_details($sales_code);
-    if($sales_response['status']===true) {
-      $sales_details = $sales_response['saleDetails'];
-    } else {
-      Utilities::set_flash_message("Invalid Sales Code",1);
-      Utilities::redirect('/sales/list');
-    }
-
-    $remove_response = $sales->removeSalesTransaction($sales_code);
-    if($remove_response['status']===true) {
-      $flash_message = "Sale transaction with code [$sales_code] removed successfully";
-      Utilities::set_flash_message($flash_message);            
-    } else {
-      $flash_message = "Unable to remove Sales transaction. Please contact Administrator.";
-      Utilities::set_flash_message($flash_message,1);
-    }
-    
-    Utilities::redirect('/sales/list');
-  }
-
+  // validate form data
   private function _validate_form_data($form_data=[]) {
 
     // dump($form_data);
@@ -556,7 +728,8 @@ class SalesControllerGst {
     $tot_bill_value = $tot_discount_amount = $tot_billable_value = $tot_tax_value = $round_off = $net_pay = 0;
 
     $payment_methods_a = Constants::$PAYMENT_METHODS_RC;
-    $one_item_found = $split_payment_found = false;
+    $one_item_found = false;
+    $split_payment_found = 0;
 
     $coupon_code = '';
     $customer_types = array_keys(Constants::$CUSTOMER_TYPES);
@@ -668,13 +841,13 @@ class SalesControllerGst {
 
     if((int)$payment_method === 2) {
       if($split_payment_cash > 0) {
-        $split_payment_found = true;
+        $split_payment_found += 1;
       }
       if($split_payment_card > 0) {
-        $split_payment_found = true;
+        $split_payment_found += 1;
       }
       if($split_payment_cn > 0) {
-        $split_payment_found = true;
+        $split_payment_found += 1;
         if($cn_no <= 0) {
           $form_errors['cnNo'] = 'Credit note number is required.';
         } else {
@@ -690,8 +863,8 @@ class SalesControllerGst {
           }
         }
       }
-      if(!$split_payment_found) {
-        $form_errors['paymentMethod'] = 'At least one payment mode value is required.';      
+      if($split_payment_found <= 1) {
+        $form_errors['paymentMethod'] = 'Cash Value , Credit Value and Credit Note Value. Two payment modes are required for Split Payment.';
       }
     }
 
@@ -841,8 +1014,9 @@ class SalesControllerGst {
         'cleaned_params' => $cleaned_params,
       ];
     }
-  }  
+  }
 
+  // apply promo code
   private function _apply_promo_code($form_data=[], $promo_code='', $offers_raw=[]) {
     $sel_promo_type = '';
     $promo_params = [];
@@ -880,6 +1054,7 @@ class SalesControllerGst {
     return $processed_data;
   }
   
+  // apply bill discount
   private function _apply_bill_discount($item_details = [], $offer_details=[]) {
     $gross_amount = 0;
 
@@ -918,6 +1093,7 @@ class SalesControllerGst {
     ];    
   }
 
+  // apply price off for items
   private function _apply_price_off_for_items($item_details = [], $offer_details=[]) {
     $total_qty_per_order = $offer_details['totalQty'] + 0;
     $free_qty_per_order = $offer_details['freeQty'] + 0;
@@ -959,4 +1135,29 @@ class SalesControllerGst {
     ];
   }
 
+  // map invoice data with form data
+  public function _map_invoice_data_with_form_data($invoice_details = []) {
+    $cleaned_params = [];
+
+    $sale_items = $invoice_details['itemDetails'];
+    unset($invoice_details['itemDetails']);
+
+    foreach($sale_items as $key => $item_details) {
+
+      // we need to add ordered qty to closing qty while editing invoice.
+      $available_qty = $item_details['closingQty'] + $item_details['itemQty'];
+ 
+      $cleaned_params['itemDetails']['itemName'][$key] = $item_details['itemName'];
+      $cleaned_params['itemDetails']['itemSoldQty'][$key] = $item_details['itemQty'];
+      $cleaned_params['itemDetails']['itemRate'][$key] = $item_details['mrp'];
+      $cleaned_params['itemDetails']['itemTaxPercent'][$key] = $item_details['taxPercent'];
+      $cleaned_params['itemDetails']['itemAvailQty'][$key] = $available_qty;
+      $cleaned_params['itemDetails']['lotNo'][$key] = $item_details['lotNo'];
+      $cleaned_params['itemDetails']['barcode'][$key] = $item_details['barcode'];
+      $cleaned_params['itemDetails']['itemDiscount'][$key] = $item_details['discountAmount'];
+    }
+    $cleaned_params = array_merge($invoice_details, $cleaned_params);
+
+    return $cleaned_params;
+  }
 }

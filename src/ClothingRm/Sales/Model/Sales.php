@@ -7,7 +7,7 @@ use Atawa\Utilities;
 
 class Sales {
 
-	# create a sales transaction
+	// create a sales transaction
 	public function create_sale($params = []) {
 		$params['clientID'] = Utilities::get_current_client_id();
 		
@@ -23,7 +23,20 @@ class Sales {
 		}
 	}
 
-	# day sales register
+	// update a sales transaction
+	public function update_sale($params = [], $invoice_code='') {
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('put', 'sales-entry/'.$invoice_code, $params);
+		$status = $response['status'];
+		if($status === 'success') {
+			return array('status' => true,'invoiceCode' => $response['response']['invoiceCode'], 'billNo' => $response['response']['billNo'] );
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}	
+
+	// day sales register
 	public function get_sales($page_no=1, $per_page=200, $search_params=[]) {
 		$client_id = Utilities::get_current_client_id();
 
@@ -51,7 +64,7 @@ class Sales {
 		}
 	}
 
-	# get sales transaction details
+	// get sales transaction details
 	public function get_sales_details($invoice_code='', $by_bill_no=false) {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
@@ -78,7 +91,7 @@ class Sales {
 		}
 	}
 
-	# get monthwise sales summary by tax rate
+	// get monthwise sales summary by tax rate
 	public function get_sales_summary_bymon_tax_report($params=[]) {
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get','tax-reports/sales-abs-mon/tax-rate-wise',$params);
@@ -96,7 +109,7 @@ class Sales {
 		}
 	}
 
-	# get monthwise sales summary
+	// get monthwise sales summary
 	public function get_sales_summary_bymon($params=[]) {
 		$api_caller = new ApiCaller();
 		$client_id = Utilities::get_current_client_id();		
