@@ -176,8 +176,8 @@
                 </tr>
               <?php 
                 endfor;
-                $items_tot_after_discount = round($items_total - $total_disc_amount, 2);
-                $grand_total = round($items_tot_after_discount + $total_tax_amount, 2);
+                // $items_tot_after_discount = round($items_total - $total_disc_amount, 2);
+                $grand_total = round($items_total + $total_tax_amount, 2);
                 $round_off = round($grand_total) - $grand_total;
                 $net_pay = round($grand_total);
               ?>

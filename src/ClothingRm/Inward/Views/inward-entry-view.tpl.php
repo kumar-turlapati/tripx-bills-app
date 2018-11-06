@@ -377,11 +377,15 @@
 
                 // dump($taxable_values, $taxable_gst_value);
 
-                $items_tot_after_discount = $items_total-($items_total*$discount_percent)/100;
+/*                $items_tot_after_discount = $items_total-($items_total*$discount_percent)/100;
                 $grand_total = $items_tot_after_discount+$total_tax_amount+
                                $other_taxes+$shipping_charges;
 
-                $net_pay = $grand_total+$adjustment+$round_off;
+                $net_pay = $grand_total+$adjustment+$round_off;*/
+                $grand_total = round($items_total + $total_tax_amount, 2);
+                
+                $round_off = round($grand_total) - $grand_total;
+                $net_pay = round($grand_total);                
               ?>
                 <tr>
                   <td colspan="12" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
