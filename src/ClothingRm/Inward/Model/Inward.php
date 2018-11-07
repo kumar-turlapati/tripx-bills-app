@@ -85,7 +85,7 @@ class Inward
 		}
 	}
 
-	public function get_purchases($page_no=1, $per_page=50, $search_params=[]) {
+	public function get_purchases($page_no=1, $per_page=100, $search_params=[]) {
 
 		$params = array();
 		$params['pageNo']  = $page_no;

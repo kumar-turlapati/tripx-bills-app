@@ -1,4 +1,7 @@
 <?php
+
+  // dump($form_data);
+
   if(isset($form_data['purchaseDate'])) {
     $purchase_date = date("d-m-Y", strtotime($form_data['purchaseDate']));
   } else {
@@ -100,12 +103,13 @@
                       title="Select all items in this page"
                     />
                   </th>                  
-                  <th style="width:25%" class="text-center valign-middle">Item name</th>
-                  <th style="width:15%;" class="text-center valign-middle">HSN / SAC Code</th>                  
+                  <th style="width:20%" class="text-center valign-middle">Item name</th>
+                  <th style="width:10%;" class="text-center valign-middle">HSN / SAC Code</th>                  
                   <th style="width:10%;" class="text-center valign-middle">Lot no.</th>
                   <th style="width:10%;" class="text-center valign-middle">Qty.</th>
+                  <th style="width:10%;" class="text-center valign-middle">Item rate<br />( in Rs. )</th>                  
                   <th style="width:10%;" class="text-center valign-middle">MRP<br />( in Rs. )</th>
-                  <th style="width:10%;" class="text-center valign-middle">No. of Stickers<br />required</th>                  
+                  <th style="width:10%;" class="text-center valign-middle">No. of stickers<br />required</th>                  
                   <th style="width:10%;" class="text-center valign-middle">Barcode</th>
                 </tr>
               </thead>
@@ -159,7 +163,7 @@
                   if( isset($form_data['itemDiscount'][$i-1]) && $form_data['itemDiscount'][$i-1] !== '' ) {
                     $item_discount = $form_data['itemDiscount'][$i-1];
                   } else {
-                    $item_discount = '';
+                    $item_discount = 0;
                   }
                   if( isset($form_data['hsnCodes'][$i-1]) && $form_data['hsnCodes'][$i-1] !== '' ) {
                     $hsn_code = $form_data['hsnCodes'][$i-1];
@@ -177,11 +181,16 @@
                     $packed_qty = $form_data['packedQty'][$i-1];
                   } else {
                     $packed_qty = 1;
-                  }                  
+                  }
 
-                  $billed_qty = $inward_qty-$free_qty;
-                  $gross_amount = $billed_qty*$item_rate;
-                  $item_amount = $gross_amount-$item_discount;
+                  $final_billed_qty =  $inward_qty-$free_qty;
+
+                  $billed_qty = $final_billed_qty * $packed_qty;
+                  $billed_qty_sticker = $final_billed_qty;
+                  $billed_qty_string = $final_billed_qty. ' x '. $packed_qty;
+
+                  $gross_amount = $billed_qty * $item_rate;
+                  $item_amount = $gross_amount - $item_discount;
                   $tax_amount = round($item_amount*$tax_percent/100,2);
 
                   $items_total += $item_amount;
@@ -202,7 +211,7 @@
                   $item_key = $item_code.'__'.$lot_no;
               ?>
                 <tr class="purchaseItemRow font12">
-                  <td align="center">
+                  <td align="center" class="valign-middle">
                     <input
                       type="checkbox"
                       id="requestedItem_<?php echo $item_key ?>"
@@ -215,8 +224,9 @@
                   <td align="left" class="valign-middle"><?php echo $item_name ?></td>
                   <td align="left" class="valign-middle"><?php echo $hsn_code ?></td>                  
                   <td class="valign-middle"><?php echo $lot_no ?></td>
-                  <td align="right" class="valign-middle"><?php echo number_format($billed_qty,2) ?></td>
-                  <td align="right" class="valign-middle"><?php echo number_format($mrp,2) ?></td>
+                  <td align="right" class="valign-middle"><?php echo $billed_qty_string ?></td>
+                  <td class="valign-middle" align="right"><?php echo number_format($item_rate, 2, '.', '') ?></td>                  
+                  <td align="right" class="valign-middle"><?php echo number_format($mrp, 2, '.', '') ?></td>
                   <td class="valign-middle">
                     <input
                       type="text"
@@ -224,7 +234,7 @@
                       name="stickerQty[<?php echo $item_code.'__'.$lot_no ?>]" 
                       style="background-color:#f1f442;border:1px solid #000;font-weight:bold;"
                       id="stickerQty_<?php echo $i ?>"
-                      value="<?php echo $billed_qty ?>"
+                      value="<?php echo $final_billed_qty ?>"
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['stickerQty']) ) :?>
                       <span class="error">Invalid</span>
@@ -242,11 +252,9 @@
               <?php 
                 endfor;
 
-                $items_tot_after_discount = $items_total-($items_total*$discount_percent)/100;
-                $grand_total = $items_tot_after_discount+$total_tax_amount+
-                               $other_taxes+$shipping_charges;
-
-                $net_pay = $grand_total+$adjustment+$round_off;
+                $grand_total = round($items_total + $total_tax_amount, 2);
+                $round_off = round($grand_total) - $grand_total;
+                $net_pay = round($grand_total);
               ?>
                 <?php /*
                 <tr>

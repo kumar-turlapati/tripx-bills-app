@@ -57,6 +57,8 @@ class BarcodeController
 
       $purchase_code = Utilities::clean_string($request->get('purchaseCode'));
       $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
+      // dump($purchase_response);
+      // exit;
 
       if($purchase_response['status'] === false) {
         $this->flash->set_flash_message('Invalid PO Number (or) PO does not exists.', 1);
@@ -75,7 +77,7 @@ class BarcodeController
         $inward_entry_no =  ' - PO No. { '. $purchase_details['poNo'] .' }';
         $mfg_date = $purchase_details['purchaseDate'];
 
-        # convert received item details to template item details.
+        // convert received item details to template item details.
         $item_names = array_column($purchase_details['itemDetails'],'itemName');
         $item_codes = array_column($purchase_details['itemDetails'],'itemCode');        
         $inward_qtys = array_column($purchase_details['itemDetails'],'itemQty');
@@ -83,7 +85,7 @@ class BarcodeController
         $lot_nos = array_column($purchase_details['itemDetails'],'lotNo');
         $mrps = array_column($purchase_details['itemDetails'],'mrp');
         $item_rates = array_column($purchase_details['itemDetails'],'itemRate');
-        $discounts = array_column($purchase_details['itemDetails'],'discount');                
+        $discounts = array_column($purchase_details['itemDetails'],'discountAmount');                
         $tax_percents = array_column($purchase_details['itemDetails'],'taxPercent');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $barcodes = array_column($purchase_details['itemDetails'],'barcode');
@@ -91,7 +93,7 @@ class BarcodeController
 
         $submitted_item_details = $purchase_details['itemDetails'];
 
-        # unset item details from api data.
+        // unset item details from api data.
         $purchase_item_details = $purchase_details['itemDetails'];
         foreach($purchase_item_details as $key => $purchase_items) {
           $item_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['itemName'];
@@ -100,7 +102,7 @@ class BarcodeController
         }
         unset($purchase_details['itemDetails']);
 
-        # create form data variable.
+        // create form data variable.
         $form_data = $purchase_details;
         $form_data['itemName'] = $item_names;
         $form_data['inwardQty'] = $inward_qtys;
