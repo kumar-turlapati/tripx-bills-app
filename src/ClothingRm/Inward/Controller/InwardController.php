@@ -337,7 +337,7 @@ class InwardController
         $lot_nos = array_column($purchase_details['itemDetails'],'lotNo');
         $mrps = array_column($purchase_details['itemDetails'],'mrp');
         $item_rates = array_column($purchase_details['itemDetails'],'itemRate');
-        $discounts = array_column($purchase_details['itemDetails'],'discount');                
+        $discounts = array_column($purchase_details['itemDetails'],'discountAmount');                
         $tax_percents = array_column($purchase_details['itemDetails'],'taxPercent');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
