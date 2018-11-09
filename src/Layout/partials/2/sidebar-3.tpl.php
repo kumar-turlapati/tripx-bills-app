@@ -262,6 +262,14 @@
           </li>
           <li class="sub-menu">
             <a href="javascript:">
+              <i class="fa fa-laptop"></i> Purchases <span class="menu-arrow arrow_carrot-right"></span> 
+            </a>
+            <ul class="sub">
+              <li><a href="/reports/po-register"><i class="fa fa-angle-right"></i> PO Register</a></li>
+            </ul>            
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:">
               <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">
@@ -279,8 +287,3 @@
     </ul>
   </div>
 </aside>
-
-<?php
-/*
-<li><a href="/report-options/opening-balances"><i class="fa fa-angle-right"></i> Op.Bal Report</a></li>
-*/ ?>

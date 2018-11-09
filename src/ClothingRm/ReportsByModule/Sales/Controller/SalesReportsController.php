@@ -471,7 +471,7 @@ class SalesReportsController {
     return [$this->template->render_view('sales-summary-by-month', $template_vars), $controller_vars];
   }
 
-  public function itemwiseSalesSummaryByMonth(Request $request) {
+  public function salesByTaxRate(Request $request) {
 
     $default_location = $_SESSION['lc'];
     $client_locations = Utilities::get_client_locations();
@@ -510,9 +510,12 @@ class SalesReportsController {
         $csv_headings = [ [$heading1], [$heading2] ];
       }
 
+      // dump($sales_summary);
+      // exit;
+
       $format = $form_data['format'];
       if($format === 'csv') {
-        Utilities::download_as_CSV_attachment('SalesbyTaxRate', $csv_headings, $sales_summary);
+        Utilities::download_as_CSV_attachment('SalesRegisterByTaxRate', $csv_headings, $sales_summary);
         return;
       }
 
@@ -552,11 +555,9 @@ class SalesReportsController {
       $pdf->Cell($item_widths[11],6,'GST Value','RTB',0,'C');
       $pdf->SetFont('Arial','',10);
 
-      // dump($sales_summary);
-      // exit;
-
       foreach($sales_summary as $day_details) {
         $date = date("d-m-Y", strtotime($day_details['tranDate']));
+        $gst_summary = [];
         if($day_details['fivePercentItemQty'] > 0) {
           $gst_summary[5] = [
             'qty' => $day_details['fivePercentItemQty'],
@@ -607,14 +608,14 @@ class SalesReportsController {
         }
         if($day_details['twentyEightPercentItemQty'] > 0) {
           $gst_summary[28] = [
-            'qty' => $day_details['twelvePercentItemQty'],
+            'qty' => $day_details['twentyEightPercentItemQty'],
             'billable' => $day_details['twentyEightPercentBillable'],
             'taxable' => $day_details['twentyEightPercentTaxable'],
             'igst' => $day_details['twentyEightPercentIgstAmt'],
             'cgst' => $day_details['twentyEightPercentCgstAmt'],
             'sgst' => $day_details['twentyEightPercentSgstAmt'],
           ];
-          $grand_tot_qty += $day_details['twelvePercentItemQty'];
+          $grand_tot_qty += $day_details['twentyEightPercentItemQty'];
           $grand_billable += $day_details['twentyEightPercentBillable'];
           $grand_taxable += $day_details['twentyEightPercentTaxable'];
           $grand_igst_value += $day_details['twentyEightPercentIgstAmt'];

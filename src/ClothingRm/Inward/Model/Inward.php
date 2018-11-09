@@ -86,8 +86,7 @@ class Inward
 	}
 
 	public function get_purchases($page_no=1, $per_page=100, $search_params=[]) {
-
-		$params = array();
+		$params = [];
 		$params['pageNo']  = $page_no;
 		$params['perPage'] = $per_page;
 		if(count($search_params)>0) {
@@ -99,10 +98,14 @@ class Inward
 				$toDate = Utilities::clean_string($search_params['toDate']);
 				$params['toDate'] = $toDate;
 			}			
-			if(isset($search_params['supplierID'])) {
-				$supplierID = Utilities::clean_string($search_params['supplierID']);
-				$params['supplierID'] = $supplierID;
-			}			
+			if(isset($search_params['supplierCode'])) {
+				$supplierCode = Utilities::clean_string($search_params['supplierCode']);
+				$params['supplierID'] = $supplierCode;
+			}
+			if(isset($search_params['locationCode'])) {
+				$locationCode = Utilities::clean_string($search_params['locationCode']);
+				$params['locationCode'] = $locationCode;
+			}
 		}
 
 		// dump($search_params);

@@ -669,7 +669,7 @@ $routes->add('report_sales_summary_month', new Routing\Route('/reports/sales-sum
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesSummaryByMonth',
 )));
 $routes->add('report_itemwise_sales', new Routing\Route('/reports/sales-by-tax-rate', array(
-  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::itemwiseSalesSummaryByMonth',
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesByTaxRate',
 )));
 
 // reports - inventory
