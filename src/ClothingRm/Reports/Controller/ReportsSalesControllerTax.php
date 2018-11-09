@@ -38,8 +38,9 @@ class ReportsSalesControllerTax {
     } else {
       $sales_summary = $sales_response['summary'];
       $month_name = date('F', mktime(0, 0, 0, $month, 10));
-      $heading1 = 'Daywise Sales Summary Report - By Tax Rate';
-      $heading2 = 'for the month of '.$month_name.', '.$year;
+      $heading1 = 'Daywise Sales Summary - By Tax Rate';
+      $heading2 = 
+      $heading3 = 'for the month of '.$month_name.', '.$year;
     }
 
     # start PDF printing.

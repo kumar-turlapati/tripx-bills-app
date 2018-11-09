@@ -658,7 +658,7 @@ $routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentMobileViewStep2',
 )));
 
-// reports
+// reports - sales
 $routes->add('report_sales_register', new Routing\Route('/reports/sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printSalesRegister',
 )));
@@ -668,8 +668,21 @@ $routes->add('report_day_sales_summary', new Routing\Route('/reports/day-sales',
 $routes->add('report_sales_summary_month', new Routing\Route('/reports/sales-summary-by-month', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesSummaryByMonth',
 )));
+$routes->add('report_itemwise_sales', new Routing\Route('/reports/sales-by-tax-rate', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::itemwiseSalesSummaryByMonth',
+)));
+
+// reports - inventory
 $routes->add('report_stock', new Routing\Route('/reports/stock-report', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::stockReport',
+)));
+
+// reports - purchases
+$routes->add('report_po_register', new Routing\Route('/reports/po-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::poRegister',
+)));
+$routes->add('report_grn_register', new Routing\Route('/reports/grn-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::grnRegister',
 )));
 
 $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
@@ -679,6 +692,10 @@ $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportN
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
 )));
+$routes->add('report_inventoryProfitability', new Routing\Route('/inventory-profitability', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::inventoryProfitability',
+)));
+
 
 // $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
 //   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
@@ -834,9 +851,7 @@ $routes->add('report_itemMaster', new Routing\Route('/item-master', array(
 $routes->add('report_payablesMonthwise', new Routing\Route('/payables-monthwise', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsFinanceController::payablesMonthwise',
 )));
-$routes->add('report_inventoryProfitability', new Routing\Route('/inventory-profitability', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::inventoryProfitability',
-)));
+
 $routes->add('report_momComparison', new Routing\Route('/mom-comparison', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::momComparison',
 )));

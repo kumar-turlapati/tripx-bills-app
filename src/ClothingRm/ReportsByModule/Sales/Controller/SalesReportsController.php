@@ -471,6 +471,230 @@ class SalesReportsController {
     return [$this->template->render_view('sales-summary-by-month', $template_vars), $controller_vars];
   }
 
+  public function itemwiseSalesSummaryByMonth(Request $request) {
+
+    $default_location = $_SESSION['lc'];
+    $client_locations = Utilities::get_client_locations();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_sales_summary_bymon($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = 'Invalid Form Data.';
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/itemwise-sales-register');        
+      }
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_sales_summary_bymon_tax_report($form_data);
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/itemwise-sales-register');
+      } else {
+        $sales_summary = $sales_api_response['summary'];
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }        
+        $month_name = date('F', mktime(0, 0, 0, $form_data['month'], 10));
+        $heading1 = 'Sales by Tax Rate';
+        $heading2 = 'for the month of '.$month_name.', '.$form_data['year'];
+        if($location_name !== '') {
+          $heading1 .= ' :: '.$location_name;
+        }        
+        $csv_headings = [ [$heading1], [$heading2] ];
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        Utilities::download_as_CSV_attachment('SalesbyTaxRate', $csv_headings, $sales_summary);
+        return;
+      }
+
+      $item_widths = array(22,20,33,33,15,27,15,27,15,27,15,27);
+      $totals_width = $item_widths[0]+$item_widths[1];
+      $slno = 0;
+      $gst_summary = [];
+
+      $grand_tot_qty = $grand_billable = $grand_taxable = $grand_igst_value = 0;
+      $grand_cgst_value = $grand_sgst_value = 0;
+
+      // start PDF printing.
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('L','A4');
+
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,0,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading2,'',1,'C');
+
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Ln(5);
+      $pdf->Cell($item_widths[0],6,'Date','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Units Sold','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'Total Amount','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'Taxable','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'IGST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[5],6,'IGST Value','RTB',0,'C'); 
+      $pdf->Cell($item_widths[6],6,'CGST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[7],6,'CGST Value','RTB',0,'C'); 
+      $pdf->Cell($item_widths[8],6,'SGST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[9],6,'SGST Value','RTB',0,'C');
+      $pdf->Cell($item_widths[10],6,'GST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[11],6,'GST Value','RTB',0,'C');
+      $pdf->SetFont('Arial','',10);
+
+      // dump($sales_summary);
+      // exit;
+
+      foreach($sales_summary as $day_details) {
+        $date = date("d-m-Y", strtotime($day_details['tranDate']));
+        if($day_details['fivePercentItemQty'] > 0) {
+          $gst_summary[5] = [
+            'qty' => $day_details['fivePercentItemQty'],
+            'billable' => $day_details['fivePercentBillable'],
+            'taxable' => $day_details['fivePercentTaxable'],
+            'igst' => $day_details['fivePercentIgstAmt'],
+            'cgst' => $day_details['fivePercentCgstAmt'],
+            'sgst' => $day_details['fivePercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['fivePercentItemQty'];
+          $grand_billable += $day_details['fivePercentBillable'];
+          $grand_taxable += $day_details['fivePercentTaxable'];
+          $grand_igst_value += $day_details['fivePercentIgstAmt'];
+          $grand_cgst_value += $day_details['fivePercentCgstAmt'];
+          $grand_sgst_value += $day_details['fivePercentSgstAmt'];
+        }
+        if($day_details['twelvePercentItemQty'] > 0) {
+          $gst_summary[12] = [
+            'qty' => $day_details['twelvePercentItemQty'],
+            'billable' => $day_details['twelvePercentBillable'],
+            'taxable' => $day_details['twelvePercentTaxable'],
+            'igst' => $day_details['twelvePercentIgstAmt'],
+            'cgst' => $day_details['twelvePercentCgstAmt'],
+            'sgst' => $day_details['twelvePercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['twelvePercentItemQty'];
+          $grand_billable += $day_details['twelvePercentBillable'];
+          $grand_taxable += $day_details['twelvePercentTaxable'];
+          $grand_igst_value += $day_details['twelvePercentIgstAmt'];
+          $grand_cgst_value += $day_details['fivePercentCgstAmt'];        
+          $grand_sgst_value += $day_details['twelvePercentSgstAmt'];
+        }
+        if($day_details['eighteenPercentItemQty'] > 0) {
+          $gst_summary[18] = [
+            'qty' => $day_details['eighteenPercentItemQty'],
+            'billable' => $day_details['eighteenPercentBillable'],
+            'taxable' => $day_details['eighteenPercentTaxable'],
+            'igst' => $day_details['eighteenPercentIgstAmt'],
+            'cgst' => $day_details['eighteenPercentCgstAmt'],
+            'sgst' => $day_details['eighteenPercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['eighteenPercentItemQty'];
+          $grand_billable += $day_details['eighteenPercentBillable'];
+          $grand_taxable += $day_details['eighteenPercentTaxable'];
+          $grand_igst_value += $day_details['eighteenPercentIgstAmt'];
+          $grand_sgst_value += $day_details['eighteenPercentSgstAmt'];
+          $grand_cgst_value += $day_details['eighteenPercentCgstAmt'];        
+        }
+        if($day_details['twentyEightPercentItemQty'] > 0) {
+          $gst_summary[28] = [
+            'qty' => $day_details['twelvePercentItemQty'],
+            'billable' => $day_details['twentyEightPercentBillable'],
+            'taxable' => $day_details['twentyEightPercentTaxable'],
+            'igst' => $day_details['twentyEightPercentIgstAmt'],
+            'cgst' => $day_details['twentyEightPercentCgstAmt'],
+            'sgst' => $day_details['twentyEightPercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['twelvePercentItemQty'];
+          $grand_billable += $day_details['twentyEightPercentBillable'];
+          $grand_taxable += $day_details['twentyEightPercentTaxable'];
+          $grand_igst_value += $day_details['twentyEightPercentIgstAmt'];
+          $grand_cgst_value += $day_details['twentyEightPercentCgstAmt'];        
+          $grand_sgst_value += $day_details['twentyEightPercentSgstAmt'];
+        }
+
+        // dump($gst_summary);
+        // exit;
+
+        foreach($gst_summary as $key => $gst_summary_details) {
+          if($gst_summary_details['igst'] > 0) {
+            $igst_amount = number_format($gst_summary_details['igst'],2,'.','');
+            $cgst_amount = $sgst_amount = '';
+            $igst_percent = number_format($key,2);
+          } else {
+            $cgst_amount = number_format($gst_summary_details['cgst'],2,'.','');
+            $sgst_amount = number_format($gst_summary_details['sgst'],2,'.','');
+            $cgst_percent = $sgst_percent = number_format($key/2, 2);
+            $igst_percent = '';
+            $igst_amount = '';
+          }
+
+          $pdf->Ln();
+          $pdf->Cell($item_widths[0],6,$date,'LRTB',0,'L');
+          $pdf->Cell($item_widths[1],6,number_format($gst_summary_details['qty'],2),'RTB',0,'R');
+          $pdf->Cell($item_widths[2],6,number_format($gst_summary_details['billable'],2),'RTB',0,'R');
+          $pdf->Cell($item_widths[3],6,number_format($gst_summary_details['taxable'],2),'RTB',0,'R');
+          $pdf->Cell($item_widths[4],6,$igst_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths[5],6,$igst_amount,'RTB',0,'R');
+          $pdf->Cell($item_widths[6],6,$cgst_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths[7],6,$cgst_amount,'RTB',0,'R');
+          $pdf->Cell($item_widths[8],6,$sgst_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths[9],6,$sgst_amount,'RTB',0,'R');
+          $pdf->Cell($item_widths[10],6,number_format($key,2),'RTB',0,'R');
+          $pdf->Cell($item_widths[11],6,number_format($gst_summary_details['cgst'] + $gst_summary_details['sgst'], 2, '.', ''),'RTB',0,'R');
+        }
+      }
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Cell($item_widths[0],6,'','LRTB',0,'L');
+      $pdf->Cell($item_widths[1],6,number_format($grand_tot_qty,2),'RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($grand_billable,2),'RTB',0,'R');
+      $pdf->Cell($item_widths[3],6,number_format($grand_taxable,2),'RTB',0,'R');
+      $pdf->Cell($item_widths[4],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[7],6,number_format($grand_cgst_value, 2),'RTB',0,'R');
+      $pdf->Cell($item_widths[8],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[9],6,number_format($grand_sgst_value, 2),'RTB',0,'R');
+      $pdf->Cell($item_widths[10],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[11],6,number_format($grand_cgst_value + $grand_sgst_value, 2),'RTB',0,'R');
+      $pdf->SetFont('Arial','B',9);
+
+      $pdf->Output();      
+    }
+
+
+    // controller variables.
+    $controller_vars = array(
+      'page_title' => 'Sales by Tax Rate',
+      'icon_name' => 'fa fa-inr',
+    );    
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'months' => Utilities::get_calender_months(), 
+      'years' => Utilities::get_calender_years(1),
+      'def_month' => date("m"),
+      'def_year' => date("Y"),
+    );
+
+    // render template
+    return [$this->template->render_view('sales-by-tax-rate', $template_vars), $controller_vars];    
+  }
 
   private function _get_sales_executives() {
     if($_SESSION['__utype'] !== 3) {
