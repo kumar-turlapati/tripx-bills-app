@@ -196,6 +196,7 @@ class salesEntryWithBarcode {
       'payment_methods' => Constants::$PAYMENT_METHODS_RC,
       'offers' => array(''=>'Choose')+$offers,
       'offers_raw' => $offers_raw,
+      'credit_days_a' => array(0=>'Choose') + $credit_days_a,      
       'qtys_a' => array(0=>'Choose')+$qtys_a,
       'errors' => $form_errors,
       'page_error' => $page_error,
@@ -388,6 +389,7 @@ class salesEntryWithBarcode {
       'payment_methods' => Constants::$PAYMENT_METHODS_RC,
       'offers' => array(''=>'Choose')+$offers,
       'offers_raw' => $offers_raw,
+      'credit_days_a' => array(0=>'Choose') + $credit_days_a,      
       'qtys_a' => array(0=>'Choose')+$qtys_a,
       'errors' => $form_errors,
       'page_error' => $page_error,
@@ -445,6 +447,7 @@ class salesEntryWithBarcode {
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
     $from_indent = isset($form_data['fi']) ? 'y': 'n';
     $customer_type = $form_data['customerType'];
+    $credit_days = isset($form_data['saCreditDays']) ? Utilities::clean_string($form_data['saCreditDays']) : 0;    
 
     $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
     $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
@@ -508,6 +511,13 @@ class salesEntryWithBarcode {
       $form_errors['otherCharges'] = 'Invalid input. Must be numeric.';
     } else {
       $cleaned_params['otherCharges'] = $other_charges;
+    }
+
+    // validate for credit days.
+    if( (int)$payment_method === 3 && (int)$credit_days === 0) {
+      $form_errors['saCreditDays'] = 'Credit days are required for Credit payment method.';
+    } else {
+      $cleaned_params['saCreditDays'] = $credit_days;
     }    
 
     // validate card no, auth code when the card value is more than zero

@@ -247,6 +247,7 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/stock-report"><i class="fa fa-angle-right"></i> Stock Report</a></li>
+              <li><a href="/reports/opbal"><i class="fa fa-angle-right"></i> Opening Balances</a></li>              
             </ul>
           </li>
           <li class="sub-menu">
@@ -255,10 +256,11 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
+              <li><a href="/reports/itemwise-sales-register"><i class="fa fa-angle-right"></i> Itemwise Sales Register</a></li>              
               <li><a href="/reports/sales-summary-by-month"><i class="fa fa-angle-right"></i> Sales Summary</a></li>              
               <li><a href="/reports/day-sales"><i class="fa fa-angle-right"></i> Sales by Day</a></li>
               <li><a href="/reports/sales-by-tax-rate"><i class="fa fa-angle-right"></i> Sales by Tax Rate</a></li>              
-            </ul>            
+            </ul>
           </li>
           <li class="sub-menu">
             <a href="javascript:">
@@ -266,6 +268,15 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/po-register"><i class="fa fa-angle-right"></i> PO Register</a></li>
+            </ul>            
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:">
+              <i class="fa fa-gg"></i> MIS Reports <span class="menu-arrow arrow_carrot-right"></span> 
+            </a>
+            <ul class="sub">
+              <li><a href="/reports/inventory-profitability"><i class="fa fa-angle-right"></i> Inventory Profitability</a></li>
+              <li><a href="/reports/material-movement"><i class="fa fa-angle-right"></i> Inventory Movement</a></li>              
             </ul>            
           </li>
           <li class="sub-menu">

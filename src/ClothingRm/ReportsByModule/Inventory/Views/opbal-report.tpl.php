@@ -1,17 +1,24 @@
 <?php
   $current_date = date("d-m-Y");
   $query_params = '';
-  if(isset($search_params['saleDate']) && $search_params['saleDate'] !=='') {
-    $saleDate = $search_params['saleDate'];
-    $query_params[] = 'saleDate='.$saleDate;
+  if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
+    $fromDate = $search_params['fromDate'];
+    $query_params[] = 'fromDate='.$fromDate;
   } else {
-    $saleDate = $current_date;
+    $fromDate = $current_date;
   }
+  if(isset($search_params['toDate']) && $search_params['toDate'] !='' ) {
+    $toDate = $search_params['toDate'];
+    $query_params[] = 'toDate='.$toDate;
+  } else {
+    $toDate = $current_date;
+  }
+
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
-  $page_url = '/reports/stock-report';
-  $brand_name = $category_code = '';
+  $page_url = '/reports/opbal';
+  $category_code = '';
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -23,6 +30,18 @@
     			  <form class="form-validate form-horizontal" method="POST">
       				<div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1" style="padding-top:5px;text-align:right;font-weight:bold;">Filters</div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
+                    <span class="add-on"><i class="fa fa-calendar"></i></span>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" value="<?php echo $toDate ?>" />
+                    <span class="add-on"><i class="fa fa-calendar"></i></span>
+                  </div>
+                </div>                
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
@@ -44,7 +63,7 @@
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
-                    <select class="form-control" name="categoryCode" id="categoryCode">
+                    <select class="form-control" name="category" id="category">
                       <?php 
                         foreach($categories as $category_key => $category_name):
                           if($category_code === $category_key) {
@@ -61,9 +80,6 @@
                    </div>
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <input placeholder="Brand Name" type="text" name="brandName" id="brandName" class="form-control brandAc" value="<?php echo $brand_name ?>">
-                </div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="format" id="format">
                       <?php 
@@ -76,7 +92,7 @@
                 </div>
       				</div>
               <div class="form-group text-center">
-                <?php include_once __DIR__."/../../../../Layout/helpers/filter-buttons.helper.php" ?>
+                <?php include_once __DIR__."/../../../../Layout/helpers/filter-buttons-reports.helper.php" ?>
               </div>
     			  </form>
     			</div>

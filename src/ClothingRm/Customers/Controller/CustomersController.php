@@ -103,7 +103,7 @@ class CustomersController
   }
 
   public function customerUpdateAction(Request $request) {
-    $form_errors = $submitted_data = $customer_details = [];
+    $form_errors = $submitted_data = $customer_details = $users = [];
     $page_error = $page_success = $cust_code = '';
 
     $redirect_url = '/customers/list';

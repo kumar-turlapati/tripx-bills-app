@@ -27,6 +27,7 @@
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
   $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';
   $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'b2c';
+  $credit_days = isset($form_data['saCreditDays']) ? $form_data['saCreditDays'] : '';  
 
   $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
   $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
@@ -59,8 +60,10 @@
     $split_payment_cn = '';
   }  
 
-  $card_and_auth_style = (int)$payment_method === 0 ? 'style="display:none;"' : '';
+  $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
+  $credit_days_input_style = (int)$payment_method === 3 ? '' : 'style="display:none;"';
+  $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
 
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
 
@@ -497,7 +500,27 @@
                   <?php if(isset($errors['paymentMethod'])): ?>
                     <span class="error"><?php echo $errors['paymentMethod'] ?></span>
                   <?php endif; ?>
-                </div>                
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4" id="containerCrDays" <?php echo $credit_days_input_style ?>>
+                  <label class="control-label">Credit days</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="saCreditDays" id="saCreditDays">
+                      <?php 
+                        foreach($credit_days_a as $key=>$value):
+                          if((int)$credit_days === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($errors['saCreditDays'])): ?>
+                    <span class="error"><?php echo $errors['saCreditDays'] ?></span>
+                  <?php endif; ?>
+                </div>                     
                 <div class="col-sm-12 col-md-4 col-lg-4" id="containerCardNo" <?php echo $card_and_auth_style ?>>
                   <label class="control-label">Card No.</label>
                   <input type="text" class="form-control noEnterKey" name="cardNo" id="cardNo" value="<?php echo $card_number ?>" />

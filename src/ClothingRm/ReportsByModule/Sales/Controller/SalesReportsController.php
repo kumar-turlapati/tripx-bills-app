@@ -697,6 +697,156 @@ class SalesReportsController {
     return [$this->template->render_view('sales-by-tax-rate', $template_vars), $controller_vars];    
   }
 
+  public function itemwiseSalesRegister(Request $request) {
+   
+    $default_location = $_SESSION['lc'];
+    $page_no = 1; $per_page = 300;
+    $total_records = [];
+    $sort_by_a = ['item' => 'SortBy - Itemwise', 'qty' => 'SortBy - Qtywise'];    
+
+    $client_locations = Utilities::get_client_locations();
+    $sa_executives = $this->_get_sales_executives();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_itemwise_sr($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = 'Invalid Form Data.';
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-register');        
+      }
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_itemwise_sales_report($form_data);
+      // dump($sales_api_response);
+      // exit;
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/itemwise-sales-register');
+      } else {
+        $total_records = $sales_api_response['summary']['results'];
+        $total_pages = $sales_api_response['summary']['total_pages'];
+        if($total_pages>1) {
+          for($i=2;$i<=$total_pages;$i++) {
+            $form_data['pageNo'] = $i;
+            $sales_api_response = $this->sales_model->get_itemwise_sales_report($form_data);
+            if($sales_api_response['status']) {
+              $total_records = array_merge($total_records,$sales_api_response['summary']['results']);
+            }
+          }
+        }
+
+        // dump($total_records);
+        // exit;
+
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+        $heading1 = 'Itemwise Sales Register';
+        $heading2 = '( from '.$form_data['fromDate'].' to '.$form_data['toDate'].' )';
+        if($location_name !== '') {
+          $heading1 .= ' - '.$location_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2] ];
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        $total_records = $this->_format_data_for_itemwise_sales_register($total_records);
+        Utilities::download_as_CSV_attachment('ItemwiseSalesRegister', $csv_headings, $total_records);
+        return;
+      }
+
+      // start PDF printing.
+      $item_widths = array(10,38,25,25,18,16,21,21,21);
+                        //  0, 1, 2, 3, 4, 5, 6, 7, 8
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+      $slno = 0;
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('P','A4');
+
+      // Print Bill Information.
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,0,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading2,'',1,'C');
+
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Ln(5);
+      $pdf->Cell($item_widths[0],6,'SNo.','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'HSN/SAC','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'Category','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'Item Rate','RTB',0,'C');
+      $pdf->Cell($item_widths[5],6,'Sold Qty.','RTB',0,'C');
+      $pdf->Cell($item_widths[6],6,'Total Amt.','RTB',0,'C');  
+      $pdf->Cell($item_widths[7],6,'Total Disc.','RTB',0,'C');
+      $pdf->Cell($item_widths[8],6,'Net Value','RTB',0,'C');
+      $pdf->SetFont('Arial','',9);
+
+      $tot_sold_qty = $tot_amount = $tot_discount = $tot_net_pay = 0;
+      $slno = 0;
+      foreach($total_records as $record_details) {
+          $slno++;
+
+          $net_pay = $record_details['saleValue'] - $record_details['discountAmount'];
+
+          $tot_sold_qty += $record_details['soldQty'];
+          $tot_amount += $record_details['saleValue'];
+          $tot_discount += $record_details['discountAmount'];
+          $tot_net_pay += $net_pay;
+          $pdf->Ln();
+          $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+          $pdf->Cell($item_widths[1],6,substr($record_details['itemName'],0,18),'RTB',0,'L');
+          $pdf->Cell($item_widths[2],6,$record_details['hsnSacCode'],'RTB',0,'L');
+          $pdf->Cell($item_widths[3],6,substr($record_details['categoryName'],0,12),'RTB',0,'L');            
+          $pdf->Cell($item_widths[4],6,number_format($record_details['saleRate'],2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[5],6,number_format($record_details['soldQty'],2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[6],6,number_format($record_details['saleRate'],2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[7],6,number_format($record_details['saleValue'],2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[8],6,number_format($net_pay,2,'.',''),'RTB',0,'R');  
+      }
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',10);    
+      $pdf->Cell($totals_width,6,'Totals','LTB',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($tot_sold_qty,2,'.',''),'LTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($tot_amount,2,'.',''),'LTB',0,'R');    
+      $pdf->Cell($item_widths[7],6,number_format($tot_discount,2,'.',''),'LTB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($tot_net_pay,2,'.',''),'LRTB',0,'R');
+
+      $pdf->Output();
+    }
+
+    $controller_vars = array(
+      'page_title' => 'Print Itemwise Sales Register',
+      'icon_name' => 'fa fa-print',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'sa_executives' => array('' => 'All Executives') + $sa_executives,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'sort_by_a' => $sort_by_a,
+    );
+
+    // render template
+    return [$this->template->render_view('itemwise-sales-register', $template_vars), $controller_vars];
+
+  }
+
   private function _get_sales_executives() {
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
@@ -776,6 +926,30 @@ class SalesReportsController {
     return ['status' => true, 'cleaned_params' => $cleaned_params];
   }
 
+  private function _validate_form_data_itemwise_sr($form_data = []) {
+    $cleaned_params = [];
+    if($form_data['locationCode'] !== '') {
+      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    } else {
+      $cleaned_params['locationCode'] = '';
+    }
+    if($form_data['fromDate'] !== '') {
+      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
+    } else {
+      $cleaned_params['fromDate'] = '';
+    }
+    if($form_data['toDate'] !== '') {
+      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
+    } else {
+      $cleaned_params['toDate'] = '';
+    }
+
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+    $cleaned_params['sortBy'] = Utilities::clean_string($form_data['sortBy']);
+
+    return ['status' => true, 'cleaned_params' => $cleaned_params];
+  }  
+
   private function _format_data_for_sales_register($total_records = []) {
     $new_records = [];
     foreach($total_records as $key => $total_record) {
@@ -795,4 +969,21 @@ class SalesReportsController {
     }
     return $new_records;
   }
+
+  private function _format_data_for_itemwise_sales_register($total_records = []) {
+    $new_records = [];
+    $slno = 0;
+    foreach($total_records as $key => $total_record) {
+      $slno++;
+      $new_records[$key]['Sl. No.'] = $slno;
+      $new_records[$key]['Item Name'] = $total_record['itemName'];
+      $new_records[$key]['HSN/SAC Code'] = $total_record['hsnSacCode'];
+      $new_records[$key]['Category Name'] = $total_record['categoryName'];
+      $new_records[$key]['Sold Qty.'] = $total_record['soldQty'];
+      $new_records[$key]['Rate'] = $total_record['saleRate'];
+      $new_records[$key]['Gross Amount'] = $total_record['saleValue'];
+      $new_records[$key]['Discount'] = $total_record['discountAmount'];
+    }
+    return $new_records;
+  }  
 }

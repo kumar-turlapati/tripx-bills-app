@@ -662,6 +662,9 @@ $routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create
 $routes->add('report_sales_register', new Routing\Route('/reports/sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printSalesRegister',
 )));
+$routes->add('report_sales_register', new Routing\Route('/reports/itemwise-sales-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::itemwiseSalesRegister',
+)));
 $routes->add('report_day_sales_summary', new Routing\Route('/reports/day-sales', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::daySalesReport',
 )));
@@ -675,6 +678,15 @@ $routes->add('report_itemwise_sales', new Routing\Route('/reports/sales-by-tax-r
 // reports - inventory
 $routes->add('report_stock', new Routing\Route('/reports/stock-report', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::stockReport',
+)));
+$routes->add('report_openingBalance', new Routing\Route('/reports/opbal', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::openingBalances',
+)));
+$routes->add('report_profitability', new Routing\Route('/reports/inventory-profitability', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::inventoryProfitability',
+)));
+$routes->add('report_materialMovement', new Routing\Route('/reports/material-movement', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::materialMovement',
 )));
 
 // reports - purchases
