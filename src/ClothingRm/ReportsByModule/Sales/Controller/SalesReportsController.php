@@ -804,6 +804,7 @@ class SalesReportsController {
           $tot_amount += $record_details['saleValue'];
           $tot_discount += $record_details['discountAmount'];
           $tot_net_pay += $net_pay;
+
           $pdf->Ln();
           $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
           $pdf->Cell($item_widths[1],6,substr($record_details['itemName'],0,18),'RTB',0,'L');
@@ -811,8 +812,8 @@ class SalesReportsController {
           $pdf->Cell($item_widths[3],6,substr($record_details['categoryName'],0,12),'RTB',0,'L');            
           $pdf->Cell($item_widths[4],6,number_format($record_details['saleRate'],2,'.',''),'RTB',0,'R');
           $pdf->Cell($item_widths[5],6,number_format($record_details['soldQty'],2,'.',''),'RTB',0,'R');
-          $pdf->Cell($item_widths[6],6,number_format($record_details['saleRate'],2,'.',''),'RTB',0,'R');
-          $pdf->Cell($item_widths[7],6,number_format($record_details['saleValue'],2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[6],6,number_format($record_details['saleValue'],2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[7],6,number_format($record_details['discountAmount'],2,'.',''),'RTB',0,'R');
           $pdf->Cell($item_widths[8],6,number_format($net_pay,2,'.',''),'RTB',0,'R');  
       }
 

@@ -444,7 +444,7 @@ class InventoryReportsController {
       
       $slno = 0;
       $tot_sold_qty = $tot_sold_value = $tot_pur_value = $tot_gross_profit = 0;
-      $item_widths = array(10,61,15,17,17,17,17,19,17);
+      $item_widths = array(8,45,15,14,16,16,16,19,17,25);
       $totals_width = $item_widths[0]+$item_widths[1];
 
       $pdf = PDF::getInstance();
@@ -465,18 +465,22 @@ class InventoryReportsController {
         $pdf->Cell(0,0,$heading3,'',1,'C');
       }
 
-      $pdf->SetFont('Arial','B',9);
+      $pdf->SetFont('Arial','B',8);
       $pdf->Ln(5);
       $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
-      $pdf->Cell($item_widths[1],6,'Item Name','LRTB',0,'C');
-      $pdf->Cell($item_widths[2],6,'QtySold','RTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
+      $pdf->Cell($item_widths[9],6,'Lot No.','RTB',0,'C');      
+      $pdf->Cell($item_widths[2],6,'Qty.Sold','RTB',0,'C');
       $pdf->Cell($item_widths[3],6,'SalePrice','RTB',0,'C');
       $pdf->Cell($item_widths[4],6,'SaleValue','RTB',0,'C');
       $pdf->Cell($item_widths[5],6,'Pur.Price','RTB',0,'C');
       $pdf->Cell($item_widths[6],6,'Pur.Value','RTB',0,'C');
       $pdf->Cell($item_widths[7],6,'GrossProfit','RTB',0,'C');
-      $pdf->Cell($item_widths[8],6,'Proft (%)','RTB',0,'C');    
-      $pdf->SetFont('Arial','',9);
+      $pdf->Cell($item_widths[8],6,'Profit (%)','RTB',0,'C');    
+      $pdf->SetFont('Arial','',8);
+
+      // dump($total_records);
+      // exit;
 
       foreach($total_records as $item_details) {
         $slno++;
@@ -489,6 +493,7 @@ class InventoryReportsController {
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,32),'RTB',0,'L');
+        $pdf->Cell($item_widths[9],6,$item_details['lotNo'],'RTB',0,'L');        
         $pdf->Cell($item_widths[2],6,$item_details['soldQty'],'RTB',0,'R');
         $pdf->Cell($item_widths[3],6,$item_details['sellingPrice'],'RTB',0,'R');
         $pdf->Cell($item_widths[4],6,$item_details['soldValue'],'RTB',0,'R');
@@ -503,23 +508,26 @@ class InventoryReportsController {
       $pdf->Cell(0,0,'Profitability Summary','',1,'C');
       $pdf->Ln(4);
       $pdf->SetFont('Arial','B',12);
-      $pdf->Cell(100,6,'Description','LRTB',0,'C');
-      $pdf->Cell(40,6,'Value','RTB',1,'C');
+      $pdf->Cell(100,6,'Description','LRT',0,'C');
+      $pdf->Cell(40,6,'Value','RT',1,'C');
       $pdf->SetFont('Arial','',14);
 
       $tot_gross_profit = 100-( round( round($tot_pur_value/$tot_sold_value,2) * 100, 2) );
 
+      $pdf->Cell(100,6,'Total Sold Qty.','LRTB',0,'R');
+      $pdf->Cell(40,6,number_format($tot_sold_qty,2,'.',''),'RTB',1,'R');
+
       $pdf->Cell(100,6,'Total Sale Value (in Rs.)','LRTB',0,'R');
-      $pdf->Cell(40,6,number_format($tot_sold_value,2),'RTB',1,'R');
+      $pdf->Cell(40,6,number_format($tot_sold_value,2,'.',''),'RTB',1,'R');
 
       $pdf->Cell(100,6,'Total Purchase Value (in Rs.)','LRTB',0,'R');
-      $pdf->Cell(40,6,number_format($tot_pur_value,2),'RTB',1,'R');
+      $pdf->Cell(40,6,number_format($tot_pur_value,2,'.',''),'RTB',1,'R');
 
-      $pdf->Cell(100,6,'Gross Profit (in Rs.)','LRTB',0,'R');
-      $pdf->Cell(40,6,number_format($tot_sold_value-$tot_pur_value,2),'RTB',1,'R');
+      $pdf->Cell(100,6,'Profit (in Rs.)','LRTB',0,'R');
+      $pdf->Cell(40,6,number_format($tot_sold_value-$tot_pur_value,2,'.',''),'RTB',1,'R');
 
-      $pdf->Cell(100,6,'Gross Profit (in %)','LRTB',0,'R');
-      $pdf->Cell(40,6,number_format($tot_gross_profit,2).'%','RTB',1,'R');     
+      $pdf->Cell(100,6,'Profit (in %)','LRTB',0,'R');
+      $pdf->Cell(40,6,number_format($tot_gross_profit,2,'.','').'%','RTB',1,'R');     
 
       $pdf->Output();
     }
