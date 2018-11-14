@@ -289,7 +289,7 @@ class InventoryReportsController {
       $pdf->SetFont('Arial','B',8);
       $pdf->Cell($item_widths[0],6,'Sno.','LTRB',0,'C');
       $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
-      $pdf->Cell($item_widths[2],6,'Lot No.','RTB',0,'C');    
+      $pdf->Cell($item_widths[2],6,'BrandName','RTB',0,'C');    
       $pdf->Cell($item_widths[3],6,'Category','RTB',0,'C');
       $pdf->Cell($item_widths[4],6,'OpenQty.','RTB',0,'C');
       $pdf->Cell($item_widths[5],6,'Pur.Rate','RTB',0,'C');
@@ -309,6 +309,7 @@ class InventoryReportsController {
         $location_id = $item_details['locationID'];
         $opening_qty = $item_details['openingQty'];
         $lot_no = $item_details['lotNo'];
+        $brand_name = substr($item_details['mfgName'], 0, 13);
         $purchase_rate = $item_details['purchaseRate'];
         $tax_percent = $item_details['taxPercent'];
         $barcode = $item_details['barcode'];
@@ -331,7 +332,7 @@ class InventoryReportsController {
 
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,$item_name,'RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,$lot_no,'RTB',0,'L');    
+        $pdf->Cell($item_widths[2],6,$brand_name,'RTB',0,'L');    
         $pdf->Cell($item_widths[3],6,$category_name,'RTB',0,'L');
         $pdf->Cell($item_widths[4],6,$opening_qty,'RTB',0,'R');
         $pdf->Cell($item_widths[5],6,number_format($purchase_rate,2,'.',''),'RTB',0,'R');
@@ -469,7 +470,7 @@ class InventoryReportsController {
       $pdf->Ln(5);
       $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
-      $pdf->Cell($item_widths[9],6,'Lot No.','RTB',0,'C');      
+      $pdf->Cell($item_widths[9],6,'BrandName','RTB',0,'C');      
       $pdf->Cell($item_widths[2],6,'Qty.Sold','RTB',0,'C');
       $pdf->Cell($item_widths[3],6,'SalePrice','RTB',0,'C');
       $pdf->Cell($item_widths[4],6,'SaleValue','RTB',0,'C');
@@ -493,7 +494,7 @@ class InventoryReportsController {
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,32),'RTB',0,'L');
-        $pdf->Cell($item_widths[9],6,$item_details['lotNo'],'RTB',0,'L');        
+        $pdf->Cell($item_widths[9],6,substr($item_details['mfgName'],0,13),'RTB',0,'L');        
         $pdf->Cell($item_widths[2],6,$item_details['soldQty'],'RTB',0,'R');
         $pdf->Cell($item_widths[3],6,$item_details['sellingPrice'],'RTB',0,'R');
         $pdf->Cell($item_widths[4],6,$item_details['soldValue'],'RTB',0,'R');
