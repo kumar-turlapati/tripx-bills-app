@@ -662,7 +662,7 @@ $routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create
 $routes->add('report_sales_register', new Routing\Route('/reports/sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printSalesRegister',
 )));
-$routes->add('report_sales_register', new Routing\Route('/reports/itemwise-sales-register', array(
+$routes->add('report_sales_register_itemwise', new Routing\Route('/reports/itemwise-sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::itemwiseSalesRegister',
 )));
 $routes->add('report_day_sales_summary', new Routing\Route('/reports/day-sales', array(
