@@ -10,9 +10,9 @@
   if($user_type === 3 || $user_type === 9) {
     $tabs = [
               '#tSales' => ['Sales', 'tSales'], 
-              '#tPurchases' => ['Purchases', 'tPurchases'], 
-              '#tInventory' => ['Inventory', 'tInventory'], 
-              '#tFinance' => ['Finance', 'tFinance'],
+              // '#tPurchases' => ['Purchases', 'tPurchases'], 
+              // '#tInventory' => ['Inventory', 'tInventory'], 
+              // '#tFinance' => ['Finance', 'tFinance'],
             ];
   } elseif($user_type === 7) {
     $tabs = [
@@ -55,18 +55,23 @@
                         <td align="right"><div id="ds-cardsale"></div></td>
                       </tr>
                       <tr>
-                        <td>Card / Cash / Cnote Sale</td>
+                        <td>Split Sale</td>
                         <td align="right"><div id="ds-splitsale"></div></td>
                       </tr>
+                      <tr>
+                        <td>Credit Sale</td>
+                        <td align="right"><div id="ds-creditsale"></div></td>
+                      </tr>
+                      <tr>
+                        <td ><b>Sales Return</b></td>
+                        <td align="right"><b><span id="ds-returns"></span></b></td>
+                      </tr>                      
                       <?php /*
                       <tr>
                         <td><b>Totals</b></td>
                         <td align="right"><b><span id="ds-totals"></span></b></td>
                       </tr>
-                      <tr>
-                        <td ><b>Sales Return</b></td>
-                        <td align="right"><b><span id="ds-returns"></span></b></td>
-                      </tr>*/?>
+                      */?>
                       <tr>
                         <td ><b>Net Sales</b></td>
                         <td align="right"><b><span id="ds-netsale"></span></b></td>
@@ -96,9 +101,17 @@
                           <td align="right"><div id="cs-cardsale"></div></td>
                         </tr>
                         <tr>
-                          <td>Card / Cash / Cnote Sale</td>
+                          <td>Split Sale</td>
                           <td align="right"><div id="cs-splitsale"></div></td>
                         </tr>
+                        <tr>
+                          <td>Credit Sale</td>
+                          <td align="right"><div id="cs-creditsale"></div></td>
+                        </tr>
+                        <tr>
+                          <td>Sales Return</td>
+                          <td align="right"><div id="cs-sreturn"></div></td>
+                        </tr>                        
                         <tr>
                           <td ><b>Net Sales</b></td>
                           <td align="right"><b><span id="cs-netsale" style="text-decoration:underline;"></span></b></td>

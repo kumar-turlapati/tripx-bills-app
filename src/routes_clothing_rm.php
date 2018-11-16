@@ -701,6 +701,9 @@ $routes->add('report_grn_register', new Routing\Route('/reports/grn-register', a
 $routes->add('report_item_master', new Routing\Route('/reports/item-master', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Masters\\Controller\\MastersReportsController::itemMasterReport',
 )));
+$routes->add('report_customer_master', new Routing\Route('/reports/customer-master', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Masters\\Controller\\MastersReportsController::customerMasterReport',
+)));
 
 $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',

@@ -85,29 +85,6 @@ class Inventory
 		}	
 	}
 
-/*	public function get_stock_report_new($params) {
-		// fetch client id
-		$client_id = Utilities::get_current_client_id();
-		$request_uri = 'reports/stock-report-new/'.$client_id;
-		
-		// call api.
-		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get',$request_uri,$params);
-
-		$status = $response['status'];
-		if ($status === 'success') {
-			return array(
-				'status' => true,  
-				'results' => $response['response'],
-			);				
-		} elseif($status === 'failed') {
-			return array(
-				'status' => false, 
-				'apierror' => $response['reason']
-			);
-		}	
-	}
-*/
 	public function get_expiry_report($params=array(),$page_no=1) {
 
 		// fetch client id
@@ -261,7 +238,7 @@ class Inventory
 		}		
 	}
 
-	public function item_master_with_pp($params=array()) {
+	public function item_master_with_pp($params = []) {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = '/reports/inventory/items-list/'.$client_id;

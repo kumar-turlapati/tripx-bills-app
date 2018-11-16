@@ -1226,11 +1226,15 @@ function initializeJS() {
             var cashSales = parseFloat(daySales.cashSales);
             var cardSales = parseFloat(daySales.cardSales);
             var splitSales = parseFloat(daySales.splitSales);
-            var totalSales = parseFloat(cashSales+cardSales+splitSales);
+            var creditSales = parseFloat(daySales.creditSales);
+            var salesReturn = parseFloat(daySales.returnAmount);
+            var totalSales = parseFloat(cashSales+cardSales+splitSales+creditSales) - salesReturn;
             var cashInHand = parseFloat(daySales.cashInHand);
             $('#ds-cashsale').text(cashSales.toFixed(2));
             $('#ds-cardsale').text(cardSales.toFixed(2));
             $('#ds-splitsale').text(splitSales.toFixed(2));
+            $('#ds-creditsale').text(creditSales.toFixed(2));
+            $('#ds-returns').text(salesReturn.toFixed(2));            
             $('#ds-netsale').text(totalSales.toFixed(2));
             $('#ds-cashinhand').text(cashInHand.toFixed(2));                                          
           }
@@ -1473,7 +1477,8 @@ function monthWiseSales() {
   var sgfYear = $('#saleYear').val();
   var saleDate = [];
   var saleAmounts = [];
-  var totCashSales = totSplitSales = totCardSales = totSales = totSalesReturns = totNetSales = 0;  
+  var totCashSales = totSplitSales = totCardSales = totSales = totSalesReturns = totNetSales = 0;
+  var totCreditSales = 0;
   jQuery.ajax("/async/monthly-sales?saleMonth="+sgfMonth+'&saleYear='+sgfYear, {
     method:"GET",
     success: function(apiResponse) {
@@ -1492,16 +1497,21 @@ function monthWiseSales() {
           totCashSales += parseFloat(returnNumber(saleDetails.cashSales));
           totCardSales += parseFloat(returnNumber(saleDetails.cardSales));
           totSplitSales += parseFloat(returnNumber(saleDetails.splitSales));
-          totSales += ( parseFloat(returnNumber(saleDetails.cashSales)) + returnNumber(parseFloat(saleDetails.cardSales)) + returnNumber(parseFloat(saleDetails.splitSales)) );
+          totCreditSales += parseFloat(returnNumber(saleDetails.creditSales));
+          totSalesReturns += parseFloat(returnNumber(saleDetails.returnAmount));
+
+          totSales += ( parseFloat(returnNumber(saleDetails.cashSales)) + returnNumber(parseFloat(saleDetails.cardSales)) + returnNumber(parseFloat(saleDetails.splitSales)) + returnNumber(parseFloat(saleDetails.creditSales)) );
           // totSalesReturns += parseFloat(saleDetails.returnamount);
           // totSalesReturns = 0;
         });
 
-        totNetSales = parseFloat(totSales) - parseFloat(totSalesReturns);
+        totNetSales = parseFloat(returnNumber(totSales)) - parseFloat(returnNumber(totSalesReturns));
 
         $('#cs-cashsale').text(totCashSales.toFixed(2));
         $('#cs-cardsale').text(totCardSales.toFixed(2));
         $('#cs-splitsale').text(totSplitSales.toFixed(2));
+        $('#cs-creditsale').text(totCreditSales.toFixed(2));
+
         $('#cs-totals').text(totSales.toFixed(2));
         $('#cs-returns').text(totSalesReturns.toFixed(2));
         $('#cs-netsale').text(totNetSales.toFixed(2));

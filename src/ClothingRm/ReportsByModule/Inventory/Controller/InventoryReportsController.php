@@ -50,7 +50,7 @@ class InventoryReportsController {
       }
 
       // hit api
-      $inven_api_response = $this->inven_api->get_stock_report($form_data);
+      $inven_api_response = $this->inven_api->item_master_with_pp($form_data);
       if($inven_api_response['status'] === false) {
         $error_message = Constants::$REPORTS_ERROR_MESSAGE;
         $this->flash->set_flash_message($error_message, 1);
@@ -61,7 +61,7 @@ class InventoryReportsController {
         if($total_pages>1) {
           for($i=2;$i<=$total_pages;$i++) {
             $form_data['pageNo'] = $i;
-            $inven_api_response = $this->inven_api->get_stock_report($form_data);
+            $inven_api_response = $this->inven_api->item_master_with_pp($form_data);
             if($inven_api_response['status']) {
               $total_records = array_merge($total_records, $inven_api_response['results']['results']);
             }
@@ -802,7 +802,7 @@ class InventoryReportsController {
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
     return ['status' => true, 'cleaned_params' => $cleaned_params];
-  }  
+  }
 
   private function _format_stock_report_for_csv($total_records = []) {
     $cleaned_params = [];

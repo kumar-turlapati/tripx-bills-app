@@ -97,7 +97,7 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Create Customer</h2>
+      <h2 class="hdg-reports text-center">Update Customer</h2>
       <div class="panel-body">
         <?php echo $flash_obj->print_flash_message(); ?>        
         <div class="global-links actionButtons clearfix">
