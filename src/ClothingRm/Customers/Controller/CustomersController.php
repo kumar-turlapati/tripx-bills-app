@@ -82,14 +82,14 @@ class CustomersController
       'genders' => [''=>'Choose'] + Constants::$GENDERS,
       'ages' => $ages_a,
       'age_categories' => Constants::$AGE_CATEGORIES,
-      'customer_types' => ['c' => 'Retail Customer', 'b' => 'Business'],
+      'customer_types' => ['c' => 'B2C - Business to Customer', 'b' => 'B2B - Business to Business'],
       'flash_obj' => $this->flash_obj,
       'states' => [0=>'Choose'] + $states_a,
       'countries' => [0=>'Choose'] + $countries_a,
       'client_business_state' => $client_business_state,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
-      'ma_executives' => $users,
+      'ma_executives' => ['' => 'Choose'] + $users,
     );
       
     # build variables
@@ -132,7 +132,7 @@ class CustomersController
       foreach($users_a as $user_details) {
         $users[$user_details['uuid']] = $user_details['userName'];
       }
-    }    
+    }
 
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];    
@@ -179,14 +179,14 @@ class CustomersController
       'genders' => [''=>'Choose'] + Constants::$GENDERS,
       'ages' => $ages_a,
       'age_categories' => Constants::$AGE_CATEGORIES,
-      'customer_types' => ['c' => 'Retail Customer', 'b' => 'Business'],
+      'customer_types' => ['c' => 'B2C - Business to Customer', 'b' => 'B2B - Business to Business'],
       'flash_obj' => $this->flash_obj,
       'states' => [0=>'Choose'] + $states_a,
       'countries' => [0=>'Choose'] + $countries_a,
       'client_business_state' => $client_business_state,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
-      'ma_executives' => ['Choose'] + $users,
+      'ma_executives' => ['' => 'Choose'] + $users,
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
     );

@@ -21,6 +21,7 @@
   $regn_code      =  $sale_details['extRegnCode'];
   $tax_amount     =  $sale_details['taxAmount'];
   $payment_method =  (int)$sale_details['paymentMethod'];
+  $tmp_cust_name  =  $sale_details['tmpCustName'];
 
 	$client_details =		Utilities::get_client_details();
 	$business_name 	=		isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];
@@ -35,6 +36,10 @@
   $referral_no    =   $sale_details['refCardNo'];
   $promo_code     =   $sale_details['promoCode'];
   $exe_name       =   $sale_details['executiveName'] !== '' ? substr($sale_details['executiveName'],0,20) : '';
+
+  if($customer_name === '') {
+    $customer_name = $tmp_cust_name;
+  }
 ?>
 <html>
 	<head>

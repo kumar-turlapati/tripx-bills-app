@@ -705,6 +705,15 @@ $routes->add('report_customer_master', new Routing\Route('/reports/customer-mast
   '_controller' => 'ClothingRm\\ReportsByModule\\Masters\\Controller\\MastersReportsController::customerMasterReport',
 )));
 
+// reports - finance
+$routes->add('report_payables', new Routing\Route('/reports/payables', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Finance\\Controller\\FinReportsController::payablesAction',
+)));
+$routes->add('report_receivables', new Routing\Route('/reports/receivables', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Finance\\Controller\\FinReportsController::receivablesAction',
+)));
+
+
 $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',
   'reportName' => null,

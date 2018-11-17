@@ -165,12 +165,15 @@
               $tot_round_off = $tot_net_pay = 0;
               foreach($sales as $sales_details):
                 // dump($sales_details);
+              // exit;
                 $sales_code = $sales_details['invoiceCode'];
                 $invoice_date = date("d-M-Y", strtotime($sales_details['invoiceDate']));
                 $mobile_number = $sales_details['mobileNo'];
                 $location_code = isset($location_codes[$sales_details['locationID']]) ? $location_codes[$sales_details['locationID']] : '';
-                if($sales_details['customerName'] !== null) {
+                if($sales_details['customerName'] !== '') {
                   $customer_name = $sales_details['customerName'];
+                } elseif($sales_details['tmpCustName'] !== '') {
+                  $customer_name = $sales_details['tmpCustName'];
                 } else {
                   $customer_name = '';
                 }

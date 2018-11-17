@@ -235,7 +235,7 @@ class MastersReportsController {
       }
       
       // start PDF printing.
-      $item_widths = array(8,10,40,35,20,20,15,18,25);
+      $item_widths = array(8,10,40,35,22,20,13,18,28);
       $slno = 0;
 
       $pdf = PDF::getInstance();
@@ -266,9 +266,9 @@ class MastersReportsController {
         $customer_type = $record_details['customerType'] === 'b' ? 'B2B' : 'B2C';
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
-        $pdf->Cell($item_widths[1],6,$customer_type,'LRTB',0,'R');
-        $pdf->Cell($item_widths[2],6,substr($record_details['customerName'], 0, 30),'RTB',0,'L');
-        $pdf->Cell($item_widths[3],6,substr($record_details['address'], 0, 35),'RTB',0,'L');
+        $pdf->Cell($item_widths[1],6,$customer_type,'RTB',0,'R');
+        $pdf->Cell($item_widths[2],6,substr($record_details['customerName'], 0, 25),'RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,substr($record_details['address'], 0, 24),'RTB',0,'L');
         $pdf->Cell($item_widths[4],6,substr($record_details['cityName'], 0, 10),'RTB',0,'L');
         $pdf->Cell($item_widths[5],6,substr($record_details['stateName'],0,10),'RTB',0,'L');
         $pdf->Cell($item_widths[6],6,$record_details['pincode'],'RTB',0,'R');

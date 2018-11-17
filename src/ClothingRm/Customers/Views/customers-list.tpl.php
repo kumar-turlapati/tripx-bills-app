@@ -83,9 +83,9 @@
                     $mobile_no = $customer_details['mobileNo'];
                     $customer_code = $customer_details['customerCode'];
                     if($customer_details['customerType'] === 'b') {
-                      $customer_type = 'Business';
+                      $customer_type = 'B2B';
                     } else {
-                      $customer_type = 'Retail';
+                      $customer_type = 'B2C';
                     }
                     if($customer_details['address'] !== '') {
                       $address = $customer_details['address'];

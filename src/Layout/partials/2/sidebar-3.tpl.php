@@ -268,8 +268,17 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/po-register"><i class="fa fa-angle-right"></i> PO Register</a></li>
-            </ul>            
+            </ul>
           </li>
+          <li class="sub-menu">
+            <a href="javascript:">
+              <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span> 
+            </a>
+            <ul class="sub">
+              <li><a href="/reports/payables"><i class="fa fa-angle-right"></i> Payables</a></li>
+              <li><a href="/reports/receivables"><i class="fa fa-angle-right"></i> Receivables</a></li>              
+            </ul>            
+          </li>          
           <li class="sub-menu">
             <a href="javascript:">
               <i class="fa fa-gg"></i> MIS Reports <span class="menu-arrow arrow_carrot-right"></span> 
@@ -279,6 +288,15 @@
               <li><a href="/reports/material-movement"><i class="fa fa-angle-right"></i> Inventory Movement</a></li>              
             </ul>            
           </li>
+          <li class="sub-menu">
+            <a href="javascript:">
+              <i class="fa fa-bars"></i> Masters <span class="menu-arrow arrow_carrot-right"></span> 
+            </a>
+            <ul class="sub">
+              <li><a href="/reports/item-master"><i class="fa fa-angle-right"></i> Item Master</a></li>
+              <li><a href="/reports/customer-master"><i class="fa fa-angle-right"></i> Customer Master</a></li>              
+            </ul>            
+          </li>          
           <li class="sub-menu">
             <a href="javascript:">
               <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 

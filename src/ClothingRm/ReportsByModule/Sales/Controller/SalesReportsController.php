@@ -62,6 +62,7 @@ class SalesReportsController {
             }
           }
         }
+
         $total_records = $this->_format_data_for_sales_register($total_records);
         if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
           $location_name = $client_locations[$form_data['locationCode']];
@@ -966,7 +967,11 @@ class SalesReportsController {
       $new_records[$key]['TotAmt'] = number_format($total_record['billAmount'],2,'.','');
       $new_records[$key]['RndOff'] = number_format($total_record['roundOff'],2,'.','');
       $new_records[$key]['NetPay'] = number_format($total_record['netPay'],2,'.','');
-      $new_records[$key]['CustomerName'] = substr($customer_name,0,20);
+      if($customer_name !== '') {
+        $new_records[$key]['CustomerName'] = substr($customer_name,0,20);
+      } else {
+        $new_records[$key]['CustomerName'] = $total_record['tmpCustName'];
+      }
     }
     return $new_records;
   }
