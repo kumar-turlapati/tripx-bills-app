@@ -50,7 +50,7 @@ class InventoryReportsController {
       }
 
       // hit api
-      $inven_api_response = $this->inven_api->item_master_with_pp($form_data);
+      $inven_api_response = $this->inven_api->get_stock_report($form_data);
       if($inven_api_response['status'] === false) {
         $error_message = Constants::$REPORTS_ERROR_MESSAGE;
         $this->flash->set_flash_message($error_message, 1);
@@ -61,7 +61,7 @@ class InventoryReportsController {
         if($total_pages>1) {
           for($i=2;$i<=$total_pages;$i++) {
             $form_data['pageNo'] = $i;
-            $inven_api_response = $this->inven_api->item_master_with_pp($form_data);
+            $inven_api_response = $this->inven_api->get_stock_report($form_data);
             if($inven_api_response['status']) {
               $total_records = array_merge($total_records, $inven_api_response['results']['results']);
             }
@@ -78,9 +78,6 @@ class InventoryReportsController {
         $heading1 = 'Stock Report - '.$location_name;
         $heading2 = 'As on '.date('jS F, Y');
         $heading3 = '';
-        if($location_name !== '') {
-          $heading1 .= ' - '.$location_name;
-        }
         if($form_data['brandName'] !== '') {
           $heading3 .= 'Brand Name: '.$form_data['brandName'];
         }

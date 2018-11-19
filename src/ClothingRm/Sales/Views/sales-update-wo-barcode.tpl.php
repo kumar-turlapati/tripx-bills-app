@@ -15,7 +15,14 @@
     $location_code = '';
   }
 
-  $current_date = isset($form_data['saleDate']) && $form_data['saleDate']!=='' ? date("d-m-Y", strtotime($form_data['saleDate'])) : date("d-m-Y");
+  if(isset($form_data['invoiceDate']) && $form_data['invoiceDate'] !== '') {
+    $current_date = date("d-m-Y", strtotime($form_data['invoiceDate']));
+  } elseif(isset($form_data['saleDate']) && $form_data['saleDate'] !== '') {
+    $current_date = date("d-m-Y", strtotime($form_data['saleDate']));
+  } else {
+    $current_date = date("d-m-Y");
+  }
+
   $payment_method = isset($form_data['paymentMethod']) ? $form_data['paymentMethod'] : $payment_method = 0;
   $discount_method = isset($form_data['discountMethod']) ? $form_data['discountMethod'] : $discount_method = 0;
   $mobile_no = isset($form_data['mobileNo']) ? $form_data['mobileNo'] : '';

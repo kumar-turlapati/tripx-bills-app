@@ -8,11 +8,11 @@
     $location_id = 0;
   }
   if(isset($submitted_data['customerType']) && $submitted_data['customerType'] !== '' ) {
-    $customer_type = $submitted_data['customerType'];
+    $customer_type = $submitted_data['customerType'] === 'b' ? 'b2b' : 'b2c';
     $bio_container_style = ' style="display:none;"';
   } else {
     $bio_container_style = '';
-    $customer_type = 'c';
+    $customer_type = 'b2c';
   }
   if(isset($submitted_data['customerName']) && $submitted_data['customerName'] !== '' ) {
     $customer_name = $submitted_data['customerName'];
