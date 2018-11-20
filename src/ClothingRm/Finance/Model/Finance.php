@@ -273,4 +273,19 @@ class Finance
 			return array('status'=>false, 'apierror'=>$response['reason']);
 		}
 	}
+
+	// get receivables
+	public function get_receivables($form_data=[]) {
+		$client_id = Utilities::get_current_client_id();
+		$end_point = 'reports/receivables';
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$end_point,$form_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status'=>true,'response'=>$response['response']);
+		} elseif($status === 'failed') {
+			return array('status'=>false, 'apierror'=>$response['reason']);
+		}		
+	}
 }
