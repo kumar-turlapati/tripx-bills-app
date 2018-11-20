@@ -57,7 +57,7 @@ class FinReportsController {
       if($payables_response['status'] === false) {
         $error_message = Constants::$REPORTS_ERROR_MESSAGE;
         $this->flash->set_flash_message($error_message, 1);
-        Utilities::redirect('/reports/item-master');
+        Utilities::redirect('/reports/payables');
       } else {
         $total_records = $payables_response['response']['records'];
         $total_pages = $payables_response['response']['total_pages'];
