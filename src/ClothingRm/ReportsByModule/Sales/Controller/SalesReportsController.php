@@ -544,16 +544,16 @@ class SalesReportsController {
       $pdf->Ln(5);
       $pdf->Cell($item_widths[0],6,'Date','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'Units Sold','RTB',0,'C');
-      $pdf->Cell($item_widths[2],6,'Total Amount','RTB',0,'C');
-      $pdf->Cell($item_widths[3],6,'Taxable','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'Billed (Rs.)','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'Taxable (Rs.)','RTB',0,'C');
       $pdf->Cell($item_widths[4],6,'IGST%','RTB',0,'C');  
-      $pdf->Cell($item_widths[5],6,'IGST Value','RTB',0,'C'); 
+      $pdf->Cell($item_widths[5],6,'IGST Value (Rs.)','RTB',0,'C'); 
       $pdf->Cell($item_widths[6],6,'CGST%','RTB',0,'C');  
-      $pdf->Cell($item_widths[7],6,'CGST Value','RTB',0,'C'); 
+      $pdf->Cell($item_widths[7],6,'CGST Value (Rs.)','RTB',0,'C'); 
       $pdf->Cell($item_widths[8],6,'SGST%','RTB',0,'C');  
-      $pdf->Cell($item_widths[9],6,'SGST Value','RTB',0,'C');
+      $pdf->Cell($item_widths[9],6,'SGST Value (Rs.)','RTB',0,'C');
       $pdf->Cell($item_widths[10],6,'GST%','RTB',0,'C');  
-      $pdf->Cell($item_widths[11],6,'GST Value','RTB',0,'C');
+      $pdf->Cell($item_widths[11],6,'GST Value (Rs.)','RTB',0,'C');
       $pdf->SetFont('Arial','',10);
 
       foreach($sales_summary as $day_details) {
