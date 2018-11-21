@@ -693,6 +693,9 @@ $routes->add('report_materialMovement', new Routing\Route('/reports/material-mov
 $routes->add('report_po_register', new Routing\Route('/reports/po-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::poRegister',
 )));
+$routes->add('report_po_register_itemwise', new Routing\Route('/reports/po-register-itemwise', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::itemwisePoRegister',
+)));
 $routes->add('report_grn_register', new Routing\Route('/reports/grn-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::grnRegister',
 )));

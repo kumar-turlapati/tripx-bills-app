@@ -163,4 +163,22 @@ class Inward
 			return array('status' => false, 'apierror' => $response['reason']);
 		}
 	}
+
+	public function get_purchases_itemwise($form_data=[]) {
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get','reports/itemwise-po-register',$form_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'response' => $response['response'], 
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}
+	}
 }
