@@ -10,9 +10,10 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Inventory\Model\Inventory;
+use ClothingRm\Products\Model\Products;
 
-class InventoryController
-{
+class InventoryController {
+  
   protected $views_path;
 
   public function __construct() {
@@ -224,105 +225,192 @@ class InventoryController
   }
 
   public function availableQtyList(Request $request) {
+    $items_list = $search_params = $items = [];
+    $client_locations = $location_ids = $categories_a = [];
 
-      $items_list = $search_params = $items = [];
-      $client_locations = $location_ids = [];
+    $total_pages = $total_records = $record_count = $page_no = 0 ;
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
+    $page_success = $page_error = '';
 
-      $total_pages = $total_records = $record_count = $page_no = 0 ;
-      $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
-      $page_success = $page_error = '';
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
 
-      $inventory_api_call = new Inventory;
+    $inventory_api_call = new Inventory;
+    $products_api = new Products;
 
-      # ---------- get location codes from api -----------------------
-      $client_locations = Utilities::get_client_locations(true);
-      foreach($client_locations as $location_key => $location_value) {
-          $location_key_a = explode('`', $location_key);
-          $location_ids[$location_key_a[1]] = $location_value;
-      }
+    $categories_a = $products_api->get_product_categories();    
 
-      if(count($request->request->all()) > 0) {
-          $search_params = $request->request->all();
+    # ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+    }
+
+    if(count($request->request->all()) > 0) {
+      $search_params = $request->request->all();
+    } else {
+      $search_params['medName'] = !is_null($request->get('medName')) ? Utilities::clean_string($request->get('medName')) : '';
+      $search_params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $default_location;
+      $search_params['category'] = !is_null($request->get('category')) ? Utilities::clean_string($request->get('category')) : '';
+      $search_params['brandName'] = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';      
+      $search_params['pageNo'] = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
+      $search_params['perPage'] = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 100;
+    }
+
+    $items_list = $this->inven_api->get_available_qtys($search_params);
+    $api_status = $items_list['status'];
+
+    $per_page = isset($search_params['perPage']) ? $search_params['perPage'] : 100;
+    $page_no = isset($search_params['pageNo']) ? $search_params['pageNo'] : 1;
+
+    // check api status
+    if($api_status) {
+      // check whether we got products or not.
+      if( is_array($items_list['items']) && count($items_list['items']) > 0) {
+        $slno = Utilities::get_slno_start(count($items_list['items']),$per_page,$page_no);
+        $to_sl_no = $slno+$per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
+        } else {
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;            
+        }
+        if($items_list['total_pages']<$page_links_to_end) {
+          $page_links_to_end = $items_list['total_pages'];
+        }
+        if($items_list['record_count'] < $per_page) {
+          $to_sl_no = ($slno+$items_list['record_count'])-1;
+        }
+        $items = $items_list['items'];
+        $total_pages = $items_list['total_pages'];
+        $total_records = $items_list['total_records'];
+        $record_count = $items_list['record_count'];
       } else {
-          $search_params['medName'] = !is_null($request->get('medName')) ? Utilities::clean_string($request->get('medName')) : '';
-          $search_params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
-          $search_params['pageNo'] = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
-          $search_params['perPage'] = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 100;
+        $page_error = 'Unable to fetch data';
       }
+    } else {
+      $page_error = $items_list['apierror'];
+    }
 
-      $items_list = $this->inven_api->get_available_qtys($search_params);
+     // prepare form variables.
+    $template_vars = array(
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'items' => $items,
+      'total_pages' => $total_pages ,
+      'total_records' => $total_records,
+      'record_count' => $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'search_params' => $search_params,            
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'default_location' => $default_location,
+      'categories' => array(''=>'All Categories') + $categories_a,
+    );
 
-      // dump($items_list);
-      // dump($search_params);
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Stock Availability',
+      'icon_name' => 'fa fa-database',
+    );
 
-      $api_status = $items_list['status'];
-      $per_page = isset($search_params['perPage']) ? $search_params['perPage'] : 100;
-      $page_no = isset($search_params['pageNo']) ? $search_params['pageNo'] : 1;
-
-      # check api status
-      if($api_status) {
-
-          # check whether we got products or not.
-          if( count($items_list['items']) > 0) {
-              $slno = Utilities::get_slno_start(count($items_list['items']),$per_page,$page_no);
-              $to_sl_no = $slno+$per_page;
-              $slno++;
-
-              if($page_no<=3) {
-                  $page_links_to_start = 1;
-                  $page_links_to_end = 10;
-              } else {
-                  $page_links_to_start = $page_no-3;
-                  $page_links_to_end = $page_links_to_start+10;            
-              }
-
-              if($items_list['total_pages']<$page_links_to_end) {
-                  $page_links_to_end = $items_list['total_pages'];
-              }
-
-              if($items_list['record_count'] < $per_page) {
-                  $to_sl_no = ($slno+$items_list['record_count'])-1;
-              }
-
-              $items = $items_list['items'];
-              $total_pages = $items_list['total_pages'];
-              $total_records = $items_list['total_records'];
-              $record_count = $items_list['record_count'];
-          } else {
-              $page_error = 'Unable to fetch data';
-          }
-
-      } else {
-          $page_error = $items_list['apierror'];
-      }
-
-       // prepare form variables.
-      $template_vars = array(
-          'page_error' => $page_error,
-          'page_success' => $page_success,
-          'items' => $items,
-          'total_pages' => $total_pages ,
-          'total_records' => $total_records,
-          'record_count' =>  $record_count,
-          'sl_no' => $slno,
-          'to_sl_no' => $to_sl_no,
-          'search_params' => $search_params,            
-          'page_links_to_start' => $page_links_to_start,
-          'page_links_to_end' => $page_links_to_end,
-          'current_page' => $page_no,
-          'client_locations' => ['' => 'All Stores'] + $client_locations,
-          'location_ids' => $location_ids,
-      );
-
-      // build variables
-      $controller_vars = array(
-          'page_title' => 'Stock in Hand',
-          'icon_name' => 'fa fa-database',
-      );
-
-      // render template
-      return array($this->template->render_view('batch-qtys-list', $template_vars),$controller_vars);      
+    // render template
+    return array($this->template->render_view('batch-qtys-list', $template_vars),$controller_vars);
   }
+
+  public function trackItem(Request $request) {
+    $page_error = $page_success = $item_name = '';
+    $errors = $form_data = $form_errors = $item_details = [];
+    $track_a = [];
+
+    $total_pages = $total_records = $record_count = $page_no = $per_page = 0 ;
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;    
+
+    $client_locations = Utilities::get_client_locations();    
+
+    if(count($request->request->all())>0) {
+      $form_data = $request->request->all();
+      $validation = $this->_validate_data_item_track($form_data);
+      if($validation['status']) {
+        $cleaned_params = $validation['cleaned_params'];
+        $item_name = $cleaned_params['itemName'];
+        
+        // hit api
+        $api_response = $this->inven_api->track_item($cleaned_params);
+        if($api_response['status']) {
+          $slno = Utilities::get_slno_start(count($api_response['response']['results']),$per_page,$page_no);
+          $to_sl_no = $slno+$per_page;
+          $slno++;
+          if($page_no<=3) {
+            $page_links_to_start = 1;
+            $page_links_to_end = 10;
+          } else {
+            $page_links_to_start = $page_no-3;
+            $page_links_to_end = $page_links_to_start+10;        
+          }
+          if($api_response['response']['total_pages']<$page_links_to_end) {
+            $page_links_to_end = $api_response['response']['total_pages'];
+          }
+          if($api_response['response']['this_page'] < $per_page) {
+            $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
+          }
+          $track_a = $api_response['response']['results'];
+          $total_pages = $api_response['response']['total_pages'];
+          $total_records = $api_response['response']['total_records'];
+          $record_count = $api_response['response']['this_page'];          
+        } else {
+          $page_error = $api_response['apierror'];
+          Utilities::set_flash_message($page_error, 1);
+        }
+      } else {
+        $form_errors = $validation['errors'];
+        Utilities::set_flash_message('You have errors in the form', 1);
+      }
+    }
+
+    // prepare template
+    $controller_vars = array(
+      'page_title' => 'Item Track'.($item_name !== '' ? ' [ '.$item_name.' ]' : ''),
+      'icon_name' => 'fa fa-angle-double-up',
+    );
+
+    $template_vars = array(
+      'track_a' => $track_a,
+      'form_data' => $form_data,
+      'form_errors' => $form_errors,
+      'client_locations' => array(''=>'Choose Store') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+    );    
+
+    // render template
+    return array($this->template->render_view('track-item', $template_vars),$controller_vars);      
+  }
+
+  private function _validate_data_item_track($form_data = []) {
+    $form_errors = $cleaned_params = [];
+    if(isset($form_data['itemName']) && $form_data['itemName'] !== '') {
+      $cleaned_params['itemName'] = Utilities::clean_string($form_data['itemName']);
+    } else {
+      $form_errors['itemName'] = 'Invalid item name.';
+    }
+    if(isset($form_data['locationCode']) && $form_data['locationCode'] !== '') {
+      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    } else {
+      $form_errors['locationCode'] = 'Invalid store name.';
+    }
+    if(count($form_errors)>0) {
+      return ['status' => false, 'errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
+  }
+
 /*  
   public function searchItem(Request $request) {
       
@@ -538,52 +626,5 @@ class InventoryController
     $template = new Template($this->views_path);
     return array($template->render_view('list-threshold-qty',$template_vars),$controller_vars);      
   }
-
-  public function trackItem(Request $request) {
-    $page_error = $page_success = $item_name = '';
-    $errors = $submitted_data = $item_details = $total_trans = array();
-
-    $inven_api = new Inventory;
-    $flash = new Flash;
-
-    if(count($request->request->all())>0) {
-      $params = $request->request->all();
-      $submitted_data['itemName'] = Utilities::clean_string($params['itemName']);
-
-      # hit api
-      $api_response = $inven_api->track_item($submitted_data);
-      $status = $api_response['status'];
-
-      // echo '<pre>';
-      // print_r($api_response);
-      // echo '</pre>';
-      // exit;
-
-      if($status === false) {
-        if(isset($api_response['errors'])) {
-          $errors = $api_response['errors'];
-        } elseif(isset($api_response['apierror'])) {
-          $page_error = $api_response['apierror'];
-        }
-      } else {
-          $total_trans = $api_response['items'];
-          $item_name = ' [ '.$submitted_data['itemName'].' ]';
-      }
-    }
-
-    # prepare template
-    $template_vars = array(
-      'total_trans' => $total_trans,
-      'submitted_data' => $submitted_data,
-    );
-
-    $controller_vars = array(
-      'page_title' => 'Inventory - Item Track'.$item_name,
-      'icon_name' => 'fa fa-angle-double-up',
-    );
-
-    # render template
-    $template = new Template($this->views_path);
-    return array($template->render_view('item-track',$template_vars),$controller_vars);      
-  }*/
+*/
 }

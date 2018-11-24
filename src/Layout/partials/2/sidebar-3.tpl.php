@@ -139,10 +139,10 @@
         </a>
         <ul class="sub">
           <?php /*
-          <li><a href="/inventory/item-threshold-list"><i class="fa fa-list-ol"></i> Threshold Qtys.</a></li>
-          <li><a href="/inventory/track-item"><i class="fa fa-exchange"></i> Item Track</a></li>*/ ?>
+          <li><a href="/inventory/item-threshold-list"><i class="fa fa-list-ol"></i> Threshold Qtys.</a></li>*/ ?>
+          <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
           <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Inventory Openings</a></li>          
-          <li><a href="/inventory/available-qty"><i class="fa fa-cubes"></i> Stock In Hand</a></li>
+          <li><a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a></li>
           <li><a href="/barcode/opbal"><i class="fa fa-barcode"></i> Barcodes for Opening</a></li>          
         </ul>
       </li>
@@ -268,7 +268,7 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/po-register"><i class="fa fa-angle-right"></i> PO Register</a></li>
-              <li><a href="/reports/po-register-itemwise"><i class="fa fa-angle-right"></i> PO Register-Itemwise</a></li>
+              <li><a href="/reports/po-register-itemwise"><i class="fa fa-angle-right"></i> PO Register Itemwise</a></li>
             </ul>
           </li>
           <li class="sub-menu">

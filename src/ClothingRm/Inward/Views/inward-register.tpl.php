@@ -23,7 +23,7 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&',$query_params);
   }
-  $pagination_url = '/inward-entry/list';
+  $pagination_url = $page_url = '/inward-entry/list';
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -131,7 +131,7 @@
                     <td class="text-left med-name valign-middle"><?php echo $purchase_details['supplierName'] ?></td>
                     <td class="text-bold text-left valign-middle"><?php echo $purchase_details['poNo'] ?></td>
                     <td class="text-right valign-middle"><?php echo $dop ?></td>
-                    <td class="text-right text-bold valign-middle"><?php echo number_format($po_amount,2) ?></td>
+                    <td class="text-right text-bold valign-middle"><?php echo number_format($po_amount,2,'.','') ?></td>
                     <td class="text-right valign-middle"><?php echo $grn_text ?></td>
                     <td class="text-right text-bold valign-middle"><?php echo $status_text ?></td>                    
                     <td class="valign-middle">
@@ -173,7 +173,7 @@
             ?>
               <tr>
                 <td colspan="4">&nbsp;</td>
-                <td class="text-right text-bold"><?php echo number_format($total_amount,2) ?></td>
+                <td class="text-right text-bold"><?php echo number_format($total_amount,2,'.','') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>                

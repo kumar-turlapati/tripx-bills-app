@@ -40,6 +40,8 @@
   }
   if(isset($form_data['locationCode'])) {
     $location_code = $form_data['locationCode'];
+  } elseif(isset($form_data['locationID'])) {
+    $location_code = $form_data['locationID'];
   } else {
     $location_code = '';
   }
@@ -168,8 +170,8 @@
                     $packed_qty = '';
                   }                  
 
-                  $billed_qty = $inward_qty-$free_qty;
-                  $gross_amount = $billed_qty*$item_rate;
+                  $billed_qty = $inward_qty - $free_qty;
+                  $gross_amount = ($billed_qty*$item_rate)*$form_data['packedQty'][$i-1];
                   $item_amount = $gross_amount - $item_discount;
                   $tax_amount = $item_amount*$tax_percent/100;
 
@@ -388,7 +390,7 @@
                 <tr>
                   <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo $total_item_qty ?></td>
                   <td colspan="3" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($items_total, 2),'2','.','') ?></td>
-                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($total_tax_amount),'2','.','') ?></td>
+                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($total_tax_amount, 2),'2','.','') ?></td>
                   <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($round_off, 2),'2','.','') ?></td>
                   <td colspan="3" style="font-weight:bold;font-size:20px;text-align:center;color:#225992"><?php echo number_format(round($net_pay, 2),'2','.','') ?></td>                  
                 </tr>

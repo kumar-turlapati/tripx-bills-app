@@ -74,7 +74,7 @@ class PurchaseReturnsController
       if($purchase_response['status']) {
         $purchase_details = $purchase_response['purchaseDetails'];
 
-        # convert received item details to template item details.
+        // convert received item details to template item details.
         $item_names = array_column($purchase_details['itemDetails'],'itemName');
         $item_codes = array_column($purchase_details['itemDetails'],'itemCode');        
         $inward_qtys = array_column($purchase_details['itemDetails'],'itemQty');
@@ -93,10 +93,10 @@ class PurchaseReturnsController
 
         $total_item_rows = is_array($item_names) && count($item_names) > 0 ? count($item_names) : 30;
 
-        # unset item details from api data.
+        // unset item details from api data.
         unset($purchase_details['itemDetails']);
 
-        # create form data variable.
+        // create form data variable.
         $form_data = $purchase_details;
 
         $form_data['itemName'] = $item_names;
@@ -123,13 +123,13 @@ class PurchaseReturnsController
       Utilities::redirect('/purchase-return/register');      
     }
 
-    # check if form is submitted.
+    // check if form is submitted.
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
-      $validation_status = $this->_validate_form_data($submitted_data,$item_codes,$lot_nos,$inward_qtys);
+      $validation_status = $this->_validate_form_data($submitted_data, $item_codes, $lot_nos, $inward_qtys, $packed_qtys);
       if($validation_status['status']) {
         $cleaned_params = $validation_status['cleaned_params'];
-        # hit api
+        // hit api
         $api_response = $this->pr_model->createPurchaseReturn($cleaned_params, $purchase_code);
         if($api_response['status']) {
           $message = 'Purchase return entry created successfully with code ` '.$api_response['returnCode'].' `';
@@ -137,7 +137,7 @@ class PurchaseReturnsController
           Utilities::redirect('/purchase-return/register');
         } else {
           $api_error = $api_response['apierror'];
-          $form_data = $submitted_data;
+          // $form_data = $submitted_data;
           $form_data['returnQty'] = array_values($submitted_data['returnQty']);
         }
       } else {
@@ -321,7 +321,7 @@ class PurchaseReturnsController
     Utilities::redirect('/purchase-return/register');
   }
 
-  private function _validate_form_data($submitted_data=[], $item_codes=[], $lot_nos=[], $inward_qtys=[]) {
+  private function _validate_form_data($submitted_data=[], $item_codes=[], $lot_nos=[], $inward_qtys=[], $packed_qtys=[]) {
 
     $form_errors = $cleaned_params = [];
     $is_one_item_found = false;
@@ -339,7 +339,7 @@ class PurchaseReturnsController
     $i = 0;
     foreach($return_qtys as $return_key => $return_qty) {
       $purchase_key = $item_codes[$i].'__'.$lot_nos[$i];
-      $inward_qty = $inward_qtys[$i];
+      $inward_qty = $inward_qtys[$i] * $packed_qtys[$i];
       if($return_key === $purchase_key && $return_qty > 0) {
         $is_one_item_found = true;
         if($return_qty <= $inward_qty) {

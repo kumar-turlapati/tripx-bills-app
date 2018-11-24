@@ -424,18 +424,17 @@ class InwardController
 
     $page_no = is_null($request->get('pageNo')) ? 1 : $request->get('pageNo');
     $per_page = is_null($request->get('perPage')) ? 100 : $request->get('perPage');
-
-    if(count($request->request->all()) > 0) {
+    if(count($request->request->all())>0) {
       $search_params = $request->request->all();
     } else {
-      if( !is_null($request->get('fromDate')) ) {
-        $search_params['fromDate'] = $request->get('fromDate');
+      if(!is_null($request->get('fromDate'))) {
+        $search_params['fromDate'] = Utilities::clean_string($request->get('fromDate'));
       }
-      if( !is_null($request->get('toDate')) ) {
-        $search_params['toDate'] =  $request->get('toDate');
+      if(!is_null($request->get('toDate'))) {
+        $search_params['toDate'] = Utilities::clean_string($request->get('toDate'));
       }
-      if( !is_null($request->get('supplierID')) ) {
-        $search_params['supplierID'] =  $request->get('supplierID');
+      if(!is_null($request->get('supplierID'))) {
+        $search_params['supplierID'] = Utilities::clean_string($request->get('supplierID'));
       }
     }
 
@@ -447,9 +446,9 @@ class InwardController
     $purchase_api_call = $this->inward_model->get_purchases($page_no,$per_page,$search_params);
     $api_status = $purchase_api_call['status'];        
 
-    # check api status
+    // check api status
     if($api_status) {
-      # check whether we got products or not.
+      // check whether we got products or not.
       if(count($purchase_api_call['purchases'])>0) {
         $slno = Utilities::get_slno_start(count($purchase_api_call['purchases']), $per_page, $page_no);
         $to_sl_no = $slno+$per_page;

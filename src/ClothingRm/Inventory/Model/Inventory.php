@@ -204,7 +204,7 @@ class Inventory
 		if ($status === 'success') {
 			return array(
 				'status' => true,
-				'items' => $response['response'],
+				'response' => $response['response'],
 			);				
 		} elseif($status === 'failed') {
 			return array(

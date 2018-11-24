@@ -250,8 +250,10 @@ $routes->add('qty_available', new Routing\Route('/inventory/available-qty/{pageN
   'pageNo' => null,
   'perPage' => null,
 )));
-$routes->add('item_track', new Routing\Route('/inventory/track-item', array(
+$routes->add('item_track', new Routing\Route('/inventory/track-item/{pageNo}/{perPage}', array(
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::trackItem',   
+  'pageNo' => null,
+  'perPage' => null,
 )));
 $routes->add('item_qty_available', new Routing\Route('/inventory/search-products', array(
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::searchItem',   

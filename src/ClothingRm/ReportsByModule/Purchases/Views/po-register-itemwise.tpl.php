@@ -1,6 +1,6 @@
 <?php
   $current_date = date("d-m-Y");
-  $page_url = '/reports/po-register';
+  $page_url = '/reports/po-register-itemwise';
 ?>
 <div class="row">
   <div class="col-lg-12">

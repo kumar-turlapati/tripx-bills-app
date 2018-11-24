@@ -98,8 +98,8 @@ class Inward
 				$toDate = Utilities::clean_string($search_params['toDate']);
 				$params['toDate'] = $toDate;
 			}			
-			if(isset($search_params['supplierCode'])) {
-				$supplierCode = Utilities::clean_string($search_params['supplierCode']);
+			if(isset($search_params['supplierID'])) {
+				$supplierCode = Utilities::clean_string($search_params['supplierID']);
 				$params['supplierID'] = $supplierCode;
 			}
 			if(isset($search_params['locationCode'])) {
