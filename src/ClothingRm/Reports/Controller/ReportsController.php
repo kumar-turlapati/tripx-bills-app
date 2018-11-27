@@ -125,7 +125,7 @@ class ReportsController
     $cn_no          =   $sale_details['cnNo'];
     $referral_no    =   $sale_details['refCardNo'];
 
-    $gst_no = '';
+    // $gst_no = '';
 
     // start PDF printing.
     $pdf = PDF::getInstance(true);
