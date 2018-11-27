@@ -522,7 +522,7 @@ class InventoryReportsController {
       $pdf->Cell($item_widths[4],6,'SaleValue','RTB',0,'C');
       $pdf->Cell($item_widths[5],6,'Pur.Price','RTB',0,'C');
       $pdf->Cell($item_widths[6],6,'Pur.Value','RTB',0,'C');
-      $pdf->Cell($item_widths[7],6,'GrossProfit','RTB',0,'C');
+      $pdf->Cell($item_widths[7],6,'Profit','RTB',0,'C');
       $pdf->Cell($item_widths[8],6,'Profit (%)','RTB',0,'C');    
       $pdf->SetFont('Arial','',8);
 
@@ -559,7 +559,9 @@ class InventoryReportsController {
       $pdf->Cell(40,6,'Value','RT',1,'C');
       $pdf->SetFont('Arial','',14);
 
-      $tot_gross_profit = 100-( round( round($tot_pur_value/$tot_sold_value,2) * 100, 2) );
+      // $tot_gross_profit = 100-( round( round($tot_pur_value/$tot_sold_value,2) * 100, 2) );
+      $profit_amount = round($tot_sold_value - $tot_pur_value, 2);
+      $tot_gross_profit = round(($profit_amount/$tot_pur_value)*100, 2);
 
       $pdf->Cell(100,6,'Total Sold Qty.','LRTB',0,'R');
       $pdf->Cell(40,6,number_format($tot_sold_qty,2,'.',''),'RTB',1,'R');
