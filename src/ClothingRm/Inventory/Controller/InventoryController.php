@@ -167,9 +167,8 @@ class InventoryController {
       # check whether we got products or not.
       if( count($items_list['results']['adjItems']) > 0) {
         $slno = Utilities::get_slno_start(count($items_list['results']['adjItems']),$per_page,$page_no);
-        $to_sl_no = $slno+$per_page;
+        $to_sl_no = $slno + $per_page;
         $slno++;
-
         if($page_no<=3) {
           $page_links_to_start = 1;
           $page_links_to_end = 10;

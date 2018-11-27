@@ -90,62 +90,60 @@
     			</div>
           </div>
         </div>
-        
         <?php if(count($grns)>0): ?>        
-          <h2 class="hdg-reports text-center">GRN Register</h2>
           <div class="table-responsive">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th width="5%" class="text-center valign-middle">Sl.No.</th>
-                    <th width="10%" class="text-center valign-middle">GRN No.</th>
-                    <th width="10%" class="text-center valign-middle">GRN Date</th>
-                    <th width="15%" class="text-center valign-middle">Supplier Name</span></th>
-                    <th width="15%" class="text-center valign-middle">PO No.&amp;Date</th>
-                    <th width="15%" class="text-center valign-middle">Bill No.</th>
-                    <th width="10%" class="text-center valign-middle">Bill Amount</th>
-                    <th width="10%" class="text-center valign-middle">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php 
-                    $cntr = $sl_no;
-                    foreach($grns as $grn_details):
-                      $grn_no = $grn_details['grnNo'];
-                      $grn_code = $grn_details['grnCode'];
-                      $grn_date = date("d-m-Y", strtotime($grn_details['grnDate']));
-                      $supplier_name = $grn_details['supplierName'];
-                      $po_info = $grn_details['poNo'].' / '.date("d-M-Y", strtotime($grn_details['purchaseDate']));
-                      $bill_no = $grn_details['billNo'];
-                      $bill_amount = $grn_details['netPay'];
-                  ?>
-                      <tr class="text-right font12">
-                        <td class="valign-middle"><?php echo $cntr ?></td>
-                        <td class="text-left valign-middle"><?php echo $grn_no ?></td>
-                        <td class="valign-middle"><?php echo $grn_date ?></td>
-                        <td class="text-bold text-left valign-middle"><?php echo $supplier_name ?></td>
-                        <td class="text-left valign-middle"><?php echo $po_info ?></td>
-                        <td class="text-right valign-middle"><?php echo $bill_no ?></td>
-                        <td class="text-right valign-middle"><?php echo $bill_amount ?></td>
-                        <td class="valign-middle">
-                          <div class="btn-actions-group">
-                            <?php if($grn_code !== ''): ?>
-                              <a class="btn btn-primary" href="/grn/view/<?php echo $grn_code ?>" title="View GRN Transaction">
-                                <i class="fa fa-eye"></i>
-                              </a>
-                              <a class="btn btn-primary" href="/print-grn/<?php echo $grn_code ?>" title="Print GRN" target="_blank">
-                                <i class="fa fa-print"></i>
-                              </a>                              
-                            <?php endif; ?>
-                          </div>
-                        </td>
-                      </tr>
-                <?php
-                  $cntr++;
-                  endforeach; 
+            <table class="table table-striped table-hover font11">
+              <thead>
+                <tr>
+                  <th width="5%" class="text-center valign-middle">Sl.No.</th>
+                  <th width="10%" class="text-center valign-middle">GRN No.</th>
+                  <th width="10%" class="text-center valign-middle">GRN Date</th>
+                  <th width="15%" class="text-center valign-middle">Supplier Name</span></th>
+                  <th width="15%" class="text-center valign-middle">PO No.&amp;Date</th>
+                  <th width="15%" class="text-center valign-middle">Bill No.</th>
+                  <th width="10%" class="text-center valign-middle">Bill Amount</th>
+                  <th width="10%" class="text-center valign-middle">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php 
+                  $cntr = $sl_no;
+                  foreach($grns as $grn_details):
+                    $grn_no = $grn_details['grnNo'];
+                    $grn_code = $grn_details['grnCode'];
+                    $grn_date = date("d-m-Y", strtotime($grn_details['grnDate']));
+                    $supplier_name = $grn_details['supplierName'];
+                    $po_info = $grn_details['poNo'].' / '.date("d-M-Y", strtotime($grn_details['purchaseDate']));
+                    $bill_no = $grn_details['billNo'];
+                    $bill_amount = $grn_details['netPay'];
                 ?>
-                </tbody>
-              </table>
+                    <tr class="text-right font11">
+                      <td class="valign-middle"><?php echo $cntr ?></td>
+                      <td class="text-left valign-middle"><?php echo $grn_no ?></td>
+                      <td class="valign-middle"><?php echo $grn_date ?></td>
+                      <td class="text-bold text-left valign-middle"><?php echo $supplier_name ?></td>
+                      <td class="text-left valign-middle"><?php echo $po_info ?></td>
+                      <td class="text-right valign-middle"><?php echo $bill_no ?></td>
+                      <td class="text-right valign-middle"><?php echo $bill_amount ?></td>
+                      <td class="valign-middle">
+                        <div class="btn-actions-group">
+                          <?php if($grn_code !== ''): ?>
+                            <a class="btn btn-primary" href="/grn/view/<?php echo $grn_code ?>" title="View GRN Transaction">
+                              <i class="fa fa-eye"></i>
+                            </a>
+                            <a class="btn btn-primary" href="/print-grn/<?php echo $grn_code ?>" title="Print GRN" target="_blank">
+                              <i class="fa fa-print"></i>
+                            </a>                              
+                          <?php endif; ?>
+                        </div>
+                      </td>
+                    </tr>
+              <?php
+                $cntr++;
+                endforeach; 
+              ?>
+              </tbody>
+            </table>
           </div>
         <?php endif; ?>        
       </div>

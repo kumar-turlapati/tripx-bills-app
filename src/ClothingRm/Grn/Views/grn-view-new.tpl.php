@@ -134,7 +134,7 @@
               <thead>
                 <tr>
                   <th style="width:230px;" class="text-center">Item name</th>
-                  <th style="width:30px;" class="text-center">Lot no.</th>                  
+                  <th style="width:30px;"  class="text-center">Lot no.</th>                  
                   <th style="width:50px;"  class="text-center">Available<br />qty.</th>
                   <th style="width:50px"   class="text-center">Accepted<br />qty.</th>
                   <th style="width:50px"   class="text-center">MRP<br />(Rs.)</th>

@@ -43,7 +43,10 @@
           <div class="pull-right text-right">
             <a href="/inward-entry/list" class="btn btn-default">
               <i class="fa fa-book"></i> Purchase Register
-            </a> 
+            </a>&nbsp;
+            <a href="/purchase-return/register" class="btn btn-default">
+              <i class="fa fa-book"></i> Purchase Return Register
+            </a>            
           </div>
         </div>
   		  <div class="filters-block">

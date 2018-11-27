@@ -147,15 +147,15 @@
               <th width="3%"  class="text-center">Sno.</th>
               <th width="15%" class="text-center">Customer<br />Name</th>
               <?php /*<th width="7%" class="text-center">Mobile<br />Number</th>*/ ?>
-              <th width="8%" class="text-center">Payment<br />Method</th>                
-              <th width="14%" class="text-center">Bill No. &amp; Date</th>
-              <th width="7%" class="text-center">Bill Amount<br />(in Rs.)</th>
-              <th width="7%" class="text-center">Discount<br />(in Rs.)</th>
-              <th width="7%" class="text-center">Taxable<br />(in Rs.)</th>
-              <th width="7%" class="text-center">GST<br />(in Rs.)</th>                
+              <th width="6%" class="text-center">Payment<br />Method</th>                
+              <th width="13%" class="text-center">Bill No. &amp; Date</th>
+              <th width="6%" class="text-center">Bill Amount<br />(in Rs.)</th>
+              <th width="6%" class="text-center">Discount<br />(in Rs.)</th>
+              <th width="6%" class="text-center">Taxable<br />(in Rs.)</th>
+              <th width="6%" class="text-center">GST<br />(in Rs.)</th>                
               <th width="5%" class="text-center">R.off<br />(in Rs.)</th>
               <th width="7%" class="text-center">Net Pay<br />(in Rs.)</th>
-              <th width="18%" class="text-center">Actions</th>
+              <th width="22%" class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -197,7 +197,11 @@
                   <td class="text-left med-name valign-middle">
                     <span style="font-weight:bold;"><?php echo $payment_method ?></span>
                   </td>
-                  <td class="valign-middle"><?php echo $sales_details['billNo'].' / '.$invoice_date ?></td>
+                  <td class="valign-middle">
+                    <a href="/sales/view-invoice/<?php echo $sales_code ?>" title="View Invoice" style="font-size:10px;color:#225992;font-weight:bold;">
+                      <?php echo $sales_details['billNo'].' / '.$invoice_date ?>
+                    </a>
+                  </td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['billAmount'],2) ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['discountAmount'],2) ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['totalAmount'],2) ?></td>                    
@@ -207,9 +211,12 @@
                   <td>
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>
-                        <a class="btn btn-danger" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Sale Bill - Small format">
+                        <a class="btn btn-danger" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
                           <i class="fa fa-print"></i>
                         </a>
+                        <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
+                          <i class="fa fa-print"></i>
+                        </a>                        
                         <a class="btn btn-primary" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
                           <i class="fa fa-undo"></i>
                         </a>
@@ -221,12 +228,10 @@
                             <i class="fa fa-pencil"></i>
                           </a>
                         <?php endif; ?>
+                        <?php /*
                         <a class="btn btn-default" href="/sales/view-invoice/<?php echo $sales_code ?>" title="View Sales Invoice">
                           <i class="fa fa-eye"></i>
                         </a>                        
-                        <?php /*
-                        */ ?>
-                        <?php /*
                         <a class="btn btn-primary" href="javascript: printSalesBill(<?php echo $sales_details['billNo'] ?>)" title="Print Sales Bill - Normal format">
                           <i class="fa fa-print"></i>
                         </a>               

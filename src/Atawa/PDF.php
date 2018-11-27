@@ -10,11 +10,13 @@ class PDF extends FPDF {
 
   private static $pdf = null;
   private static $client_details = null;
+  private static $skip_footer = null;
 
-  public static function getInstance() {
+  public static function getInstance($skip_footer = false) {
     if(self::$pdf == null) {
       self::$pdf = new PDF;
     }
+    self::$skip_footer = $skip_footer;
     return self::$pdf;
   }
 
@@ -51,19 +53,21 @@ class PDF extends FPDF {
 
   // Page footer
   public function Footer() {
-    // Position at 1.5 cm from bottom
-    $this->SetY(-15);
-    // Arial italic 8
-    $this->SetFont('Arial','IB',8);
+    if(self::$skip_footer === false) {
+      // Position at 1.5 cm from bottom
+      $this->SetY(-15);
+      // Arial italic 8
+      $this->SetFont('Arial','IB',8);
 
-    // footer text
-    $footer_text = 'Page '.$this->PageNo().'/{nb}';
-    $promo_text = 'Powered by QwikBills.com, Version 1.6, Build 2.5.6';
+      // footer text
+      $footer_text = 'Page '.$this->PageNo().'/{nb}';
+      $promo_text = 'Powered by QwikBills.com, Version 1.6, Build 2.5.6';
 
-    // Page number
-    $this->Cell(0,4,$footer_text,'T',2,'C');
-    $this->SetFont('Arial','B',6);    
-    $this->Cell(0,-4,$promo_text,0,1,'R');    
+      // Page number
+      $this->Cell(0,4,$footer_text,'T',2,'C');
+      $this->SetFont('Arial','B',6);    
+      $this->Cell(0,-4,$promo_text,0,1,'R');
+    }
   }  
 
 }

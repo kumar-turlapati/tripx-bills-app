@@ -23,7 +23,6 @@
   $payment_method =  (int)$sale_details['paymentMethod'];
   $tmp_cust_name  =  $sale_details['tmpCustName'];
 
-	$client_details =		Utilities::get_client_details();
 	$business_name 	=		isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];
 	$business_add1	=		$sale_details['address1'];
 	$business_add2	=		$sale_details['address2'];
@@ -63,8 +62,13 @@
 	  		<?php if($business_add2 !== ''): ?>
 	  			<h6 style="margin:0 0 0 0px; text-align:center;font-size:11px;"><?php echo $business_add2 ?></h6>
 	  		<?php endif; ?>
-	  		<h3 style="margin: 0px 0 0px 0px;text-align:center;border-top: 1px dotted #000;font-size:18px;">Tax Invoice</h3>
-        <h3 style="margin: 0px 0 0px 0px;text-align:center;font-size:12px;">GSTIN: <?php echo $gst_no ?></h3>        
+	
+    		<?php if($gst_no !== ''): ?>
+          <h3 style="margin: 0px 0 0px 0px;text-align:center;border-top: 1px dotted #000;font-size:18px;">Tax Invoice</h3>
+          <h3 style="margin: 0px 0 0px 0px;text-align:center;font-size:12px;">GSTIN: <?php echo $gst_no ?></h3>
+        <?php else: ?>
+          <h3 style="margin: 0px 0 0px 0px;text-align:center;border-top: 1px dotted #000;font-size:18px;">Bill of Sale</h3>
+        <?php endif; ?>
 	  		<h3 style="margin: 0px 0 0px 0px;text-align:center;border-top: 1px dotted #000;font-size:14px;">Bill No : <?php echo $bill_no ?></h3>
 	  		<h5 style="text-align:center;margin:0 0 0 0px;font-size:12px;">Bill date &amp; time: <?php echo $bill_date.', '.$bill_time ?></h5>
         <?php if($exe_name !== ''): ?>
@@ -104,7 +108,7 @@
 					      $base_price = $item_details['itemQty'] * $item_details['itemRate'];
 					      $discount = $item_details['discountAmount'];
 					      $tax_percent = $item_details['taxPercent'];
-					      $tax_amount = ($item_details['cgstAmount'] + $item_details['sgstAmount']) * $item_details['itemQty'];
+					      $tax_amount = ($item_details['cgstAmount'] + $item_details['sgstAmount']);
                 $total_qty += $item_details['itemQty'];
 
                 if(isset($taxable_values[$tax_percent])) {
@@ -151,47 +155,53 @@
             <tr>
               <td colspan="4" style="text-align:center;border-bottom:1px dotted #000;border-top:1px dotted #000;font-size:14px;font-weight:bold;">[ <?php echo Utilities::get_indian_currency($net_pay) ?> ]</td>
             </tr>
-				    <tr>
-				    	<td colspan="4" style="text-align:center;border-bottom:1px dotted #000;font-size:14px;font-weight:bold;">GST Summary</td>
-				    </tr>   			  	
 			   	</tbody>
 			  </table>
+        <?php if($gst_no !== ''): ?>
+          <table style="width:100%;font-size:12px;" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="text-align:center;border-bottom:1px dotted #000;font-size:14px;font-weight:bold;">GST Summary</td>
+            </tr>
+          </table>
+          <table style="width:100%;font-size:12px;" cellpadding="0" cellspacing="0">
+           <thead>
+              <th style="text-align:left;font-size:11px;font-weight:bold;">GST %</th>
+              <th style="text-align:left;font-size:11px;font-weight:bold;">Taxable (Rs.)</th>
+              <th style="text-align:left;font-size:11px;font-weight:bold;">IGST</th>
+              <th style="text-align:left;font-size:11px;font-weight:bold;">CGST</th>
+              <th style="text-align:left;font-size:11px;font-weight:bold;">SGST</th>
+           </thead>
+           <tbody>
+              <?php
+              	$taxes = array_keys($taxable_values);
+                $tot_taxable_value = $tot_igst_amount = $tot_cgst_amount = $tot_sgst_amount = 0;                        
+                foreach($taxes as $tax_code => $tax_percent):
+                  if( isset($taxable_values[$tax_percent]) ) {
+                    $taxable_value = $taxable_values[$tax_percent];
+                    $tot_taxable_value += $taxable_value;
+                  } else {
+                    $taxable_value = 0;
+                  }
+                  if(isset($taxable_gst_value[$tax_percent])) {
+                    $cgst_amount = $sgst_amount = round($taxable_gst_value[$tax_percent]/2,2);
+                    $igst_amount = 0;
+                  }                          
+              ?>
+                <tr>
+                    <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;"><?php echo number_format($tax_percent, 2).'%' ?></td>
+                    <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_amount"><?php echo number_format($taxable_value,2,'.','') ?></td>
+                    <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_igst_value"><?php echo number_format($igst_amount,2,'.','')  ?></td>
+                    <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_cgst_value"><?php echo number_format($cgst_amount,2,'.','') ?></td>
+                    <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_sgst_value"><?php echo number_format($sgst_amount,2,'.','') ?></td>
+                </tr>
+              <?php endforeach; ?>
+           </tbody>
+          </table>
+        <?php endif; ?>
         <table style="width:100%;font-size:12px;" cellpadding="0" cellspacing="0">
-         <thead>
-            <th style="text-align:left;font-size:11px;font-weight:bold;">GST %</th>
-            <th style="text-align:left;font-size:11px;font-weight:bold;">Taxable (Rs.)</th>
-            <th style="text-align:left;font-size:11px;font-weight:bold;">IGST</th>
-            <th style="text-align:left;font-size:11px;font-weight:bold;">CGST</th>
-            <th style="text-align:left;font-size:11px;font-weight:bold;">SGST</th>
-         </thead>
-         <tbody>
-            <?php
-            	$taxes = array_keys($taxable_values);
-              $tot_taxable_value = $tot_igst_amount = $tot_cgst_amount = $tot_sgst_amount = 0;                        
-              foreach($taxes as $tax_code => $tax_percent):
-                if( isset($taxable_values[$tax_percent]) ) {
-                  $taxable_value = $taxable_values[$tax_percent];
-                  $tot_taxable_value += $taxable_value;
-                } else {
-                  $taxable_value = 0;
-                }
-                if(isset($taxable_gst_value[$tax_percent])) {
-                  $cgst_amount = $sgst_amount = round($taxable_gst_value[$tax_percent]/2,2);
-                  $igst_amount = 0;
-                }                          
-            ?>
-              <tr>
-                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;"><?php echo number_format($tax_percent, 2).'%' ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_amount"><?php echo number_format($taxable_value,2,'.','') ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_igst_value"><?php echo number_format($igst_amount,2,'.','')  ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_cgst_value"><?php echo number_format($cgst_amount,2,'.','') ?></td>
-                  <td class="font11" style="text-align:left;font-size:11px;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_sgst_value"><?php echo number_format($sgst_amount,2,'.','') ?></td>
-              </tr>
-            <?php endforeach; ?>
-				    <tr>
-				    	<td colspan="5" style="text-align:center;border-top:1px dotted #000;font-size:14px;font-weight:bold;border-left:1px dotted #000;border-right:1px dotted #000;">Payment Details</td>
-				    </tr>
-         </tbody>
+          <tr>
+            <td colspan="5" style="text-align:center;border-top:1px dotted #000;font-size:14px;font-weight:bold;border-left:1px dotted #000;border-right:1px dotted #000;">Payment Details</td>
+          </tr>
         </table>
         <table style="width:100%;font-size:10px;" cellpadding="0" cellspacing="0">
          <thead>

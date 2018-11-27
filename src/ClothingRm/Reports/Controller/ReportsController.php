@@ -87,7 +87,9 @@ class ReportsController
     $params['billNo'] = $billNo;
     $print_date_time = date("d-M-Y h:ia");
 
-    $sales_response = $sales->get_sales_details($billNo,true);
+    $sales_response = $sales->get_sales_details($billNo,false);
+    // dump($sales_response);
+    // exit;
     $status = $sales_response['status'];
     if($status) {
       $sale_details = $sales_response['saleDetails'];
@@ -96,71 +98,96 @@ class ReportsController
     } else {
       die($this->_get_print_error_message());
     }
-
     $bill_no = $sale_details['billNo'];
     $bill_date = date('d-M-Y',strtotime($sale_details['invoiceDate']));
-    $bill_time = date('h:ia',strtotime($sale_details['createdOn']));
-    $pay_method = Constants::$PAYMENT_METHODS_RC[$sale_details['paymentMethod']];
-    $terms_text = 'Note: [1] Please get your medicines checked by Doctor before use. [2] Production of Original bill is mandatory for return of items. [3] Item returns/replacement will not be entertained after 48 hours. [4] Total amount is inclusive of applicable taxes.';
+    $bill_time = date('h:ia',strtotime($sale_details['createdTime']));
+    $payment_method = (int)Constants::$PAYMENT_METHODS_RC[$sale_details['paymentMethod']];
+    $payment_method_num = (int)$sale_details['paymentMethod'];
+    $tmp_cust_name = $sale_details['tmpCustName'];
+    $customer_name  =  $sale_details['customerName'] !== '' ? substr(strtoupper($sale_details['customerName']),0,30) : '';
+    $card_no = $sale_details['cardNo'] > 0 ? '* ****'.$sale_details['cardNo'] : '';
+    $auth_code = $sale_details['authCode'] > 0 ? $sale_details['authCode'] : '****';
 
-    # start PDF printing.
-    $pdf = PDF::getInstance();
+    $cn_no =  $sale_details['cnNo'];
+    $referral_no = $sale_details['refCardNo'];
+    $promo_code =  $sale_details['promoCode'];
+    if($customer_name === '') {
+      $customer_name = $tmp_cust_name;
+    }
+
+    $business_name  =   isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];
+    $business_add1  =   $sale_details['address1'];
+    $business_add2  =   $sale_details['address2'];
+    $gst_no         =   $sale_details['locGstNo'];
+    $card_no        =   $sale_details['cardNo'] > 0 ? '* ****'.$sale_details['cardNo'] : '';
+    $auth_code      =   $sale_details['authCode'] > 0 ? $sale_details['authCode'] : '****';
+
+    $cn_no          =   $sale_details['cnNo'];
+    $referral_no    =   $sale_details['refCardNo'];
+
+    $gst_no = '';
+
+    // start PDF printing.
+    $pdf = PDF::getInstance(true);
     $pdf->AliasNbPages();
     $pdf->AddPage('P','A4');
 
-    # Print Bill Information.
+    // Print Bill Information.
     $pdf->SetFont('Arial','B',16);
-    $pdf->Cell(0,0,'Tax Invoice','',1,'C');
+    $pdf->Cell(0,0, $gst_no !== '' ? 'Tax Invoice' : 'Bill of Sale','',1,'C');
     
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln(4);
 
-    # Initialize widths
-    $invoice_info_widths = [40,35,45,70];
+    // Initialize widths
+    $invoice_info_widths = [40,30,30,60,30];
     $customer_info_widths = [95,95];
-    $item_widths = [10,38,16,14,14,14,14,14,14,14,14,14];
-    $final_tot_width = [23,23,23,25,20,30,23,23];
+    $item_widths = [10,60,22,22,16,20,20,20];
+    $final_tot_width = [26,26,26,25,27,20];
 
-    # second row
+    // second row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
     $pdf->Cell($invoice_info_widths[0],6,'Invoice No.','LRTB',0,'C');
     $pdf->Cell($invoice_info_widths[1],6,'Invoice Date','RTB',0,'C');
-    $pdf->Cell($invoice_info_widths[2],6,'Paid Through','RTB',0,'C');
-    $pdf->Cell($invoice_info_widths[3],6,'Promo Offer(s)','RTB',1,'C');
+    $pdf->Cell($invoice_info_widths[2],6,'Payment Mode','RTB',0,'C');
+    $pdf->Cell($invoice_info_widths[3],6,'Customer Name','RTB',0,'C');    
+    $pdf->Cell($invoice_info_widths[4],6,'Promo Code','RTB',1,'C');
     
-    $pdf->SetFont('Arial','B',14);
-    $pdf->Cell($invoice_info_widths[0],6,$bill_no,'LRTB',0,'C');
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Cell($invoice_info_widths[0],6,$bill_no,'LRB',0,'C');
     $pdf->SetFont('Arial','',9);
-    $pdf->Cell($invoice_info_widths[1],6,$bill_date,'RTB',0,'C');
-    $pdf->Cell($invoice_info_widths[2],6,$pay_method,'RTB',0,'C');
-    $pdf->Cell($invoice_info_widths[3],6,'','RTB',1,'C');
+    $pdf->Cell($invoice_info_widths[1],6,$bill_date,'RB',0,'C');
+    $pdf->Cell($invoice_info_widths[2],6,$payment_method,'RB',0,'C');
+    $pdf->Cell($invoice_info_widths[3],6,$customer_name,'RB',0,'C');
+    $pdf->Cell($invoice_info_widths[4],6,$promo_code,'RB',1,'C');
     
-    $pdf->SetFont('Arial','B',7);
-    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
-    $pdf->Cell($item_widths[1],6,'ProductName','RTB',0,'C');
-    $pdf->Cell($item_widths[2],6,'HSNCode','RTB',0,'C');
-    $pdf->Cell($item_widths[3],6,'Item Rate','RTB',0,'C');
-    $pdf->Cell($item_widths[4],6,'Item Qty.','RTB',0,'C');  
-    $pdf->Cell($item_widths[5],6,'Gross Val.','RTB',0,'C');
-    $pdf->Cell($item_widths[6],6,'Discount','RTB',0,'C');
-    $pdf->Cell($item_widths[7],6,'Taxable','RTB',0,'C');
-    $pdf->Cell($item_widths[8],6,'CGST','RTB',0,'C');
-    $pdf->Cell($item_widths[9],6,'CGST Val.','RTB',0,'C');
-    $pdf->Cell($item_widths[10],6,'SGST','RTB',0,'C');
-    $pdf->Cell($item_widths[11],6,'SGST Val.','RTB',1,'C');    
-    $pdf->SetFont('Arial','',7);
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Product Name','RB',0,'C');
+    $pdf->Cell($item_widths[2],6,'HSN/SAC','RB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Item Rate','RB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Qty.','RB',0,'C');  
+    $pdf->Cell($item_widths[5],6,'Amount','RB',0,'C');
+    $pdf->Cell($item_widths[6],6,'Discount','RB',0,'C');
+    $pdf->Cell($item_widths[7],6, $gst_no !== '' ? 'Taxable' : 'Gross Amt.','RB',1,'C');
+    $pdf->SetFont('Arial','',9);
 
-    $tot_bill_value = $tot_discount = $tot_cgst_value = 0;
-    $tot_sgst_value = $tot_taxable = $tot_items_qty = 0;
+    $tot_bill_value = $tot_discount = $tot_taxable = $tot_items_qty = 0;
+    $taxable_values = $tax_amounts = $taxable_gst_value = [];
+
     foreach($sale_item_details as $item_details) {
       $slno++;
-      $amount = round($item_details['itemQty']*$item_details['itemRate'], 2);
-      $discount = $item_details['discount'];
-      $taxable = round($amount - $discount, 2);
-      
       $tax_percent = $item_details['taxPercent'];
+
+      $amount = round($item_details['itemQty']*$item_details['mrp'], 2);
+      $discount = $item_details['discountAmount'];
+
+      $base_price = $item_details['itemQty'] * $item_details['itemRate'];
+      $taxable = round($amount - $discount, 2);
       $tax_value = ($taxable * $tax_percent / 100);
+
+      $tax_amount = $item_details['cgstAmount'] + $item_details['sgstAmount'];
 
       $cgst_percent = $sgst_percent = round($tax_percent/2,2);
       $cgst_value = $sgst_value = round($tax_value/2,2);
@@ -168,57 +195,233 @@ class ReportsController
       $tot_bill_value += $amount;
       $tot_discount += $discount;
       $tot_taxable += $taxable;
-      $tot_sgst_value += $sgst_value;
-      $tot_cgst_value += $cgst_value;
       $tot_items_qty += $item_details['itemQty'];
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,20),'RTB',0,'L');
-      $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
-      $pdf->Cell($item_widths[3],6,$item_details['itemRate'],'RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,$item_details['hsnSacCode'],'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,$item_details['mrp'],'RTB',0,'R');
       $pdf->Cell($item_widths[4],6,$item_details['itemQty'],'RTB',0,'R');
-      $pdf->Cell($item_widths[5],6,number_format($amount,2),'RTB',0,'R');
-      $pdf->Cell($item_widths[6],6,number_format($item_details['discount'],2),'RTB',0,'R');
-      $pdf->Cell($item_widths[6],6,number_format($taxable,2),'RTB',0,'R');      
-      $pdf->Cell($item_widths[7],6,$cgst_percent.' %','RTB',0,'R');
-      $pdf->Cell($item_widths[8],6,number_format($cgst_value,2),'RTB',0,'R');
-      $pdf->Cell($item_widths[9],6,$sgst_percent.' %','RTB',0,'R');
-      $pdf->Cell($item_widths[10],6,number_format($sgst_value,2),'RTB',1,'R');
+      $pdf->Cell($item_widths[5],6,number_format($amount,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($item_details['discountAmount'],2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[7],6,number_format($taxable,2,'.',''),'RTB',1,'R');
+
+      if(isset($taxable_values[$tax_percent])) {
+        $taxable = $taxable_values[$tax_percent] + ($base_price);
+        $gst_value = $taxable_gst_value[$tax_percent] + $tax_amount;
+
+        $taxable_values[$tax_percent] = $taxable;
+        $taxable_gst_value[$tax_percent] = $gst_value;
+      } else {
+        $taxable_values[$tax_percent] = ($base_price);
+        $taxable_gst_value[$tax_percent] = $tax_amount;
+      }
     }
 
-    $pdf->Cell($item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3],6,'LINE TOTALS','LRTB',0,'R');
-    $pdf->Cell($item_widths[4],6,$tot_items_qty,'RTB',0,'R');
-    $pdf->Cell($item_widths[5],6,number_format($tot_bill_value,2),'RTB',0,'R');
-    $pdf->Cell($item_widths[6],6,number_format($tot_discount,2),'RTB',0,'R');
-    $pdf->Cell($item_widths[6],6,number_format($tot_taxable,2),'RTB',0,'R');  
-    $pdf->Cell($item_widths[7],6,'','RTB',0,'R');
-    $pdf->Cell($item_widths[8],6,number_format($tot_cgst_value,2),'RTB',0,'R');
-    $pdf->Cell($item_widths[9],6,'','RTB',0,'R');
-    $pdf->Cell($item_widths[10],6,number_format($tot_sgst_value,2),'RTB',1,'R');
-      
-    $pdf->SetFont('Arial','B',10);
-    $pdf->Cell(190,6,'INVOICE SUMMARY (figures in Rs.)','LRTB',1,'C');
     $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($item_widths[6]+$item_widths[7],6,'','L',0,'C');
+    $pdf->Cell($final_tot_width[0],6,'Amount (Rs.)','LRB',0,'C');
+    if($gst_no !== '') {
+      $pdf->Cell($final_tot_width[1],6,'Discount (Rs.)','RB',0,'C');
+      $pdf->Cell($final_tot_width[2],6,'Taxable (Rs.)','RB',0,'C');  
+    } else {
+      $pdf->Cell($final_tot_width[1]+$final_tot_width[1],6,'Discount (Rs.)','RB',0,'C');
+    }
 
-    $pdf->Cell($final_tot_width[0],6,'Bill Amount','LRTB',0,'C');
-    $pdf->Cell($final_tot_width[1],6,'Discount','RTB',0,'C');
-    $pdf->Cell($final_tot_width[2],6,'Taxable','RTB',0,'C');  
-    $pdf->Cell($final_tot_width[3],6,'CGST & SGST','RTB',0,'C');
-    $pdf->Cell($final_tot_width[4],6,'Round Off','RTB',0,'C');
-    $pdf->Cell($final_tot_width[5],6,'Invoice Total','RTB',0,'C');
-    $pdf->Cell($final_tot_width[6],6,'Paid by Cash','RTB',0,'C'); 
-    $pdf->Cell($final_tot_width[7],6,'Paid by Card','RTB',1,'C');
+    $pdf->Cell($final_tot_width[3],6,'Round Off','RB',0,'C');
+    $pdf->Cell($final_tot_width[5],6,'Total Qty.','RB',0,'C');
+    $pdf->Cell($final_tot_width[4],6,'Net Pay (Rs.)','RB',1,'C');
+    $pdf->SetFont('Arial','',9);
 
-    $pdf->Cell($final_tot_width[0],6,number_format($sale_details['billAmount'],2),'LRTB',0,'R');
-    $pdf->Cell($final_tot_width[1],6,number_format($sale_details['discountAmount'],2),'RTB',0,'R');
-    $pdf->Cell($final_tot_width[2],6,number_format($sale_details['totalAmount'],2),'RTB',0,'R');  
-    $pdf->Cell($final_tot_width[3],6,number_format($sale_details['taxAmount'],2),'RTB',0,'R');
-    $pdf->Cell($final_tot_width[4],6,number_format($sale_details['roundOff'],2),'RTB',0,'R');
-    $pdf->SetFont('Arial','B',14);      
-    $pdf->Cell($final_tot_width[5],6,number_format($sale_details['netPay'],2),'RTB',0,'R');
-    $pdf->SetFont('Arial','B',9);      
-    $pdf->Cell($final_tot_width[6],6,$sale_details['netPayCash'] > 0 ? number_format($sale_details['netPayCash'],2) : '','RTB',0,'R');      
-    $pdf->Cell($final_tot_width[7],6,$sale_details['netPayCard'] > 0 ? number_format($sale_details['netPayCard'],2) : '','RTB',1,'R');
+    $pdf->Cell($item_widths[6]+$item_widths[7],6,'','L',0,'C');
+    $pdf->Cell($final_tot_width[0],6,number_format($tot_bill_value,2,'.',''),'LRTB',0,'R');
+
+    if($gst_no !== '') {
+      $pdf->Cell($final_tot_width[1],6,number_format($tot_discount,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($final_tot_width[2],6,number_format($tot_taxable,2,'.',''),'RTB',0,'R');
+    } else {
+      $pdf->Cell($final_tot_width[2] + $final_tot_width[1],6,number_format($tot_taxable,2,'.',''),'RTB',0,'R');
+    }
+
+    $pdf->Cell($final_tot_width[3],6,number_format($sale_details['roundOff'],2,'.',''),'RTB',0,'R');
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell($final_tot_width[5],6,number_format($tot_items_qty,2),'RTB',0,'R');
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell($final_tot_width[4],6,number_format($sale_details['netPay'],2,'.',''),'RTB',1,'R');
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(190,6,'[ In words: '.Utilities::get_indian_currency($sale_details['netPay']).' ]','LRB',1,'R');
+
+    if($gst_no !== '') {
+      $taxes = array_keys($taxable_values);
+
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Cell(95,6,'GST Summary','LRB',0,'C');
+      $pdf->Cell(95,6,'Payment Details','LRB',1,'C');
+
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Cell(15,6,'GST','LRB',0,'C');    
+      $pdf->Cell(21,6,'Taxable (Rs.)','LB',0,'C');    
+      $pdf->Cell(19,6,'IGST (Rs.)','LB',0,'C');    
+      $pdf->Cell(20,6,'CGST (Rs.)','LB',0,'C');
+      $pdf->Cell(20,6,'SGST (Rs.)','LRB',0,'C');
+
+      $pdf->Cell(23,6,'Paid through','LB',0,'C');    
+      $pdf->Cell(47,6,'Details','B',0,'C');    
+      $pdf->Cell(25,6,'Amount (Rs.)','RB',1,'C');
+
+      $pdf->SetFont('Arial','',8);      
+
+      // Row - 1
+
+      // for 5%
+      if(isset($taxable_values['5.00'])) {
+        $five_percent_taxable = $taxable_values['5.00'];
+        $cgst_amount = $sgst_amount = round($taxable_gst_value['5.00']/2,2);
+        $igst_amount = 0;
+      } else {
+        $five_percent_taxable = $igst_amount = $sgst_amount = $cgst_amount = 0;
+      }
+      $pdf->Cell(15,6,'5.00 %','LRB',0,'R');    
+      $pdf->Cell(21,6,$five_percent_taxable > 0 ? number_format($five_percent_taxable, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
+      $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','LRB',0,'R');      
+
+      $pdf->Cell(23,6,'By Cash','',0,'R');
+      if($payment_method_num === 0) {
+        $cash_amount = number_format($sale_details['netPay'],2,'.','');
+      } elseif($payment_method_num === 2 && $sale_details['netPayCash']>0) {
+        $cash_amount = number_format($sale_details['netPayCash'],2,'.','');
+      } else {
+        $cash_amount = '';
+      }
+      $pdf->Cell(47,6,'','',0,'C');
+      $pdf->Cell(25,6,$cash_amount,'R',1,'C');         
+
+      // for 12%
+      if(isset($taxable_values['12.00'])) {
+        $twelve_percent_taxable = $taxable_values['12.00'];
+        $cgst_amount = $sgst_amount = round($taxable_gst_value['12.00']/2,2);
+        $igst_amount = 0;
+      } else {
+        $twelve_percent_taxable = $cgst_amount = $igst_amount = $sgst_amount = 0;
+      }
+      $pdf->Cell(15,6,'12.00 %','LRB',0,'R');    
+      $pdf->Cell(21,6, $twelve_percent_taxable > 0 ? number_format($twelve_percent_taxable, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
+      $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','LRB',0,'R');      
+
+      $pdf->Cell(23,6,'By Card','',0,'R'); 
+      if($payment_method_num === 1) {
+        $card_amount = number_format($sale_details['netPay'],2,'.','');
+      } elseif($payment_method_num === 2 && $sale_details['netPayCard']>0) {
+        $card_amount = number_format($sale_details['netPayCard'],2,'.','');
+      } else {
+        $card_amount = '';
+      }
+      $pdf->Cell(47,6,$card_amount !== '' ? $card_no.', Appr.Code: '.$auth_code : '','',0,'C');    
+      $pdf->Cell(25,6,$card_amount,'R',1,'C');
+
+      // for 18%
+      if(isset($taxable_values['18.00'])) {
+        $eighteen_percent_taxable = isset($taxable_values['18.00']) ?  $taxable_values['18.00'] : '';
+        $cgst_amount = $sgst_amount = round($taxable_gst_value['18.00']/2,2);
+        $igst_amount = 0;
+      } else {
+        $eighteen_percent_taxable = $igst_amount = $cgst_amount = $sgst_amount = 0;
+      }
+
+      $pdf->Cell(15,6,'18.00 %','LRB',0,'R');    
+      $pdf->Cell(21,6, $eighteen_percent_taxable > 0 ? number_format($eighteen_percent_taxable, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
+      $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','LRB',0,'R');      
+
+      $pdf->Cell(23,6,'By CrditVoc','',0,'R');
+      if($payment_method_num === 2 && $sale_details['netPayCn']>0) {
+        $cv_amount = number_format($sale_details['netPayCn'],2,'.','');
+      } else {
+        $cv_amount = '';
+      }      
+      $pdf->Cell(47,6,$cv_amount !== '' ? 'CNN:'.$cn_no : '','',0,'C');
+      $pdf->Cell(25,6,$cv_amount,'R',1,'C');         
+
+      // for 28%
+      if(isset($taxable_values['28.00'])) {
+        $twenty_eight_percent_taxable = $taxable_values['28.00'];
+        $cgst_amount = $sgst_amount = round($taxable_gst_value['28.00']/2,2);
+        $igst_amount = 0;
+      } else {
+        $twenty_eight_percent_taxable = $igst_amount = $cgst_amount = $sgst_amount = 0;
+      }
+
+      $pdf->Cell(15,6,'28.00 %','LRB',0,'R');    
+      $pdf->Cell(21,6, $twenty_eight_percent_taxable > 0 ? number_format($twenty_eight_percent_taxable, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
+      $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
+      $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','LRB',0,'R');      
+
+      $pdf->Cell(23,6,'By Credit','B',0,'R');    
+      $pdf->Cell(47,6,'','B',0,'C');    
+      $pdf->Cell(25,6,'','RB',1,'C');
+    } else {
+      
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Cell(190,6,'Payment Details','LRB',1,'C');
+
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Cell(23,6,'Paid through','LB',0,'C');    
+      $pdf->Cell(47,6,'Details','B',0,'C');    
+      $pdf->Cell(25,6,'Amount (Rs.)','B',0,'C');
+      $pdf->Cell(95,6,'','RB',1,'C');
+      $pdf->SetFont('Arial','',8);      
+
+      $pdf->Cell(23,6,'By Cash','L',0,'R');
+      if($payment_method_num === 0) {
+        $cash_amount = number_format($sale_details['netPay'],2,'.','');
+      } elseif($payment_method_num === 2 && $sale_details['netPayCash']>0) {
+        $cash_amount = number_format($sale_details['netPayCash'],2,'.','');
+      } else {
+        $cash_amount = '';
+      }
+      $pdf->Cell(47,6,'','',0,'C');
+      $pdf->Cell(25,6,$cash_amount,'',0,'C');
+      $pdf->Cell(95,6,'','R',1,'C');
+
+      $pdf->Cell(23,6,'By Card','L',0,'R'); 
+      if($payment_method_num === 1) {
+        $card_amount = number_format($sale_details['netPay'],2,'.','');
+      } elseif($payment_method_num === 2 && $sale_details['netPayCard']>0) {
+        $card_amount = number_format($sale_details['netPayCard'],2,'.','');
+      } else {
+        $card_amount = '';
+      }
+      $pdf->Cell(47,6,$card_amount !== '' ? $card_no.', Appr.Code: '.$auth_code : '','',0,'C');    
+      $pdf->Cell(25,6,$card_amount,'',0,'C');
+      $pdf->Cell(95,6,'','R',1,'C');
+
+      $pdf->Cell(23,6,'By CrditVoc','L',0,'R');
+      if($payment_method_num === 2 && $sale_details['netPayCn']>0) {
+        $cv_amount = number_format($sale_details['netPayCn'],2,'.','');
+      } else {
+        $cv_amount = '';
+      }      
+      $pdf->Cell(47,6,$cv_amount !== '' ? 'CNN:'.$cn_no : '','',0,'C');
+      $pdf->Cell(25,6,$cv_amount,'',0,'C');         
+      $pdf->Cell(95,6,'','R',1,'C');
+
+      $pdf->Cell(23,6,'By Credit','L',0,'R');    
+      $pdf->Cell(47,6,'','',0,'C');    
+      $pdf->Cell(25,6,'','',0,'C');
+      $pdf->Cell(95,6,'','R',1,'C');
+    }
+
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(190,6,'Terms & Conditions','LRBT',1,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(190,6,'1) NO EXCHANGE. NO RETURN.','LRB',0,'L');
+
     $pdf->Output();
   }
 

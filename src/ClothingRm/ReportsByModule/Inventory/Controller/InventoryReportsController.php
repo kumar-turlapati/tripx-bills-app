@@ -31,6 +31,8 @@ class InventoryReportsController {
     $default_location = $_SESSION['lc'];
     $page_no = 1; $per_page = 300;
     $total_records = $categories_a = [];
+    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise'];
+    $neg_a = ['all' => 'All items', 'neg' => 'Negative values'];
 
     $client_locations = Utilities::get_client_locations();
     $categories_a = $this->products_api->get_product_categories();
@@ -68,6 +70,9 @@ class InventoryReportsController {
           }
         }
 
+        // dump($total_records, $form_data);
+        // exit;
+
         // $total_records = $this->_format_data_for_sales_register($total_records);
         if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
           $location_name = $client_locations[$form_data['locationCode']];
@@ -75,8 +80,14 @@ class InventoryReportsController {
           $location_name = '';
         }
 
-        $heading1 = 'Stock Report - '.$location_name;
-        $heading2 = 'As on '.date('jS F, Y');
+        if($form_data['groupBy'] === 'lot') {
+          $report_string = 'Lotwise';
+        } else {
+          $report_string = 'Itemwise';
+        }
+
+        $heading1 = $report_string.' Stock Report - '.$location_name;
+        $heading2 = '( from '.date("d-M-Y", strtotime($form_data['fromDate'])).' to '. date("d-M-Y", strtotime($form_data['toDate'])) .' )';
         $heading3 = '';
         if($form_data['brandName'] !== '') {
           $heading3 .= 'Brand Name: '.$form_data['brandName'];
@@ -97,76 +108,112 @@ class InventoryReportsController {
         Utilities::download_as_CSV_attachment('StockReport', $csv_headings, $total_records);
         return;
       }
-      
       // start PDF printing.
-      $item_widths = array(10,48,28,13,18,20,20,17,17);
-      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3];
-      $totals_width1 = $item_widths[5] + $item_widths[6];
-      $slno = $tot_amount = $tot_qty = $tot_amount_mrp = 0;
+      $item_widths = array(10,38,23,20,25,12,14,14,14,16,12,12,12,13,12,18,12);
+      //                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4]  + $item_widths[5];
+      $slno = 0; $tot_amount = 0;
+      $tot_op_qty = $tot_pu_qty = $tot_sr_qty = $tot_aj_qty = $tot_st_qty = $tot_sa_qty = $tot_pr_qty = $tot_cl_qty = 0;
 
       $pdf = PDF::getInstance();
       $pdf->AliasNbPages();
-      $pdf->AddPage('P','A4');
+      $pdf->SetAutoPageBreak(false);
+      $pdf->AddPage('L','A4');
       $pdf->setTitle($heading1.' - '.date('jS F, Y'));
 
       $pdf->SetFont('Arial','B',16);
       $pdf->Cell(0,5,$heading1,'',1,'C');
-      $pdf->SetFont('Arial','B',10);
+      $pdf->SetFont('Arial','B',12);
       $pdf->Cell(0,5,$heading2,'',1,'C');
       if($heading3 !== '') {
         $pdf->SetFont('Arial','B',10);
         $pdf->Cell(0,5,$heading3,'B',1,'C');
       }
 
-      $pdf->SetFont('Arial','B',9);
-      $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
-      $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
-      $pdf->Cell($item_widths[2],6,'Lot No.','RTB',0,'C');
-      $pdf->Cell($item_widths[3],6,'GST(%)','RTB',0,'C');        
-      $pdf->Cell($item_widths[4],6,'Clos.Qty.','RTB',0,'C');        
-      $pdf->Cell($item_widths[5],6,'Rate/Unit','RTB',0,'C');
-      $pdf->Cell($item_widths[6],6,'Amount','RTB',0,'C');
-      $pdf->Cell($item_widths[7],6,'M.R.P','RTB',0,'C');
-      $pdf->Cell($item_widths[8],6,'Amount','RTB',0,'C');    
-      
-      $pdf->SetFont('Arial','',9);
-
+      $this->_add_page_heading_for_stock_report($pdf, $item_widths);
+      $first_page = true;
+      $row_cntr = 0;
       foreach($total_records as $item_details) {
         $slno++;
 
-        $item_name = $item_details['itemName'];
+        $item_name = substr($item_details['itemName'], 0, 20);
+        $category_name = substr($item_details['categoryName'], 0, 15);
+        $brand_name = substr( strtolower($item_details['brandName']), 0, 14);
         $lot_no = $item_details['lotNo'];
+
+        $row_cntr++;
+
+        $opening_qty = $item_details['openingQty'];
+        $purchased_qty = $item_details['purchasedQty'];
+        $sales_return_qty = $item_details['salesReturnQty'];
+        $adjusted_qty = $item_details['adjustedQty'];
+        $transfer_qty = $item_details['transferQty'];
+        $purchase_return_qty = $item_details['purchaseReturnQty'];
+        $sold_qty = $item_details['soldQty'];
         $closing_qty = $item_details['closingQty'];
-        $closing_rate = $item_details['purchaseRate'];
+        $mrp = $item_details['mrp'];
+        $purchase_rate = $item_details['purchaseRate'];
         $tax_percent = $item_details['taxPercent'];
-        $mrp = $item_details['mrp'] + 0;
-        $upp = $item_details['upp'] + 0;
 
-        $amount = round($closing_qty * $closing_rate, 2);
-        $mrp_amount = round($closing_qty * $mrp, 2);
-
+        $amount = round($closing_qty * $purchase_rate, 2);
+        
+        $tot_op_qty += $opening_qty;
+        $tot_pu_qty += $purchased_qty;
+        $tot_sr_qty += $sales_return_qty;
+        $tot_aj_qty += $adjusted_qty;
+        $tot_st_qty += $transfer_qty;
+        $tot_sa_qty += $sold_qty;
+        $tot_pr_qty += $purchase_return_qty;
+        $tot_cl_qty += $closing_qty;
         $tot_amount += $amount;
-        $tot_amount_mrp += $mrp_amount;      
-        $tot_qty += $closing_qty;
+
+        if($form_data['groupBy'] === 'item') {
+          $lot_no = '';
+        }
         
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,$item_name,'RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,$lot_no,'RTB',0,'L');
-        $pdf->Cell($item_widths[3],6,number_format($tax_percent,2,'.',''),'RTB',0,'R');            
-        $pdf->Cell($item_widths[4],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[5],6,number_format($closing_rate,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[6],6,number_format($amount,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[7],6,number_format($mrp,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[8],6,number_format($mrp_amount,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[2],6,$category_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,$brand_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[4],6,$lot_no,'RTB',0,'L');
+        $pdf->Cell($item_widths[5],6,$tax_percent,'RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,number_format($opening_qty,2,'.',''),'RTB',0,'R');            
+        $pdf->Cell($item_widths[7],6,number_format($purchased_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,number_format($sales_return_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[9],6,number_format($adjusted_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[10],6,number_format($transfer_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[11],6,number_format($sold_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[12],6,number_format($purchase_return_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[13],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[14],6,number_format($purchase_rate,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[15],6,number_format($amount,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[16],6,number_format($mrp,2,'.',''),'RTB',0,'R');
+        if($first_page && $row_cntr === 23) {
+          $pdf->AddPage('L','A4');
+          $this->_add_page_heading_for_stock_report($pdf, $item_widths);
+          $first_page = false; $row_cntr = 0;
+        } elseif ($row_cntr === 26) {
+          $pdf->AddPage('L','A4');
+          $this->_add_page_heading_for_stock_report($pdf, $item_widths);
+          $row_cntr = 0;
+        }
       }
 
       $pdf->Ln();
-      $pdf->SetFont('Arial','B',10);
-      $pdf->Cell($totals_width,6,'T O T A L S','LTB',0,'R');
-      $pdf->Cell($item_widths[4],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
-      $pdf->Cell($item_widths[5]+$item_widths[5],6,number_format($tot_amount,2,'.',''),'RTB',0,'R');    
-      $pdf->Cell($item_widths[7]+$item_widths[8],6,number_format($tot_amount_mrp,2,'.',''),'RTB',0,'R');      
+      $pdf->SetFont('Arial','B',8);
+      $pdf->Cell($totals_width,6,'REPORT TOTALS','LRTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($tot_op_qty,2,'.',''),'RTB',0,'R');            
+      $pdf->Cell($item_widths[7],6,number_format($tot_pu_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($tot_sr_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[9],6,number_format($tot_aj_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[10],6,number_format($tot_st_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[11],6,number_format($tot_sa_qty,2,'.',''),'RTB',0,'R');      
+      $pdf->Cell($item_widths[12],6,number_format($tot_pr_qty,2,'.',''),'RTB',0,'R');      
+      $pdf->Cell($item_widths[13],6,number_format($tot_cl_qty,2,'.',''),'RTB',0,'R');      
+      $pdf->Cell($item_widths[14],6,'','RTB',0,'R');      
+      $pdf->Cell($item_widths[15],6,number_format($tot_amount,2,'.',''),'RTB',0,'R');      
+      $pdf->Cell($item_widths[16],6,'','RTB',0,'R');
       $pdf->Output();
     }
 
@@ -182,6 +229,8 @@ class InventoryReportsController {
       'categories' => array(''=>'All Categories') + $categories_a,
       'default_location' => $default_location,
       'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'group_by_a' => $group_by_a,
+      'neg_a' => $neg_a,
     );
 
     // render template
@@ -704,6 +753,10 @@ class InventoryReportsController {
     }
 
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+    $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
+    $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
+    $cleaned_params['groupBy'] = Utilities::clean_string($form_data['groupBy']);
+    $cleaned_params['balanceType'] = Utilities::clean_string($form_data['balanceType']);
 
     return ['status' => true, 'cleaned_params' => $cleaned_params];
   }
@@ -816,5 +869,27 @@ class InventoryReportsController {
       ];
     }
     return $cleaned_params;
+  }
+
+  private function _add_page_heading_for_stock_report(&$pdf=null, $item_widths=[]) {
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell($item_widths[0],  6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],  6,'Item Name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],  6,'Category Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],  6,'Brand Name','RTB',0,'C');
+    $pdf->Cell($item_widths[4],  6,'Lot No.','RTB',0,'C');
+    $pdf->Cell($item_widths[5],  6,'GST(%)','RTB',0,'C');        
+    $pdf->Cell($item_widths[6],  6,'OP Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[7],  6,'PU Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[8],  6,'SR Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[9],  6,'AJ Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[10], 6,'ST Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[11], 6,'SA Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[12], 6,'PR Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[13], 6,'CL Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[14], 6,'Rate','RTB',0,'C');
+    $pdf->Cell($item_widths[15], 6,'Amount','RTB',0,'C');
+    $pdf->Cell($item_widths[16], 6,'M.R.P','RTB',0,'C');
+    $pdf->SetFont('Arial','',8);
   }
 }

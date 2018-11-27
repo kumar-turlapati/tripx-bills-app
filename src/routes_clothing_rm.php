@@ -726,6 +726,9 @@ $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportN
 $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
 )));
+$routes->add('report_printSalesBill', new Routing\Route('/print-sales-bill', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBill',
+)));
 $routes->add('report_inventoryProfitability', new Routing\Route('/inventory-profitability', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::inventoryProfitability',
 )));

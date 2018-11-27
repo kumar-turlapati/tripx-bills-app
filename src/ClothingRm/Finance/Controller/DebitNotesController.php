@@ -155,7 +155,7 @@ class DebitNotesController {
     $from_date = $request->get('fromDate')!== null ? Utilities::clean_string($request->get('fromDate')) : '01-'.date('m').'-'.date("Y");
     $to_date = $request->get('toDate')!== null ? Utilities::clean_string($request->get('toDate')) : date("d-m-Y");
     $location_code = $request->get('locationCode')!== null ? Utilities::clean_string($request->get('locationCode')) : '';
-    $page_no = $request->get('pageNo')!== null ? Utilities::clean_string($request->get('pageNo')) : 1;
+    $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')) : 1;
     $per_page = 100;
 
     $search_params = array(
@@ -166,11 +166,12 @@ class DebitNotesController {
       'perPage' => $per_page,
     );
 
+
     $api_response = $this->dn_model->get_debit_notes($search_params);
     if($api_response['status']) {
       if(count($api_response['data']['dnotes'])>0) {
           $slno = Utilities::get_slno_start(count($api_response['data']['dnotes']),$per_page,$page_no);
-          $to_sl_no = $slno+$per_page;
+          $to_sl_no = $slno + $per_page;
           $slno++;
           if($page_no <= 3) {
             $page_links_to_start = 1;
