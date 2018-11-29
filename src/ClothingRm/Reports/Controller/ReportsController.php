@@ -101,7 +101,7 @@ class ReportsController
     $bill_no = $sale_details['billNo'];
     $bill_date = date('d-M-Y',strtotime($sale_details['invoiceDate']));
     $bill_time = date('h:ia',strtotime($sale_details['createdTime']));
-    $payment_method = (int)Constants::$PAYMENT_METHODS_RC[$sale_details['paymentMethod']];
+    $payment_method = Constants::$PAYMENT_METHODS_RC[$sale_details['paymentMethod']];
     $payment_method_num = (int)$sale_details['paymentMethod'];
     $tmp_cust_name = $sale_details['tmpCustName'];
     $customer_name  =  $sale_details['customerName'] !== '' ? substr(strtoupper($sale_details['customerName']),0,30) : '';
@@ -163,14 +163,14 @@ class ReportsController
     $pdf->Cell($invoice_info_widths[4],6,$promo_code,'RB',1,'C');
     
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell($item_widths[0],6,'Sno.','LRB',0,'C');
-    $pdf->Cell($item_widths[1],6,'Product Name','RB',0,'C');
-    $pdf->Cell($item_widths[2],6,'HSN/SAC','RB',0,'C');
-    $pdf->Cell($item_widths[3],6,'Item Rate','RB',0,'C');
-    $pdf->Cell($item_widths[4],6,'Qty.','RB',0,'C');  
-    $pdf->Cell($item_widths[5],6,'Amount','RB',0,'C');
-    $pdf->Cell($item_widths[6],6,'Discount','RB',0,'C');
-    $pdf->Cell($item_widths[7],6, $gst_no !== '' ? 'Taxable' : 'Gross Amt.','RB',1,'C');
+    $pdf->Cell($item_widths[0],6,'Sno.','LR',0,'C');
+    $pdf->Cell($item_widths[1],6,'Product Name','R',0,'C');
+    $pdf->Cell($item_widths[2],6,'HSN/SAC','R',0,'C');
+    $pdf->Cell($item_widths[3],6,'Item Rate','R',0,'C');
+    $pdf->Cell($item_widths[4],6,'Qty.','R',0,'C');  
+    $pdf->Cell($item_widths[5],6,'Amount','R',0,'C');
+    $pdf->Cell($item_widths[6],6,'Discount','R',0,'C');
+    $pdf->Cell($item_widths[7],6, $gst_no !== '' ? 'Taxable' : 'Gross Amt.','R',1,'C');
     $pdf->SetFont('Arial','',9);
 
     $tot_bill_value = $tot_discount = $tot_taxable = $tot_items_qty = 0;
@@ -220,17 +220,17 @@ class ReportsController
 
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell($item_widths[6]+$item_widths[7],6,'','L',0,'C');
-    $pdf->Cell($final_tot_width[0],6,'Amount (Rs.)','LRB',0,'C');
+    $pdf->Cell($final_tot_width[0],6,'Amount (Rs.)','LR',0,'C');
     if($gst_no !== '') {
-      $pdf->Cell($final_tot_width[1],6,'Discount (Rs.)','RB',0,'C');
-      $pdf->Cell($final_tot_width[2],6,'Taxable (Rs.)','RB',0,'C');  
+      $pdf->Cell($final_tot_width[1],6,'Discount (Rs.)','R',0,'C');
+      $pdf->Cell($final_tot_width[2],6,'Taxable (Rs.)','R',0,'C');  
     } else {
-      $pdf->Cell($final_tot_width[1]+$final_tot_width[1],6,'Discount (Rs.)','RB',0,'C');
+      $pdf->Cell($final_tot_width[1]+$final_tot_width[1],6,'Discount (Rs.)','R',0,'C');
     }
 
-    $pdf->Cell($final_tot_width[3],6,'Round Off','RB',0,'C');
-    $pdf->Cell($final_tot_width[5],6,'Total Qty.','RB',0,'C');
-    $pdf->Cell($final_tot_width[4],6,'Net Pay (Rs.)','RB',1,'C');
+    $pdf->Cell($final_tot_width[3],6,'Round Off','R',0,'C');
+    $pdf->Cell($final_tot_width[5],6,'Total Qty.','R',0,'C');
+    $pdf->Cell($final_tot_width[4],6,'Net Pay (Rs.)','R',1,'C');
     $pdf->SetFont('Arial','',9);
 
     $pdf->Cell($item_widths[6]+$item_widths[7],6,'','L',0,'C');
@@ -259,7 +259,7 @@ class ReportsController
       $pdf->Cell(95,6,'Payment Details','LRB',1,'C');
 
       $pdf->SetFont('Arial','B',9);
-      $pdf->Cell(15,6,'GST','LRB',0,'C');    
+      $pdf->Cell(15,6,'GST','LB',0,'C');    
       $pdf->Cell(21,6,'Taxable (Rs.)','LB',0,'C');    
       $pdf->Cell(19,6,'IGST (Rs.)','LB',0,'C');    
       $pdf->Cell(20,6,'CGST (Rs.)','LB',0,'C');
@@ -281,7 +281,7 @@ class ReportsController
       } else {
         $five_percent_taxable = $igst_amount = $sgst_amount = $cgst_amount = 0;
       }
-      $pdf->Cell(15,6,'5.00 %','LRB',0,'R');    
+      $pdf->Cell(15,6,'5.00 %','LB',0,'R');    
       $pdf->Cell(21,6,$five_percent_taxable > 0 ? number_format($five_percent_taxable, 2, '.', '') : '','LB',0,'R');
       $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
       $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
@@ -306,7 +306,7 @@ class ReportsController
       } else {
         $twelve_percent_taxable = $cgst_amount = $igst_amount = $sgst_amount = 0;
       }
-      $pdf->Cell(15,6,'12.00 %','LRB',0,'R');    
+      $pdf->Cell(15,6,'12.00 %','LB',0,'R');    
       $pdf->Cell(21,6, $twelve_percent_taxable > 0 ? number_format($twelve_percent_taxable, 2, '.', '') : '','LB',0,'R');
       $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
       $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
@@ -332,7 +332,7 @@ class ReportsController
         $eighteen_percent_taxable = $igst_amount = $cgst_amount = $sgst_amount = 0;
       }
 
-      $pdf->Cell(15,6,'18.00 %','LRB',0,'R');    
+      $pdf->Cell(15,6,'18.00 %','LB',0,'R');    
       $pdf->Cell(21,6, $eighteen_percent_taxable > 0 ? number_format($eighteen_percent_taxable, 2, '.', '') : '','LB',0,'R');
       $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
       $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
@@ -356,7 +356,7 @@ class ReportsController
         $twenty_eight_percent_taxable = $igst_amount = $cgst_amount = $sgst_amount = 0;
       }
 
-      $pdf->Cell(15,6,'28.00 %','LRB',0,'R');    
+      $pdf->Cell(15,6,'28.00 %','LB',0,'R');    
       $pdf->Cell(21,6, $twenty_eight_percent_taxable > 0 ? number_format($twenty_eight_percent_taxable, 2, '.', '') : '','LB',0,'R');
       $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
       $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');

@@ -47,7 +47,7 @@
       </div>
       </div>
       <div class="theme-name">
-      	<h1><?php echo (isset($_SESSION['cname'])&&$_SESSION['cname']!=''?$_SESSION['cname']:'') ?></h1>
+      	<h1><?php echo isset($_SESSION['cname']) && $_SESSION['cname'] !== '' ? $_SESSION['cname'] : '' ?></h1>
       </div>
   </header>
   <?php if( isset($_SESSION['token_valid']) && $_SESSION['token_valid'] && $show_page_name ): ?>

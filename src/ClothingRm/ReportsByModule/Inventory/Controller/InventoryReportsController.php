@@ -13,6 +13,8 @@ use Atawa\PDF;
 use ClothingRm\Inventory\Model\Inventory;
 use ClothingRm\Products\Model\Products;
 use ClothingRm\Openings\Model\Openings;
+use ClothingRm\Inward\Model\Inward;
+use ClothingRm\Grn\Model\GrnNew;
 
 class InventoryReportsController {
 
@@ -23,7 +25,9 @@ class InventoryReportsController {
     $this->inven_api = new Inventory;
     $this->products_api = new Products;
     $this->flash = new Flash;
-    $this->opbal_model = new Openings;    
+    $this->opbal_model = new Openings;
+    $this->inward_model = new Inward;
+    $this->grn_model = new GrnNew;
   }
 
   public function stockReport(Request $request) {
@@ -735,6 +739,368 @@ class InventoryReportsController {
     // render template
     return [$this->template->render_view('material-movement', $template_vars), $controller_vars];    
   }
+
+  public function printGRN(Request $request) {
+    $grn_code = Utilities::clean_string($request->get('grnCode'));
+    $grn_response = $this->grn_model->get_grn_details($grn_code);
+    if($grn_response['status']) {
+      $grn_details = $grn_response['grnDetails'];
+    } else {
+      $this->set_flash_message('Invalid GRN Code.');
+      Utilities::redirect('/grn/list');
+    }
+
+    // dump($grn_details);
+    // exit;
+
+    $print_date_time = date("d-M-Y h:ia");
+    $slno = $total_qty = 0;
+
+    $grn_date       =    date('d-M-Y',strtotime($grn_details['grnDate']));
+    $grn_no         =    $grn_details['grnNo'];
+    $pay_method     =    Constants::$PAYMENT_METHODS_PURCHASE[$grn_details['paymentMethod']];
+    $credit_days    =    $grn_details['creditDays'];
+    $supplier_name  =    $grn_details['supplierName'];
+    $po_info        =    $grn_details['poNo'].' / '.date('d-M-Y',strtotime($grn_details['purchaseDate']));
+    $bill_no        =    $grn_details['billNo'];
+    $bill_due_date  =    date('d-M-Y',strtotime($grn_details['paymentDueDate']));
+    $remarks        =    $grn_details['remarks'];
+    $grn_tax_amount =    $grn_details['taxAmount'];
+    $grn_value      =    $grn_details['netPay'];
+    $total_items    =    (isset($grn_details['itemDetails']) && count($grn_details['itemDetails'])>0 ? count($grn_details['itemDetails']) : 'Invalid' );
+
+    if( isset($grn_details['itemDetails']) && count($grn_details['itemDetails']) > 0 ) {
+      foreach($grn_details['itemDetails'] as $grn_qty_details) {
+        $total_qty += ($grn_qty_details['itemQty']*$grn_qty_details['packedQty']);
+      }
+    }
+
+    $items_total = $grn_details['billAmount'];
+    $discount_amount = $grn_details['discountAmount'];
+    $total_tax_amount = $grn_details['taxAmount'];
+
+    $packing_charges = isset($grn_details['packingCharges']) && $grn_details['packingCharges'] > 0 ? $grn_details['packingCharges'] : 0;
+    $shipping_charges = isset($grn_details['shippingCharges']) && $grn_details['shippingCharges'] > 0 ? $grn_details['shippingCharges'] : 0;
+    $insurance_charges = isset($grn_details['insuranceCharges']) && $grn_details['insuranceCharges'] > 0 ? $grn_details['insuranceCharges'] : 0;
+    $other_charges = isset($grn_details['otherCharges']) && $grn_details['otherCharges'] > 0 ? $grn_details['otherCharges'] : 0;
+    $remarks = isset($grn_details['remarks']) ? $grn_details['remarks'] : '';
+
+    $items_tot_after_discount = $items_total-$discount_amount;
+    $grand_total = $items_tot_after_discount + $total_tax_amount + $packing_charges + $shipping_charges + $insurance_charges + $other_charges;
+
+    $net_pay = $grn_details['netPay'];
+    $round_off = $grn_details['roundOff'];
+
+    // start PDF printing.
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('L','A4');
+
+    // Print Bill Information.
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,'Godown Receipt Note (GRN)','',1,'C');
+    
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln(4);
+
+    # first row
+    $header_widths = array(100,35,30,30,48,35);
+    $item_widths = array(12,74,43,23,22,20,15,23,23,23);
+    $totals_width = $item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3]+
+                    $item_widths[4]+$item_widths[5]+$item_widths[6]+$item_widths[7]+
+                    $item_widths[8];
+
+    $pdf->Cell($header_widths[0],6,'Supplier name','LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,'Supplier bill no.','RTB',0,'C');
+    $pdf->Cell($header_widths[2],6,'Payment method','RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,'Credit days','RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,'Payment due date','RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,'PO. No & Date','RTB',1,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell($header_widths[0],6,$supplier_name,'LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,$bill_no,'LRTB',0,'C');
+    $pdf->Cell($header_widths[2],6,$pay_method,'RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,$credit_days,'RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,$bill_due_date,'RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,$po_info,'RTB',1,'C');    
+ 
+    // second row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($header_widths[0],6,'GRN No. & Date','LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,'ItemsTotal (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[2],6,'Discount (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,'GrossAmount (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,'GST (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,'PackingCharges (Rs.)','RTB',1,'C');
+    
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell($header_widths[0],6,$grn_no.'/ '.$grn_date,'LRB',0,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell($header_widths[1],6,number_format($items_total,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[2],6,number_format($discount_amount,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[3],6,number_format($items_tot_after_discount,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[4],6,number_format($total_tax_amount,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[5],6,number_format($packing_charges,2,'.',''),'RB',1,'C');
+
+    // third row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($header_widths[0],6,'Net Pay (Rs.)','LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,'Shipping/Freight (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[2],6,'Insurance(Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,'OtherCharges','RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,'RoundOff(Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,'Total Qty.','RTB',1,'C');
+
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell($header_widths[0],6,number_format($grn_value,2,'.',''),'LRB',0,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell($header_widths[1],6,number_format($shipping_charges,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[2],6,number_format($insurance_charges,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[3],6,number_format($other_charges,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[4],6,number_format($round_off,2,'.',''),'RB',0,'C');
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell($header_widths[5],6,$total_items.' | '.$total_qty,'RB',1,'C');
+    $pdf->SetFont('Arial','',9);
+
+    // fourth row(s)
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRB',0,'C');
+    $pdf->Cell($item_widths[1],6,'ItemName','RB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Lot No.','RB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Accp. Qty.','RB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Billed Qty.','RB',0,'C');    
+    $pdf->Cell($item_widths[5],6,'Item Rate','RB',0,'C');
+    $pdf->Cell($item_widths[6],6,'GST(%)','RB',0,'C');
+    $pdf->Cell($item_widths[7],6,'Amount','RB',0,'C');
+    $pdf->Cell($item_widths[8],6,'GST Amount','RB',0,'C');
+    $pdf->Cell($item_widths[9],6,'Total Amount','RB',0,'C');    
+    $pdf->SetFont('Arial','',9);
+    $total_value = 0;
+    foreach($grn_details['itemDetails'] as $item_details) {
+        $slno++;
+        $item_name = substr($item_details['itemName'],0,35);
+        $packed_qty = $item_details['packedQty'];
+        $acc_qty = $item_details['itemQty']*$packed_qty;
+        $item_qty = ($item_details['itemQty']-$item_details['freeQty']) * $packed_qty;
+        $item_rate = $item_details['itemRate'];
+        $tax_percent = $item_details['taxPercent'];
+        $item_amount = round($item_qty*$item_rate,2);
+        $lot_no = $item_details['lotNo'];
+        if($tax_percent>0) {
+          $tax_amount = round(($item_amount*$tax_percent)/100,2);
+        } else {
+          $tax_amount = 0;
+        }
+        $total_amount = $item_amount+$tax_amount;
+        $total_value += $total_amount;
+        
+        $pdf->Ln();
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,28),'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,$lot_no,'RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,number_format($acc_qty,2,'.',''),'RTB',0,'R');  
+        $pdf->Cell($item_widths[4],6,number_format($item_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[5],6,number_format($item_rate,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,number_format($tax_percent,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[7],6,number_format($item_amount,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,number_format($tax_amount,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[9],6,number_format($total_amount,2,'.',''),'RTB',0,'R');        
+    }
+
+    // $pdf->Ln();
+    // $pdf->SetFont('Arial','B',11);    
+    // $pdf->Cell($totals_width,6,'TOTAL VALUE','LRTB',0,'R');
+    // $pdf->Cell($item_widths[9],6,number_format(,2),'LRTB',0,'R');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(60,10,'Prepared by:','LRB',0,'L');
+    $pdf->Cell(60,10,'Verified by:','RB',0,'L');
+    $pdf->Cell(60,10,'Approved by:','RB',0,'L');
+    $pdf->Cell(98,10,'Remarks: '.$remarks,'RB',0,'L');
+
+    $pdf->Output();
+  }
+
+  public function printPO(Request $request) {
+    $purchase_code = Utilities::clean_string($request->get('purchaseCode'));
+    $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
+    if($purchase_response['status']) {
+      $purchase_details = $purchase_response['purchaseDetails'];
+    } else {
+      $this->set_flash_message('Invalid PO Code.');
+      Utilities::redirect('/inward-entry/list');
+    }
+
+    dump($purchase_details);
+    exit;
+
+    $print_date_time = date("d-M-Y h:ia");
+    $slno = $total_qty = 0;
+
+    $grn_date       =    date('d-M-Y',strtotime($grn_details['grnDate']));
+    $grn_no         =    $grn_details['grnNo'];
+    $pay_method     =    Constants::$PAYMENT_METHODS_PURCHASE[$grn_details['paymentMethod']];
+    $credit_days    =    $grn_details['creditDays'];
+    $supplier_name  =    $grn_details['supplierName'];
+    $po_info        =    $grn_details['poNo'].' / '.date('d-M-Y',strtotime($grn_details['purchaseDate']));
+    $bill_no        =    $grn_details['billNo'];
+    $bill_due_date  =    date('d-M-Y',strtotime($grn_details['paymentDueDate']));
+    $remarks        =    $grn_details['remarks'];
+    $grn_tax_amount =    $grn_details['taxAmount'];
+    $grn_value      =    $grn_details['netPay'];
+    $total_items    =    (isset($grn_details['itemDetails']) && count($grn_details['itemDetails'])>0 ? count($grn_details['itemDetails']) : 'Invalid' );
+
+    if( isset($grn_details['itemDetails']) && count($grn_details['itemDetails']) > 0 ) {
+      foreach($grn_details['itemDetails'] as $grn_qty_details) {
+        $total_qty += ($grn_qty_details['itemQty']*$grn_qty_details['packedQty']);
+      }
+    }
+
+    $items_total = $grn_details['billAmount'];
+    $discount_amount = $grn_details['discountAmount'];
+    $total_tax_amount = $grn_details['taxAmount'];
+
+    $packing_charges = isset($grn_details['packingCharges']) && $grn_details['packingCharges'] > 0 ? $grn_details['packingCharges'] : 0;
+    $shipping_charges = isset($grn_details['shippingCharges']) && $grn_details['shippingCharges'] > 0 ? $grn_details['shippingCharges'] : 0;
+    $insurance_charges = isset($grn_details['insuranceCharges']) && $grn_details['insuranceCharges'] > 0 ? $grn_details['insuranceCharges'] : 0;
+    $other_charges = isset($grn_details['otherCharges']) && $grn_details['otherCharges'] > 0 ? $grn_details['otherCharges'] : 0;
+    $remarks = isset($grn_details['remarks']) ? $grn_details['remarks'] : '';
+
+    $items_tot_after_discount = $items_total-$discount_amount;
+    $grand_total = $items_tot_after_discount + $total_tax_amount + $packing_charges + $shipping_charges + $insurance_charges + $other_charges;
+
+    $net_pay = $grn_details['netPay'];
+    $round_off = $grn_details['roundOff'];
+
+    // start PDF printing.
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('L','A4');
+
+    // Print Bill Information.
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,'Purchase Order','',1,'C');
+    
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln(4);
+
+    # first row
+    $header_widths = array(100,35,30,30,48,35);
+    $item_widths = array(12,74,43,23,22,20,15,23,23,23);
+    $totals_width = $item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3]+
+                    $item_widths[4]+$item_widths[5]+$item_widths[6]+$item_widths[7]+
+                    $item_widths[8];
+
+    $pdf->Cell($header_widths[0],6,'Supplier name','LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,'Supplier bill no.','RTB',0,'C');
+    $pdf->Cell($header_widths[2],6,'Payment method','RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,'Credit days','RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,'Payment due date','RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,'PO. No & Date','RTB',1,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell($header_widths[0],6,$supplier_name,'LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,$bill_no,'LRTB',0,'C');
+    $pdf->Cell($header_widths[2],6,$pay_method,'RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,$credit_days,'RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,$bill_due_date,'RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,$po_info,'RTB',1,'C');    
+ 
+    // second row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($header_widths[0],6,'GRN No. & Date','LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,'ItemsTotal (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[2],6,'Discount (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,'GrossAmount (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,'GST (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,'PackingCharges (Rs.)','RTB',1,'C');
+    
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell($header_widths[0],6,$grn_no.'/ '.$grn_date,'LRB',0,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell($header_widths[1],6,number_format($items_total,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[2],6,number_format($discount_amount,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[3],6,number_format($items_tot_after_discount,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[4],6,number_format($total_tax_amount,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[5],6,number_format($packing_charges,2,'.',''),'RB',1,'C');
+
+    // third row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($header_widths[0],6,'Net Pay (Rs.)','LRTB',0,'C');
+    $pdf->Cell($header_widths[1],6,'Shipping/Freight (Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[2],6,'Insurance(Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[3],6,'OtherCharges','RTB',0,'C');
+    $pdf->Cell($header_widths[4],6,'RoundOff(Rs.)','RTB',0,'C');
+    $pdf->Cell($header_widths[5],6,'Total Qty.','RTB',1,'C');
+
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell($header_widths[0],6,number_format($grn_value,2,'.',''),'LRB',0,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell($header_widths[1],6,number_format($shipping_charges,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[2],6,number_format($insurance_charges,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[3],6,number_format($other_charges,2,'.',''),'RB',0,'C');
+    $pdf->Cell($header_widths[4],6,number_format($round_off,2,'.',''),'RB',0,'C');
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell($header_widths[5],6,$total_items.' | '.$total_qty,'RB',1,'C');
+    $pdf->SetFont('Arial','',9);
+
+    // fourth row(s)
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRB',0,'C');
+    $pdf->Cell($item_widths[1],6,'ItemName','RB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Lot No.','RB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Accp. Qty.','RB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Billed Qty.','RB',0,'C');    
+    $pdf->Cell($item_widths[5],6,'Item Rate','RB',0,'C');
+    $pdf->Cell($item_widths[6],6,'GST(%)','RB',0,'C');
+    $pdf->Cell($item_widths[7],6,'Amount','RB',0,'C');
+    $pdf->Cell($item_widths[8],6,'GST Amount','RB',0,'C');
+    $pdf->Cell($item_widths[9],6,'Total Amount','RB',0,'C');    
+    $pdf->SetFont('Arial','',9);
+    $total_value = 0;
+    foreach($grn_details['itemDetails'] as $item_details) {
+        $slno++;
+        $item_name = substr($item_details['itemName'],0,35);
+        $packed_qty = $item_details['packedQty'];
+        $acc_qty = $item_details['itemQty']*$packed_qty;
+        $item_qty = ($item_details['itemQty']-$item_details['freeQty']) * $packed_qty;
+        $item_rate = $item_details['itemRate'];
+        $tax_percent = $item_details['taxPercent'];
+        $item_amount = round($item_qty*$item_rate,2);
+        $lot_no = $item_details['lotNo'];
+        if($tax_percent>0) {
+          $tax_amount = round(($item_amount*$tax_percent)/100,2);
+        } else {
+          $tax_amount = 0;
+        }
+        $total_amount = $item_amount+$tax_amount;
+        $total_value += $total_amount;
+        
+        $pdf->Ln();
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,28),'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,$lot_no,'RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,number_format($acc_qty,2,'.',''),'RTB',0,'R');  
+        $pdf->Cell($item_widths[4],6,number_format($item_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[5],6,number_format($item_rate,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,number_format($tax_percent,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[7],6,number_format($item_amount,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,number_format($tax_amount,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[9],6,number_format($total_amount,2,'.',''),'RTB',0,'R');        
+    }
+
+    // $pdf->Ln();
+    // $pdf->SetFont('Arial','B',11);    
+    // $pdf->Cell($totals_width,6,'TOTAL VALUE','LRTB',0,'R');
+    // $pdf->Cell($item_widths[9],6,number_format(,2),'LRTB',0,'R');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(60,10,'Prepared by:','LRB',0,'L');
+    $pdf->Cell(60,10,'Verified by:','RB',0,'L');
+    $pdf->Cell(60,10,'Approved by:','RB',0,'L');
+    $pdf->Cell(98,10,'Remarks: '.$remarks,'RB',0,'L');
+
+    $pdf->Output();
+  }  
 
   private function _validate_stock_report_data($form_data = []) {
     $cleaned_params = [];

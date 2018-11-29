@@ -382,16 +382,14 @@ class Utilities
 
     // redirect user to login if anything went wrong.
     if($cookie_validation) {
-      if(!isset($_SESSION['uid'])) {
-        $_SESSION['cname'] = $cookie_string_a[3];
-        $_SESSION['ccode'] = $cookie_string_a[4];
-        $_SESSION['uid'] = $cookie_string_a[5];
-        $_SESSION['uname'] = $cookie_string_a[6];
-        $_SESSION['utype'] = $cookie_string_a[7];
-        $_SESSION['bc'] = $cookie_string_a[8];
-        $_SESSION['lc'] = $cookie_string_a[9]; 
-        $_SESSION['lname'] = $cookie_string_a[10];
-      }
+      $_SESSION['cname'] = $cookie_string_a[3];
+      $_SESSION['ccode'] = $cookie_string_a[4];
+      $_SESSION['uid'] = $cookie_string_a[5];
+      $_SESSION['uname'] = $cookie_string_a[6];
+      $_SESSION['utype'] = $cookie_string_a[7];
+      $_SESSION['bc'] = $cookie_string_a[8];
+      $_SESSION['lc'] = $cookie_string_a[9]; 
+      $_SESSION['lname'] = $cookie_string_a[10];
       $_SESSION['token_valid'] = true;
       $_SESSION['last_access_time'] = $current_time;
       return true;
