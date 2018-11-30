@@ -57,9 +57,14 @@ class ProductsController {
       }
     }
 
-    if($request->get('itemCode') && $request->get('itemCode')!='') {
+    if( !is_null($request->get('itemCode')) && 
+        $request->get('itemCode')!=='' && 
+        !is_null($request->get('lc')) && 
+        $request->get('lc') !== ''
+      ) {
       $item_code = Utilities::clean_string($request->get('itemCode'));
-      $products_api_response = $products_api_call->get_product_details($item_code);
+      $location_code = Utilities::clean_string($request->get('lc'));
+      $products_api_response = $products_api_call->get_product_details($item_code, $location_code);
       if($products_api_response['status']) {
         $product_details = $products_api_response['productDetails'];
         $update_flag = true;

@@ -79,22 +79,28 @@ class CategoriesController
     $submitted_data = $form_errors = array();
     $status_options = array(''=>'Select','1'=>'Active','0'=>'Inactive');
 
-    # ---------- get location codes from api -----------------
+    // ---------- get location codes from api -----------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
-    }    
-
-    $category_code = $request->get('categoryCode');
-    $category_details = $this->categories_model->get_category_details($category_code);
-    if($category_details === false) {
-      $this->flash->set_flash_message('Invalid category code', 1);
-      Utilities::redirect('/categories/list');
-    } else {
-      $submitted_data = $category_details;
     }
+
+    $category_code = !is_null($request->get('categoryCode')) ? Utilities::clean_string($request->get('categoryCode')) : false;
+    $category_location = !is_null($request->get('lc')) ?  Utilities::clean_string($request->get('lc')) : false;
+    if($category_code !== false && $category_location !== false) {
+      $category_details = $this->categories_model->get_category_details($category_code, $category_location);
+      if($category_details === false) {
+        $this->flash->set_flash_message('Invalid category code', 1);
+        Utilities::redirect('/categories/list');
+      } else {
+        $submitted_data = $category_details;
+      }
+    } else {
+        $this->flash->set_flash_message('Invalid category code', 1);
+        Utilities::redirect('/categories/list');
+      }
 
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();
@@ -141,6 +147,14 @@ class CategoriesController
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
+
+    // ---------- get location codes from api -----------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
 
     if( !is_null($request->get('pageNo'))) {
       $page_no = $request->get('pageNo');
@@ -189,6 +203,10 @@ class CategoriesController
       'page_error' => $page_error,
       'page_success' => $page_success,
       'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     return array($this->template->render_view('categories-list', $template_vars), $controller_vars);        

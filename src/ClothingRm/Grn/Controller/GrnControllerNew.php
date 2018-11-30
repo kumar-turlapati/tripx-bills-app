@@ -164,37 +164,25 @@ class GrnControllerNew
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
 
-    if( $request->get('pageNo') ) {
-      $page_no = $request->get('pageNo');
-    } else {
-      $page_no = 1;
-    }
-
-    if( $request->get('perPage') ) {
-      $per_page = $request->get('perPage');
-    } else {
-      $per_page = 100;
-    }
+    $page_no = !is_null($request->get('pageNo')) && is_numeric($request->get('pageNo')) ? $request->get('pageNo') : 1;
+    $per_page = !is_null($request->get('perPage')) && is_numeric($request->get('perPage')) ? $request->get('perPage') : 100;
+    $from_date = !is_null($request->get('fromDate')) && $request->get('fromDate') !== '' ? $request->get('fromDate') : '01-'.date('m').'-'.date("Y");
+    $to_date = !is_null($request->get('toDate')) && $request->get('toDate') !== '' ? $request->get('toDate') : date("d-m-Y");
+    $supplier_id = !is_null($request->get('supplierID')) && $request->get('supplierID') !== '' ? $request->get('supplierID') : '';
 
     if(count($request->request->all()) > 0) {
-      $search_params = $request->request->all();
-    } elseif($request->get('fromDate')) {
-      $search_params['fromDate'] = $request->get('fromDate');
-    } elseif($request->get('toDate')) {
-      $search_params['toDate'] =  $request->get('toDate');
-    } elseif($request->get('supplierID')) {
-      $search_params['supplierID'] =  $request->get('supplierID');                     
+      $form_data = $request->request->all();
+      $search_params['fromDate'] = $form_data['fromDate'];
+      $search_params['toDate'] = $form_data['toDate'];
+      $search_params['supplierID'] = $form_data['supplierID'];
     } else {
-      $search_params = [];
+      $search_params['fromDate'] = $from_date;
+      $search_params['toDate'] = $to_date;
+      $search_params['supplierID'] = $supplier_id;
     }
 
-    # search GRN from and to dates.
-    if(!isset($search_params['fromDate'])) {
-      $search_params['fromDate'] = '01-'.date('m').'-'.date("Y");
-    }
-    if(!isset($search_params['toDate'])) {
-      $search_params['toDate'] = date("d-m-Y");
-    }        
+    $search_params['perPage'] = $per_page;
+    $search_params['pageNo'] = $page_no;
 
     $supplier_api_call = new Supplier;
     $suppliers = $this->supplier_model->get_suppliers(0,0);
@@ -225,7 +213,6 @@ class GrnControllerNew
           if($grn_api_response['record_count'] < $per_page) {
             $to_sl_no = ($slno+$grn_api_response['record_count'])-1;
           }
-
           $grns_a = $grn_api_response['grns'];
           $total_pages = $grn_api_response['total_pages'];
           $total_records = $grn_api_response['total_records'];

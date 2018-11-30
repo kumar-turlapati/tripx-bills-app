@@ -49,12 +49,12 @@ class Products
 		}
 	}
 
-	public function get_product_details($product_code='') {
+	public function get_product_details($product_code='', $location_code='') {
 		$api_caller = new ApiCaller();
 
 		$end_point = 'products/details/'.$product_code;
 
-		$response = $api_caller->sendRequest('get',$end_point);
+		$response = $api_caller->sendRequest('get',$end_point,['locationCode' => $location_code]);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return array(

@@ -9,12 +9,11 @@
   if($query_params != '') {
     $query_params = '?'.implode('&', $query_params);
   }
+
+  // dump($location_ids, $location_codes);
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
-    
-    <!-- Panel starts -->
     <section class="panelBox">
       <div class="panelBody">
 
@@ -40,10 +39,10 @@
               <tr>
                 <th width="5%" class="text-center">Sno</th>
                 <th width="30%" class="text-center">Category name</th>
+                <th width="20%" class="text-center">Store name</th>
                 <th width="5%" class="text-center">Status</th>                
-                <th width="5%" class="text-center">Total Items</th>
+                <th width="10%" class="text-center">Products / Category</th>
                 <th width="10%" class="text-center">Options</th>
-                <th width="5%" class="text-center">Category code</th>
               </tr>
             </thead>
             <tbody>
@@ -72,32 +71,34 @@
                       $status = 'Inactive';
                     } elseif((int)$category_details['status'] === 1) {
                       $status = 'Active';
-                    }     
+                    }
+                    $location_code = isset($location_codes[$category_details['locationID']]) ? $location_codes[$category_details['locationID']] : '';
+                    $location_name = isset($location_ids[$category_details['locationID']]) ? $location_ids[$category_details['locationID']] : '';
                 ?>
-                    <tr class="text-right font14">
+                    <tr class="text-right font12">
                       <td class="text-right valign-middle"><?php echo $cntr ?></td>
                       <td class="text-left valign-middle"><?php echo $category_name ?></td>
+                      <td class="text-left valign-middle"><?php echo $location_name ?></td>
                       <td class="text-left valign-middle"><?php echo $status ?></td>
                       <td class="text-right text-bold valign-middle"><?php echo $total_items ?></td>
                       <td class="valign-middle">
-                        <div class="btn-actions-group text-left" style="padding-left:10px;">
+                        <div class="btn-actions-group text-right">
                           <?php if($category_code !== ''): ?>
-                            <a class="btn btn-primary" href="/category/update/<?php echo $category_code ?>" title="Edit this category">
+                            <a class="btn btn-primary" href="/category/update/<?php echo $category_code ?>?lc=<?php echo $location_code ?>" title="Edit this category">
                               <i class="fa fa-pencil"></i>
                             </a>
                           <?php endif; ?>
                         </div>
                       </td>
-                      <td class="text-right valign-middle"><?php echo $category_code ?></td>
                     </tr>
               <?php
                 $cntr++;
                 endforeach; 
               ?>
                 <tr>
-                  <td colspan="3" class="text-bold text-right font14">Total Items</td>
+                  <td colspan="4" class="text-bold text-right font14">Total Products</td>
                   <td class="text-bold text-right font14"><?php echo number_format($total_item_count) ?></td>
-                  <td>&nbsp;</td><td>&nbsp;</td>
+                  <td>&nbsp;</td>
                 </tr>
             <?php else: ?>
                 <tr><td colspan="6" align="center" class="font14">No categories is available.</td></tr>
@@ -107,7 +108,5 @@
         </div>
       </div>
     </section>
-    <!-- Panel ends --> 
   </div>
 </div>
-<!-- Basic Forms ends -->

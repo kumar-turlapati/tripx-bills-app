@@ -1,9 +1,5 @@
 <?php
   use Atawa\Utilities;
-
-  if(isset($template_vars) && is_array($template_vars)) {
-    extract($template_vars); 
-  }
   $query_params = '';  
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
     $fromDate = $search_params['fromDate'];
@@ -78,8 +74,15 @@
         				<div class="col-sm-12 col-md-2 col-lg-2">
         					<div class="select-wrap">
         						<select class="form-control" name="supplierID" id="supplierID">
-        						  <?php foreach($suppliers as $key=>$value): ?>
-        							<option value="<?php echo $key ?>"><?php echo $value ?></option>
+        						  <?php 
+                        foreach($suppliers as $key=>$value):
+                          if($supplierID === $key) {
+                            $selected = 'selected = "selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+        							   <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
         						  <?php endforeach; ?>
         						</select>
         					  </div>

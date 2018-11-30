@@ -76,9 +76,9 @@ class Categories
 	}
 
 	# get product details.
-	public function get_category_details($category_code='') {
+	public function get_category_details($category_code='', $category_location = '') {
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get', 'categories/details?categoryCode='.$category_code, []);
+		$response = $api_caller->sendRequest('get', 'categories/details?categoryCode='.$category_code.'&locationCode='.$category_location, []);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return $response['response']['categoryDetails'];

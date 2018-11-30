@@ -106,9 +106,6 @@
               <?php 
                 $cntr = $sl_no;
                 foreach($products as $product_details):
-                  // dump($product_details);
-                  // exit;
-
                   if($product_details['mrp']>0) {
                     $mrp = $product_details['mrp'];
                   } else {
@@ -137,12 +134,14 @@
                   $thr_qty = $product_details['thrQty'];
                   $item_code = $product_details['itemCode'];
                   $item_sku = $product_details['itemSku'];
+                  $location_id = $product_details['locationID'];
+                  $item_location_code = isset($location_codes[$location_id]) ? $location_codes[$location_id] : '';
               ?>
                   <tr class="text-uppercase text-right font11">
                     <td class="text-center"><?php echo $cntr ?></td>
                     <td class="text-left med-name">
                       <a 
-                        href="/products/update/<?php echo $item_code ?>"
+                        href="/products/update/<?php echo $item_code ?>?lc=<?php echo $item_location_code ?>"
                         class="hyperlink"
                         title="click here to update"
                       >
