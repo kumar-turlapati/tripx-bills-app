@@ -9,23 +9,15 @@ class Categories
 {
 
 	# get product categories with count
-	public function get_categories($page_no=1, $per_page=100, $search_params=array()) {
-
-		$params = array();
-		$params['pageNo']  = $page_no;
-		$params['perPage'] = $per_page;
-		if(count($search_params)>0) {
-			if(isset($search_params['catname'])) {
-				$cat_name = Utilities::clean_string($search_params['catname']);
-				$params['catName'] = $cat_name;
-			}				
-		}
+	public function get_categories($page_no=1, $per_page=100, $search_params=[]) {
+		$search_params['pageNo']  = $page_no;
+		$search_params['perPage'] = $per_page;
 
 		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get', 'categories/wic', $params);
+		$response = $api_caller->sendRequest('get', 'categories/wic', $search_params);
 		$status = $response['status'];
-		if ($status === 'success') {
+		if($status === 'success') {
 			return array(
 				'status' => true,  
 				'categories' => $response['response']

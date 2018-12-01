@@ -154,8 +154,11 @@
                       <td>
                         <div class="btn-actions-group">
                           <?php if($sales_code !== ''): ?>
-                            <a class="btn btn-danger" href="javascript: printSalesBillSmall(<?php echo $sales_details['billNo'] ?>)" title="Print Sale Bill - Small format">
-                              <i class="fa fa-files-o"></i>
+                            <a class="btn btn-danger" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
+                              <i class="fa fa-print"></i>
+                            </a>
+                            <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
+                              <i class="fa fa-print"></i>
                             </a>
                             <a class="btn btn-primary" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
                               <i class="fa fa-undo"></i>

@@ -148,6 +148,8 @@ class CategoriesController
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
 
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+
     // ---------- get location codes from api -----------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
@@ -156,32 +158,21 @@ class CategoriesController
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
     }    
 
-    if( !is_null($request->get('pageNo'))) {
-      $page_no = $request->get('pageNo');
-    } else {
-      $page_no = 1;
-    }
-
-    if(!is_null($request->get('perPage'))) {
-      $per_page = $request->get('perPage');
-    } else {
-      $per_page = 100;
-    }
-
+    $page_no = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1; 
+    $per_page = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 100;
     if(count($request->request->all()) > 0) {
-      $search_params = $request->request->all();
-    } elseif( !is_null($request->get('catname'))) {
-      $search_params['catname'] = $request->get('catname');
+      $form_data = $request->request->all();
+      $location_code = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $search_params = [];
+      $location_code =  !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
     }
 
+    $search_params['lc'] = $location_code;
     $categories_list = $this->categories_model->get_categories($page_no, $per_page, $search_params);
     $api_status = $categories_list['status'];
-
-    # check api status
+    // check api status
     if($api_status) {
-      # check whether we got products or not.
+      // check whether we got products or not.
       if(count($categories_list['categories']) >0) {
         $categories = $categories_list['categories'];
       } else {
@@ -191,7 +182,7 @@ class CategoriesController
       $page_error = $categories_list['apierror'];
     }
 
-    # build variables
+    // build variables
     $controller_vars = array(
       'page_title' => 'Product Categories',
       'icon_name' => 'fa fa-list',
@@ -203,10 +194,11 @@ class CategoriesController
       'page_error' => $page_error,
       'page_success' => $page_success,
       'flash_obj' => $this->flash,
-      'client_locations' => array(''=>'Choose') + $client_locations,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
+      'default_location' => $default_location,
     );
 
     return array($this->template->render_view('categories-list', $template_vars), $controller_vars);        

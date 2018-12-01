@@ -38,7 +38,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
               <a href="/products/create" class="btn btn-default">
-                <i class="fa fa-file-text-o"></i> New Product / Service
+                <i class="fa fa-file-text-o"></i> New Product
               </a>
           </div>
         </div>
@@ -93,7 +93,8 @@
               <tr class="font12">
                 <th width="5%" class="text-center">Sno.</th>
                 <th width="30%" class="text-left">Product / Service Name</th>
-                <th width="10%" class="text-center">Brand Name</th>                
+                <th width="10%" class="text-center">Brand Name</th>               
+                <th width="10%" class="text-center">Category</th>               
                 <th width="5%" class="text-center">Threshold<span class="brk">Qty.</span></th>                
                 <th width="5%" class="text-center">Units /<span class="brk">pack</span></th>
                 <th width="5%" class="text-center">M.R.P <span class="brk">(in Rs.)</span></th>
@@ -135,6 +136,7 @@
                   $item_code = $product_details['itemCode'];
                   $item_sku = $product_details['itemSku'];
                   $location_id = $product_details['locationID'];
+                  $category_name = $product_details['categoryName'];
                   $item_location_code = isset($location_codes[$location_id]) ? $location_codes[$location_id] : '';
               ?>
                   <tr class="text-uppercase text-right font11">
@@ -149,6 +151,7 @@
                       </a>
                     </td>
                     <td class="text-left"><?php echo substr($brandName,0,20) ?></td>
+                    <td class="text-left"><?php echo substr($category_name,0,20) ?></td>
                     <td class="text-right"><?php echo $thr_qty ?></td>
                     <td><?php echo $units_per_pack ?></td>
                     <td class="text-bold"><?php echo $mrp ?></td>

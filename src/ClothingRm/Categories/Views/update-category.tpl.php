@@ -46,7 +46,7 @@
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Store name</label>
               <div class="select-wrap">
-                <select class="form-control" name="locationCode" id="locationCode">
+                <select class="form-control" name="locationCode" id="locationCode" readonly>
                   <?php 
                     foreach($client_locations as $key=>$value): 
                       $location_key_a = explode('`', $key);

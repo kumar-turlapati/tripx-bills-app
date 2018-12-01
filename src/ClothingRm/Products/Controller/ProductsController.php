@@ -23,7 +23,7 @@ class ProductsController {
 
   public function createProductService(Request $request) {
     $errors = $taxes = $taxes_a = [];
-    $page_error = $page_success = $item_code = '';
+    $page_error = $page_success = $item_code = $location_code = $product_location = '';
     $upp_a = $categories_a = array(''=>'Choose');
     $update_flag=false;
     $submitted_data = $product_details = [];
@@ -67,6 +67,7 @@ class ProductsController {
       $products_api_response = $products_api_call->get_product_details($item_code, $location_code);
       if($products_api_response['status']) {
         $product_details = $products_api_response['productDetails'];
+        $product_location = $location_code;
         $update_flag = true;
       } else {
         $flash->set_flash_message("Invalid product code.",1);
@@ -79,7 +80,7 @@ class ProductsController {
       $page_title = 'Create Product / Service';
     }
 
-    $categories_a = $categories_a + $products_api_call->get_product_categories();
+    $categories_a = $categories_a + $products_api_call->get_product_categories($location_code);
 
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
@@ -128,7 +129,9 @@ class ProductsController {
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'location_ids' => $location_ids,
-      'location_codes' => $location_codes,      
+      'location_codes' => $location_codes,
+      'update_flag' => $update_flag,
+      'product_location' => $product_location,
     );
 
     // build variables
@@ -218,7 +221,7 @@ class ProductsController {
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Products (or) Services',
+      'page_title' => 'Products',
       'icon_name' => 'fa fa-tasks',
     );
     $template_vars = array(

@@ -38,9 +38,9 @@ class Products
 		}	
 	}
 
-	public function get_product_categories() {
+	public function get_product_categories($location_code='') {
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get','categories');
+		$response = $api_caller->sendRequest('get','categories?lc='.$location_code);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return $response['response'];

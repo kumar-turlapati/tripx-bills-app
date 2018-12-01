@@ -227,23 +227,28 @@
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Store name</label>
-              <div class="select-wrap">
-                <select class="form-control" name="locationCode" id="locationCode">
-                  <?php 
-                    foreach($client_locations as $key=>$value): 
-                      $location_key_a = explode('`', $key);
-                      if($location_code === $location_key_a[0]) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }
-                  ?>
-                    <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-              <?php if(isset($form_errors['locationCode'])): ?>
-                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php if($update_flag === false): ?>
+                <div class="select-wrap">
+                  <select class="form-control" name="locationCode" id="locationCode">
+                    <?php 
+                      foreach($client_locations as $key=>$value): 
+                        $location_key_a = explode('`', $key);
+                        if($location_code === $location_key_a[0]) {
+                          $selected = 'selected="selected"';
+                        } else {
+                          $selected = '';
+                        }
+                    ?>
+                      <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <?php if(isset($form_errors['locationCode'])): ?>
+                  <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+                <?php endif; ?>
+              <?php else: ?>
+                <p style="font-size:16px;font-weight:bold;color:#225992;"><?php echo isset($location_ids[$submitted_data['locationID']]) ? $location_ids[$submitted_data['locationID']] : 'Invalid Store'?> <span style="color:red;font-size:11px;">[ Not editable ]</span></p>
+                <input type="hidden" id="locationCode" name="locationCode" value="<?php echo $product_location ?>" />
               <?php endif; ?>
             </div>
           </div>
@@ -257,87 +262,3 @@
     </section>
   </div>
 </div>
-
-<?php
-/*
-              <div class="select-wrap">
-                <select class="form-control" name="unitsPerPack" id="unitsPerPack">
-                  <?php
-                    foreach($upp_a as $key=>$value): 
-                      if($sel_upp == $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>*/ ?>
-
-
-            <?php /*
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Min. Indent Qty. (for marketing campaigns)</label>
-              <input
-                type="text" 
-                class="form-control noEnterKey" 
-                name="minIndentQty" 
-                id="minIndentQty" 
-                value="<?php echo $min_indent_qty ?>"
-                maxlength="10"
-              >
-              <?php if(isset($errors['minIndentQty'])): ?>
-                <span class="error"><?php echo $errors['minIndentQty'] ?></span>
-              <?php endif; ?>              
-            </div> */?>
-
-            <?php /*
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Units per pack</label>
-              <input
-                type="text" 
-                class="form-control noEnterKey" 
-                name="unitsPerPack" 
-                id="unitsPerPack" 
-                value="<?php echo $sel_upp ?>"
-              >
-              <?php if(isset($errors['unitsPerPack'])): ?>
-                <span class="error"><?php echo $errors['unitsPerPack'] ?></span>
-              <?php endif; ?>
-            </div> */ ?>
-
-          <?php /*
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Manufacturer name</label>
-              <div class="select-wrap">
-                <select class="form-control" name="mfgID" id="mfgID">
-                  <?php 
-                    foreach($mfgs as $key=>$value): 
-                      if($sel_mfg_code === $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['status'])): ?>
-                  <span class="error"><?php echo $errors['status'] ?></span>
-                <?php endif; ?>
-              </div>
-            </div>
-          </div> */ ?>
-<?php /*
-/*  if(isset($submitted_data['minIndentQty'])) {
-    $min_indent_qty = $submitted_data['minIndentQty'];
-  } else {
-    $min_indent_qty = '';
-  }
-  if(isset($submitted_data['unitsPerPack'])) {
-    $sel_upp = $submitted_data['unitsPerPack'];
-  } else {
-    $sel_upp = 1;
-  }*/ ?>          
