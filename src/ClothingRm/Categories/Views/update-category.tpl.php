@@ -14,6 +14,8 @@
   } else {
     $location_id = 0;
   }
+
+  // dump($location_ids, $location_codes);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -44,27 +46,6 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Store name</label>
-              <div class="select-wrap">
-                <select class="form-control" name="locationCode" id="locationCode" readonly>
-                  <?php 
-                    foreach($client_locations as $key=>$value): 
-                      $location_key_a = explode('`', $key);
-                      if((int)$location_id === (int)$location_key_a[1]) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }
-                  ?>
-                    <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-              <?php if(isset($form_errors['locationCode'])): ?>
-                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
-              <?php endif; ?>
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="status" id="status">
@@ -84,6 +65,11 @@
                 <?php endif; ?> 
               </div>              
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Store name</label>
+              <p style="font-size:16px;font-weight:bold;color:#225992;"><?php echo isset($location_ids[$location_id]) ? $location_ids[$submitted_data['locationID']] : 'Invalid Store'?> <span style="color:red;font-size:11px;">[ Not editable ]</span></p>
+              <input type="hidden" id="locationCode" name="locationCode" value="<?php echo $location_codes[$location_id] ?>" />
+            </div>            
           </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">

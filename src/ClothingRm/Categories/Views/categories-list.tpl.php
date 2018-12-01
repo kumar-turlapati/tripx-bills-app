@@ -75,7 +75,7 @@
               </tr>
             </thead>
             <tbody>
-            <?php if(count($categories) > 0): ?>
+            <?php if(is_array($categories) && count($categories) > 0): ?>
                 <?php 
                   $cntr = $sl_no;
                   $total_item_count = 0;
