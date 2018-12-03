@@ -309,8 +309,8 @@ class SalesReportsController {
       $pdf->Cell(24,6,number_format($stock_balance['salesReturnQty'], 2, '.', ''),'LTB',0,'C');
       $pdf->Cell(23,6,number_format($stock_balance['adjustedQty'], 2, '.', ''),'LTB',0,'C');
       $pdf->Cell(23,6,number_format($stock_balance['transferQty'], 2, '.', ''),'LTB',0,'C');
-      $pdf->Cell(23,6,number_format($stock_balance['purchaseReturnQty'], 2, '.', ''),'LTB',0,'C');
       $pdf->Cell(23,6,number_format($stock_balance['soldQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(23,6,number_format($stock_balance['purchaseReturnQty'], 2, '.', ''),'LTB',0,'C');
       $pdf->Cell(25,6,number_format($stock_balance['closingQty'], 2, '.', ''),'LRTB',0,'C');
 
       $pdf->Output();
