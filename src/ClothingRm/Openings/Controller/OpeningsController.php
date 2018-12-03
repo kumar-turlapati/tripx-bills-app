@@ -124,6 +124,8 @@ class OpeningsController {
     $page_success = $page_error = '';
     $categories_a = [''=>'Choose'];
 
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+
     $client_locations = Utilities::get_client_locations();
     $page_no = !is_null($request->get('pageNo')) ? $request->get('pageNo') : 1;
     $per_page = !is_null($request->get('perPage')) ? $request->get('perPage') : 100;
@@ -132,17 +134,13 @@ class OpeningsController {
       if($request->get('itemName') !== '') {
         $search_params['itemName'] = Utilities::clean_string($request->get('itemName'));
       }
-      if($request->get('batchNo') !== '') {
-        $search_params['batchNo'] = Utilities::clean_string($request->get('batchNo'));
-      }
-      if($request->get('category') !== '') {
-        $search_params['category'] = Utilities::clean_string($request->get('category'));
-      }
       if($request->get('locationCode') !== '') {
         $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
       }      
     } else {
-      $search_params = [];
+      $search_params = [
+        'locationCode' => $default_location,
+      ];
     }
 
     $search_params['pageNo'] = $page_no;
@@ -153,7 +151,7 @@ class OpeningsController {
 
     // check api status
     if($api_status) {
-      # check whether we got products or not.
+      // check whether we got products or not.
       if(count($openings['openings'])>0) {
         $slno = Utilities::get_slno_start(count($openings['openings']), $per_page, $page_no);
         $to_sl_no = $slno+$per_page;
@@ -197,6 +195,7 @@ class OpeningsController {
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
       'categories' => $categories_a,
+      'default_location' => $default_location,
       'location_codes' => ['' => 'All Stores'] + $client_locations,
     );
 

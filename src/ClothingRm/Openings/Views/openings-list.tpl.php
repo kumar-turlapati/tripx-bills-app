@@ -8,12 +8,6 @@
   } else {
     $itemName = '';
   }
-  if(isset($search_params['category']) && $search_params['category'] !== '' ) {
-    $category = $search_params['category'];
-    $query_params[] = 'category='.$category;
-  } else {
-    $category = '';
-  }
   if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
     $locationCode = $search_params['locationCode'];
     $query_params[] = 'locationCode='.$locationCode;
@@ -26,17 +20,11 @@
     $query_params = '';
   }
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
-
-    <!-- Panel starts -->
     <section class="panelBox">
       <div class="panelBody">
-
         <?php echo Utilities::print_flash_message() ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/opbal/add" class="btn btn-default">
@@ -44,14 +32,11 @@
             </a> 
           </div>
         </div>
-        <!-- Right links ends -->        
-
         <?php if($page_error !== ''): ?>
           <div class="alert alert-danger" role="alert">
             <strong>Error!</strong> <?php echo $page_error ?> 
           </div>
         <?php endif; ?>
-
 		    <div class="panel">
           <div class="panel-body">
 			     <div id="filters-form">
@@ -59,7 +44,7 @@
         				<div class="form-group">
                   <div class="col-sm-12 col-md-2 col-lg-1">Filter by</div>
         				  <div class="col-sm-12 col-md-2 col-lg-2">
-          					<input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control" value="<?php echo $itemName ?>">
+          					<input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $itemName ?>">
         				  </div>
                   <div class="col-sm-12 col-md-2 col-lg-2">
                     <div class="select-wrap">

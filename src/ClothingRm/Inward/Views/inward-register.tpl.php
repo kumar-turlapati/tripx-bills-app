@@ -136,9 +136,10 @@
                     <td class="text-right text-bold valign-middle"><?php echo $status_text ?></td>                    
                     <td class="valign-middle">
                       <div class="btn-actions-group">
+                        <?php /*
                         <a class="btn btn-primary" href="/print-po/<?php echo $purchase_code ?>" title="Print PO" target="_blank">
                           <i class="fa fa-print"></i>
-                        </a>
+                        </a> */ ?>
                         <?php if($grn_info === false): ?>
                           <?php if((int)$purchase_details['status'] === 1) : ?>                      
                             <a class="btn btn-warning" href="/grn/create?poNo=<?php echo $purchase_details['poNo'] ?>" title="Create GRN for this PO">

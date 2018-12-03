@@ -139,7 +139,8 @@ class Sales {
 		if ($status === 'success') {
 			return array(
 				'status' => true,
-				'summary' => $response['response']['daySales']
+				'summary' => $response['response']['daySales'],
+				'stock_balance' => $response['response']['stockBalance'],
 			);
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);

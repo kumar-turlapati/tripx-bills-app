@@ -194,6 +194,9 @@ class SalesReportsController {
         Utilities::redirect('/reports/sales-register');
       } else {
         $day_summary = $sales_api_response['summary'];
+        $stock_balance = $sales_api_response['stock_balance'];
+        // dump($day_summary, $stock_balance);
+        // exit;
         if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
           $location_name = $client_locations[$form_data['locationCode']];
         } else {
@@ -213,7 +216,7 @@ class SalesReportsController {
         $cash_in_hand = $day_summary[0]['cashInHand'];
         $sales_return = $day_summary[0]['returnAmount'];
         $day_sales = $cash_sales + $card_sales + $split_sales + $credit_sales;
-        $total_sales = $day_sales - $sales_return;        
+        $total_sales = $day_sales - $sales_return;
       }
 
       $format = $form_data['format'];
@@ -284,7 +287,31 @@ class SalesReportsController {
       $pdf->SetFont('Arial','B');              
       $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
       $pdf->Cell($item_widths[1],6,'Cash in hand (a)-(e)','RTB',0,'R');
-      $pdf->Cell($item_widths[2],6,number_format($cash_sales-$sales_return,2,'.',''),'RTB',0,'R');        
+      $pdf->Cell($item_widths[2],6,number_format($cash_sales-$sales_return,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',11);              
+      $pdf->Cell(190,6,'Stock Status (Qtys.) as on : '.$form_data['saleDate'],'LRT',1,'C');
+      $pdf->SetFont('Arial','B',9);         
+      $pdf->Cell(25,6,'Opening - OP','LTB',0,'C');
+      $pdf->Cell(24,6,'Purch. - PU','LTB',0,'C');
+      $pdf->Cell(24,6,'Sa.Return - SR','LTB',0,'C');
+      $pdf->Cell(23,6,'Adj. - AJ','LTB',0,'C');
+      $pdf->Cell(23,6,'Transfers - ST','LTB',0,'C');
+      $pdf->Cell(23,6,'Sales-SA','LTB',0,'C');
+      $pdf->Cell(23,6,'P.Returns-PR','LTB',0,'C');
+      $pdf->Cell(25,6,'Closing-CL','LRTB',1,'C');
+      $pdf->SetFont('Arial','',9);
+
+      $pdf->Cell(25,6,number_format($stock_balance['openingQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(24,6,number_format($stock_balance['purchasedQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(24,6,number_format($stock_balance['salesReturnQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(23,6,number_format($stock_balance['adjustedQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(23,6,number_format($stock_balance['transferQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(23,6,number_format($stock_balance['purchaseReturnQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(23,6,number_format($stock_balance['soldQty'], 2, '.', ''),'LTB',0,'C');
+      $pdf->Cell(25,6,number_format($stock_balance['closingQty'], 2, '.', ''),'LRTB',0,'C');
 
       $pdf->Output();
     }
