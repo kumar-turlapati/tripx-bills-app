@@ -32,10 +32,18 @@ class BarcodeController
   }
 
   public function generateBarcodeAction(Request $request) {
-    $purchase_details = $suppliers_a = $form_data = [];
-    $form_errors = [];
+    $purchase_details = $suppliers_a = $form_data = $location_ids = [];
+    $location_codes = $form_errors = [];
 
-    $page_error = $inward_entry_no = $mfg_date = '';
+    $page_error = $inward_entry_no = $mfg_date = $po_location_code = '';
+
+    # ---------- get location codes from api -----------------------
+/*    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }*/    
 
     if(is_null($request->get('purchaseCode'))) {
       $this->flash->set_flash_message('PO Number is mandatory for generating barcode.', 1);
@@ -57,7 +65,7 @@ class BarcodeController
 
       $purchase_code = Utilities::clean_string($request->get('purchaseCode'));
       $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
-      // dump($purchase_response);
+      // dump($purchase_response, $location_codes, $location_ids);
       // exit;
 
       if($purchase_response['status'] === false) {
@@ -76,6 +84,7 @@ class BarcodeController
         $client_business_state = $client_details['locState'];
         $inward_entry_no =  ' - PO No. { '. $purchase_details['poNo'] .' }';
         $mfg_date = $purchase_details['purchaseDate'];
+        $po_location_code = $purchase_details['locationID'];
 
         // convert received item details to template item details.
         $item_names = array_column($purchase_details['itemDetails'],'itemName');
@@ -151,7 +160,7 @@ class BarcodeController
 
       if(is_array($new_barcodes['items']) && count($new_barcodes['items']) > 0) {
         # hit api and create barcodes.
-        $api_response = $this->bc_model->generate_barcode($purchase_code, $new_barcodes);
+        $api_response = $this->bc_model->generate_barcode($purchase_code, $new_barcodes, $po_location_code);
         if($api_response['status'] && count($api_response['barcodes'])>0) {
           $print_array = [];
           foreach($cleaned_params as $key => $print_qty) {
@@ -366,7 +375,7 @@ class BarcodeController
           $new_barcodes = $form_validation['cleaned_params']['new_barcodes'];
           $existing_barcodes = $form_validation['cleaned_params']['print_barcodes'];
           if(count($new_barcodes)>0) {
-            $api_response = $this->bc_model->generate_barcode_opening($new_barcodes);
+            $api_response = $this->bc_model->generate_barcode_opening($new_barcodes, $location_code);
             if($api_response['status'] && count($api_response['barcodes'])>0) {
               foreach($api_response['barcodes'] as $item_key => $new_barcode) {
                 if(isset($sticker_qtys[$item_key])) {

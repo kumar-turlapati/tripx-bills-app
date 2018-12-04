@@ -569,8 +569,9 @@ function initializeJS() {
       $('#grossAmount_'+itemIndex).text(grossAmount);
 
       if(itemType === 'p') {
-        updateTransferOutApplicableTax(itemIndex, grossAmount, reqQty);
+        //updateTransferOutApplicableTax(itemIndex, grossAmount, reqQty);
       }
+      $('#saItemTax_'+itemIndex+' option[value="'+taxPercent+'"]').attr('selected', 'selected');            
       updateTransferOutTotal();
     }
 
@@ -594,6 +595,8 @@ function initializeJS() {
     function updateTransferOutTotal() {
       var totGrossAmount = totTaxableAmount = totDiscount = totTaxAmount = 0;
       var totBeforeRound = roundedNetPay = netPay = 0;
+
+      var shippingCharges = insuranceCharges = otherCharges = 0;
 
       var taxCalcOption = $('#taxCalcOption').val();
 
@@ -634,7 +637,9 @@ function initializeJS() {
       extraParams:{
         locationCode: function() {
            if($('#locationCode').length>0) {
-            return $('#locationCode').val()
+            return $('#locationCode').val();
+           } else if($('#fromLocation').length>0) {
+            return $('#fromLocation').val();
            } else {
             return '';
            }

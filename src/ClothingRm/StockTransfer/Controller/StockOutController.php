@@ -27,7 +27,7 @@ class StockOutController
     $this->taxes_model = new Taxes;
   }
 
-  # Stock transfer create action.
+  // Stock transfer create action.
   public function stockOutCreateAction(Request $request) {
 
     $page_error = $page_success = $from_location = $to_location = '';
@@ -205,7 +205,6 @@ class StockOutController
     return array($template->render_view('stock-out-register', $template_vars), $controller_vars);    
   }
 
-  /******************************* private functions should go from here ******************************/
   private function _validate_form_data($form_data=[], $from_locations=[], $to_locations=[]) {
     // dump($form_data);
     // exit;

@@ -13,7 +13,7 @@ class Barcode {
 		$this->api_caller = new ApiCaller;
 	}
 
-	# add barcode
+	// add barcode
 	public function generate_barcode($purchase_code='', $new_barcodes=[]) {
 		$request_uri = 'barcode/'.$purchase_code;
 		$response = $this->api_caller->sendRequest('post',$request_uri,$new_barcodes);
@@ -25,9 +25,9 @@ class Barcode {
 		}
 	}
 
-	# generate barcode for opening balances.
-	public function generate_barcode_opening($new_barcodes=[]) {
-		$request_uri = 'barcode-opening';
+	// generate barcode for opening balances.
+	public function generate_barcode_opening($new_barcodes=[], $location_code='') {
+		$request_uri = 'barcode-opening?lc='.$location_code;
 		$response = $this->api_caller->sendRequest('post',$request_uri,$new_barcodes);
 		$status = $response['status'];
 		if ($status === 'success') {
@@ -37,7 +37,7 @@ class Barcode {
 		}
 	}	
 
-	# get all barcodes
+	// get all barcodes
 	public function get_barcodes($filter_params=[]) {
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get','barcode',$filter_params);

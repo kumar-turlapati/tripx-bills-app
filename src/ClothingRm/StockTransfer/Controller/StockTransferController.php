@@ -41,6 +41,9 @@ class StockTransferController
       if(ctype_alnum($to_location) === false) {
         $form_errors['toLocation'] = 'To location is required.';
       }
+      if($from_location === $to_location) {
+        $form_errors['toLocation'] = 'To location is not same as From location.';
+      }
       if(count($form_errors) <= 0) {
         $redirect_url = "/stock-transfer/out?fromLocation=$from_location&toLocation=$to_location";
         Utilities::redirect($redirect_url);

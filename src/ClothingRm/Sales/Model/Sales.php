@@ -141,6 +141,7 @@ class Sales {
 				'status' => true,
 				'summary' => $response['response']['daySales'],
 				'stock_balance' => $response['response']['stockBalance'],
+				'stock_balance_mtd' => $response['response']['stockBalanceMtd'],
 			);
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);
