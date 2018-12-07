@@ -167,8 +167,9 @@ class AsyncController {
       }
     } elseif($api_string === 'brandAc' && !is_null($request->get('a'))) {
       $params['q'] = Utilities::clean_string($request->get('a'));
+      $params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
       $response = $api_caller->sendRequest('get','mfg/ac/get-names',$params,false);
-      if(count($response)>0 && is_array($response)) {
+      if(is_array($response) && count($response)>0) {
         echo implode($response,"\n");
       }
     } elseif($api_string === 'getBillNos' && !is_null($request->get('custName'))) {

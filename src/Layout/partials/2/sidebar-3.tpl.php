@@ -256,7 +256,7 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
-              <li><a href="/reports/itemwise-sales-register"><i class="fa fa-angle-right"></i> Itemwise Sales Register</a></li>              
+              <li><a href="/reports/itemwise-sales-register"><i class="fa fa-angle-right"></i> Itemwise Sales Register</a></li>
               <li><a href="/reports/sales-summary-by-month"><i class="fa fa-angle-right"></i> Sales Summary</a></li>              
               <li><a href="/reports/day-sales"><i class="fa fa-angle-right"></i> Sales by Day</a></li>
               <li><a href="/reports/sales-by-tax-rate"><i class="fa fa-angle-right"></i> Sales by Tax Rate</a></li>              

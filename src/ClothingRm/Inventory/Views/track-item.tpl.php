@@ -89,10 +89,10 @@
                     $redirect_url = '';
                     $tran_date = date("d-M-Y", strtotime($tran_details['tranDate']));
                     $slno++;
+                    $pur_qty = $sr_qty = $sa_qty = $pr_qty = $adj_qty = $st_qty = $op_qty = 0;
                     switch($tran_details['tranType']) {
                       case 'OP':
                         $op_qty = $tran_details['itemQty'];
-                        $pur_qty = $sr_qty = $sa_qty = $pr_qty = $adj_qty = $st_qty = 0;
 
                         $clos_qty += $op_qty;
                         $all_op_qty += $op_qty;
@@ -100,7 +100,6 @@
                         break;
                       case 'PU':
                         $pur_qty = $tran_details['itemQty'];
-                        $op_qty = $sr_qty = $sa_qty = $pr_qty = $adj_qty = $st_qty = 0;
 
                         $all_pur_qty += $pur_qty;
                         $clos_qty += $pur_qty;
@@ -108,7 +107,6 @@
                         break;                          
                       case 'SR':
                         $sr_qty = $tran_details['itemQty'];
-                        $op_qty = $pur_qty = $sa_qty = $pr_qty = $adj_qty = $st_qty = 0;
 
                         $all_sr_qty += $sr_qty;
                         $clos_qty += $sr_qty;
@@ -116,7 +114,6 @@
                         break;                          
                       case 'SA':
                         $sa_qty = $tran_details['itemQty'];
-                        $op_qty = $pur_qty = $sr_qty = $pr_qty = $adj_qty = $st_qty = 0;
 
                         $all_sa_qty += $sa_qty;
                         $clos_qty -= $sa_qty;
@@ -124,7 +121,6 @@
                         break;
                       case 'PR':
                         $pr_qty = $tran_details['itemQty'];
-                        $op_qty = $pur_qty = $sr_qty = $sa_qty = $adj_qty = $st_qty = 0;
                         $redirect_url = '/purchase-return/view/'.$tran_details['autoCode'];
 
                         $all_pr_qty += $pr_qty;
@@ -132,17 +128,15 @@
                         break;                          
                       case 'AJ':
                         $adj_qty = $tran_details['itemQty'];
-                        $op_qty = $pur_qty = $sr_qty = $sa_qty = $pr_qty = $st_qty = 0;
 
                         $all_adj_qty += $adj_qty;
                         $clos_qty += $adj_qty;
                         break;
                       case 'TR':
                         $st_qty = $tran_details['itemQty'];
-                        $op_qty = $pur_qty = $sr_qty = $sa_qty = $pr_qty = $adj_qty = 0;
 
                         $all_st_qty += $st_qty;
-                        $clos_qty += $all_st_qty;                                                 
+                        $clos_qty += $st_qty;            
                         break;
                     }
 
@@ -162,7 +156,7 @@
                       <td class="text-right"><?php echo $sa_qty > 0 ? number_format($sa_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right"><?php echo $pr_qty > 0 ? number_format($pr_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right"><?php echo is_numeric($adj_qty) && $adj_qty !== 0 ? number_format($adj_qty, 2, '.', '') : '' ?></td>
-                      <td class="text-right"><?php echo $st_qty > 0 ? number_format($st_qty, 2, '.', '') : '' ?></td>
+                      <td class="text-right"><?php echo is_numeric($st_qty) ? number_format($st_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right text-bold green font14"><?php echo number_format($clos_qty, 2, '.', '') ?></td>                      
                       <td class="text-right">
                         <?php if($redirect_url !== ''): ?>
@@ -182,8 +176,8 @@
                       <td class="text-right text-bold"><?php echo $all_sr_qty > 0 ? number_format($all_sr_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right text-bold"><?php echo $all_sa_qty > 0 ? number_format($all_sa_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right text-bold"><?php echo $all_pr_qty > 0 ? number_format($all_pr_qty, 2, '.', '') : '' ?></td>
-                      <td class="text-right text-bold"><?php echo $all_adj_qty > 0 ? number_format($all_adj_qty, 2, '.', '') : '' ?></td>
-                      <td class="text-right text-bold"><?php echo $all_st_qty > 0 ? number_format($all_st_qty, 2, '.', '') : '' ?></td>
+                      <td class="text-right text-bold"><?php echo is_numeric($all_adj_qty) ? number_format($all_adj_qty, 2, '.', '') : '' ?></td>
+                      <td class="text-right text-bold"><?php echo is_numeric($all_st_qty) ? number_format($all_st_qty, 2, '.', '') : '' ?></td>
                     </tr>                
               </tbody>
             </table>

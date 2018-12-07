@@ -27,8 +27,8 @@
         </div>
         
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="stockOutForm">
-          <h2 class="hdg-reports" id="hdg-reports">Transaction Details</h2>
-          <div class="panel">
+          <?php /*<h2 class="hdg-reports" id="hdg-reports">Transaction Details</h2> */ ?>
+          <div class="panel" style="margin-bottom:0px;">
             <div class="panel-body">
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
@@ -36,14 +36,15 @@
                   <div class="select-wrap">
                     <select class="form-control" name="fromLocation" id="fromLocation">
                       <?php 
-                        foreach($from_locations as $key=>$value): 
-                          if($from_location === $key) {
+                        foreach($client_locations as $key=>$value): 
+                          $location_key_a = explode('`', $key);
+                          if($from_location === $location_key_a[0]) {
                             $selected = 'selected="selected"';
                           } else {
                             $selected = '';
                           }
                       ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                        <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>
@@ -58,14 +59,15 @@
                   <div class="select-wrap">
                     <select class="form-control" name="toLocation" id="toLocation">
                       <?php 
-                        foreach($to_locations as $key=>$value): 
-                          if($to_location === $key) {
+                        foreach($client_locations as $key=>$value): 
+                          $location_key_a = explode('`', $key);
+                          if($to_location === $location_key_a[0]) {
                             $selected = 'selected="selected"';
                           } else {
                             $selected = '';
                           }
                       ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                        <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>
@@ -85,11 +87,13 @@
                       </div>
                       <?php if(isset($errors['transferDate'])): ?>
                         <span class="error"><?php echo $errors['transferDate'] ?></span>
-                      <?php endif; ?>                  
+                      <?php endif; ?>
+                      <input type="hidden" id="taxCalcOption" name="taxCalcOption" value="i" />
                     </div>
                   </div>
                 </div>                
               </div>
+              <?php /*
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Tax calculation method</label>
@@ -115,10 +119,10 @@
                     </select>
                   </div>
                 </div>
-              </div>
+              </div> */ ?>
             </div>
           </div>
-          <h2 class="hdg-reports">Item Details</h2>          
+          <?php /*<h2 class="hdg-reports">Item Details</h2> */ ?>
           <div class="table-responsive">
             <table class="table table-striped table-hover font12">
               <thead>
@@ -144,12 +148,14 @@
                       $item_qty = $form_data['itemDetails']['itemSoldQty'][$ex_index];
                       $item_rate = $form_data['itemDetails']['itemRate'][$ex_index];
                       $tax_percent = $form_data['itemDetails']['itemTaxPercent'][$ex_index];
+                      $item_discount = 0;
                     } else {
                       $item_name = '';
                       $item_qty_available = '';
-                      $item_qty = '';
-                      $item_rate = '';
-                      $tax_percent = '';      
+                      $item_qty = 0;
+                      $item_rate = 0;
+                      $tax_percent = 0;
+                      $item_discount = 0;
                     }
 
                     if($item_qty && $item_rate>0) {

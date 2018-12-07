@@ -53,8 +53,8 @@ class Mfg {
 	}
 
 	// get mfg details
-	public function get_mfg_details($mfg_code = '') {
-		$response = $this->api_caller->sendRequest('get', 'mfg/details/'.$mfg_code, []);
+	public function get_mfg_details($mfg_code = '', $location_code='') {
+		$response = $this->api_caller->sendRequest('get', 'mfg/details/'.$mfg_code.'?lc='.$location_code, []);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return $response['response'];

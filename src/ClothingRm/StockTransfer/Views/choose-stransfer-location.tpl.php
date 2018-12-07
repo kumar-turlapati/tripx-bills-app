@@ -2,7 +2,7 @@
   if(isset($form_data['fromLocation'])) {
     $from_loc_code = $form_data['fromLocation'];
   } else {
-    $from_loc_code = '';
+    $from_loc_code = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
   }
   if(isset($form_data['toLocation'])) {
     $to_loc_code = $form_data['toLocation'];

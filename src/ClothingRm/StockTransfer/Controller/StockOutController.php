@@ -33,21 +33,20 @@ class StockOutController
     $page_error = $page_success = $from_location = $to_location = '';
     $qtys_a = $form_data = $form_errors = $taxes = [];
 
-    $from_location = $request->get('fromLocation');
-    $to_location = $request->get('toLocation');
-
     for($i=1;$i<=500;$i++) {
       $qtys_a[$i] = $i;
-    }    
+    }
 
-    # ---------- get location codes from api --------------------------------
-    $from_locations = ['' => 'Choose a Store'] + Utilities::get_client_locations();
-    $to_locations = ['' => 'Choose a Store'] + Utilities::get_client_locations(false, true);
+    // ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true, true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];
+      $location_names[$location_key_a[0]] = $location_value;
+    }
 
-    # ---------- get product categories --------------------------------------
-    $categories_a = $this->products_model->get_product_categories();
-
-    # ---------- get tax percents from api ----------------------
+    // ---------- get tax percents from api ----------------------
     $taxes_a = $this->taxes_model->list_taxes();
     if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
       $taxes_raw = $taxes_a['taxes'];
@@ -58,7 +57,7 @@ class StockOutController
 
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
-      $validate_form = $this->_validate_form_data($form_data, $from_locations, $to_locations);
+      $validate_form = $this->_validate_form_data($form_data, $location_names);
       $status = $validate_form['status'];
       if($status) {
         $cleaned_params = $validate_form['cleaned_params'];
@@ -66,28 +65,36 @@ class StockOutController
         if($result['status']) {
           $message = 'Stock transfer successfully completed with Voucher No. ` '.$result['billNo'].' `';
           $this->flash->set_flash_message($message);
+          Utilities::redirect('/stock-transfer/register');
         } else {
-          $message = 'An error occurred while performing this request.';
-          $this->flash->set_flash_message($message,1);  
+          $this->flash->set_flash_message($result['apierror'],1);
         }
-        Utilities::redirect('/stock-transfer/register');
       } else {
         $form_errors = $validate_form['errors'];
-        $from_loc_name = isset($from_locations[$from_location]) ? $from_locations[$from_location] : 'InvalidFromStore';
-        $to_loc_name = isset($to_locations[$to_location]) ? $to_locations[$to_location] : 'InvalidToStore';
       }
+      $from_location = Utilities::clean_string($request->get('fromLocation'));
+      $to_location = Utilities::clean_string($request->get('toLocation'));
+      $from_loc_name = isset($location_names[$from_location]) ? $location_names[$from_location] : 'InvalidFromStore';
+      $to_loc_name = isset($location_names[$to_location]) ? $location_names[$to_location] : 'InvalidToStore';
     } elseif(!is_null($request->get('fromLocation')) && !is_null($request->get('toLocation'))) {
-      $from_loc_name = isset($from_locations[$from_location]) ? $from_locations[$from_location] : 'InvalidFromStore';
-      $to_loc_name = isset($to_locations[$to_location]) ? $to_locations[$to_location] : 'InvalidToStore';
+      $from_location = Utilities::clean_string($request->get('fromLocation'));
+      $to_location = Utilities::clean_string($request->get('toLocation'));
+      if(!(in_array($from_location, $location_codes) && in_array($to_location, $location_codes))) {
+        $this->flash->set_flash_message('Invalid From and To Store Names.',1);
+        Utilities::redirect('/stock-transfer/choose-location');
+      } else {
+        $from_loc_name = isset($location_names[$from_location]) ? $location_names[$from_location] : 'InvalidFromStore';
+        $to_loc_name = isset($location_names[$to_location]) ? $location_names[$to_location] : 'InvalidToStore';
+      }
     } else {
       $message = 'Choose From and To Location for transfer.';
       $this->flash->set_flash_message($message, 1);
       Utilities::redirect('/stock-transfer/choose-location');
     }
 
-    # build variables
+    // build variables
     $controller_vars = array(
-      'page_title' => 'Inventory Management - Stock Transfer || '.$from_loc_name.' >>> '.$to_loc_name,
+      'page_title' => 'Stock Transfer || '.$from_loc_name.' >>> '.$to_loc_name,
       'icon_name' => 'fa fa-database',
     );
 
@@ -99,12 +106,14 @@ class StockOutController
       'btn_label' => 'Transfer Stock',
       'form_data' => $form_data,
       'flash_obj' => $this->flash,
-      'from_locations' => array(''=>'Choose') + $from_locations,
-      'to_locations' => array(''=>'Choose') + $to_locations,
       'from_location' => $from_location,
       'to_location' => $to_location,
       'taxes' => $taxes,
       'taxcalc_opt_a' => array('e'=>'Exluding Item Rate', 'i' => 'Including Item Rate'),      
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     // render template
@@ -112,6 +121,91 @@ class StockOutController
     return array($template->render_view('stock-out-create', $template_vars), $controller_vars);
   }
 
+  // Stock transfer view action.
+  public function stockOutViewAction(Request $request) {
+    $page_error = $page_success = $from_location = $to_location = '';
+    $qtys_a = $form_data = $form_errors = $taxes = [];
+
+    // validate transfer code.
+    if(!is_null($request->get('transferCode')) && $request->get('transferCode') !== '') {
+      $transfer_code = Utilities::clean_string($request->get('transferCode'));
+      $transfer_details_reponse = $this->sto_model->get_stock_out_entry_details($transfer_code);
+      if($transfer_details_reponse['status'] === false) {
+        $this->flash->set_flash_message('Invalid Transfer Code', 1);
+        Utilities::redirect('/stock-transfer/register');
+      } else {
+        $form_data = $this->_map_form_data_with_api_response($transfer_details_reponse['stoDetails']);
+      }
+    }
+
+    for($i=1;$i<=500;$i++) {
+      $qtys_a[$i] = $i;
+    }
+
+    // ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true, true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];
+      $location_names[$location_key_a[0]] = $location_value;
+    }
+
+    // ---------- get tax percents from api ----------------------
+    $taxes_a = $this->taxes_model->list_taxes();
+    if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
+      $taxes_raw = $taxes_a['taxes'];
+      foreach($taxes_a['taxes'] as $tax_details) {
+        $taxes[$tax_details['taxCode']] = $tax_details['taxPercent'];
+      }
+    }    
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'View Stock Transfer',
+      'icon_name' => 'fa fa-database',
+    );
+
+    $template_vars = array(
+      'qtys_a' => array(0=>'Choose')+$qtys_a,
+      'errors' => $form_errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => 'Transfer Stock',
+      'form_data' => $form_data,
+      'flash_obj' => $this->flash,
+      'taxes' => $taxes,
+      'taxcalc_opt_a' => array('e'=>'Exluding Item Rate', 'i' => 'Including Item Rate'),      
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+    );
+
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('stock-out-view', $template_vars), $controller_vars);
+  }
+
+  private function _map_form_data_with_api_response($form_data = []) {
+    $cleaned_params = [];
+    if(isset($form_data['itemDetails'])) {
+      foreach($form_data['itemDetails'] as $key => $item_details) {
+        $cleaned_params['itemName'][$key] = $item_details['itemName'];
+        $cleaned_params['itemAvailQty'][$key] = '';
+        $cleaned_params['itemSoldQty'][$key] = $item_details['itemQty'];
+        $cleaned_params['itemRate'][$key] = $item_details['mrp'];
+        $cleaned_params['itemTaxPercent'][$key] = $item_details['taxPercent'];
+        $cleaned_params['lotNo'][$key] = $item_details['lotNo'];
+      }
+      unset($form_data['itemDetails']);
+      $form_data['itemDetails'] = $cleaned_params;
+      return $form_data;
+    }
+    return [];
+  }
+
+  // List of stock out transactions.
   public function stockOutTransactionsList(Request $request) {
     $search_params = $transactions = $location_ids = [];
     $page_error = '';
@@ -120,6 +214,7 @@ class StockOutController
 
     # ---------- get from location codes from api -----------------------
     $from_locations = Utilities::get_client_locations(true);
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
 
     $to_locations = Utilities::get_client_locations(true, true);
     foreach($to_locations as $location_key => $location_value) {
@@ -130,7 +225,7 @@ class StockOutController
     # parse request parameters.
     $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
     $to_date = $request->get('toDate') !== null ? Utilities::clean_string($request->get('toDate')):date("d-m-Y");
-    $from_location_code = $request->get('fromLocationCode')!== null ? Utilities::clean_string($request->get('fromLocationCode')) : '';
+    $from_location_code = $request->get('fromLocationCode')!== null ? Utilities::clean_string($request->get('fromLocationCode')) : $default_location;
     $to_location_code = $request->get('toLocationCode') !== null ? Utilities::clean_string($request->get('toLocationCode')) : '';
     $page_no = $request->get('pageNo') !== null?Utilities::clean_string($request->get('pageNo')) : 1;
     $per_page = 100;
@@ -205,7 +300,7 @@ class StockOutController
     return array($template->render_view('stock-out-register', $template_vars), $controller_vars);    
   }
 
-  private function _validate_form_data($form_data=[], $from_locations=[], $to_locations=[]) {
+  private function _validate_form_data($form_data=[], $location_names = []) {
     // dump($form_data);
     // exit;
 
@@ -221,14 +316,14 @@ class StockOutController
     $tax_calc_option = Utilities::clean_string($form_data['taxCalcOption']);    
 
     # validate from location code
-    if(isset($from_locations[$from_location])) {
+    if(isset($location_names[$from_location])) {
       $cleaned_params['fromLocation'] = $from_location;
     } else {
       $form_errors['fromLocation'] = 'Invalid from location.'; 
     }
 
     # validate to location code
-    if(isset($to_locations[$from_location])) {
+    if(isset($location_names[$to_location])) {
       $cleaned_params['toLocation'] = $to_location;
     } else {
       $form_errors['toLocation'] = 'Invalid to location.'; 
@@ -257,7 +352,7 @@ class StockOutController
         $tot_tax_value += $item_tax_amount;
 
         # validate item name.
-        if(ctype_alnum(str_replace([' ', '-', '_'], ['','',''], $item_name)) === false) {
+        if($item_name === '') {
           $form_errors['itemDetails']['itemName'][$item_key] = 'Invalid item name.';
         } else {
           $cleaned_params['itemDetails']['itemName'][$item_key] = $item_name;
@@ -326,6 +421,8 @@ class StockOutController
 
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
 
+    // dump($form_errors);
+
     # return response.
     if(count($form_errors)>0) {
       return [
@@ -340,102 +437,3 @@ class StockOutController
     }
   }
 }
-
-
-/*    $validate_form = $this->_validate_form_data($request->request->all());
-      $status = $validate_form['status'];
-      if($status) {
-        $flash = new Flash();
-        $fin_model = new Finance();
-        $form_data = $validate_form['cleaned_params'];
-        $result = $fin_model->create_payment_voucher($this->_map_voucher_data($form_data));
-        // dump($result);
-        // exit;
-        if($result['status']===true) {
-          $message = 'Payment voucher created successfully with Voucher No. ` '.$result['vocNo'].' `';
-          $flash->set_flash_message($message);
-        } else {
-          $message = 'An error occurred while creating payment voucher.';
-          $flash->set_flash_message($message,1);          
-        }
-        Utilities::redirect('/fin/payment-voucher/create');
-      } else {
-        $form_errors = $validate_form['errors'];
-        $submitted_data = $request->request->all();
-      }
-
-
-    $search_params['locationCode'] = $from_location;
-    $search_params['pageNo'] = $page_no;
-    $search_params['perPage'] = $per_page;
-    $search_params['category'] = $category;
-    $search_params['medName'] = $product_name;
-
-    # get stock in hand
-    $items_list = $this->inv_model->get_available_qtys($search_params);
-
-    if($items_list['status']) {
-      if( count($items_list['items']) > 0) {
-        $slno = Utilities::get_slno_start(count($items_list['items']),$per_page,$page_no);
-        $to_sl_no = $slno + $per_page;
-        $slno++;
-        if($page_no<=3) {
-          $page_links_to_start = 1;
-          $page_links_to_end = 10;
-        } else {
-          $page_links_to_start = $page_no-3;
-          $page_links_to_end = $page_links_to_start+10;            
-        }
-        if($items_list['total_pages'] < $page_links_to_end) {
-          $page_links_to_end = $items_list['total_pages'];
-        }
-        if($items_list['record_count'] < $per_page) {
-          $to_sl_no = ($slno+$items_list['record_count'])-1;
-        }
-        $items = $items_list['items'];
-        $total_pages = $items_list['total_pages'];
-        $total_records = $items_list['total_records'];
-        $record_count = $items_list['record_count'];
-      } else {
-        $page_error = 'Unable to fetch data';
-      }
-    } else {
-      $page_error = $items_list['apierror'];
-    }
-
-    # prepare form variables.
-    $template_vars = array(
-      'page_error' => $page_error,
-      'page_success' => $page_success,
-      'form_errors' => $form_errors,
-      'submitted_data' => $submitted_data,
-      'items_list' => $items,
-      'flash_obj' => $this->flash,
-      'total_pages' => $total_pages ,
-      'total_records' => $total_records,
-      'record_count' =>  $record_count,
-      'sl_no' => $slno,
-      'to_sl_no' => $to_sl_no,
-      'page_links_to_start' => $page_links_to_start,
-      'page_links_to_end' => $page_links_to_end,
-      'current_page' => $page_no,
-      'from_location' => $from_location,
-      'to_location' => $to_location,
-      'from_loc_name' => $from_loc_name,
-      'to_loc_name' => $to_loc_name,
-      'categories' => ['' => 'All Categories'] + $categories_a,
-      'search_params' => $search_params,
-    );
-
-    $submitted_data = $form_errors = $search_params = $items = [];
-    $total_pages = $total_records = $record_count = $page_no = 0 ;
-    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
-
-    $page_no = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
-    $per_page = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 50;
-
-      $product_name = !is_null($request->get('productName')) ? $request->get('productName') : '';
-      $category = !is_null($request->get('category')) ? $request->get('category') : '';
-
-
-      */

@@ -166,7 +166,7 @@
                     </td>
                     <td style="vertical-align:middle;" align="center">
                         <input 
-                          class="form-control saleItemQty"
+                          class="form-control saleItemQty noEnterKey"
                           name="itemDetails[itemSoldQty][]"
                           id="qty_<?php echo $i-1 ?>"
                           index="<?php echo $i-1 ?>"

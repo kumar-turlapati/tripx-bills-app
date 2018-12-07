@@ -82,7 +82,9 @@
                       $status = 'Inactive';
                     } elseif((int)$mfg_details['status'] === 1) {
                       $status = 'Active';
-                    }     
+                    }
+                    $location_id = $mfg_details['locationID'];
+                    $location_code = isset($location_codes[$location_id]) ? $location_codes[$location_id] : '';
                 ?>
                   <tr class="text-right font14">
                     <td class="text-right valign-middle"><?php echo $cntr ?></td>
@@ -91,7 +93,7 @@
                     <td class="valign-middle">
                       <div class="btn-actions-group text-left" style="padding-left:10px;">
                         <?php if($mfg_code !== ''): ?>
-                          <a class="btn btn-primary" href="/mfg/update/<?php echo $mfg_code ?>" title="Edit this record">
+                          <a class="btn btn-primary" href="/mfg/update/<?php echo $mfg_code ?>?lc=<?php echo $location_code ?>" title="Edit this record">
                             <i class="fa fa-pencil"></i>
                           </a>
                         <?php endif; ?>

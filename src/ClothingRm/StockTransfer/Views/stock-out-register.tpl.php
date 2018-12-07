@@ -166,11 +166,12 @@
                   <td align="right" class="valign-middle"><?php echo number_format($transfer_qty, 2) ?></td>                
                   <td class="valign-middle">
                   <?php if($voucher_no>0): ?>
-                    <div class="btn-actions-group" align="right">                    
+                    <div class="btn-actions-group" align="right">
+                      <?php /*                  
                       <a class="btn btn-primary" href="#" title="Print this voucher">
                         <i class="fa fa-print"></i>
-                      </a>&nbsp;&nbsp;
-                      <a class="btn btn-primary" href="#" title="View this voucher">
+                      </a>&nbsp;&nbsp; */ ?>
+                      <a class="btn btn-primary" href="/stock-transfer/out/<?php echo $transfer_code ?>" title="View this voucher">
                         <i class="fa fa-eye"></i>
                       </a>
                     </div>

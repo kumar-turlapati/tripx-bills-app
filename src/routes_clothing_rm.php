@@ -561,6 +561,10 @@ $routes->add('force_logout', new Routing\Route('/force-logout', array(
 $routes->add('stock_out_transfer', new Routing\Route('/stock-transfer/out', array(
   '_controller' => 'ClothingRm\\StockTransfer\\Controller\\StockOutController::stockOutCreateAction',
 )));
+$routes->add('stock_out_transfer_view', new Routing\Route('/stock-transfer/out/{transferCode}', array(
+  '_controller' => 'ClothingRm\\StockTransfer\\Controller\\StockOutController::stockOutViewAction',
+  'transferCode' => null,
+)));
 $routes->add('stock_out_transfer_list', new Routing\Route('/stock-transfer/register/{pageNo}', array(
   '_controller' => 'ClothingRm\\StockTransfer\\Controller\\StockOutController::stockOutTransactionsList',
   'pageNo' => null,

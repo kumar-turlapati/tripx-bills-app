@@ -25,8 +25,9 @@ class MfgController
 
     $submitted_data = $form_errors = [];
     $status_options = array(''=>'Select','1'=>'Active','0'=>'Inactive');
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
 
-    # ---------- get location codes from api -----------------
+    // ---------- get location codes from api -----------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
@@ -60,7 +61,7 @@ class MfgController
       'form_errors' => $form_errors,
       'flash_obj' => $this->flash,
       'client_locations' => array(''=>'Choose') + $client_locations,
-      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'default_location' => $default_location,
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
     );
@@ -79,7 +80,15 @@ class MfgController
     $submitted_data = $form_errors = array();
     $status_options = array(''=>'Select','1'=>'Active','0'=>'Inactive');
 
-    # ---------- get location codes from api -----------------
+    if( is_null($request->get('mfgCode')) || is_null($request->get('lc'))) {
+      $this->flash->set_flash_message('Invalid Operation.');
+      Utilities::redirect('/mfgs/list');
+    } else {
+      $mfg_code = Utilities::clean_string($request->get('mfgCode'));
+      $mfg_location = Utilities::clean_string($request->get('lc'));
+    }
+
+    // ---------- get location codes from api -----------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
@@ -87,8 +96,7 @@ class MfgController
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
     }    
 
-    $mfg_code = $request->get('mfgCode');
-    $mfg_details = $this->mfg_model->get_mfg_details($mfg_code);
+    $mfg_details = $this->mfg_model->get_mfg_details($mfg_code, $mfg_location);
     if($mfg_details === false) {
       $this->flash->set_flash_message('Invalid brand / mfg. code', 1);
       Utilities::redirect('/mfgs/list');
@@ -114,7 +122,7 @@ class MfgController
       }
     }
 
-    # prepare form variables.
+    // prepare form variables.
     $template_vars = array(
       'status_options' => $status_options,
       'submitted_data' => $submitted_data,
@@ -126,7 +134,7 @@ class MfgController
       'location_codes' => $location_codes,      
     );
 
-    # build variables
+    // build variables
     $controller_vars = array(
       'page_title' => 'Product Brands / Manufacturers',
       'icon_name' => 'fa fa-thumbs-o-up',

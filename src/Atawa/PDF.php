@@ -61,7 +61,7 @@ class PDF extends FPDF {
 
       // footer text
       $footer_text = 'Page '.$this->PageNo().'/{nb}';
-      $promo_text = 'Powered by QwikBills.com, Version 1.6, Build 2.5.6';
+      $promo_text = 'Powered by QwikBills.com - Cloud based Billing & Inventory Solution.';
 
       // Page number
       $this->Cell(0,4,$footer_text,'T',2,'C');
