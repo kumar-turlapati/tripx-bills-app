@@ -1262,7 +1262,7 @@ function initializeJS() {
   if( $('#offerEntryForm').length>0 ) {
     $('#offerCancel').on('click', function(e){
       if(confirm("Are you sure. You want to close this page?") == true) {
-        window.location.href = '/promo-offers/entry';
+        window.location.href = '/promo-offers/list';
       } else {
         return false;
       }

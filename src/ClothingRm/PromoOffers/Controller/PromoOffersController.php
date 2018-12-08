@@ -30,10 +30,18 @@ class PromoOffersController
     # Initialize variables
 
     $offer_types_a = $form_errors = $form_data = [];
+    $location_ids = $location_codes = [];
     $api_error = '';
 
     $offer_types_a = Constants::$PROMO_OFFER_CATEGORIES;
     $status_a = [1=>'Active', 0 => 'Inactive'];
+
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
 
     # end of initializing variables
     #-------------------------------------------------------------------------------
@@ -71,7 +79,11 @@ class PromoOffersController
       'form_errors' => $form_errors,
       'form_data' => $form_data,
       'api_error' => $api_error,
-      'status_a' => $status_a
+      'status_a' => $status_a,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     return array($this->template->render_view('promo-offer-entry',$template_vars),$controller_vars);
@@ -83,10 +95,18 @@ class PromoOffersController
     # Initialize variables
 
     $offer_types_a = $form_errors = $form_data = $offer_details = [];
+    $location_ids = $location_codes = [];
     $api_error = '';
 
     $offer_types_a = Constants::$PROMO_OFFER_CATEGORIES;
     $status_a = [1=>'Active', 0 => 'Inactive'];
+
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
 
     # end of initializing variables
     #-------------------------------------------------------------------------------
@@ -98,14 +118,16 @@ class PromoOffersController
                     Utilities::clean_string($submitted_data['pO']) :
                     '';
 
+      $location_code = !is_null($request->get('lc')) ? Utilities::clean_string($request->get('lc')) : '';
+
       # check submitted offer code. there is a chance of malformed codes.
       # if not matched redirects to offers list page.
-      $this->_validate_promo_offer_code($submitted_data['pO']);
+      $this->_validate_promo_offer_code($submitted_data['pO'], $location_code);
       $validation_status = $this->_validate_form_data($submitted_data,false);
       if($validation_status['status']) {
         $cleaned_params = $validation_status['cleaned_params'];
         # hit api
-        $api_response = $this->offers_model->updatePromoOffer($cleaned_params, $offer_code);
+        $api_response = $this->offers_model->updatePromoOffer($cleaned_params, $offer_code, $location_code);
         if($api_response['status']) {
           $message = 'Promotional Offer updated successfully for offer code ` '.$offer_code.' `';
           $this->flash->set_flash_message($message);
@@ -120,9 +142,10 @@ class PromoOffersController
         $form_data = $submitted_data;
       }
 
-    } elseif( !is_null($request->get('offerCode')) ) {
+    } elseif( !is_null($request->get('offerCode')) && !is_null($request->get('lc')) ) {
       $offer_code = Utilities::clean_string($request->get('offerCode'));
-      $form_data = $this->_map_api_variables_with_form($this->_validate_promo_offer_code($offer_code));
+      $location_code = Utilities::clean_string($request->get('lc'));
+      $form_data = $this->_map_api_variables_with_form($this->_validate_promo_offer_code($offer_code, $location_code), $location_codes);
     } else {
       $this->flash->set_flash_message('Invalid promo code.', 1);
       Utilities::redirect('/promo-offers/list');
@@ -140,6 +163,10 @@ class PromoOffersController
       'api_error' => $api_error,
       'status_a' => $status_a,
       'offerCode' => $offer_code,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     return array($this->template->render_view('promo-offer-update',$template_vars),$controller_vars);
@@ -154,11 +181,21 @@ class PromoOffersController
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $offer_types_a = array(''=>'Choose') + Constants::$PROMO_OFFER_CATEGORIES_DIGITS;
 
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
     // parse request parameters.
-    $start_date = $request->get('startDate')!== null ? Utilities::clean_string($request->get('startDate')) : '';
-    $end_date = $request->get('endDate')!== null ? Utilities::clean_string($request->get('endDate')) : '';
-    $offer_type = $request->get('offerType') !== null?Utilities::clean_string($request->get('offerType')) : '';
+    $start_date = $request->get('startDate')!== null ? Utilities::clean_string($request->get('startDate')) : date("01-m-Y");
+    $end_date = $request->get('endDate')!== null ? Utilities::clean_string($request->get('endDate')) : date("d-m-Y");
+    $offer_type = $request->get('offerType') !== null ? Utilities::clean_string($request->get('offerType')) : '';
     $page_no = $request->get('pageNo')!==null ? Utilities::clean_string($request->get('pageNo')) : 1;
+    $location_code = $request->get('locationCode')!==null ? Utilities::clean_string($request->get('locationCode')) : $default_location;
     $per_page = 100;
 
     $search_params = array(
@@ -167,7 +204,11 @@ class PromoOffersController
       'offerType' => $offer_type,
       'pageNo' => $page_no,
       'perPage' => $per_page,
+      'locationCode' => $location_code,
     );
+
+    // dump($search_params);
+    // exit;
 
     # hit api for offers data.
     $api_response =  $this->offers_model->getAllPromoOffers($search_params);
@@ -216,6 +257,9 @@ class PromoOffersController
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
       'search_params' => $search_params,
+      'location_codes' => $location_codes,
+      'client_locations' => $client_locations,
+      'default_location' => $default_location,
     );
 
     // build variables
@@ -228,9 +272,9 @@ class PromoOffersController
     return array($this->template->render_view('promo-offers-list',$template_vars),$controller_vars);
   }
 
-  private function _validate_promo_offer_code($offer_code='') {
+  private function _validate_promo_offer_code($offer_code='', $location_code='') {
     if($offer_code !== null || $offer_code !== '') {
-      $offer_details = $this->offers_model->getPromoOfferDetails($offer_code);
+      $offer_details = $this->offers_model->getPromoOfferDetails($offer_code, $location_code);
       $status = $offer_details['status'];
       if($status) {
         return $offer_details['offerDetails'];
@@ -241,7 +285,7 @@ class PromoOffersController
     Utilities::redirect('/promo-offers/list');
   }
   
-  private function _map_api_variables_with_form($offer_details = []) {
+  private function _map_api_variables_with_form($offer_details = [], $location_codes=[]) {
     $mapped_data = [];
     foreach($offer_details as $key => $value) {
       if($key === 'promoType') {
@@ -259,7 +303,12 @@ class PromoOffersController
         $mapped_data['totalProducts'] = $value;
       } elseif($key === 'freeQty') {
         $mapped_data['freeProducts'] = $value;
-      } elseif($key === '') {
+/*      } elseif($key === 'locationID') {
+        if(isset($location_codes[$value])) {
+          $mapped_data['locationCode'] = $location_codes[$value];
+        } else {
+          $mapped_data['locationCode'] = '';
+        }*/
       } else {
         $mapped_data[$key] = $value;
       }
@@ -270,14 +319,14 @@ class PromoOffersController
   private function _validate_form_data($form_data=[]) {
 
     $form_errors = $cleaned_params = [];
-    $is_one_item_found = false;
-
+    
     $offer_code = Utilities::clean_string($form_data['offerCode']);
     $offer_type = Utilities::clean_string($form_data['offerType']);
     $offer_desc = Utilities::clean_string($form_data['offerDesc']);
     $start_date = Utilities::clean_string($form_data['startDate']);
     $end_date = Utilities::clean_string($form_data['endDate']);
     $status = Utilities::clean_string($form_data['status']);
+    $location_code = Utilities::clean_string($form_data['locationCode']);
 
     $product_name = Utilities::clean_string($form_data['productName']);
     $discount_on_product = Utilities::clean_string($form_data['discountOnProduct']);
@@ -286,6 +335,8 @@ class PromoOffersController
     $bill_value = Utilities::clean_string($form_data['billValue']);
     $discount_on_bill_value = Utilities::clean_string($form_data['discountOnBillValue']);
 
+    // dump($form_data);
+
     # validate offer name
     if($offer_code === '') {
       $form_errors['offerCode'] = 'Promo code is required.';
@@ -293,6 +344,13 @@ class PromoOffersController
       $cleaned_params['offerCode'] = $offer_code;
     } else {
       $form_errors['offerCode'] = 'Must be below 10 chars. with alphabets and digits.';      
+    }
+
+    # validate location code
+    if($location_code === '') {
+      $form_errors['locationCode'] = 'Invalid store name.';      
+    } else {
+      $cleaned_params['locationCode'] = $location_code;
     }
 
     # validate offer type

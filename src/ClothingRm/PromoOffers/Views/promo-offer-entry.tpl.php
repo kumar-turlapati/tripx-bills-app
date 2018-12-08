@@ -1,10 +1,16 @@
 <?php
   use Atawa\Utilities;
+
   if(isset($form_data['offerCode'])) {
     $offer_code = $form_data['offerCode'];
   } else {
     $offer_code = '';
   }
+  if(isset($form_data['locationCode'])) {
+    $location_code = $form_data['locationCode'];
+  } else {
+    $location_code = '';
+  }  
   if(isset($form_data['offerType'])) {
     $offer_type = $form_data['offerType'];
   } else {
@@ -74,28 +80,19 @@
     $acontainer_class = $bcontainer_class = $ccontainer_class = 'style="display:none;"';
   }
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12"> 
-    
-    <!-- Panel starts -->
     <section class="panel">
       <h2 class="hdg-reports text-center">Create Offer</h2>
       <div class="panel-body">
-
         <?php echo Utilities::print_flash_message() ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/promo-offers/list" class="btn btn-default">
-              <i class="fa fa-book"></i> Offers List
+              <i class="fa fa-book"></i> Promo Offers List
             </a>
           </div>
         </div>
-        <!-- Right links ends --> 
-        
-        <!-- Form starts -->
         <form 
           class="form-validate form-horizontal"
           method="POST"
@@ -156,7 +153,7 @@
             </div>           
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Start date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -170,7 +167,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">End date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -184,7 +181,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="status" id="status">
@@ -206,6 +203,29 @@
                 <span class="error"><?php echo $form_errors['status'] ?></span>
               <?php endif; ?>              
             </div>            
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Store name</label>
+                <div class="select-wrap">
+                  <select class="form-control" name="locationCode" id="locationCode">
+                    <?php 
+                      foreach($client_locations as $key=>$value): 
+                        $location_key_a = explode('`', $key);
+                        if($location_code === $location_key_a[0]) {
+                          $selected = 'selected="selected"';
+                        } else {
+                          $selected = '';
+                        }
+                    ?>
+                      <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <?php if(isset($form_errors['locationCode'])): ?>
+                  <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+                <?php endif; ?>
+            </div>
           </div>
           <div class="form-group" id="aContainer" <?php echo $acontainer_class ?>>
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
@@ -302,10 +322,7 @@
             </button>
           </div>
         </form>
-        <!-- Form ends -->
       </div>
     </section>
-    <!-- Panel ends --> 
   </div>
 </div>
-<!-- Basic Forms ends -->

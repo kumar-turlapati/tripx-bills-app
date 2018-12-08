@@ -25,6 +25,12 @@
   } else {
     $offerType = '';
   }
+  if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
+    $locationCode = $search_params['locationCode'];
+    $query_params[] = 'locationCode='.$locationCode;
+  } else {
+    $locationCode = $default_location;
+  }  
 
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -32,24 +38,17 @@
 
   $page_url = '/promo-offers/list';
 ?>
-
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12">
-    <!-- Panel starts -->
     <section class="panelBox">
-      <h2 class="hdg-reports text-center">List Offers</h2>
+      <h2 class="hdg-reports text-center">List Promo Offers</h2>
       <div class="panelBody">
-
         <?php echo Utilities::print_flash_message() ?>
-
         <?php if($page_error !== ''): ?>
           <div class="alert alert-danger" role="alert">
             <strong>Error!</strong> <?php echo $page_error ?> 
           </div>
         <?php endif; ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/promo-offers/entry" class="btn btn-default">
@@ -59,10 +58,44 @@
         </div>
   		  <div class="filters-block">
     		  <div id="filters-form">
-            <!-- Form starts -->
             <form class="form-validate form-horizontal" method="POST">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $location_key=>$value):
+                          $location_key_a = explode('`', $location_key);
+                          if($locationCode === $location_key_a[0]) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="offerType" id="offerType">
+                      <?php 
+                        foreach($offer_types as $key=>$value): 
+                          if((int)$offer_type === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }                      
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="startDate" id="startDate" value="<?php echo $startDate ?>" />
@@ -74,27 +107,10 @@
                     <input class="span2" size="16" type="text" readonly name="endDate" id="endDate" value="<?php echo $endDate ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
-                </div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="select-wrap">
-                    <select class="form-control" name="offerType" id="offerType">
-                      <?php 
-                        foreach($offer_types as $key=>$value): 
-                          if($offer_type === $key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }                      
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                      <?php endforeach; ?>
-                    </select>
-                   </div>
-                </div>
+                </div>                
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
             </div>
            </form>        
-          <!-- Form ends -->
 			    </div>
         </div>
         <div class="table-responsive">
@@ -123,6 +139,7 @@
                   $start_date = date('d-M-Y', strtotime($offer_details['startDate']));
                   $end_date = date('d-M-Y', strtotime($offer_details['endDate']));
                   $status = Constants::$RECORD_STATUS[$offer_details['status']];
+                  $location_code = isset($location_codes[$offer_details['locationID']]) ? $location_codes[$offer_details['locationID']] : '';
               ?>
                 <tr class="font12">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
@@ -135,7 +152,7 @@
                   <td>
                   <?php if($offer_code !== ''): ?>
                     <div class="btn-actions-group" align="right">                    
-                      <a class="btn btn-primary" href="/promo-offers/update/<?php echo $offer_code ?>" title="Edit Promotional Offer">
+                      <a class="btn btn-primary" href="/promo-offers/update/<?php echo $offer_code ?>?lc=<?php echo $location_code ?>" title="Edit Promotional Offer">
                         <i class="fa fa-pencil"></i>
                       </a>
                     </div>
@@ -153,6 +170,5 @@
         </div>
       </div>
     </section>
-    <!-- Panel ends -->
   </div>
 </div>
