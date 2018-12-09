@@ -504,7 +504,7 @@ class SalesEntryWoBarcode {
       'flash_obj' => $this->flash,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
-      'sa_executives' => $sa_executives,
+      'sa_executives' => ['Choose'] + $sa_executives,
       'promo_key' => $promo_key,
       'customer_types' => $customer_types,
       'no_of_rows' => count($form_data['itemDetails']['itemName']),
