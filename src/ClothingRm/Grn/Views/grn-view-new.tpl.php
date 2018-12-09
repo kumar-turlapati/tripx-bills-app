@@ -1,7 +1,7 @@
 <?php 
   use Atawa\Utilities;
 
-  $current_date = date("d-m-Y");
+  // $current_date = date("d-m-Y");
 
   // dump($grn_details);
   // exit;
@@ -13,7 +13,7 @@
   $payment_method = $grn_details['paymentMethod'];
   $credit_period = $grn_details['creditDays'];
   $bill_number = $grn_details['billNo'];
-  $grn_date = $grn_details['grnDate'];
+  $grn_date = date("d-m-Y", strtotime($grn_details['grnDate']));
 
   // dump($grn_details);
 
@@ -116,8 +116,8 @@
                   <label class="control-label">GRN date (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <div class="col-lg-12">
-                      <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" disabled name="grnDate" id="grnDate" />
+                      <div class="input-append date" data-date="<?php echo $grn_date ?>" data-date-format="dd-mm-yyyy">
+                        <input class="span2" value="<?php echo $grn_date ?>" size="16" type="text" disabled name="grnDate" id="grnDate" />
                         <span class="add-on"><i class="fa fa-calendar"></i></span>
                       </div>                 
                     </div>
