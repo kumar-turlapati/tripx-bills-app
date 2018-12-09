@@ -1,6 +1,6 @@
 <?php
 
-  // dump($form_data);
+  dump($form_data);
   // dump($errors);
   // dump($offers_raw);
   // exit;
@@ -34,7 +34,6 @@
   $payment_method = isset($form_data['paymentMethod']) ? $form_data['paymentMethod'] : $payment_method = 0;
   $discount_method = isset($form_data['discountMethod']) ? $form_data['discountMethod'] : $discount_method = 0;
   $mobile_no = isset($form_data['mobileNo']) ? $form_data['mobileNo'] : '';
-  $customer_name = isset($form_data['name']) ? $form_data['name'] : '';
   $card_number = isset($form_data['cardNo']) ? $form_data['cardNo'] : ''; 
   $card_auth_code = isset($form_data['authCode']) ? $form_data['authCode'] : '';
   $coupon_code = isset($form_data['couponCode']) ? $form_data['couponCode'] : '';
