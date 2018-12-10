@@ -286,7 +286,7 @@ class SalesReportsController {
       $pdf->SetFont('Arial','B');              
       $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
       $pdf->Cell($item_widths[1],6,'Cash in hand (a)-(e)','RTB',0,'R');
-      $pdf->Cell($item_widths[2],6,number_format($cash_sales-$sales_return,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($cash_in_hand,2,'.',''),'RTB',0,'R');
 
       $pdf->Ln();
       $pdf->Ln();

@@ -1493,7 +1493,8 @@ function monthWiseSales() {
           var amount = (
                           parseInt(returnNumber(saleDetails.cardSales))+
                           parseInt(returnNumber(saleDetails.cashSales))+
-                          parseInt(returnNumber(saleDetails.splitSales))
+                          parseInt(returnNumber(saleDetails.splitSales)) + 
+                          parseInt(returnNumber(saleDetails.creditSales))
                         );
 
           saleDate.push(dateFormat.getDate());
