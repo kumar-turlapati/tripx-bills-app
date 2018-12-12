@@ -17,7 +17,7 @@
         <div class="global-links actionButtons clearfix"> 
           <div class="pull-right text-right">
             <a href="/stock-transfer/register" class="btn btn-default"><i class="fa fa-book"></i> Stock Transfer Register</a>
-            <a href="/sales/entry" class="btn btn-default"><i class="fa fa-file-text-o"></i> New Sales Entry </a> 
+            <a href="/stock-transfer/out" class="btn btn-default"><i class="fa fa-file-text-o"></i> New Stock Transfer</a> 
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="stockOutForm">

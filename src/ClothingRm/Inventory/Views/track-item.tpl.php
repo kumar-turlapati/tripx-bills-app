@@ -134,7 +134,8 @@
                         break;
                       case 'TR':
                         $st_qty = $tran_details['itemQty'];
-
+                        $redirect_url = '/stock-transfer/out/'.$tran_details['autoCode'];
+                        
                         $all_st_qty += $st_qty;
                         $clos_qty += $st_qty;            
                         break;
