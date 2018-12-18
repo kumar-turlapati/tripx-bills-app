@@ -722,7 +722,7 @@
                 $button_class = 'btn btn-primary';
               }
             ?>
-            <button class="<?php echo $button_class ?>" id="SaveInvoice" name="op" value="SaveandPrintBill">
+            <button class="<?php echo $button_class ?> cancelOp" id="SaveInvoice" name="op" value="SaveandPrintBill">
               <i class="<?php echo $button_icon ?>"></i> Save &amp; Print Bill
             </button>
             <button class="btn btn-danger cancelButton" id="seWithBarcode">

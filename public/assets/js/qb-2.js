@@ -410,6 +410,9 @@ function initializeJS() {
   }
 
   $('.cancelButton').on('click', function(e) {
+    e.preventDefault();
+    $(this).attr('disabled', true);
+    $('.cancelOp').attr('disabled', true);
     var buttonId = $(this).attr('id');
     if(buttonId === 'stoCancel') {
       window.location.href = '/stock-transfer/choose-location';
@@ -426,7 +429,6 @@ function initializeJS() {
     } else if(buttonId === 'uploadSuppliers') {
       window.location.href = '/upload-creditors';
     }
-    e.preventDefault();
   });
 
   jQuery('.delPcVoucher').on("click", function(e){
@@ -892,6 +894,13 @@ function initializeJS() {
         $('#siOtherInfoWindow').hide();
         $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');          
       }
+    });
+
+    $('#SaveInvoice').on('click', function(e){
+      e.preventDefault();
+      $(this).attr('disabled', true);
+      $('.cancelButton').attr('disabled', true);
+      $('#outwardEntryForm').submit();
     });
 
     // show Card No and authcode if Payment mode is credit. Show Split Payment inputs as well
