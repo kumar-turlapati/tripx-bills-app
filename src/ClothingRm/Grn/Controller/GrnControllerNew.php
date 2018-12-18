@@ -28,11 +28,12 @@ class GrnControllerNew
   // GRN entry Action
   public function grnEntryCreateAction(Request $request) {
     
-    if( is_null($request->get('poNo')) ) {
+    if(is_null($request->get('poNo')) ) {
       $this->flash->set_flash_message('PO Number is required to generate a GRN.', 1);
       Utilities::redirect('/grn/list');
     } else {
       $po_no = Utilities::clean_string($request->get('poNo'));
+      $po_code = Utilities::clean_string($request->get('poCode'));
     }
 
     # initialize variables.
@@ -50,6 +51,7 @@ class GrnControllerNew
       if($validation_status['status']===true) {
         $cleaned_params = $validation_status['cleaned_params'];
         $cleaned_params['poNo'] = $po_no;
+        $cleaned_params['poCode'] = $po_code;
         # hit api
         $api_response = $this->grn_model->createGRN($cleaned_params);
         if($api_response['status']===true) {
@@ -67,9 +69,9 @@ class GrnControllerNew
     }
 
     # get PO Details based on PO Number;
-    $purchase_response = $this->inward_model->get_purchase_details($po_no,true);
+    $purchase_response = $this->inward_model->get_purchase_details($po_code);
 
-    if($purchase_response['status']===true) {
+    if($purchase_response['status']) {
 
       $purchase_details = $purchase_response['purchaseDetails'];
       # check GRN is already generated for this PO.

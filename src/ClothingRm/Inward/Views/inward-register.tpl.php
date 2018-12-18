@@ -142,7 +142,7 @@
                         </a> */ ?>
                         <?php if($grn_info === false): ?>
                           <?php if((int)$purchase_details['status'] === 1) : ?>                      
-                            <a class="btn btn-warning" href="/grn/create?poNo=<?php echo $purchase_details['poNo'] ?>" title="Create GRN for this PO">
+                            <a class="btn btn-warning" href="/grn/create?poNo=<?php echo $purchase_details['poNo'] ?>&poCode=<?php echo $purchase_code ?>" title="Create GRN for this PO">
                               <i class="fa fa-list-ol"></i>
                             </a>
                           <?php endif; ?>

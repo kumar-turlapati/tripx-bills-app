@@ -482,7 +482,7 @@ class SalesEntryWoBarcode {
 
     # --------------- build variables -----------------
     $controller_vars = array(
-      'page_title' => 'View Invoice',
+      'page_title' => 'View Invoice :: Bill No - '.$form_data['billNo'],
       'icon_name' => 'fa fa-inr',
     );
     
