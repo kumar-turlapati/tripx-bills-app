@@ -39,6 +39,7 @@
                   style="font-weight:bold;font-size:14px;border:1px dotted;padding:5px;"
                   class="form-control inameAc noEnterKey"
                 />
+                <input type="hidden" name="locationCode" id="locationCode" value="327eb4e7a3b4916ea1e112636c8b567a0bf2b223f53e2fadbd931dcccb1d8ff9" />
               </div>
               <div class="col-sm-12 col-md-12 col-lg-12" align="right">
                 <button class="btn btn-warning btn-sm" id="mobileIndentItem">Check Availability</button>

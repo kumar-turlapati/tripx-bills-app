@@ -266,7 +266,7 @@ class ReceiptsController
 
     $tran_date = Utilities::clean_string($form_data['tranDate']);
     $party_name = Utilities::clean_string($form_data['partyName']);
-    $bill_no = Utilities::clean_string($form_data['billNo']);
+    $bill_no = isset($form_data['billNo']) ? Utilities::clean_string($form_data['billNo']) : '';
     $payment_method = Utilities::clean_string($form_data['paymentMode']);
     $amount = Utilities::clean_string($form_data['amount']);
     $narration = Utilities::clean_string($form_data['narration']);

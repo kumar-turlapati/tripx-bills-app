@@ -123,7 +123,7 @@ class SalesReturnsController {
         $flash->set_flash_message('Sales Return Transaction updated successfully');
         Utilities::redirect('/sales-return/update/'.$sales_code.'/'.$return_code);
       } else {
-        $success = 'Sales Return transaction saved successfully with MRN No. <b>`'.$sales_ret_response['mrnNo'].'`. Credit note raised with serial number `'.$sales_ret_response['cnNo'].'`';
+        $success = 'Sales Return transaction saved successfully with MRN No. <b>`'.$sales_ret_response['mrnNo'].'`</b>. Credit note raised with serial number `'.$sales_ret_response['cnNo'].'`';
         $flash->set_flash_message($success);
         Utilities::redirect('/sales-return/list');                
       }
