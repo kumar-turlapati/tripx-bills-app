@@ -49,6 +49,7 @@
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
 
   $form_submit_url = '/sales/entry';
+  // dump($promo_key);
 ?>
 
 <div class="row">
@@ -66,6 +67,72 @@
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="outwardEntryForm" action="<?php echo $form_submit_url ?>">
+          <div class="panel" style="margin-bottom:0px;padding-top:10px;padding-bottom:10px;">
+            <div class="panel-body" style="border: 2px dotted;">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Date of sale (dd-mm-yyyy)</label>
+                  <div class="form-group">
+                    <div class="col-lg-12">
+                      <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
+                        <span class="add-on"><i class="fa fa-calendar"></i></span>
+                      </div>
+                      <?php if(isset($errors['saleDate'])): ?>
+                        <span class="error"><?php echo $errors['saleDate'] ?></span>
+                      <?php endif; ?>                  
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Store name</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $key=>$value): 
+                          if($location_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($form_errors['locationCode'])): ?>
+                    <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sales executive name</label>
+                  <div class="select-wrap">                        
+                    <select 
+                      class="form-control"
+                      id="saExecutive" 
+                      name="saExecutive"
+                      style="font-size:12px;"
+                    >
+                      <?php
+                        foreach($sa_executives as $key=>$value):
+                          if($key === $executive_id) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>                            
+                    </select>
+                  </div>
+                </div>                
+              </div>
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-striped table-hover font12">
               <thead>
@@ -105,9 +172,7 @@
                       $item_discount = 0;
                       $tax_percent = 0;      
                     }
-
                     if($item_qty > 0 && $item_rate > 0) {
-
                       $item_amount = $item_qty * $item_rate;
                       $taxable_amount = $item_amount - $item_discount;
                       $tax_amount = round(($taxable_amount*$tax_percent)/100, 2);
@@ -117,11 +182,16 @@
                       $tot_tax_amount += $tax_amount;
                       $tot_bill_qty += $item_qty;
                       $tot_discount += $item_discount;
-
                     } else {
                       $item_amount = '';
                       $taxable_amount = '';
                       $tax_amount = '';
+                    }
+
+                    if($promo_key !== '') {
+                      $qty_style = ' readonly = "readonly"';
+                    } else {
+                      $qty_style = '';
                     }
                 ?>
                   <tr>
@@ -171,6 +241,7 @@
                           id="qty_<?php echo $i-1 ?>"
                           index="<?php echo $i-1 ?>"
                           value="<?php echo $item_qty ?>"
+                          <?php echo $qty_style ?>
                         />
                     </td>
                     <td style="vertical-align:middle;" align="center">
@@ -541,68 +612,6 @@
           </div>
           <div class="panel" style="margin-bottom:10px;">
             <div class="panel-body" style="border: 2px dotted;">
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Date of sale (dd-mm-yyyy)</label>
-                  <div class="form-group">
-                    <div class="col-lg-12">
-                      <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
-                        <span class="add-on"><i class="fa fa-calendar"></i></span>
-                      </div>
-                      <?php if(isset($errors['saleDate'])): ?>
-                        <span class="error"><?php echo $errors['saleDate'] ?></span>
-                      <?php endif; ?>                  
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Store name</label>
-                  <div class="select-wrap">
-                    <select class="form-control" name="locationCode" id="locationCode">
-                      <?php 
-                        foreach($client_locations as $key=>$value): 
-                          if($location_code === $key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                  </div>
-                  <?php if(isset($form_errors['locationCode'])): ?>
-                    <span class="error"><?php echo $form_errors['locationCode'] ?></span>
-                  <?php endif; ?>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Sales executive name</label>
-                  <div class="select-wrap">                        
-                    <select 
-                      class="form-control"
-                      id="saExecutive" 
-                      name="saExecutive"
-                      style="font-size:12px;"
-                    >
-                      <?php
-                        foreach($sa_executives as $key=>$value):
-                          if($key === $executive_id) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>                            
-                    </select>
-                  </div>
-                </div>                
-              </div>
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Customer mobile number</label>

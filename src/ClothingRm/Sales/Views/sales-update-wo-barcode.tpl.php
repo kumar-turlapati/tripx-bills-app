@@ -99,6 +99,72 @@
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="outwardEntryForm" action="<?php echo $form_submit_url ?>">
+          <div class="panel" style="margin-bottom:0px;padding-top:10px;padding-bottom:10px;">
+            <div class="panel-body" style="border: 2px dotted;">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Date of sale (dd-mm-yyyy)</label>
+                  <div class="form-group">
+                    <div class="col-lg-12">
+                      <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
+                        <span class="add-on"><i class="fa fa-calendar"></i></span>
+                      </div>
+                      <?php if(isset($errors['saleDate'])): ?>
+                        <span class="error"><?php echo $errors['saleDate'] ?></span>
+                      <?php endif; ?>                  
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Store name</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $key=>$value): 
+                          if($location_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($form_errors['locationCode'])): ?>
+                    <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sales executive name</label>
+                  <div class="select-wrap">                        
+                    <select 
+                      class="form-control"
+                      id="saExecutive" 
+                      name="saExecutive"
+                      style="font-size:12px;"
+                    >
+                      <?php
+                        foreach($sa_executives as $key=>$value):
+                          if($key === $executive_id) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>                            
+                    </select>
+                  </div>
+                </div>                
+              </div>
+            </div>
+          </div>          
           <div class="table-responsive">
             <table class="table table-striped table-hover font12">
               <thead>
@@ -574,68 +640,6 @@
           </div>
           <div class="panel" style="margin-bottom:10px;">
             <div class="panel-body" style="border: 2px dotted;">
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Date of sale (dd-mm-yyyy)</label>
-                  <div class="form-group">
-                    <div class="col-lg-12">
-                      <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
-                        <span class="add-on"><i class="fa fa-calendar"></i></span>
-                      </div>
-                      <?php if(isset($errors['saleDate'])): ?>
-                        <span class="error"><?php echo $errors['saleDate'] ?></span>
-                      <?php endif; ?>                  
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Store name</label>
-                  <div class="select-wrap">
-                    <select class="form-control" name="locationCode" id="locationCode">
-                      <?php 
-                        foreach($client_locations as $key=>$value): 
-                          if($location_code === $key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                  </div>
-                  <?php if(isset($form_errors['locationCode'])): ?>
-                    <span class="error"><?php echo $form_errors['locationCode'] ?></span>
-                  <?php endif; ?>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Sales executive name</label>
-                  <div class="select-wrap">                        
-                    <select 
-                      class="form-control"
-                      id="saExecutive" 
-                      name="saExecutive"
-                      style="font-size:12px;"
-                    >
-                      <?php
-                        foreach($sa_executives as $key=>$value):
-                          if($key === $executive_id) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>                            
-                    </select>
-                  </div>
-                </div>                
-              </div>
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Customer mobile number</label>
