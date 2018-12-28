@@ -14,6 +14,13 @@
   } else {
     $location_code = '';
   }
+  if(isset($form_data['saExecutive'])) {
+    $executive_id = $form_data['saExecutive'];
+  } elseif(isset($form_data['saExecutiveId'])) {
+    $executive_id = $form_data['saExecutiveId'];
+  } else {
+    $executive_id = '';
+  }
 
   $current_date = isset($form_data['invoiceDate']) && $form_data['invoiceDate']!=='' ? date("d-m-Y", strtotime($form_data['invoiceDate'])) : date("d-m-Y");
   $payment_method = isset($form_data['paymentMethod']) ? $form_data['paymentMethod'] : $payment_method = 0;
@@ -26,7 +33,6 @@
   $tax_calc_option = isset($form_data['taxCalcOption']) ? $form_data['taxCalcOption'] : 'i';
   $split_payment_cash = isset($form_data['splitPaymentCash']) ? $form_data['splitPaymentCash'] : '';
   $split_payment_card = isset($form_data['splitPaymentCard']) ? $form_data['splitPaymentCard'] : '';
-  $executive_id = isset($form_data['saExecutive']) ? $form_data['saExecutive'] : '';
   $cn_no = isset($form_data['cnNo']) ? $form_data['cnNo'] : '';
   $split_payment_cn = isset($form_data['splitPaymentCn']) ? $form_data['splitPaymentCn'] : '';
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';

@@ -30,6 +30,13 @@
   } else {
     $customer_name = '';
   }
+  if(isset($form_data['saExecutive'])) {
+    $executive_id = $form_data['saExecutive'];
+  } elseif(isset($form_data['saExecutiveId'])) {
+    $executive_id = $form_data['saExecutiveId'];
+  } else {
+    $executive_id = '';
+  }  
 
   $payment_method = isset($form_data['paymentMethod']) ? $form_data['paymentMethod'] : $payment_method = 0;
   $discount_method = isset($form_data['discountMethod']) ? $form_data['discountMethod'] : $discount_method = 0;
@@ -38,7 +45,6 @@
   $card_auth_code = isset($form_data['authCode']) ? $form_data['authCode'] : '';
   $coupon_code = isset($form_data['couponCode']) ? $form_data['couponCode'] : '';
   $tax_calc_option = isset($form_data['taxCalcOption']) ? $form_data['taxCalcOption'] : 'i';
-  $executive_id = isset($form_data['saExecutive']) ? $form_data['saExecutive'] : '';
   $cn_no = isset($form_data['cnNo']) ? $form_data['cnNo'] : '';
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
   $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';

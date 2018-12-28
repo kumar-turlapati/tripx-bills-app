@@ -326,50 +326,50 @@ class InventoryController {
   public function trackItem(Request $request) {
     $page_error = $page_success = $item_name = '';
     $errors = $form_data = $form_errors = $item_details = [];
-    $track_a = [];
+    $track_a = $cleaned_params = [];
 
     $total_pages = $total_records = $record_count = $page_no = $per_page = 0 ;
-    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;    
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
-    $client_locations = Utilities::get_client_locations();    
+    $per_page = 100;
+    $page_no = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
+    $item_name = !is_null($request->get('itemName')) ? Utilities::clean_string($request->get('itemName')) : '';
+    $location_code = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
 
-    if(count($request->request->all())>0) {
-      $form_data = $request->request->all();
-      $validation = $this->_validate_data_item_track($form_data);
-      if($validation['status']) {
-        $cleaned_params = $validation['cleaned_params'];
-        $item_name = $cleaned_params['itemName'];
-        
-        // hit api
-        $api_response = $this->inven_api->track_item($cleaned_params);
-        if($api_response['status']) {
-          $slno = Utilities::get_slno_start(count($api_response['response']['results']),$per_page,$page_no);
-          $to_sl_no = $slno+$per_page;
-          $slno++;
-          if($page_no<=3) {
-            $page_links_to_start = 1;
-            $page_links_to_end = 10;
-          } else {
-            $page_links_to_start = $page_no-3;
-            $page_links_to_end = $page_links_to_start+10;        
-          }
-          if($api_response['response']['total_pages']<$page_links_to_end) {
-            $page_links_to_end = $api_response['response']['total_pages'];
-          }
-          if($api_response['response']['this_page'] < $per_page) {
-            $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
-          }
-          $track_a = $api_response['response']['results'];
-          $total_pages = $api_response['response']['total_pages'];
-          $total_records = $api_response['response']['total_records'];
-          $record_count = $api_response['response']['this_page'];          
+    $client_locations = Utilities::get_client_locations();
+
+    if($item_name !== '' && $location_code !== '') {
+      $cleaned_params['pageNo'] = $page_no;
+      $cleaned_params['perPage'] = $per_page;
+      $cleaned_params['locationCode'] = $location_code;
+      $cleaned_params['itemName'] = $item_name;
+
+      // hit api
+      $api_response = $this->inven_api->track_item($cleaned_params);
+      if($api_response['status']) {
+        $slno = Utilities::get_slno_start(count($api_response['response']['results']),$per_page,$page_no);
+        $to_sl_no = $slno + $per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
         } else {
-          $page_error = $api_response['apierror'];
-          Utilities::set_flash_message($page_error, 1);
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;        
         }
+        if($api_response['response']['total_pages']<$page_links_to_end) {
+          $page_links_to_end = $api_response['response']['total_pages'];
+        }
+        if($api_response['response']['this_page'] < $per_page) {
+          $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
+        }
+        $track_a = $api_response['response']['results'];
+        $total_pages = $api_response['response']['total_pages'];
+        $total_records = $api_response['response']['total_records'];
+        $record_count = $api_response['response']['this_page'];          
       } else {
-        $form_errors = $validation['errors'];
-        Utilities::set_flash_message('You have errors in the form', 1);
+        $page_error = $api_response['apierror'];
+        Utilities::set_flash_message($page_error, 1);
       }
     }
 
@@ -381,10 +381,18 @@ class InventoryController {
 
     $template_vars = array(
       'track_a' => $track_a,
-      'form_data' => $form_data,
+      'form_data' => $cleaned_params,
       'form_errors' => $form_errors,
       'client_locations' => array(''=>'Choose Store') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'total_pages' => $total_pages,
+      'total_records' => $total_records,
+      'record_count' =>  $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
     );    
 
     // render template

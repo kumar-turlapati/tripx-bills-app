@@ -9,7 +9,7 @@ if($page_links_to_end>1 && $total_records>0):
 ?>
   <ul class="pagination">
       <div class="display-count">
-        Displaying <?php echo ($sl_no>0?$sl_no:0).' - '.$to_sl_no.' of '.$total_records ?>
+        Displaying <?php echo ($sl_no > 0 ? $sl_no : 0).' - '.$to_sl_no.' of '.$total_records ?>
       </div>
       <?php
         for($i=$page_links_to_start;$i<=$page_links_to_end;$i++):

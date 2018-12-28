@@ -73,7 +73,11 @@ class ApiCaller
 		if (self::$instance->error) {
 			if((int)self::$instance->errorCode===500) {
 				$response = json_decode(self::$instance->response, true);
-				return array('status'=>'failed', 'reason'=>$response['errorcode'].'#'.$response['errortext']);
+				if(isset($response['errorcode']) && $response['errortext']) {
+					return array('status'=>'failed', 'reason' => $response['errorcode'].'#'.$response['errortext']);
+				} else {
+					return ['status'=>'failed', 'reason' => '#Unknown error.'];
+				}
 			} else {
 				return array(
 					'status'=>'failed', 
