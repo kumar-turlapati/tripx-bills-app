@@ -38,6 +38,23 @@ $routes->add('dashboard', new Routing\Route('/dashboard', array(
   '_controller' => 'User\\Controller\\DashBoardController::indexAction',
 )));
 
+// stock audit controller
+$routes->add('stock_audit_add', new Routing\Route('/stock-audit/create', array(
+  '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::createStockAudit',
+)));
+$routes->add('stock_audit_update', new Routing\Route('/stock-audit/update/{auditCode}', array(
+  '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::updateStockAudit',
+  'auditCode' => null,
+)));
+$routes->add('stock_audit_list', new Routing\Route('/stock-audit/register', array(
+  '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::stockAuditsRegister'
+)));
+$routes->add('stock_audit_items_list', new Routing\Route('/stock-audit/items/{auditCode}/{pageNo}', array(
+  '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::stockAuditItems',
+  'auditCode' => null,
+  'pageNo' => null,
+)));
+
 // fin year routes
 $routes->add('finy_add', new Routing\Route('/finy/create', array(
   '_controller' => 'Settings\\Controller\\FinyController::createFinYear',
@@ -745,6 +762,13 @@ $routes->add('report_inventoryProfitability', new Routing\Route('/inventory-prof
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::inventoryProfitability',
 )));
 
+$routes->add('report_printIndent', new Routing\Route('/print-indent', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndent',
+)));
+$routes->add('report_printIndentWr', new Routing\Route('/print-indent-wor', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentWoRate',
+)));
+
 
 // $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
 //   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
@@ -832,12 +856,6 @@ $routes->add('report_salesReturnRegister', new Routing\Route('/sales-return-regi
 )));
 $routes->add('report_printDaywiseSalesSummary', new Routing\Route('/sales-summary-by-month', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::printSalesSummaryByMonth',
-)));
-$routes->add('report_printIndent', new Routing\Route('/print-indent', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndent',
-)));
-$routes->add('report_printIndentWr', new Routing\Route('/print-indent-wor', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentWoRate',
 )));
 $routes->add('report_printIndentsAgentwise', new Routing\Route('/print-indents-agentwise', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentsAgentwise',
