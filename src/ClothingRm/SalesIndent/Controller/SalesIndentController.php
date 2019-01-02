@@ -284,7 +284,7 @@ class SalesIndentController {
       'last_indent_no' => $last_indent_no,
       'indent_print_option' => $indent_print_option,
       'indent_code' => $indent_code,
-      'indent_number' => $indent_number
+      'indent_number' => $indent_no
     );
 
     return array($this->template->render_view('indent-update', $template_vars),$controller_vars);

@@ -35,7 +35,7 @@
                   size="10"
                   id="itemName"
                   name="itemName"
-                  maxlength="10"
+                  maxlength="30"
                   style="font-weight:bold;font-size:14px;border:1px dotted;padding:5px;"
                   class="form-control inameAc noEnterKey"
                 />

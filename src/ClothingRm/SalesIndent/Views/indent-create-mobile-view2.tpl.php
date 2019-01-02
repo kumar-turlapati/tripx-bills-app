@@ -2,8 +2,8 @@
   if(isset($_SESSION['indentItemsM'])) {
     $total_qty = $total_items  = $total_value = 0;
     foreach($_SESSION['indentItemsM'] as $indent_order_details) {
-      $total_qty += $indent_order_details['orderQty'];
-      $total_value += $total_qty * $indent_order_details['mrp'];
+      $total_qty += round($indent_order_details['orderQty'],2);
+      $total_value += round($indent_order_details['orderQty'] * $indent_order_details['mrp'],2);
       $total_items++;
     }
   } else {
