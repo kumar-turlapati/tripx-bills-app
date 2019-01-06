@@ -102,9 +102,55 @@ function initializeJS() {
         } else {
           $(this).prop('checked', false);          
         }
-      });      
+      });
     });
   }
+
+  if($('#stockAuditItems').length > 0) {
+    $('#itemnames').Tabledit({
+      url: '/async/auditQty?locationCode=' + $('#locationCode').val() + '&aC=' + $('#aC').val(),
+      editButton: false,
+      deleteButton: false,
+      hideIdentifier: false,
+      columns: {
+        identifier: [1,'itemName'],
+        editable: [
+          [5, 'phyQty']
+        ]
+      }
+    });
+    $('.tabledit-input').on('keypress keydown keyup', function (e) {
+       if(e.keyCode == 13) {
+         e.preventDefault();
+       }
+    });
+    $('#saLockSubmit').on('click', function (e) {
+      e.preventDefault();
+      bootbox.confirm("Are you sure. You want to Lock and Submit the Audit?", function(result) {
+        if(result === true) {
+          $('#stockAuditItems').append('<input type="hidden" name="op" value="saLockSubmit" />'); 
+          $(this).attr('disabled', true);
+          $('#stockAuditItems').submit();
+        } else {
+          return;
+        }
+      });      
+    });
+    $('#saPhyQty').on('click', function (e) {
+      e.preventDefault();
+      $('#stockAuditItems').append('<input type="hidden" name="op" value="saPhyQty" />'); 
+      $(this).html('<i class="fa fa-recycle"></i> Processing, Please Wait....');
+      $(this).attr('disabled', true);
+      $('#filterSubmit, #filterReset, #printAuditReport').attr('disabled', true);
+      $('#stockAuditItems').submit();
+    });
+    
+    $('#printAuditReport').on('click', function(e){
+      e.preventDefault();
+      var auditCode = $('#aC').val();
+      window.location.href = '/stock-audit/print/'+auditCode;
+    });
+   }
 
   if( $('#owBarcode').length>0 ) {
     $('#customerType').on('change', function(e){

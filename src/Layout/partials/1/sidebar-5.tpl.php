@@ -6,7 +6,7 @@
   $products_icon = (isset($category_id) && $category_id===1)?'fa fa-medkit':'fa fa-tasks';
 
   $cust_label = (isset($category_id) && $category_id===1)?'Patients':'Customers';
-  $cust_url = (isset($category_id) && $category_id===1)?'/patients/list':'/customers/list';  
+  $cust_url = (isset($category_id) && $category_id===1)?'/patients/list':'/customers/list';
 ?>
 <!--sidebar start-->
 <aside>

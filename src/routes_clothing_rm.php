@@ -46,6 +46,10 @@ $routes->add('stock_audit_update', new Routing\Route('/stock-audit/update/{audit
   '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::updateStockAudit',
   'auditCode' => null,
 )));
+$routes->add('stock_audit_print', new Routing\Route('/stock-audit/print/{auditCode}', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::printStockAuditReport',
+  'auditCode' => null,
+)));
 $routes->add('stock_audit_list', new Routing\Route('/stock-audit/register', array(
   '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::stockAuditsRegister'
 )));

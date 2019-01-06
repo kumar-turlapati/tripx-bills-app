@@ -199,6 +199,20 @@ class AsyncController {
         $this->_set_fin_start_end_dates($response['response']);
       }
       echo 'QwikBills V.1.0';
+    } elseif($api_string === 'auditQty') {
+      $params = [];
+      $params['itemCode'] = Utilities::clean_string($request->get('itemName'));
+      $params['phyQty'] = Utilities::clean_string($request->get('phyQty'));
+      $params['locationCode'] =  Utilities::clean_string($request->get('locationCode'));
+      $params['auditCode'] = Utilities::clean_string($request->get('aC'));
+      $api_url = 'stockaudit/upsert-item';
+      $response = $api_caller->sendRequest('post',$api_url,$params,false);
+      header("Content-type: application/json");
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     }
     exit;
   }

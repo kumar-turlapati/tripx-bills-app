@@ -15,6 +15,7 @@ use ClothingRm\Products\Model\Products;
 use ClothingRm\Openings\Model\Openings;
 use ClothingRm\Inward\Model\Inward;
 use ClothingRm\Grn\Model\GrnNew;
+use ClothingRm\StockAudit\Model\StockAudit;
 
 class InventoryReportsController {
 
@@ -28,6 +29,7 @@ class InventoryReportsController {
     $this->opbal_model = new Openings;
     $this->inward_model = new Inward;
     $this->grn_model = new GrnNew;
+    $this->audit_model = new StockAudit;    
   }
 
   public function stockReport(Request $request) {
@@ -1100,7 +1102,158 @@ class InventoryReportsController {
     $pdf->Cell(98,10,'Remarks: '.$remarks,'RB',0,'L');
 
     $pdf->Output();
-  }  
+  }
+
+  public function printStockAuditReport(Request $request) {
+    $page_no = 1; $per_page = 300;
+    $client_locations = $location_ids = $location_codes = [];
+    $items_a = [];
+
+    $register_url = '/stock-audit/register';
+
+    // get location codes from api
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
+
+    // get audit details
+    $audit_code = $request->get('auditCode');
+    $audit_details = $this->audit_model->get_audit_details($audit_code);
+    if(is_array($audit_details) && count($audit_details)>0) {
+      $audit_location_id = $audit_details['locationID'];
+      $audit_status = (int)$audit_details['status'];
+      // check for filter variables.
+      if(isset($location_codes[$audit_location_id])) {
+        $audit_location_code = $location_codes[$audit_location_id];
+        $audit_location_name = $location_ids[$audit_location_id];
+        $audit_type = $audit_details['auditType'] === 'int' ? 'Internal' : 'External';
+        $start_date = $audit_details['auditStartDate'];
+        $cb_date = $audit_details['cbDate'];
+      } else {
+        $this->flash->set_flash_message('Invalid audit location', 1);
+        Utilities::redirect($register_url);
+      }       
+    } else {
+      $this->flash->set_flash_message('Invalid Audit Location', 1);
+      Utilities::redirect($register_url);
+    }
+    
+    // prepare form data variables.
+    $form_data = [
+      'pageNo' => 1,
+      'perPage' => 300,
+      'locationCode' => $audit_location_code,
+    ];
+
+    // hit api
+    $audit_response = $this->audit_model->get_audit_items($form_data, $audit_code);
+    if($audit_response['status'] === false) {
+      $this->flash->set_flash_message('No data available to Download', 1);
+      Utilities::redirect('/stock-audit/register');
+    } else {
+      $total_records = $audit_response['response']['items'];
+      $total_pages = $audit_response['response']['total_pages'];
+      if($total_pages>1) {
+        for($i=2;$i<=$total_pages;$i++) {
+          $form_data['pageNo'] = $i;
+          $audit_response = $this->audit_model->get_audit_items($form_data, $audit_code);
+          if($audit_response['status']) {
+            $total_records = array_merge($total_records, $audit_response['response']['items']);
+          }
+        }
+      }
+    }
+
+    // dump($total_records);
+    // exit;
+
+    // start printing PDF.
+    $heading1 = $audit_type.' Stock Audit Report - '.$audit_location_name;
+    $heading2 = 'Started on '.date('jS M, Y', strtotime($start_date)).' | CB Date: '.date('jS M, Y', strtotime($cb_date));
+    $heading2 .= ' [ Phy.Qty. compares with Sys.Qty. ]';
+
+    // start PDF printing.
+    $item_widths = array(10,65,28,28,15,15,15,15);
+    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + 
+                  $item_widths[3];
+    $slno = $tot_amount = $tot_qty = $tot_amount_mrp = 0;
+
+    $pdf = PDF::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P','A4');
+    $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+    $this->_add_page_heading_for_audit_report($pdf, $item_widths, $heading1, $heading2);
+    
+    $slno = $row_cntr = 0;
+    $tot_phy_qty = $tot_sys_qty = $tot_diff_qty = 0;
+    foreach($total_records as $item_details) {
+      $slno++;
+
+      $item_name = substr($item_details['itemName'],0,33);
+      $category_name = substr($item_details['categoryName'],0,12);
+      $brand_name = substr($item_details['brandName'],0,12);
+      $phy_qty = $item_details['physicalQty'];
+      $sys_qty = $item_details['systemQty'];
+      $diff_qty = $phy_qty-$sys_qty;
+      if($phy_qty>0 && $sys_qty>0) {
+        $accu = round($phy_qty/$sys_qty*100,2);
+        if($accu > 100) {
+          $accu = '********';
+        } else {
+          $accu .= '%';
+        }
+      } else {
+        $accu = '';
+      }
+
+      $tot_phy_qty += $phy_qty;
+      $tot_sys_qty += $sys_qty;
+      $tot_diff_qty += $diff_qty;
+
+      $pdf->Ln();
+      $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+      $pdf->Cell($item_widths[1],6,$item_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,$category_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,$brand_name,'RTB',0,'L');            
+      $pdf->Cell($item_widths[4],6,$phy_qty !== '' ? number_format($phy_qty,2,'.','') : '','RTB',0,'R');
+      if((int)$_SESSION['utype'] === 3) {
+        $pdf->Cell($item_widths[5],6,$sys_qty !== '' ? number_format($sys_qty,2,'.','') : '','RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,$diff_qty !== '' ? number_format($diff_qty,2,'.','') : '','RTB',0,'R');
+      } else {
+        $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,'','RTB',0,'R');
+      }
+
+      $pdf->Cell($item_widths[7],6,$accu,'RTB',0,'R');
+
+      if($row_cntr === 37) {
+        $pdf->AddPage('P','A4');
+        $this->_add_page_heading_for_audit_report($pdf, $item_widths, $heading1, $heading2);
+        $first_page = false; 
+        $row_cntr = 0;
+      }
+      $row_cntr++;
+    }
+
+    $pdf->Ln();
+    $pdf->Cell($totals_width,6,'TOTALS','LRTB',0,'R');
+    $pdf->Cell($item_widths[4],6,$tot_phy_qty>0 ? number_format($tot_phy_qty,2,'.','') : '','LRTB',0,'R');
+    $pdf->Cell($item_widths[5],6,$tot_phy_qty>0 ? number_format($tot_sys_qty,2,'.','') : '','RTB',0,'R');
+
+    $pdf->Ln(40);
+    $pdf->Cell(63,6,'PREPARED BY','B',0,'C');
+    $pdf->Cell(63,6,'VERIFIED BY','B',0,'C');
+    $pdf->Cell(63,6,'APPROVED BY','B',0,'C');
+
+    $pdf->Ln();
+    $pdf->Cell(189,6,'This report is printed on '.date("d-M-Y @ H:i:s").' hrs.','',0,'R');
+
+    $pdf->Output();
+  }
 
   private function _validate_stock_report_data($form_data = []) {
     $cleaned_params = [];
@@ -1260,4 +1413,23 @@ class InventoryReportsController {
     $pdf->Cell($item_widths[16], 6,'M.R.P','RTB',0,'C');
     $pdf->SetFont('Arial','',8);
   }
+
+  private function _add_page_heading_for_audit_report(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,5,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell(0,5,$heading2,'',1,'C');
+
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Category Name','RTB',0,'C');        
+    $pdf->Cell($item_widths[3],6,'Brand Name','RTB',0,'C');        
+    $pdf->Cell($item_widths[4],6,'Phy.Qty','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Sys.Qty','RTB',0,'C');      
+    $pdf->Cell($item_widths[6],6,'Diff.','RTB',0,'C');    
+    $pdf->Cell($item_widths[7],6,'Accu.%','RTB',0,'C');
+    $pdf->SetFont('Arial','',9);
+  }
+
 }
