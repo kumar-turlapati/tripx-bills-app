@@ -72,6 +72,7 @@
             <ul class="sub">
               <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock Transfer</a></li>
               <li><a href="/inventory/stock-adjustment"><i class="fa fa-adjust"></i> Stock Adjustment</a></li>
+              <li><a href="/stock-audit/create"><i class="fa fa-check"></i> Phy. Stock Audit</a></li>          
             </ul>
           </li>
         </ul>
@@ -121,6 +122,7 @@
               <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Tran. Register</a></li>          
               <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock Adj. Register</a></li>
               <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>
+              <li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li>          
             </ul>            
           </li>
           <li class="sub-menu">
