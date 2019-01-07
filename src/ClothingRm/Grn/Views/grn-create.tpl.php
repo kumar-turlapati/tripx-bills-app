@@ -73,8 +73,18 @@
     $net_pay = 0;
   }
 
-  $items_tot_after_discount = $bill_amount-$discount_amount;
-  $grand_total = $bill_value = $items_tot_after_discount+$tax_amount;
+  $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
+  $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
+  $insurance_charges = isset($form_data['insuranceCharges']) ? $form_data['insuranceCharges'] : '';
+  $other_charges = isset($form_data['otherCharges']) ? $form_data['otherCharges'] : '';
+  $transporter_name = isset($form_data['transporterName']) ? $form_data['transporterName'] : '';
+  $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
+  $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
+  $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
+
+  $items_tot_after_discount = $bill_amount - $discount_amount;
+  
+  $bill_value = ($items_tot_after_discount + $tax_amount + $shipping_charges + $insurance_charges + $other_charges + $packing_charges);
 
   $round_off = round(round($bill_value)-round($bill_value,2),2);
   $net_pay = round($bill_value,0);
@@ -99,13 +109,12 @@
             </a>            
           </div>
         </div>
-
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="grnEntryForm">
           <div class="panel">
             <div class="panel-body">
               <h2 class="hdg-reports borderBottom">Transaction Details</h2>
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+                <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">GRN Date (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <div class="col-lg-12">
@@ -119,7 +128,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+                <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Supplier name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="supplierID" id="supplierID" disabled>
@@ -141,7 +150,7 @@
                     <span class="error"><?php echo $form_errors['supplierID'] ?></span>
                   <?php endif; ?>              
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+                <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Supplier bill number</label>
                   <input 
                     type="text" 
@@ -193,27 +202,27 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                    <label class="control-label">Credit period (in days)</label>
-                    <div class="select-wrap">
-                      <select class="form-control" name="creditDays" id="creditDays" disabled>
-                        <?php 
-                          foreach($credit_days_a as $key=>$value):
-                            if((int)$creditDays === $key) {
-                              $selected = 'selected="selected"';
-                            } else {
-                              $selected = '';
-                            }
-                        ?>
-                          <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                            <?php echo $value ?>
-                          </option>
-                        <?php endforeach; ?>
-                      </select>
-                      <?php if(isset($form_errors['creditDays'])): ?>
-                        <span class="error"><?php echo $form_errors['creditDays'] ?></span>
-                      <?php endif; ?>
-                    </div>
+                  <label class="control-label">Credit period (in days)</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="creditDays" id="creditDays" disabled>
+                      <?php 
+                        foreach($credit_days_a as $key=>$value):
+                          if((int)$creditDays === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                    <?php if(isset($form_errors['creditDays'])): ?>
+                      <span class="error"><?php echo $form_errors['creditDays'] ?></span>
+                    <?php endif; ?>
                   </div>
+                </div>
               </div>
             </div>
           </div>
@@ -222,7 +231,7 @@
             <span class="error"><?php echo $form_errors['itemDetailsError'] ?></span>
           <?php endif; ?>          
           <div class="table-responsive">
-            <table class="table table-striped table-hover item-detail-table font12" id="purchaseTable">
+            <table class="table table-striped table-hover item-detail-table font12" id="purchaseTable" style="margin-bottom:0px;">
               <thead>
                 <tr>
                   <th style="width:250px;" class="text-center purItem">Item name</th>
@@ -326,30 +335,61 @@
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($item_amount,2,'.','') ?></td>
                 </tr>
               <?php endfor; ?>
-                <tr>
-                  <td colspan="9" align="right">Taxable value</td>
-                  <td id="inwItemsTotal" align="right"><?php echo number_format($bill_amount, 2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">G.S.T</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount, 2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Grand totals</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_value, 2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Round off</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Net pay</td>
-                  <td style="vertical-align:middle;text-align:right;font-weight:bold;font-size:18px;"><?php echo number_format($net_pay, 2,'.','') ?></td>
-                </tr>                
               </tbody>
             </table>
           </div>
-
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
+                <tr>
+                  <th width="10%" class="text-center valign-middle">Taxable Value (in Rs.)</th>
+                  <th width="10%"  class="text-center valign-middle">G.S.T (in Rs.)</th>             
+                  <th width="10%" class="text-center valign-middle">Packing Charges (in Rs.)</th>
+                  <th width="10%"  class="text-center valign-middle">Shipping Charges (in Rs.)</th>             
+                </tr>
+                <tr>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_amount, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($packing_charges, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($shipping_charges, 2, '.', '') ?></td>
+                </tr>
+            </table>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font14" id="owItemsTable">
+                <tr>
+                  <th width="10%" class="text-center valign-middle">Insurance Charges (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Other Charges (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Round Off (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Bill Amount (in Rs.)</th>
+                </tr>
+                <tr>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($insurance_charges, 2, '.', '')  ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($other_charges, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2, '.', '')  ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($net_pay, 2, '.', '') ?></td>
+                </tr>
+            </table>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font14" id="owItemsTable">
+                <tr>
+                  <th width="10%" class="text-center valign-middle">Transport Name</th>
+                  <th width="10%"  class="text-center valign-middle">L.R. No.</th>             
+                  <th width="10%" class="text-center valign-middle">L.R. Date</th>
+                  <th width="10%"  class="text-center valign-middle">Challan No.</th>             
+                </tr>
+                <tr style="height:30px;">
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $transporter_name  ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $lr_no ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $lr_date ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $challan_no ?></td>
+                </tr>
+                <tr>
+                  <td style="vertical-align:middle;font-weight:bold;color:#2F7192" align="center">Notes / Comments</td>
+                  <td style="vertical-align:middle;text-align:right;" colspan="3"><?php echo $remarks ?></td>
+                </tr>                
+            </table>
+          </div>
           <div class="text-center">
             <button class="btn btn-danger" id="grnCancel">
               <i class="fa fa-times"></i> Cancel
@@ -358,9 +398,7 @@
               <i class="fa fa-save"></i> Save
             </button>
           </div>
-          
         </form>
-
       </div>
     </section>
   </div>

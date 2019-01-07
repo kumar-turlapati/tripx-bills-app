@@ -314,7 +314,15 @@ class InwardController
     }
 
     $client_details = Utilities::get_client_details();
-    $client_business_state = $client_details['locState'];    
+    $client_business_state = $client_details['locState'];
+
+    # get client locations
+    $client_locations_resp = $this->user_model->get_client_locations();
+    if($client_locations_resp['status']) {
+      foreach($client_locations_resp['clientLocations'] as $loc_details) {
+        $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
+      }
+    }    
 
     # validate purchase code.
     if( is_null($request->get('purchaseCode')) ) {
@@ -341,6 +349,7 @@ class InwardController
         $tax_percents = array_column($purchase_details['itemDetails'],'taxPercent');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
+        $billed_qtys = array_column($purchase_details['itemDetails'],'billedQty');        
 
         # unser item details from api data.
         unset($purchase_details['itemDetails']);
@@ -357,6 +366,7 @@ class InwardController
         $form_data['itemName'] = $item_names;
         $form_data['inwardQty'] = $inward_qtys;
         $form_data['freeQty'] = $free_qtys;
+        $form_data['billedQty'] = $billed_qtys;
         $form_data['lotNo'] = $lot_nos;
         $form_data['itemRate'] = $item_rates;
         $form_data['taxPercent'] = $tax_percents;
@@ -408,6 +418,7 @@ class InwardController
       'states_a' => array(0=>'Choose') + Constants::$LOCATION_STATES,
       'supply_type_a' => array('' => 'Choose', 'inter' => 'Interstate', 'intra' => 'Intrastate'),
       'client_business_state' => $client_business_state,
+      'client_locations' => array(''=>'Choose') + $client_locations,      
     );
 
     return array($this->template->render_view('inward-entry-view',$template_vars),$controller_vars);
@@ -634,7 +645,7 @@ class InwardController
 
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];
-    # ------------------------------------- check for form Submission --------------------------------
+    // ------------------------------------- check for form Submission --------------------------------
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
       $form_validation = $this->_validate_ar_po_data($submitted_data);
@@ -653,7 +664,7 @@ class InwardController
       }
     }
 
-    # theme variables.
+    // theme variables.
     $controller_vars = array(
       'page_title' => 'Purchases - Approve / Reject PO',
       'icon_name' => 'fa fa-laptop',
@@ -748,7 +759,7 @@ class InwardController
       $form_errors['purchaseDate'] = 'PO Date is out of Financial year dates.';
     }
 
-    # validate supplier name
+    // validate supplier name
     if( isset($form_data['supplierID']) && $form_data['supplierID'] === '') {
       $form_errors['supplierID'] = 'Invalid supplier name.';
     } else {
@@ -757,13 +768,7 @@ class InwardController
 
     $cleaned_params['poNo'] = Utilities::clean_string($form_data['poNo']);
 
-/*    # validate PO No
-    if( isset($form_data['poNo']) && $form_data['poNo'] === '') {
-      $form_errors['poNo'] = 'PO number is mandatory.';
-    } else {
-    }*/
-
-    # validate payment method
+    // validate payment method
     if( isset($form_data['paymentMethod']) && (int)$form_data['paymentMethod'] === 1) {
       $credit_days = (int)$form_data['creditDays'];
       if($credit_days>0) {
@@ -776,24 +781,59 @@ class InwardController
       $cleaned_params['paymentMethod'] = Utilities::clean_string($form_data['paymentMethod']);
     }
 
-    # validate location code
+    // validate location code
     if( isset($form_data['locationCode']) && ctype_alnum($form_data['locationCode']) ) {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
       $form_errors['locationCode'] = 'Invalid location code.';
     }
 
-    # remarks field
+    // remarks field
     if(isset($form_data['remarks']) && $form_data['remarks'] !=='' ) {
       $cleaned_params['remarks'] = Utilities::clean_string($form_data['remarks']);
     } else {
       $cleaned_params['remarks'] = '';
     }
 
-    # validate line items only if grn is not generated.
+    //validate various charges.
+    $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
+    $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
+    $insurance_charges = Utilities::clean_string($form_data['insuranceCharges']);
+    $other_charges = Utilities::clean_string($form_data['otherCharges']);
+    $transporter_name = Utilities::clean_string($form_data['transporterName']);
+    $lr_no = Utilities::clean_string($form_data['lrNos']);
+    $lr_date = Utilities::clean_string($form_data['lrDate']);
+    $chalan_no = Utilities::clean_string($form_data['challanNo']);
+        
+    if($packing_charges !== '' && !is_numeric($packing_charges)) {
+      $form_errors['packingCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['packingCharges'] = $packing_charges;
+    }
+    if($shipping_charges !== '' && !is_numeric($shipping_charges)) {
+      $form_errors['shippingCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['shippingCharges'] = $shipping_charges;
+    }
+    if($insurance_charges !== '' && !is_numeric($insurance_charges)) {
+      $form_errors['insuranceCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['insuranceCharges'] = $insurance_charges;
+    }
+    if($other_charges !== '' && !is_numeric($other_charges)) {
+      $form_errors['otherCharges'] = 'Invalid input. Must be numeric.';
+    } else {
+      $cleaned_params['otherCharges'] = $other_charges;
+    }
+    $cleaned_params['transporterName'] = $transporter_name;
+    $cleaned_params['lrNos'] = $lr_no;
+    $cleaned_params['lrDate'] = $lr_date;
+    $cleaned_params['challanNo'] = $chalan_no;        
+
+    // validate line items only if grn is not generated.
     if($is_grn_generated===false) {
 
-      # validate line item details
+      // validate line item details
       $item_names_a = $form_data['itemName'];
       $inward_qtys_a = $form_data['inwardQty'];
       $free_qtys_a = $form_data['freeQty'];

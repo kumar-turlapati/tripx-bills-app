@@ -14,7 +14,16 @@
   $supplier_name = isset($form_data['supplierName']) ? $form_data['supplierName'] : '';
   $store_name = isset($client_locations[$form_data['locationID']]) ? $client_locations[$form_data['locationID']] : '';
   $payment_method = isset($payment_methods[$form_data['paymentMethod']]) ? $payment_methods[$form_data['paymentMethod']] : '';
-  $inward_status = isset($form_data['status']) ? $form_data['status'] : 0; 
+  $inward_status = isset($form_data['status']) ? $form_data['status'] : 0;
+
+  $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
+  $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
+  $insurance_charges = isset($form_data['insuranceCharges']) ? $form_data['insuranceCharges'] : '';
+  $other_charges = isset($form_data['otherCharges']) ? $form_data['otherCharges'] : '';
+  $transporter_name = isset($form_data['transporterName']) ? $form_data['transporterName'] : '';
+  $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
+  $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
+  $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';  
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -34,7 +43,7 @@
           </div>
         </div>
         <div class="table-responsive">
-          <table class="table table-striped table-hover font12" id="owItemsTable">
+          <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
             <thead>
               <tr>
                 <th width="10%" class="text-center valign-middle">PO No.</th>
@@ -58,10 +67,10 @@
                 </tr>
             </tbody>
           </table>
-        </div>     
+        </div>   
         <form class="form-validate form-horizontal" method="POST" id="inwardEntryForm" autocomplete="off">      
           <div class="table-responsive">
-            <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable">
+            <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="margin-bottom:0px;">
               <thead>
                 <tr>
                   <th style="width:240px;" class="text-center purItem">Item name</th>
@@ -176,34 +185,67 @@
                 </tr>
               <?php 
                 endfor;
-                // $items_tot_after_discount = round($items_total - $total_disc_amount, 2);
                 $grand_total = round($items_total + $total_tax_amount, 2);
+                $grand_total += ($shipping_charges + $packing_charges + $insurance_charges + $other_charges);
+
                 $round_off = round($grand_total) - $grand_total;
                 $net_pay = round($grand_total);
               ?>
-                <tr>
-                  <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
-                  <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2), 2, '.','') ?></td>
-                </tr>
-                <tr>
-                  <td colspan="11" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
-                  <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount, 2), 2, '.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">(+ or -) Round off</td>
-                  <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo number_format($round_off,2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;font-size:14px;" colspan="11" align="right">Total Amount</td>
-                  <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="11"><?php echo $remarks ?></td>
-                </tr>
               </tbody>
             </table>
           </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
+                <tr>
+                  <th width="10%" class="text-center valign-middle">Taxable Value (in Rs.)</th>
+                  <th width="10%"  class="text-center valign-middle">G.S.T (in Rs.)</th>             
+                  <th width="10%" class="text-center valign-middle">Packing Charges (in Rs.)</th>
+                  <th width="10%"  class="text-center valign-middle">Shipping Charges (in Rs.)</th>             
+                </tr>
+                <tr>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($items_total, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($total_tax_amount, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($packing_charges, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($shipping_charges, 2, '.', '') ?></td>
+                </tr>
+            </table>
+          </div>          
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font14" id="owItemsTable">
+                <tr>
+                  <th width="10%" class="text-center valign-middle">Insurance Charges (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Other Charges (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Round Off (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Bill Amount (in Rs.)</th>
+                </tr>
+                <tr>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($insurance_charges, 2, '.', '')  ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($other_charges, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2, '.', '')  ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($net_pay, 2, '.', '') ?></td>
+                </tr>
+                <tr>
+                  <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
+                  <td style="vertical-align:middle;text-align:right;" colspan="3"><?php echo $remarks ?></td>
+                </tr>
+            </table>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
+                <tr>
+                  <th width="10%" class="text-center valign-middle">Transport Name</th>
+                  <th width="10%"  class="text-center valign-middle">L.R. No.</th>             
+                  <th width="10%" class="text-center valign-middle">L.R. Date</th>
+                  <th width="10%"  class="text-center valign-middle">Challan No.</th>             
+                </tr>
+                <tr style="height:30px;">
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $transporter_name  ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $lr_no ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $lr_date ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo $challan_no ?></td>
+                </tr>
+            </table>
+          </div>           
           <div class="panel" style="margin-bottom:10px;">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
@@ -251,65 +293,8 @@
               <i class="fa fa-save"></i> Save
             </button>
           </div>
-          <input type="hidden" name="pc" id="pc" value="<?php echo $po_code ?>" />
-          <input type="hidden" name="pn" id="pn" value="<?php echo $po_number ?>" />          
         </form>
       </div>
     </section>
   </div>
 </div>
-
-<?php /*
-
-                <tr>
-                  <td colspan="12" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
-                </tr>
-                <tr style="padding:0px;margin:0px;">
-                  <td colspan="12" style="padding:0px;margin:0px;">
-                    <table class="table table-striped table-hover font12 valign-middle">
-                      <thead>
-                        <th style="text-align:center;">GST Rate (in %)</th>
-                        <th style="text-align:right;">Taxable Amount (in Rs.)</th>
-                        <th style="text-align:right;">IGST (in Rs.)</th>
-                        <th style="text-align:right;">CGST (in Rs.)</th>
-                        <th style="text-align:right;">SGST (in Rs.)</th>
-                      </thead>
-                      <tbody>
-                      <?php
-                        $tot_taxable_value = $tot_igst_amount = $tot_cgst_amount = $tot_sgst_amount = 0;                        
-                        foreach($taxes as $tax_code => $tax_percent):
-                          if( isset($taxable_values[$tax_percent]) ) {
-                            $taxable_value = $taxable_values[$tax_percent];
-                            $tot_taxable_value += $taxable_value;
-                          } else {
-                            $taxable_value = 0;
-                          }
-                          if(isset($taxable_gst_value[$tax_percent])) {
-                            if($supply_type === 'inter') {
-                              $cgst_amount = $sgst_amount = 0;
-                              $igst_amount = $taxable_gst_value[$tax_percent];
-                              $tot_igst_amount += $igst_amount;
-                            } else {
-                              $cgst_amount = $sgst_amount = round($taxable_gst_value[$tax_percent]/2,2);
-                              $igst_amount = 0;
-                              $tot_cgst_amount += $cgst_amount;
-                              $tot_sgst_amount += $sgst_amount;                              
-                            }
-                          } else {
-                            $cgst_amount = $sgst_amount = $igst_amount = 0;
-                          }                          
-                      ?>
-                        <tr>
-                            <input type="hidden" value="<?php echo $tax_percent ?>" class="inwTaxPercents" id="<?php echo $tax_code ?>" />
-                            <input type="hidden" value="" id="taxAmount_<?php echo $tax_code ?>" class="taxAmounts" />
-                            <td class="font11" style="text-align:right;font-weight:bold;"><?php echo number_format($tax_percent, 2).' %' ?></td>
-                            <td class="font11" style="text-align:right;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_amount"><?php echo number_format($taxable_value,2) ?></td>
-                            <td class="font11" style="text-align:right;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_igst_value"><?php echo number_format($igst_amount,2)  ?></td>
-                            <td class="font11" style="text-align:right;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_cgst_value"><?php echo number_format($cgst_amount,2) ?></td>
-                            <td class="font11" style="text-align:right;font-weight:bold;" id="taxable_<?php echo $tax_code ?>_sgst_value"><?php echo number_format($sgst_amount,2) ?></td>
-                        </tr>
-                      <?php endforeach; ?>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>*/ ?>

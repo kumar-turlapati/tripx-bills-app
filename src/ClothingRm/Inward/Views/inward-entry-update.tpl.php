@@ -63,6 +63,14 @@
   } else {
     $supplier_gst_no = '';
   }
+  $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
+  $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
+  $insurance_charges = isset($form_data['insuranceCharges']) ? $form_data['insuranceCharges'] : '';
+  $other_charges = isset($form_data['otherCharges']) ? $form_data['otherCharges'] : '';
+  $transporter_name = isset($form_data['transporterName']) ? $form_data['transporterName'] : '';
+  $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
+  $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
+  $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';  
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -267,6 +275,132 @@
                     </div>
                 </div>
               </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Packing charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="10"
+                    id="packingCharges"
+                    name="packingCharges"
+                    maxlength="10"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $packing_charges ?>"
+                    class="form-control"
+                  />
+                  <?php if(isset($errors['packingCharges'])): ?>
+                    <span class="error"><?php echo $errors['packingCharges'] ?></span>
+                  <?php endif; ?>                  
+                </div>                
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Shipping charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="10"
+                    id="shippingCharges"
+                    name="shippingCharges"
+                    maxlength="10"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $shipping_charges ?>"
+                    class="form-control"
+                  />
+                  <?php if(isset($errors['shippingCharges'])): ?>
+                    <span class="error"><?php echo $errors['shippingCharges'] ?></span>
+                  <?php endif; ?>                  
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Insurance charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="insuranceCharges"
+                    name="insuranceCharges"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $insurance_charges ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['insuranceCharges'])): ?>
+                    <span class="error"><?php echo $errors['insuranceCharges'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Other charges (in Rs.)</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="otherCharges"
+                    name="otherCharges"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $other_charges ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['otherCharges'])): ?>
+                    <span class="error"><?php echo $errors['otherCharges'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label">Transporter name</label>
+                  <input 
+                    type="text"
+                    size="15"
+                    id="transporterName"
+                    name="transporterName"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $transporter_name ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['transporterName'])): ?>
+                    <span class="error"><?php echo $errors['transporterName'] ?></span>
+                  <?php endif; ?>                  
+                </div>                
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">L.R. No(s)</label>
+                  <input
+                    type="text"
+                    size="10"
+                    id="lrNos"
+                    name="lrNos"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $lr_no ?>"
+                    class="form-control"
+                  />
+                  <?php if(isset($errors['lrNo'])): ?>
+                    <span class="error"><?php echo $errors['lrNo'] ?></span>
+                  <?php endif; ?>                  
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">L.R. Date</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="lrDate"
+                    name="lrDate"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $lr_date ?>"
+                    class="form-control"                    
+                  />
+                  <?php if(isset($errors['lrDate'])): ?>
+                    <span class="error"><?php echo $errors['lrDate'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">Challan no.</label>
+                  <input
+                    type="text"
+                    size="15"
+                    id="challanNo"
+                    name="challanNo"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    value="<?php echo $challan_no ?>"
+                    class="form-control"           
+                  />
+                  <?php if(isset($errors['challanNo'])): ?>
+                    <span class="error"><?php echo $errors['challanNo'] ?></span>
+                  <?php endif; ?>                   
+                </div>
+              </div>              
             </div>
           </div>
           <h2 class="hdg-reports">Item Details</h2>
@@ -560,6 +694,7 @@
 
                 // $items_tot_after_discount = round($items_total - $total_disc_amount, 2);
                 $grand_total = round($items_total + $total_tax_amount, 2);
+                $grand_total += ($shipping_charges + $packing_charges + $insurance_charges + $other_charges);
                 $round_off = round($grand_total) - $grand_total;
                 $net_pay = round($grand_total);
               ?>
