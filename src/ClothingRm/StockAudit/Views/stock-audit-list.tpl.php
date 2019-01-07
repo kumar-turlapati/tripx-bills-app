@@ -90,7 +90,7 @@
                     <td style="text-align:right;vertical-align:middle;"><?php echo $status ?></td>
                     <td style="vertical-align:middle;text-align:center;">
                       <div class="btn-actions-group">
-                        <?php if((int)$status === 1 || Utilities::is_admin()): ?>
+                        <?php if((int)$audit_details['status'] === 1 || Utilities::is_admin()): ?>
                           <?php /*
                           <a class="btn btn-warning" href="/stock-audit/update/<?php echo $audit_code ?>" title="Edit Audit Details">
                             <i class="fa fa-pencil"></i>

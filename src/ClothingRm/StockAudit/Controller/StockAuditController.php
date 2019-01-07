@@ -366,7 +366,7 @@ class StockAuditController
     // build variables
     $controller_vars = array(
       'page_title' => 'Stock Audit - Update Physical Quantities',
-      'icon_name' => 'fa fa-inr',
+      'icon_name' => 'fa fa-database',
     );
 
     // render template
