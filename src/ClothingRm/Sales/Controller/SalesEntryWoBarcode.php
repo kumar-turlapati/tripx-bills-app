@@ -645,7 +645,7 @@ class SalesEntryWoBarcode {
       'client_locations' => ['' => 'All Stores'] + $client_locations,
       'sa_executives' =>  array('' => 'All executives') + $sa_executives,
       'location_ids' => $location_ids,
-      'location_codes' => $location_codes,      
+      'location_codes' => $location_codes,
     );
 
     # build variables

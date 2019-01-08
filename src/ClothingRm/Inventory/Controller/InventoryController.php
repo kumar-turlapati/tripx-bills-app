@@ -236,8 +236,6 @@ class InventoryController {
     $inventory_api_call = new Inventory;
     $products_api = new Products;
 
-    $categories_a = $products_api->get_product_categories();    
-
     # ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
@@ -248,7 +246,7 @@ class InventoryController {
     if(count($request->request->all()) > 0) {
       $search_params = $request->request->all();
     } else {
-      $search_params['medName'] = !is_null($request->get('medName')) ? Utilities::clean_string($request->get('medName')) : '';
+      $search_params['psName'] = !is_null($request->get('psName')) ? Utilities::clean_string($request->get('psName')) : '';
       $search_params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $default_location;
       $search_params['category'] = !is_null($request->get('category')) ? Utilities::clean_string($request->get('category')) : '';
       $search_params['brandName'] = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';      
@@ -256,6 +254,7 @@ class InventoryController {
       $search_params['perPage'] = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 100;
     }
 
+    $categories_a = $products_api->get_product_categories($search_params['locationCode']);
     $items_list = $this->inven_api->get_available_qtys($search_params);
     $api_status = $items_list['status'];
 
@@ -286,6 +285,7 @@ class InventoryController {
         $total_pages = $items_list['total_pages'];
         $total_records = $items_list['total_records'];
         $record_count = $items_list['record_count'];
+        $totals = $items_list['totals'];
       } else {
         $page_error = 'Unable to fetch data';
       }
@@ -311,6 +311,7 @@ class InventoryController {
       'location_ids' => $location_ids,
       'default_location' => $default_location,
       'categories' => array(''=>'All Categories') + $categories_a,
+      'store_totals' => $totals,
     );
 
     // build variables

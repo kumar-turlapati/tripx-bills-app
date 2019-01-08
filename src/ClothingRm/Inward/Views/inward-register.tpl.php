@@ -19,6 +19,12 @@
     $query_params[] = 'supplierID='.$supplierID;
   } else {
     $supplierID = '';
+  }
+  if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
+    $locationCode = $search_params['locationCode'];
+    $query_params[] = 'locationCode='.$locationCode;    
+  } else {
+    $locationCode = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&',$query_params);
@@ -52,9 +58,7 @@
   	       <div id="filters-form">
   	         <form class="form-validate form-horizontal" method="POST" action="<?php echo $pagination_url ?>">
       				<div class="form-group">
-                <div class="col-sm-12 col-md-2 col-lg-1">
-                  Filter by
-                </div>
+                <div class="col-sm-12 col-md-2 col-lg-1">Filter by</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
@@ -69,7 +73,7 @@
                 </div>
       				  <div class="col-sm-12 col-md-2 col-lg-2">
       						<select class="form-control" name="supplierID" id="supplierID">
-      						  <?php 
+      						  <?php
                       foreach($suppliers as $key=>$value): 
                         if($key===$supplierID) {
                           $selected = 'selected';
@@ -81,6 +85,25 @@
       						  <?php endforeach; ?>
       						</select>
       				  </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $location_key=>$value):
+                          $location_key_a = explode('`', $location_key);
+                          if($locationCode === $location_key_a[0]) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
       				</div>
   	         </form>

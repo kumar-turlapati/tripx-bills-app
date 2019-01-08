@@ -23,7 +23,7 @@ class Inventory
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get',$request_uri,$search_params);
 
-		// dump($search_params);
+		// dump($response);
 		// exit;
 
 		$status = $response['status'];
@@ -33,7 +33,8 @@ class Inventory
 				'items' => $response['response']['batchqtys']['results'], 
 				'total_pages' => $response['response']['batchqtys']['total_pages'],
 				'total_records' => $response['response']['batchqtys']['total_records'],
-				'record_count' =>  $response['response']['batchqtys']['this_page']
+				'record_count' => $response['response']['batchqtys']['this_page'],
+				'totals' => $response['response']['batchqtys']['totals'],
 			);				
 		} elseif($status === 'failed') {
 			return array(

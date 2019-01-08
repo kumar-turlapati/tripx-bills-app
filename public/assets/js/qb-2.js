@@ -789,6 +789,46 @@ function initializeJS() {
       updateInwardItemRow(rowId);
     });
 
+    jQuery('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').on("blur", function(e){
+      var packingCharges = returnNumber(parseFloat($('#packingCharges').val()));
+      var shippingCharges = returnNumber(parseFloat($('#shippingCharges').val()));
+      var insuranceCharges = returnNumber(parseFloat($('#insuranceCharges').val()));
+      var otherCharges = returnNumber(parseFloat($('#otherCharges').val()));
+      var totTaxableAmount = totalTaxAmount = finalAmount = 0;
+      var netPay = roundedNetPay = 0;
+
+      jQuery('.inwItemAmount').each(function(i, obj) {
+        if(jQuery(this).val().length === 0) {
+          iTotal = 0;
+        } else {
+          iTotal = parseFloat(returnNumber(jQuery(this).val()));
+        }
+        if( iTotal > 0 ) {
+          totTaxableAmount  += iTotal;
+        }
+      });
+
+      jQuery('.inwItemTaxAmount').each(function(i, obj) {
+        if(jQuery(this).val().length === 0) {
+          iTotal = 0;
+        } else {
+          iTotal = parseFloat(returnNumber(jQuery(this).val()));
+        }
+        if( iTotal > 0 ) {
+          totalTaxAmount  += iTotal;
+        }
+      });        
+
+      netPay = parseFloat(totTaxableAmount+totalTaxAmount) + parseFloat(packingCharges) + parseFloat(shippingCharges) + parseFloat(insuranceCharges) + parseFloat(otherCharges);
+      roundedNetPay = Math.round(netPay);
+      finalAmount = netPay-parseFloat(roundedNetPay.toFixed(2));
+
+      $('#inwItemsTotal').text(totTaxableAmount.toFixed(2));
+      $('#inwItemTaxAmount').text(totalTaxAmount.toFixed(2));
+      $('#roundOff').text(finalAmount.toFixed(2));
+      $('#inwNetPay').text(roundedNetPay);
+    });
+
     jQuery('.inwItemTax').on("change", function(){
       var idArray = $(this).attr('id').split('_');
       var rowId = idArray[1];
@@ -847,6 +887,11 @@ function initializeJS() {
       var inwItemAmount = parseFloat( returnNumber(inwItemGrossAmount-inwItemDiscount) );
       var inwItemTaxAmount = parseFloat((inwItemAmount * inwItemTax) / 100).toFixed(2);
 
+      var packingCharges = returnNumber(parseFloat($('#packingCharges').val()));
+      var shippingCharges = returnNumber(parseFloat($('#shippingCharges').val()));
+      var insuranceCharges = returnNumber(parseFloat($('#insuranceCharges').val()));
+      var otherCharges = returnNumber(parseFloat($('#otherCharges').val()));
+
       $('#inwBillQty_'+rowId).val(billedQty);
       $('#inwItemGrossAmount_'+rowId).val(inwItemGrossAmount);
       $('#inwItemAmount_'+rowId).val(inwItemAmount);
@@ -874,7 +919,7 @@ function initializeJS() {
         }
       });        
 
-      netPay = parseFloat(totTaxableAmount + totalTaxAmount);
+      netPay = parseFloat(totTaxableAmount+totalTaxAmount) + parseFloat(packingCharges) + parseFloat(shippingCharges) + parseFloat(insuranceCharges) + parseFloat(otherCharges);
       roundedNetPay = Math.round(netPay);
       finalAmount = netPay-parseFloat(roundedNetPay.toFixed(2));
 

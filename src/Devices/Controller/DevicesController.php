@@ -25,12 +25,20 @@ class DevicesController
   public function addDeviceAction(Request $request) {
     $submitted_data = $form_errors = $users_a = [];
 
-    # ---------- get users from api ------------------------------
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
+    // ---------- get users from api ------------------------------
     $result = $this->user_model->get_users();
     if($result['status']) {
       $users_a = $result['users'];
       foreach($users_a as $user_details) {
-        $users[$user_details['uuid']] = $user_details['userName'];
+        $users[$user_details['uuid']] = $user_details['userName'].' [ '.$location_ids[$user_details['locationID']].' ]';
       }
     }
 
@@ -76,12 +84,20 @@ class DevicesController
   public function updateDeviceAction(Request $request) {
     $submitted_data = $form_errors = $users_a = [];
 
-    # ---------- get users from api ------------------------------
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
+    // ---------- get users from api ------------------------------
     $result = $this->user_model->get_users();
     if($result['status']) {
       $users_a = $result['users'];
       foreach($users_a as $user_details) {
-        $users[$user_details['uuid']] = $user_details['userName'];
+        $users[$user_details['uuid']] = $user_details['userName'].' [ '.$location_ids[$user_details['locationID']].' ]';
       }
     }
 
@@ -122,7 +138,7 @@ class DevicesController
         Utilities::redirect('/devices/list');
       }
     } else {
-      $this->flash->set_flash_message('Device code is required for editing device.',1);
+      $this->flash->set_flash_message('Device code is required for editing a device.',1);
       Utilities::redirect('/devices/list');
     }
 
@@ -144,6 +160,32 @@ class DevicesController
     return array($this->template->render_view('device-update', $template_vars), $controller_vars);    
   }
 
+  public function deleteDeviceAction(Request $request) {
+    if(!is_null($request->get('deviceCode'))) {
+      $device_code = Utilities::clean_string($request->get('deviceCode'));
+      $device_details = $this->device_model->get_device_details($device_code);
+      if($device_details['status']) {
+        $submitted_data = $device_details['deviceDetails'];
+      } else {
+        $this->flash->set_flash_message('Invalid device code.',1);
+        Utilities::redirect('/devices/list');
+      }
+    } else {
+      $this->flash->set_flash_message('Invalid Device Name',1);
+      Utilities::redirect('/devices/list');
+    }
+
+    $response = $this->device_model->delete_device($device_code);
+    if($response['status']) {
+      $this->flash->set_flash_message('<i class="fa fa-times"></i>&nbsp;&nbsp;Device deleted successfully.');
+    } else {
+      $message = $result['apierror'];
+      $this->flash->set_flash_message($message,1);
+    }
+    
+    Utilities::redirect('/devices/list');
+  }
+
   public function listDevicesAction(Request $request) {
     $devices_a = $search_params = $users_a = $users = [];
     $page_error = '';
@@ -151,25 +193,41 @@ class DevicesController
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
-    # parse request parameters.
-    $uid = $request->get('uid') !== null ? Utilities::clean_string($request->get('uid')) : '';
-    $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')) : 1;
-    $per_page = 100;
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
 
-    # ---------- get users from api ------------------------------
+    // get users from api
     $result = $this->user_model->get_users();
     if($result['status']) {
       $users_a = $result['users'];
+      $uuid_a = array_column($users_a, 'uuid');
+      $uid_a =  array_column($users_a, 'uid');
+      $users_final = array_combine($uuid_a, $uid_a);
       foreach($users_a as $user_details) {
-        $users[$user_details['uuid']] = $user_details['userName'];
+        $users[$user_details['uuid']] = $user_details['userName'].' - '.$location_ids[$user_details['locationID']];
       }
-    }    
+    }
+
+    // parse request parameters.
+    $uuid = $request->get('uuid') !== null ? Utilities::clean_string($request->get('uuid')) : '';
+    $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')) : 1;
+    $location_code = $request->get('locationCode') !== null ? Utilities::clean_string($request->get('locationCode')) : '';
+    $per_page = 100;
 
     $search_params = array(
       'pageNo' => $page_no,
       'perPage' => $per_page,
-      'uid' => $uid,
+      'uid' => $uuid !== '' && isset($users_final[$uuid]) ? $users_final[$uuid] : 0,
+      'locationCode' => $location_code,
     );
+
+    // dump($search_params);
+    // exit;
 
     $api_response = $this->device_model->get_devices($search_params);
     // dump($api_response);
@@ -207,7 +265,7 @@ class DevicesController
     $template_vars = array(
       'page_error' => $page_error,
       'devices' => $devices_a,
-      'users' => ['' => ['userName' => 'All Users']] + $users_a,
+      'users' => ['' => 'All Users'] + $users,
       'total_pages' => $total_pages ,
       'total_records' => $total_records,
       'record_count' => $record_count,
@@ -216,7 +274,10 @@ class DevicesController
       'page_links_to_start' => $page_links_to_start,
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
-      'search_params' => $search_params,
+      'search_params' => $search_params + ['uuid' => $uuid],
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     // build variables

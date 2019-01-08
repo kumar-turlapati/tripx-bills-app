@@ -2,11 +2,11 @@
   use Atawa\Utilities;
 
   $query_params = '';  
-  if(isset($search_params['medName']) && $search_params['medName'] !== '') {
-    $medName = $search_params['medName'];
-    $query_params[] = 'medName='.$medName;
+  if(isset($search_params['psName']) && $search_params['psName'] !== '') {
+    $psName = $search_params['psName'];
+    $query_params[] = 'psName='.$psName;
   } else {
-    $medName = '';
+    $psName = '';
   }
   if(isset($search_params['brandName']) && $search_params['brandName'] !== '') {
     $brandName = $search_params['brandName'];
@@ -18,7 +18,7 @@
     $categoryCode = $search_params['category'];
     $query_params[] = 'category='.$categoryCode;
   } else {
-    $brandName = '';
+    $categoryCode = '';
   }
   if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '') {
     $locationCode = $search_params['locationCode'];
@@ -61,15 +61,9 @@
                       <?php endforeach; ?>
                     </select>
                   </div>
-                  <?php if(isset($form_errors['locationCode'])): ?>
-                    <span class="error"><?php echo $form_errors['locationCode'] ?></span>
-                  <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
-                  <input placeholder="Item name" type="text" name="medName" id="medName" class="form-control inameAc" value="<?php echo $medName ?>">
-                  <?php if(isset($form_errors['itemName'])): ?>
-                    <span class="error"><?php echo $form_errors['itemName'] ?></span>
-                  <?php endif; ?>
+                  <input placeholder="Product / Service Name" type="text" name="psName" id="psName" class="form-control inameAc" value="<?php echo $psName ?>">
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
@@ -91,10 +85,7 @@
                 </div>                
                 <div class="col-sm-12 col-md-1 col-lg-1">
                   <input placeholder="Brand" type="text" name="brandName" id="brandName" class="form-control brandAc" value="<?php echo $brandName ?>">
-                  <?php if(isset($form_errors['brandName'])): ?>
-                    <span class="error"><?php echo $form_errors['brandName'] ?></span>
-                  <?php endif; ?>
-                </div>           
+                </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="container-fluid">
                     <button class="btn btn-success">
@@ -159,9 +150,14 @@
                 endforeach;
               ?>
                 <tr>
-                  <td colspan="6" style="font-size:14px;font-weight:bold;text-align:right;">PAGE TOTALS</td>
+                  <td colspan="6" style="font-size:14px;font-weight:bold;text-align:right;">PAGE TOTALS (MRP * Available Qty.)</td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($total_qty, 2, '.', '') ?></td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($total_value, 2, '.', '') ?></td>
+                </tr>
+                <tr>
+                  <td colspan="6" style="font-size:14px;font-weight:bold;text-align:right;">STORE TOTALS (MRP * Available Qty.)</td>
+                  <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($store_totals['totalQty'], 2, '.', '') ?></td>
+                  <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($store_totals['totalValue'], 2, '.', '') ?></td>
                 </tr>
               </tbody>
             </table>

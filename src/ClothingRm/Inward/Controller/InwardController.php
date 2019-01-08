@@ -433,6 +433,14 @@ class InwardController
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
 
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
     $page_no = is_null($request->get('pageNo')) ? 1 : $request->get('pageNo');
     $per_page = is_null($request->get('perPage')) ? 100 : $request->get('perPage');
     if(count($request->request->all())>0) {
@@ -447,7 +455,13 @@ class InwardController
       if(!is_null($request->get('supplierID'))) {
         $search_params['supplierID'] = Utilities::clean_string($request->get('supplierID'));
       }
+      if(!is_null($request->get('locationCode'))) {
+        $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
+      }      
     }
+
+    // dump($search_params);
+    // exit;
 
     $suppliers = $this->supplier_model->get_suppliers(0,0);
     if($suppliers['status']) {
@@ -508,6 +522,9 @@ class InwardController
       'page_links_to_start' => $page_links_to_start,
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     # build variables
