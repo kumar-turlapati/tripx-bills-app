@@ -12,6 +12,12 @@
     $query_params[] = 'stateCode='.$stateCode;
   } else {
     $stateCode = '';
+  }
+  if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
+    $locationCode = $search_params['locationCode'];
+    $query_params[] = 'locationCode='.$locationCode;    
+  } else {
+    $locationCode = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -56,6 +62,25 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $location_key=>$value):
+                          $location_key_a = explode('`', $location_key);
+                          if($locationCode === $location_key_a[0]) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
             </form>
@@ -66,7 +91,8 @@
             <thead>
               <tr>
                 <th width="5%"  class="text-center">Sno.</th>
-                <th width="40%" class="text-center">Customer name</th>
+                <th width="25%" class="text-center">Customer name</th>
+                <th width="15%" class="text-center">Store name</th>
                 <th width="5%" class="text-center">Customer type</th>
                 <th width="35%" class="text-center">Address</span></th>
                 <th width="10%" class="text-center">Mobile no</th>
@@ -93,10 +119,12 @@
                     if($customer_details['cityName'] !== '') {
                       $address .= $address === '' ? $customer_details['cityName'] : ', '.$customer_details['cityName'];
                     }
+                    $store_name = isset($location_ids[$customer_details['locationID']]) ? $location_ids[$customer_details['locationID']] : '';
                 ?>
                     <tr class="text-right font11">
                       <td class="valign-middle"><?php echo $cntr ?></td>
                       <td class="text-left valign-middle"><?php echo $customer_name ?></td>
+                      <td class="text-left valign-middle"><?php echo $store_name ?></td>
                       <td class="text-left valign-middle"><?php echo $customer_type ?></td>
                       <td class="text-left valign-middle"><?php echo trim($address) ?></td>
                       <td class="text-left text-bold valign-middle"><?php echo $mobile_no ?></td>

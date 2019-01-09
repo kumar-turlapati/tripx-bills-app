@@ -1,6 +1,7 @@
 <?php
   use Atawa\Utilities;
-  $finy_code = '';
+  $location_code = isset($search_params['locationCode']) ? $search_params['locationCode'] : '';
+  $finy_code =  isset($search_params['finyCode']) ? $search_params['finyCode'] : '';
   $page_url = $pagination_url = '/finy-slnos/list';
 ?>
 <div class="row">
@@ -41,6 +42,25 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $location_key=>$value):
+                          $location_key_a = explode('`', $location_key);
+                          if($location_code === $location_key_a[0]) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
                 <?php include_once __DIR__."/../../../src/Layout/helpers/filter-buttons.helper.php" ?>
               </div>
             </form>

@@ -42,9 +42,19 @@ class FinySlnosController {
       Utilities::redirect('/finy-slnos/list');
     }
 
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
+    // dump($location_codes);
+
     if( count($request->request->all())>0 ) {
       $form_data = $request->request->all();
-      $validation = $this->_validate_fin_year_slnos_data($form_data);
+      $validation = $this->_validate_fin_year_slnos_data($form_data, $location_codes);
       if($validation['status']) {
         $api_response = $this->finy_slno_model->create_finy_slnos($validation['cleaned_params']);
         if($api_response['status']) {
@@ -67,6 +77,9 @@ class FinySlnosController {
       'flash_obj' => $this->flash,
       'voc_types' => $voc_types,
       'finys' => $finys,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
     );
 
     // build variables
@@ -146,6 +159,8 @@ class FinySlnosController {
 
   // list finys slnos
   public function listFinySlnos(Request $request) {
+    
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
 
     $finy_response = $this->finy_model->get_finys();
     if($finy_response['status'] && count($finy_response['finys']) > 0) {
@@ -157,6 +172,14 @@ class FinySlnosController {
       Utilities::redirect('/finy/list');
     }
 
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
     $slnos = $search_params = [];
 
     $total_pages = $total_records = $record_count = $page_no = 0 ;
@@ -165,12 +188,14 @@ class FinySlnosController {
 
     $page_no = is_null($request->get('pageNo')) ? 1 : Utilities::clean_string($request->get('pageNo'));
     $per_page = is_null($request->get('perPage')) ? 100 : Utilities::clean_string($request->get('perPage'));
-    $finy_code = is_null($request->get('finyCode')) ? '' : Utilities::clean_string($request->get('finyCode')); 
+    $finy_code = is_null($request->get('finyCode')) ? '' : Utilities::clean_string($request->get('finyCode'));
+    $location_code = is_null($request->get('locationCode')) ? $default_location : Utilities::clean_string($request->get('locationCode'));
 
     $search_params = [
       'pageNo' => $page_no,
       'perPage' => $per_page,
       'finyCode' => $finy_code,
+      'locationCode' => $location_code,
     ];
 
     $api_response = $this->finy_slno_model->get_finy_slnos($search_params);
@@ -221,6 +246,9 @@ class FinySlnosController {
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
       'finys' => $finys,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     // build variables
@@ -234,7 +262,7 @@ class FinySlnosController {
   }
 
   // validate finy slnos
-  private function _validate_fin_year_slnos_data($form_data =[]) {
+  private function _validate_fin_year_slnos_data($form_data = [], $location_codes = []) {
     $cleaned_params = $form_errors = [];
     $voc_types = Constants::$VOC_TYPES;
 
@@ -260,6 +288,16 @@ class FinySlnosController {
     } else {
       $form_errors['finyCode'] = 'Invalid Financial year.';
     }
+    if(isset($form_data['locationCode']) && $form_data['locationCode'] !== '') {
+      $location_code = Utilities::clean_string($form_data['locationCode']);
+      if(in_array($location_code, $location_codes)) {
+        $cleaned_params['locationCode'] = $location_code;
+      } else {
+        $form_errors['locationCode'] = 'Store does not exists.';
+      }
+    } else {
+      $form_errors['locationCode'] = 'Invalid Store Name.';
+    }    
 
     foreach($voc_types as $voc_key => $voc_name) {
       $text_key = $voc_key.'_text';

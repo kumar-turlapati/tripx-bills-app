@@ -209,16 +209,26 @@ class CustomersController
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
 
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
     $page_no = is_null($request->get('pageNo')) ? 1 : Utilities::clean_string($request->get('pageNo'));
     $per_page = is_null($request->get('perPage')) ? 100 : Utilities::clean_string($request->get('perPage'));
     $customer_name = is_null($request->get('custName')) ? '' : Utilities::clean_string($request->get('custName'));
     $state_code = is_null($request->get('stateCode')) ? '' : Utilities::clean_string($request->get('stateCode'));
+    $location_code = is_null($request->get('locationCode')) ? '' : Utilities::clean_string($request->get('locationCode'));
 
     $search_params = [
       'pageNo' => $page_no,
       'perPage' => $per_page,
       'custName' => $customer_name,
       'stateCode' => $state_code,
+      'locationCode' => $location_code,
     ];
 
     // dump($search_params);
@@ -277,6 +287,9 @@ class CustomersController
       'customer_types' => [],
       'genders' => Constants::$GENDERS,
       'states_a' => array(0=>'All States') + $states_a,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
     );
 
     // build variables

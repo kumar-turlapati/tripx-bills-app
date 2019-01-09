@@ -1,5 +1,6 @@
 <?php
-  //dump($form_data);
+  $finyCode = isset($form_data['finyCode']) ? $form_data['finyCode'] : '';
+  $locationCode = isset($form_data['locationCode']) ? $form_data['locationCode'] : '';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -22,7 +23,7 @@
                 <select class="form-control" name="finyCode" id="finyCode">
                   <?php 
                     foreach($finys as $key=>$value):
-                      if($finy_code === $key) {
+                      if($finyCode === $key) {
                         $selected = 'selected="selected"';
                       } else {
                         $selected = '';
@@ -35,6 +36,29 @@
                   <span class="error"><?php echo $errors['finyCode'] ?></span>
                 <?php endif; ?>                 
               </div>              
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label"><b>Store Name</b></label>              
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php 
+                    foreach($client_locations as $location_key=>$value):
+                      $location_key_a = explode('`', $location_key);
+                      if($locationCode === $location_key_a[0]) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }  
+                  ?>
+                   <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
             </div>
           </div>          
           <div class="table-responsive">
