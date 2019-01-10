@@ -503,7 +503,7 @@ $routes->add('banks_list', new Routing\Route('/fin/bank/list', array(
 $routes->add('users_list', new Routing\Route('/users/list', array(
   '_controller' => 'User\\Controller\\UserController::listUsersAction',
 )));
-$routes->add('users_list', new Routing\Route('/users/online', array(
+$routes->add('users_list_online', new Routing\Route('/users/online', array(
   '_controller' => 'User\\Controller\\UserController::listOnlineUsersAction',
 )));
 $routes->add('users_update', new Routing\Route('/users/update/{uuid}', array(
