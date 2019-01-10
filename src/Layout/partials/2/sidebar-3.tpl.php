@@ -237,7 +237,7 @@
             </a>
           </li>
           <li>
-            <a href="/users/list" title="Manage users who use this app">
+            <a href="/users/online" title="Shows the users who are online">
               <i class="fa fa-wifi"></i> Online Users
             </a>
           </li>          
