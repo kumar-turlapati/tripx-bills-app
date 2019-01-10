@@ -49,7 +49,7 @@
                         $status = '<span class="red">Blocked</span>';
                       }
                       $store_name = isset($location_ids[$user_details['locationID']]) ? $location_ids[$user_details['locationID']] : 'Invalid';
-                      $ip_address = inet_ntop($user_details['ipAddress']);
+                      $ip_address = $user_details['ipAddress'];
                       $last_accessed = date("d-m-Y H:ia", strtotime($user_details['lastAccessed']));
                   ?>
                     <tr class="text-right font11">

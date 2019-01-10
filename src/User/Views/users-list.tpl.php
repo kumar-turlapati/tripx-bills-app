@@ -23,16 +23,16 @@
         
         <h2 class="hdg-reports text-center">List of all Users</h2>
         <div class="table-responsive">
-          <table class="table table-striped table-hover">
+          <table class="table table-striped table-hover font11">
             <thead>
               <tr>
-                <th width="5%" class="text-center">Sno.</th>
-                <th width="30%">User name</th>
-                <th width="25%">Login ID</th>
-                <th width="10%">Phone no</th>
-                <th width="10%">User type</span></th>
-                <th width="10%">Status</th>
-                <th width="10%" class="text-center">Actions</th>
+                <th width="5%" class="text-center valign-middle">Sno.</th>
+                <th width="30%" class="text-center valign-middle">User name</th>
+                <th width="25%" class="text-center valign-middle">Login ID</th>
+                <th width="10%" class="text-center valign-middle">Phone no</th>
+                <th width="10%" class="text-center valign-middle">User type</span></th>
+                <th width="10%" class="text-center valign-middle">Status</th>
+                <th width="10%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -57,13 +57,13 @@
                   ?>
 
                   <?php //if( (int)$user_details['userType'] !== 3 ): ?>
-                    <tr class="text-right font12">
-                      <td align="center"><?php echo $cntr ?></td>
-                      <td class="text-left"><?php echo $user_name ?></td>
-                      <td class="text-left"><?php echo $email ?></td>
-                      <td class="text-bold"><?php echo $phone ?></td>
-                      <td class="text-left"><?php echo $user_type ?></td>
-                      <td class="text-left"><?php echo $status ?></td>
+                    <tr class="text-right font11">
+                      <td class="text-right valign-middle"><?php echo $cntr ?></td>
+                      <td class="text-left valign-middle"><?php echo $user_name ?></td>
+                      <td class="text-left valign-middle"><?php echo $email ?></td>
+                      <td class="text-bold valign-middle"><?php echo $phone ?></td>
+                      <td class="text-left valign-middle"><?php echo $user_type ?></td>
+                      <td class="text-left valign-middle"><?php echo $status ?></td>
                       <td>
                         <div class="btn-actions-group">
                           <?php if($uuid !== ''): ?>
