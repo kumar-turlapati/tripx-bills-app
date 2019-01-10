@@ -236,6 +236,11 @@
               <i class="fa fa-user-circle"></i> System Users
             </a>
           </li>
+          <li>
+            <a href="/users/list" title="Manage users who use this app">
+              <i class="fa fa-wifi"></i> Online Users
+            </a>
+          </li>          
         </ul>        
       </li>
       <li class="sub-menu">

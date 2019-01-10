@@ -20,6 +20,19 @@ class User {
 		}
 	}
 
+	public function get_online_users($search_params=[]) {
+		$client_id = Utilities::get_current_client_id();
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get','users-online',$search_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status'=>true,'users'=>$response['response']['users']);
+		} elseif($status === 'failed') {
+			return array('status'=>false, 'apierror'=>$response['reason']);
+		}
+	}	
+
 	public function get_user_details($uuid='',$search_params=array()) {
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'users/'.$uuid.'/'.$client_id;

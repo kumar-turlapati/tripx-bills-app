@@ -174,7 +174,48 @@ class UserController {
 
     // render template
     $template = new Template($this->views_path);
-    return array($template->render_view('users-list',$template_vars),$controller_vars);     
+    return array($template->render_view('users-list',$template_vars),$controller_vars);
+  }
+
+  public function listOnlineUsersAction(Request $request) {
+    $users = [];
+    $flash = new Flash();
+
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
+    $user_model = new User();
+    $result = $user_model->get_online_users();
+
+    if($result['status']) {
+      $users = $result['users'];
+    } else {
+      $message = $result['apierror'];
+      $flash->set_flash_message($message,1);      
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'users' => $users,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,      
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Users Online',
+      'icon_name' => 'fa fa-wifi',
+    );
+
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('users-online-list',$template_vars),$controller_vars);
   }
 
   public function editProfileAction(Request $request) {
