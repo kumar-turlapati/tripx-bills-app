@@ -73,7 +73,7 @@
                             <?php /*
                             <a class="btn btn-danger delUser" href="javascript:void(0)" title="Remove user" uid="<?php echo $uuid ?>">
                               <i class="fa fa-times"></i>
-                            </a>*/ ?>                                           
+                            </a>*/ ?>
                           <?php endif; ?>
                         </div>
                       </td>
@@ -86,7 +86,7 @@
                 ?>
             <?php } else { ?>
                 <tr>
-                  <td colspan="7">No users are available.</td>
+                  <td colspan="7" style="font-size:16px;text-align:center;color:red;">No users are available / Unauthorized access.</td>
                 </tr>
             <?php } ?>
             </tbody>

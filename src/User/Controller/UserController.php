@@ -20,6 +20,7 @@ class UserController {
   public function createUserAction(Request $request) {
 
     $user_details = $submitted_data = $form_errors = array();
+    $client_locations = [];
 
     $user_model = new User();
     $flash = new Flash();
@@ -77,6 +78,7 @@ class UserController {
 
     $user_details = $submitted_data = $form_errors = array();
     $uuid = $page_error = $page_success = '';
+    $client_locations = [];
 
     $user_model = new User();
     $flash = new Flash();
@@ -180,6 +182,8 @@ class UserController {
   public function listOnlineUsersAction(Request $request) {
     $users = [];
     $flash = new Flash();
+
+    $client_locations = $location_key_a = $location_ids = $location_codes = [];
 
     // ---------- get location codes from api ------------------
     $client_locations = Utilities::get_client_locations(true);

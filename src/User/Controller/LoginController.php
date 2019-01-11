@@ -49,12 +49,6 @@ class LoginController
       } else {
         $error = 'Invalid captcha challenge. Try again.';
       }
-
-/*      if($user_id !== '' && $password !== '' && $login->validateUser($user_id, $password)) {
-        $this->_redirect_to_dashboard();
-      } else {
-        $error = 'Invalid Userid (or) Password';
-      }*/
     }
 
     return array('',array('site_key'=>$site_key,'error'=>$error));

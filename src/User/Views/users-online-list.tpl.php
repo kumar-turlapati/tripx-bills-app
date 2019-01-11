@@ -84,7 +84,7 @@
                 ?>
             <?php } else { ?>
                 <tr>
-                  <td colspan="11">No users are available online.</td>
+                  <td colspan="10" style="font-size:16px;text-align:center;color:red;">No users are available online.</td>
                 </tr>
             <?php } ?>
             </tbody>
