@@ -1,15 +1,5 @@
 <?php
   $current_date = date("d-m-Y");
-  $query_params = '';
-  if(isset($search_params['saleDate']) && $search_params['saleDate'] !=='') {
-    $saleDate = $search_params['saleDate'];
-    $query_params[] = 'saleDate='.$saleDate;
-  } else {
-    $saleDate = $current_date;
-  }
-  if(is_array($query_params) && count($query_params)>0) {
-    $query_params = '?'.implode('&', $query_params);
-  }
   $page_url = '/reports/sales-by-tax-rate';
 ?>
 <div class="row">
@@ -27,8 +17,8 @@
                     <select class="form-control" name="month" id="month">
                       <?php 
                         foreach($months as $key=>$value):
-                          if($key==$def_month) {
-                            $selected = "selected";
+                          if((int)$key === (int)date("m")) {
+                            $selected = 'selected';
                           } else {
                             $selected = '';
                           }
@@ -42,12 +32,12 @@
                   <div class="select-wrap">
                     <select class="form-control" name="year" id="year">
                       <?php 
-                        foreach($years as $key=>$value):
-                          if($key==$def_year) {
-                            $selected = "selected";
+                        foreach($years as $key => $value):
+                          if((int)$key === (int)date("Y")) {
+                            $selected = 'selected';
                           } else {
                             $selected = '';
-                          }
+                          }                          
                       ?>
                         <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                       <?php endforeach; ?>
@@ -59,14 +49,9 @@
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
                         foreach($client_locations as $location_key=>$value):
-                          $location_key_a = explode('`', $location_key);
-                          if($locationCode === $location_key_a[0]) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
+                          $location_key_a = explode('`', $location_key);  
                       ?>
-                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                       <option value="<?php echo $location_key_a[0] ?>">
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>
@@ -76,9 +61,7 @@
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="format" id="format">
-                      <?php 
-                        foreach($format_options as $key=>$value):
-                      ?>
+                      <?php foreach($format_options as $key=>$value): ?>
                         <option value="<?php echo $key ?>"><?php echo $value ?></option>
                       <?php endforeach; ?>
                     </select>

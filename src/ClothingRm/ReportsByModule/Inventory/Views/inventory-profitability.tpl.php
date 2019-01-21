@@ -1,23 +1,6 @@
 <?php
-  $current_date = date("d-m-Y");
-  $query_params = '';
-  if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
-    $fromDate = $search_params['fromDate'];
-    $query_params[] = 'fromDate='.$fromDate;
-  } else {
-    $fromDate = $current_date;
-  }
-  if(isset($search_params['toDate']) && $search_params['toDate'] !='' ) {
-    $toDate = $search_params['toDate'];
-    $query_params[] = 'toDate='.$toDate;
-  } else {
-    $toDate = $current_date;
-  }
-
-  if(is_array($query_params) && count($query_params)>0) {
-    $query_params = '?'.implode('&', $query_params);
-  }
-  $page_url = '/reports/inventory-profitability';
+  $current_date = $toDate = date("d-m-Y");
+  $fromDate = '01-'.date("m-Y");
   $category_code = '';
 ?>
 <div class="row">
@@ -48,13 +31,8 @@
                       <?php 
                         foreach($client_locations as $location_key=>$value):
                           $location_key_a = explode('`', $location_key);
-                          if($locationCode === $location_key_a[0]) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
                       ?>
-                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                       <option value="<?php echo $location_key_a[0] ?>">
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>
@@ -65,14 +43,9 @@
                   <div class="select-wrap">
                     <select class="form-control" name="category" id="category">
                       <?php 
-                        foreach($categories as $category_key => $category_name):
-                          if($category_code === $category_key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
+                        foreach($categories as $category_key => $category_name):  
                       ?>
-                       <option value="<?php echo $category_key ?>" <?php echo $selected ?>>
+                       <option value="<?php echo $category_key ?>">
                           <?php echo $category_name ?>
                         </option>
                       <?php endforeach; ?>

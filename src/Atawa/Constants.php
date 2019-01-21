@@ -130,7 +130,7 @@ class Constants
 
   public static $INW_SEARCH_OPTIONS = [
     'billno' => 'Bill No.',
-    'date' => 'Bill Date',
+    'date' => 'Bill Date (yyyy-mm-dd)',
     'suppname' => 'Supplier Name',
     'itemname' => 'Item Name',
   ];

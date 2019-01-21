@@ -58,7 +58,7 @@
                   <input placeholder="Barcode" type="text" name="barcode" id="barcode" class="form-control" value="<?php echo $barcode ?>" size="13" />
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <input placeholder="Item name" type="text" name="itemName" id="itemName" class="form-control" value="<?php echo $itemName ?>" size="10" />
+                  <input placeholder="Item name" type="text" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $itemName ?>" size="10" />
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Lot No." type="text" name="lotNo" id="lotNo" class="form-control" value="<?php echo $lotNo ?>"  size="13" />
@@ -150,8 +150,8 @@
                   <td class="valign-middle" align="right"><?php echo $mrp ?></td>
                   <td class="valign-middle">
                     <div class="btn-actions-group" align="right">                    
-                      <a class="btn btn-primary" href="<?php echo $print_url ?>" title="Print Barcodes" target="_blank">
-                        <i class="fa fa-print"></i>
+                      <a class="btn btn-success" href="<?php echo $print_url ?>" title="Print Barcodes" target="_blank">
+                        <i class="fa fa-barcode"></i>
                       </a>
                     </div>
                   </td>

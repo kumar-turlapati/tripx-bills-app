@@ -1,24 +1,7 @@
 <?php
-  $current_date = date("d-m-Y");
-  $query_params = '';
-  if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
-    $fromDate = $search_params['fromDate'];
-    $query_params[] = 'fromDate='.$fromDate;
-  } else {
-    $fromDate = $current_date;
-  }
-  if(isset($search_params['toDate']) && $search_params['toDate'] !='' ) {
-    $toDate = $search_params['toDate'];
-    $query_params[] = 'toDate='.$toDate;
-  } else {
-    $toDate = $current_date;
-  }
-
-  if(is_array($query_params) && count($query_params)>0) {
-    $query_params = '?'.implode('&', $query_params);
-  }
-  $page_url = '/reports/opbal';
   $category_code = '';
+  $current_date = date("d-m-Y");
+  $page_url = '/reports/opbal';
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -32,13 +15,13 @@
                 <div class="col-sm-12 col-md-1 col-lg-1" style="padding-top:5px;text-align:right;font-weight:bold;">Filters</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
+                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" placeholder="From Date" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" value="<?php echo $toDate ?>" />
+                    <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" placeholder="To Date" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>                
@@ -47,14 +30,9 @@
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
                         foreach($client_locations as $location_key=>$value):
-                          $location_key_a = explode('`', $location_key);
-                          if($locationCode === $location_key_a[0]) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
+                          $location_key_a = explode('`', $location_key); 
                       ?>
-                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                       <option value="<?php echo $location_key_a[0] ?>">
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>

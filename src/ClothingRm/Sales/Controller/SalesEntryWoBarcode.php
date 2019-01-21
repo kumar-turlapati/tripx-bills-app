@@ -414,7 +414,7 @@ class SalesEntryWoBarcode {
         $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
       } else {
         $page_error = $sales_response['apierror'];
-        $flash->set_flash_message($page_error,1);
+        $this->flash->set_flash_message($page_error,1);
         Utilities::redirect('/sales/list');
       }
     } else {
@@ -535,21 +535,7 @@ class SalesEntryWoBarcode {
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
     }
 
-    # ---------- get sales executive names from api -----------------------
-    if($_SESSION['__utype'] !== 3) {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
-    } else {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
-    }
-    if($sexe_response['status']) {
-      foreach($sexe_response['users'] as $user_details) {
-        $sa_executives[$user_details['userCode']] = $user_details['userName'];
-      }
-    } else {
-      $sa_executives = [];
-    }    
-
-    # check for filter variables.
+    // check for filter variables.
     if(is_null($request->get('pageNo'))) {
       $search_params['pageNo'] = 1;
     } else {
@@ -592,6 +578,20 @@ class SalesEntryWoBarcode {
     } else {
       $search_params['saExecutiveCode'] = $request->get('saExecutiveCode');
     }
+
+    # ---------- get sales executive names from api -----------------------
+    if($_SESSION['__utype'] !== 3) {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+    } else {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+    }
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
+      }
+    } else {
+      $sa_executives = [];
+    }    
 
     # hit API.
     $sales_api_call = $this->sales->get_sales($page_no,$per_page,$search_params);
@@ -666,7 +666,7 @@ class SalesEntryWoBarcode {
 
     $search_by_a = array(
       'billno' => 'Bill No.',
-      'date' => 'Date',
+      'date' => 'Date (yyyy-mm-dd)',
       'name' => 'Name',
       'mobile' => 'Mobile No.',
     );

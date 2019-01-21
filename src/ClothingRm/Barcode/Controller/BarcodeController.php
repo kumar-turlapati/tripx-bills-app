@@ -34,16 +34,22 @@ class BarcodeController
   public function generateBarcodeAction(Request $request) {
     $purchase_details = $suppliers_a = $form_data = $location_ids = [];
     $location_codes = $form_errors = [];
+    $taxes = $taxes_raw = [];
 
     $page_error = $inward_entry_no = $mfg_date = $po_location_code = '';
 
+    if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 3 && (int)$_SESSION['utype'] !== 7) {
+      $this->flash->set_flash_message("Permission Error: You are not authorized to generate Barcodes against this PO", 1);
+      Utilities::redirect('/inward-entry/list');
+    }    
+
     # ---------- get location codes from api -----------------------
-/*    $client_locations = Utilities::get_client_locations(true);
+    $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
-    }*/    
+    }
 
     if(is_null($request->get('purchaseCode'))) {
       $this->flash->set_flash_message('PO Number is mandatory for generating barcode.', 1);
@@ -67,7 +73,6 @@ class BarcodeController
       $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
       // dump($purchase_response, $location_codes, $location_ids);
       // exit;
-
       if($purchase_response['status'] === false) {
         $this->flash->set_flash_message('Invalid PO Number (or) PO does not exists.', 1);
         Utilities::redirect('/barcodes/list');
@@ -101,6 +106,7 @@ class BarcodeController
         $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
 
         $submitted_item_details = $purchase_details['itemDetails'];
+        $po_store_name = array_key_exists($purchase_response['purchaseDetails']['locationIDNumeric'], $location_ids) ? $location_ids[$purchase_response['purchaseDetails']['locationIDNumeric']] : 'Invalid Store';
 
         // unset item details from api data.
         $purchase_item_details = $purchase_details['itemDetails'];
@@ -218,7 +224,7 @@ class BarcodeController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Generate Barcodes'.$inward_entry_no,
+      'page_title' => 'Generate Barcodes'.$inward_entry_no.' @ '.$po_store_name,
       'icon_name' => 'fa fa-barcode',      
     );
 

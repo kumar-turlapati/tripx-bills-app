@@ -44,7 +44,7 @@ class MastersReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/item-master');        
       }
@@ -188,7 +188,7 @@ class MastersReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/customer-master');        
       }
@@ -300,11 +300,11 @@ class MastersReportsController {
   }
 
   private function _validate_item_master_data($form_data = []) {
-    $cleaned_params = [];
+    $cleaned_params = $form_errors = [];
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
     if($form_data['categoryCode'] !== '') {
       $cleaned_params['categoryCode'] = Utilities::clean_string($form_data['categoryCode']);
@@ -319,15 +319,19 @@ class MastersReportsController {
 
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
-    return ['status' => true, 'cleaned_params' => $cleaned_params];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
   }
 
   private function _validate_customer_master_data($form_data = []) {
-    $cleaned_params = [];
+    $cleaned_params = $form_errors = [];
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
     if($form_data['customerType'] !== '') {
       $cleaned_params['customerType'] = Utilities::clean_string($form_data['customerType']);
@@ -337,7 +341,11 @@ class MastersReportsController {
     
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
-    return ['status' => true, 'cleaned_params' => $cleaned_params];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
   }  
   
   private function _format_data_for_item_master($total_records = []) {

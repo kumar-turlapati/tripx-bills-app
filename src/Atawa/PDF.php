@@ -55,7 +55,7 @@ class PDF extends FPDF {
   public function Footer() {
     if(self::$skip_footer === false) {
       // Position at 1.5 cm from bottom
-      $this->SetY(-15);
+      $this->SetY(-10);
       // Arial italic 8
       $this->SetFont('Arial','IB',8);
 

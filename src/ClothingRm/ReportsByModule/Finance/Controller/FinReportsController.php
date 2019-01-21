@@ -47,7 +47,7 @@ class FinReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Filters. Please try again.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/payables');
       }
@@ -254,7 +254,7 @@ class FinReportsController {
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store name.';
     }
     if($form_data['supplierCode'] !== '') {
       $cleaned_params['supplierCode'] = Utilities::clean_string($form_data['supplierCode']);
@@ -360,7 +360,7 @@ class FinReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Filters. Please try again.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/receivables');
       }
@@ -526,7 +526,7 @@ class FinReportsController {
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store name.';
     }
     if($form_data['customerName'] !== '') {
       $cleaned_params['customerName'] = Utilities::clean_string($form_data['customerName']);

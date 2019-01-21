@@ -1,5 +1,6 @@
 <?php
-  $current_date = date("d-m-Y");
+  $from_date = date('01-m-Y');
+  $to_date = $current_date = date('d-m-Y');
   $page_url = '/reports/po-register-itemwise';
 ?>
 <div class="row">
@@ -14,13 +15,13 @@
                 <div class="col-sm-12 col-md-1 col-lg-1">Filters</div>
       				  <div class="col-sm-12 col-md-2 col-lg-2">
       						<div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-      						  <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $current_date ?>" />
+      						  <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $from_date ?>" />
       						  <span class="add-on"><i class="fa fa-calendar"></i></span>
       					  </div>
       				  </div>
       				  <div class="col-sm-12 col-md-2 col-lg-2">
       						<div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-      						  <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" value="<?php echo $current_date ?>" />
+      						  <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" value="<?php echo $to_date ?>" />
       						  <span class="add-on"><i class="fa fa-calendar"></i></span>
       						</div>
       				  </div>
@@ -29,14 +30,9 @@
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
                         foreach($client_locations as $location_key=>$value):
-                          $location_key_a = explode('`', $location_key);
-                          if($locationCode === $location_key_a[0]) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
+                          $location_key_a = explode('`', $location_key);  
                       ?>
-                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                       <option value="<?php echo $location_key_a[0] ?>">
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>
@@ -47,14 +43,9 @@
                   <div class="select-wrap">
                     <select class="form-control" name="supplierCode" id="supplierCode">
                       <?php 
-                        foreach($suppliers as $key=>$value):
-                          if($supplierCode === $key) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
+                        foreach($suppliers as $key=>$value):  
                       ?>
-                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                       <option value="<?php echo $key ?>">
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>

@@ -60,8 +60,8 @@
           <i class="fa fa-search"></i> Search <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/sales/search-bills"><i class="fa fa-square-o"></i> Sale Bills</a></li>
-          <li><a href="/purchases/search-bills"><i class="fa fa-laptop"></i> Purchase Bills</a></li>          
+          <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Sale Bills</a></li>
+          <li><a href="/purchases/search-bills"><i class="fa fa-compass"></i> Purchase Bills</a></li>          
         </ul>
       </li>
       <li class="sub-menu">
@@ -92,7 +92,7 @@
           </li>
           <li class="sub-menu">
             <a href="javascript:">
-              <i class="fa fa-laptop"></i> Purchases <span class="menu-arrow arrow_carrot-right"></span> 
+              <i class="fa fa-compass"></i> Purchases <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">
               <li><a href="/reports/po-register"><i class="fa fa-angle-right"></i> PO Register</a></li>

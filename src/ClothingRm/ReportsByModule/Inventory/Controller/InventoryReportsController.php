@@ -52,9 +52,9 @@ class InventoryReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
-        Utilities::redirect('/reports/sales-register');        
+        Utilities::redirect('/reports/stock-report');        
       }
 
       // hit api
@@ -110,7 +110,7 @@ class InventoryReportsController {
 
       $format = $form_data['format'];
       if($format === 'csv') {
-        $total_records = $this->_format_stock_report_for_csv($total_records);
+        $total_records = $this->_format_stock_report_for_csv($total_records,$form_data['groupBy']);
         Utilities::download_as_CSV_attachment('StockReport', $csv_headings, $total_records);
         return;
       }
@@ -261,9 +261,9 @@ class InventoryReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
-        Utilities::redirect('/reports/sales-register');        
+        Utilities::redirect('/reports/opbal');        
       }
 
       // hit api
@@ -310,12 +310,12 @@ class InventoryReportsController {
 
       $format = $form_data['format'];
       if($format === 'csv') {
-        $total_records = $this->_format_stock_report_for_csv($total_records);
+        $total_records = $this->_format_opbal_report_for_csv($total_records);
         Utilities::download_as_CSV_attachment('OpeningBalances', $csv_headings, $total_records);
         return;
       }
 
-      # start PDF printing.
+      // start PDF printing.
       $pdf = PDF::getInstance();
       $pdf->AliasNbPages();
       $pdf->AddPage('P','A4');
@@ -438,7 +438,7 @@ class InventoryReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/inventory-profitability');        
       }
@@ -488,7 +488,7 @@ class InventoryReportsController {
 
       $format = $form_data['format'];
       if($format === 'csv') {
-        $total_records = $this->_format_stock_report_for_csv($total_records);
+        $total_records = $this->_format_profitability_report_for_csv($total_records);
         Utilities::download_as_CSV_attachment('InventoryProfitability', $csv_headings, $total_records);
         return;
       }
@@ -623,7 +623,7 @@ class InventoryReportsController {
         $form_data['pageNo'] = $page_no;
         $form_data['perPage'] = $per_page;
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/material-movement');        
       }
@@ -1256,12 +1256,14 @@ class InventoryReportsController {
   }
 
   private function _validate_stock_report_data($form_data = []) {
-    $cleaned_params = [];
+    $cleaned_params = $form_errors = [];
+    
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
+
     if($form_data['categoryCode'] !== '') {
       $cleaned_params['categoryCode'] = Utilities::clean_string($form_data['categoryCode']);
     } else {
@@ -1279,15 +1281,20 @@ class InventoryReportsController {
     $cleaned_params['groupBy'] = Utilities::clean_string($form_data['groupBy']);
     $cleaned_params['balanceType'] = Utilities::clean_string($form_data['balanceType']);
 
-    return ['status' => true, 'cleaned_params' => $cleaned_params];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
   }
 
   private function _validate_opbal_data($form_data = []) {
-    $cleaned_params = [];
+    $cleaned_params = $form_errors = [];
+
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
     if($form_data['category'] !== '') {
       $cleaned_params['category'] = Utilities::clean_string($form_data['category']);
@@ -1297,25 +1304,29 @@ class InventoryReportsController {
     if($form_data['fromDate'] !== '') {
       $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
     } else {
-      $cleaned_params['fromDate'] = '';
+      $form_errors['FromDate'] = 'Invalid From Date';
     }
     if($form_data['toDate'] !== '') {
       $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
     } else {
-      $cleaned_params['toDate'] = '';
+      $form_errors['ToDate'] = 'Invalid To Date';
     }
 
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
-    return ['status' => true, 'cleaned_params' => $cleaned_params];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
   }  
 
   private function _validate_inventory_profitability($form_data = []) {
-    $cleaned_params = [];
+    $cleaned_params = $form_errors = [];
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
     if($form_data['category'] !== '') {
       $cleaned_params['category'] = Utilities::clean_string($form_data['category']);
@@ -1337,29 +1348,31 @@ class InventoryReportsController {
     } else {
       $cleaned_params['toDate'] = '';
     }
-
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
-
-    return ['status' => true, 'cleaned_params' => $cleaned_params];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
   }
 
   private function _validate_material_movement($form_data = []) {
-    $cleaned_params = [];
-    if($form_data['fromDate'] !== '') {
-      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
-    } else {
-      $cleaned_params['fromDate'] = '';
-    }
-    if($form_data['toDate'] !== '') {
-      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
-    } else {
-      $cleaned_params['toDate'] = '';
-    }    
+    $cleaned_params = $form_errors = [];
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
+    if($form_data['fromDate'] !== '') {
+      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
+    } else {
+      $cleaned_params['fromDate'] = date("d-m-Y");
+    }    
+    if($form_data['toDate'] !== '') {
+      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
+    } else {
+      $cleaned_params['toDate'] = date("d-m-Y");
+    }    
     if($form_data['count'] !== '') {
       $cleaned_params['count'] = Utilities::clean_string($form_data['count']);
     } else {
@@ -1369,26 +1382,234 @@ class InventoryReportsController {
       $cleaned_params['movType'] = Utilities::clean_string($form_data['movType']);
     } else {
       $cleaned_params['movType'] = '';
-    }    
+    }
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
-    return ['status' => true, 'cleaned_params' => $cleaned_params];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
   }
 
-  private function _format_stock_report_for_csv($total_records = []) {
+  private function _format_stock_report_for_csv($total_records = [], $group_by = 'item') {
     $cleaned_params = [];
-    foreach($total_records as $key => $record_details) {
+    $sno = $tot_amount = 0;
+    $tot_op_qty = $tot_pu_qty = $tot_sr_qty = $tot_aj_qty = 0;
+    $tot_st_qty = $tot_sa_qty = $tot_pr_qty = $tot_cl_qty = 0;
+    foreach($total_records as $key => $item_details) {
+      $sno++;
+      $item_name = $item_details['itemName'];
+      $category_name = $item_details['categoryName'];
+      $brand_name = $item_details['brandName'];
+      $lot_no = $item_details['lotNo'];
+      $opening_qty = $item_details['openingQty'];
+      $purchased_qty = $item_details['purchasedQty'];
+      $sales_return_qty = $item_details['salesReturnQty'];
+      $adjusted_qty = $item_details['adjustedQty'];
+      $transfer_qty = $item_details['transferQty'];
+      $purchase_return_qty = $item_details['purchaseReturnQty'];
+      $sold_qty = $item_details['soldQty'];
+      $closing_qty = $item_details['closingQty'];
+      $mrp = $item_details['mrp'];
+      $purchase_rate = $item_details['purchaseRate'];
+      $tax_percent = $item_details['taxPercent'];
+
+      $amount = round($closing_qty * $purchase_rate, 2);
+      
+      $tot_op_qty += $opening_qty;
+      $tot_pu_qty += $purchased_qty;
+      $tot_sr_qty += $sales_return_qty;
+      $tot_aj_qty += $adjusted_qty;
+      $tot_st_qty += $transfer_qty;
+      $tot_sa_qty += $sold_qty;
+      $tot_pr_qty += $purchase_return_qty;
+      $tot_cl_qty += $closing_qty;
+      $tot_amount += $amount;
+      if($group_by === 'item') {
+        $lot_no = '';
+      }
       $cleaned_params[$key] = [
-        'Item Name' => $record_details['itemName'],
-        'Category Name' => $record_details['categoryName'],
-        'Lot No.' => $record_details['lotNo'],
-        'Tax Percent' => $record_details['taxPercent'],
-        'Closing Qty' => $record_details['closingQty'],
-        'Purchase Rate' => $record_details['purchaseRate'],
-        'M.R.P' => $record_details['mrp'],
-        'Brand Name' => $record_details['mfgName'],
+        'Sno.' => $sno,
+        'Item Name' => $item_name,
+        'Category Name' => $category_name,
+        'Brand Name'  => $brand_name,
+        'Lot No.'     => $lot_no,
+        'GST (%)'     => number_format($tax_percent,2,'.',''),
+        'OP Qty.'     => number_format($opening_qty,2,'.',''),
+        'PU Qty.'     => number_format($purchased_qty,2,'.',''),
+        'SR Qty.'     => number_format($sales_return_qty,2,'.',''),
+        'AJ Qty.'     => number_format($adjusted_qty,2,'.',''),
+        'ST Qty.'     => number_format($transfer_qty,2,'.',''),
+        'SA Qty.'     => number_format($sold_qty,2,'.',''),
+        'PR Qty.'     => number_format($purchase_return_qty,2,'.',''), 
+        'CL Qty.'     => number_format($closing_qty,2,'.',''),
+        'Rate'        => number_format($purchase_rate,2,'.',''),
+        'Amount'      => number_format($amount,2,'.',''),
+        'M.R.P'       => number_format($mrp,2,'.',''),
       ];
     }
+
+    $cleaned_params[count($cleaned_params)] = [
+        'Sno.' => '',
+        'Item Name' => '',
+        'Category Name' => '',
+        'Brand Name'  => '',
+        'Lot No.'     => '',
+        'GST (%)'     => '',
+        'OP Qty.'     => number_format($tot_op_qty,2,'.',''),
+        'PU Qty.'     => number_format($tot_pu_qty,2,'.',''),
+        'SR Qty.'     => number_format($tot_sr_qty,2,'.',''),
+        'AJ Qty.'     => number_format($tot_aj_qty,2,'.',''),
+        'ST Qty.'     => number_format($tot_st_qty,2,'.',''),
+        'SA Qty.'     => number_format($tot_sa_qty,2,'.',''),
+        'PR Qty.'     => number_format($tot_pr_qty,2,'.',''), 
+        'CL Qty.'     => number_format($tot_cl_qty,2,'.',''),
+        'Rate'        => '',
+        'Amount'      => number_format($tot_amount,2,'.',''),
+        'M.R.P'       => '',
+    ];
+
+    return $cleaned_params;
+  }
+
+  private function _format_opbal_report_for_csv($total_records = []) {
+    $slno = $tot_amount = $tot_qty = 0;
+    foreach($total_records as $key => $item_details) {
+      $slno++;
+      $item_name = $item_details['itemName'];
+      $category_name = $item_details['categoryName'];
+      $location_id = $item_details['locationID'];
+      $opening_qty = $item_details['openingQty'];
+      $lot_no = $item_details['lotNo'];
+      $brand_name = $item_details['mfgName'];
+      $purchase_rate = $item_details['purchaseRate'];
+      $tax_percent = $item_details['taxPercent'];
+      $barcode = $item_details['barcode'];
+      $opening_date = date("d-m-Y", strtotime($item_details['createdDateTime']));
+      $opening_rate = $item_details['openingRate'];
+      if($purchase_rate > 0 && $opening_qty > 0) {
+        $item_amount = round($purchase_rate*$opening_qty,2);
+      } else {
+        $item_amount = 0;
+      }
+      if($item_amount>0 && $tax_percent > 0) {
+        $tax_amount = round( ($item_amount*$tax_percent)/100, 2);
+      } else {
+        $tax_amount = 0;
+      }
+
+      $item_total = $item_amount + $tax_amount;
+      $tot_amount += $item_total;
+      $tot_qty += $opening_qty;
+
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Item Name' => $item_name,
+        'BrandName' => $brand_name,
+        'Category' => $category_name,
+        'OpenQty.' => number_format($opening_qty,2,'.',''),
+        'Pur.Rate' => number_format($purchase_rate,2,'.',''),
+        'Tax%' => number_format($tax_percent,2,'.',''),
+        'Amount' => number_format($item_total,2,'.',''),
+        'MRP' => number_format($opening_rate,2,'.',''),
+      ];
+    }
+
+    $cleaned_params[count($cleaned_params)] = [
+      'Sno.' => '',
+      'Item Name' => 'T O T A L S',
+      'BrandName' => '',
+      'Category' => '',
+      'OpenQty.' => number_format($tot_qty,2,'.',''),
+      'Pur.Rate' => '',
+      'Tax%' => '',
+      'Amount' => number_format($tot_amount,2,'.',''),
+      'MRP' => '',
+    ];
+
+    return $cleaned_params;
+  }
+
+  private function _format_profitability_report_for_csv($total_records = []) {
+    $slno = 0;
+    $tot_sold_qty = $tot_sold_value = $tot_pur_value = $tot_gross_profit = 0;
+    $cleaned_params = [];
+
+    foreach($total_records as $key => $item_details) {
+      $slno++;
+      $gross_profit = $item_details['soldValue']-$item_details['purchaseValue'];
+      
+      $tot_sold_qty += $item_details['soldQty'];
+      $tot_sold_value += $item_details['soldValue'];
+      $tot_pur_value += $item_details['purchaseValue'];
+
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Item Name' => $item_details['itemName'],
+        'BrandName' => $item_details['mfgName'],
+        'Qty.Sold' => $item_details['soldQty'],
+        'SalePrice' => $item_details['sellingPrice'],
+        'SaleValue' => $item_details['soldValue'],
+        'Pur.Price' => $item_details['finalPurchaseRate'],
+        'Pur.Value' => $item_details['purchaseValue'],
+        'Profit' => number_format($gross_profit,2,'.',''),
+        'Profit (%)' => number_format($item_details['profitPercentage'],2,'.',''),
+      ];
+    }
+
+    $cleaned_params[] = [
+      'Profitability Summary'
+    ];
+    
+    $profit_amount = round($tot_sold_value - $tot_pur_value, 2);
+    $tot_gross_profit = round(($profit_amount/$tot_pur_value)*100, 2);
+
+    $cleaned_params[] = [
+      'Total Sold Qty.', 'Total Sale Value (in Rs.)', 'Total Purchase Value (in Rs.)', 
+      'Profit (in Rs.)', 'Profit (in %)'
+    ];
+
+    $cleaned_params[] = [
+      'Total Sold Qty.' => number_format($tot_sold_qty,2,'.',''),
+      'Total Sale Value (in Rs.)' => number_format($tot_sold_value,2,'.',''),
+      'Total Purchase Value (in Rs.)' => number_format($tot_pur_value,2,'.',''),
+      'Profit (in Rs.)' => number_format($tot_sold_value-$tot_pur_value,2,'.',''),
+      'Profit (in %)' => number_format($tot_gross_profit,2,'.',''),
+    ];
+
+    return $cleaned_params;
+  }
+
+  private function _format_data_for_material_movement($total_records = []) {
+    $cleaned_params = [];
+    $slno = $tot_amount = $tot_qty = 0;
+
+    foreach($total_records as $key => $item_details) {
+      $slno++;
+      $amount = $item_details['soldQty']*$item_details['itemRate'];
+      $tot_amount += $amount;
+      $tot_qty += $item_details['soldQty'];
+      $cleaned_params[$key] = [
+        'SNo.' => $slno ,
+        'Item Name' => $item_details['itemName'],
+        'Category' => $item_details['categoryName'],
+        'Brand Name' => $item_details['mfgName'],
+        'Sold Qty.' => number_format($item_details['soldQty'],2,'.',''),
+        'Rate / Unit (Rs.)' => number_format($item_details['itemRate'],2,'.',''),
+        'Amount (Rs.)' => number_format($amount,2,'.',''),
+      ];
+    }
+    $cleaned_params[$key] = [
+      'SNo.' => 'T O T A L S' ,
+      'Item Name' => '',
+      'Category' => '',
+      'Brand Name' => '',
+      'Sold Qty.' => number_format($tot_qty,2,'.',''),
+      'Rate / Unit (Rs.)' => '',
+      'Amount (Rs.)' => number_format($tot_amount,2,'.',''),
+    ];
+
     return $cleaned_params;
   }
 
@@ -1431,5 +1652,4 @@ class InventoryReportsController {
     $pdf->Cell($item_widths[7],6,'Accu.%','RTB',0,'C');
     $pdf->SetFont('Arial','',9);
   }
-
 }

@@ -110,7 +110,7 @@ class InwardController
     # theme variables.
     $controller_vars = array(
       'page_title' => 'Inward Material Entry - Create',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-compass',
     );
     $template_vars = array(
       'utilities' => new Utilities,
@@ -276,7 +276,7 @@ class InwardController
     # theme variables.
     $controller_vars = array(
       'page_title' => 'Inward Material Entry - Update Transaction',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-compass',
     );
     $template_vars = array(
       'utilities' => new Utilities,
@@ -530,7 +530,7 @@ class InwardController
     # build variables
     $controller_vars = array(
       'page_title' => 'Purchase Register',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-compass',
     );
 
     # render template
@@ -542,7 +542,7 @@ class InwardController
 
     # allow this option only to the administrator.
     if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 3) {
-      $this->flash_obj->set_flash_message("Permission Error: You are not authorized to perform this action.", 1);
+      $this->flash->set_flash_message("Permission Error: You are not authorized to perform this action.", 1);
       Utilities::redirect('/inward-entry/list');
     }
 
@@ -684,7 +684,7 @@ class InwardController
     // theme variables.
     $controller_vars = array(
       'page_title' => 'Purchases - Approve / Reject PO',
-      'icon_name' => 'fa fa-laptop',
+      'icon_name' => 'fa fa-compass',
     );
     $template_vars = array(
       'utilities' => new Utilities,

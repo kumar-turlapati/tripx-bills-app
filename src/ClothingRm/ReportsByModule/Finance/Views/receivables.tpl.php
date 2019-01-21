@@ -1,9 +1,5 @@
 <?php
   $current_date = date("d-m-Y");
-  $query_params = '';
-  if(is_array($query_params) && count($query_params)>0) {
-    $query_params = '?'.implode('&', $query_params);
-  }
   $page_url = '/reports/receivables';
 ?>
 <div class="row">
@@ -21,14 +17,9 @@
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
                         foreach($client_locations as $location_key=>$value):
-                          $location_key_a = explode('`', $location_key);
-                          if($locationCode === $location_key_a[0]) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
+                          $location_key_a = explode('`', $location_key);  
                       ?>
-                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                       <option value="<?php echo $location_key_a[0] ?>">
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>

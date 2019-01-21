@@ -43,7 +43,7 @@ class PurchaseReportsController {
       if($validation['status']) {
         $form_data = $validation['cleaned_params'];
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/po-register');        
       }
@@ -216,7 +216,7 @@ class PurchaseReportsController {
       if($validation['status']) {
         $form_data = $validation['cleaned_params'];
       } else {
-        $error_message = 'Invalid Form Data.';
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
         $this->flash->set_flash_message($error_message, 1);
         Utilities::redirect('/reports/po-register-itemwise');
       }
@@ -359,11 +359,11 @@ class PurchaseReportsController {
   }  
 
   private function _validate_po_register_data($form_data = []) {
-    $cleaned_params = [];
+    $cleaned_params = $form_errors = [];
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $cleaned_params['locationCode'] = '';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
 
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
@@ -371,7 +371,11 @@ class PurchaseReportsController {
     $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
     $cleaned_params['supplierCode'] = Utilities::clean_string($form_data['supplierCode']);
 
-    return ['status' => true, 'cleaned_params' => $cleaned_params];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
   }
 
   private function _validate_po_register_itemwise_data($form_data = []) {
@@ -379,7 +383,7 @@ class PurchaseReportsController {
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $form_errors['locationCode'] = 'Invalid store name.';
+      $form_errors['StoreName'] = 'Invalid Store Name.';
     }
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
     $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
@@ -388,8 +392,8 @@ class PurchaseReportsController {
     $cleaned_params['itemName'] = Utilities::clean_string($form_data['itemName']);
     $cleaned_params['brandName'] = Utilities::clean_string($form_data['brandName']);
 
-    if(count($form_errors)>0) {
-      return ['status' => false, 'errors' => $form_errors];
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
     } else {
       return ['status' => true, 'cleaned_params' => $cleaned_params];
     }
@@ -398,6 +402,10 @@ class PurchaseReportsController {
   private function _format_po_register_for_csv($total_records = []) {
     $cleaned_params = [];
     $cntr = 0;
+
+    $tot_gross = $tot_discount = $tot_tax = $tot_net_pay = $tot_qty = 0;
+    $tot_round_off = 0;
+
     foreach($total_records as $key => $record_details) {
       $cntr++;
       if((int)$record_details['paymentMethod'] === 1) {
@@ -406,50 +414,99 @@ class PurchaseReportsController {
       } elseif((int)$record_details['paymentMethod'] === 0) {
         $payment_method = 'Cash';
         $credit_days = 0;
-      }      
+      }
+
+      $tot_gross += $record_details['billAmount'];
+      $tot_discount += $record_details['discountAmount'];
+      $tot_tax += $record_details['taxAmount'];
+      $tot_round_off += $record_details['roundOff'];
+      $tot_net_pay += $record_details['netPay'];
+      $tot_qty += $record_details['totalQty'];
+
       $cleaned_params[$key] = [
-        'Sl. No.' => $cntr,
+        'SNo.' => $cntr,
         'PO No.' => $record_details['poNo'],
         'PO Date' => date("d-m-Y", strtotime($record_details['purchaseDate']) ),
         'Supplier Name' => $record_details['supplierName'],
         'Invoice No.' => $record_details['billNo'],
         'GRN No.' => $record_details['grnNo'],
         'GRN Date' => date("d-m-Y", strtotime($record_details['grnDate'])),
-        'Payment Method' => $payment_method,
-        'Credit Days' => $credit_days,
-        'Gross Amount' => $record_details['billAmount'],        
-        'Discount' => $record_details['discountAmount'],        
-        'GST' => $record_details['taxAmount'],        
-        'Round Off' => $record_details['roundOff'],        
-        'Net Pay' => $record_details['netPay'],        
-        'Total Qty.' => $record_details['totalQty'],        
+        'PMode' => $payment_method,
+        'Cr. Days' => $credit_days,
+        'Gross (Rs.)' => number_format($record_details['billAmount'], 2, '.', ''),
+        'Disc. (Rs.)' => number_format($record_details['discountAmount'], 2, '.', ''),        
+        'GST (Rs.)' => number_format($record_details['taxAmount'], 2, '.', ''),        
+        'R.Off' => number_format($record_details['roundOff'], 2, '.', ''),        
+        'Net Pay (Rs.)' => number_format($record_details['netPay'], 2, '.', ''),        
+        'Tot.Qty.' => number_format($record_details['totalQty'], 2, '.', ''),        
       ];
     }
+
+    $cleaned_params[] = [
+      'SNo.' => 'T O T A L S',
+      'PO No.' => '',
+      'PO Date' => '',
+      'Supplier Name' => '',
+      'Invoice No.' => '',
+      'GRN No.' => '',
+      'GRN Date' => '',
+      'PMode' => '',
+      'Cr. Days' => '',
+      'Gross (Rs.)' => number_format($tot_gross, 2, '.', ''),        
+      'Disc. (Rs.)' => number_format($tot_discount, 2, '.', ''),
+      'GST (Rs.)' => number_format($tot_tax, 2, '.', ''),
+      'R.Off' => number_format($tot_round_off, 2, '.', ''),
+      'Net Pay (Rs.)' => number_format($tot_net_pay, 2, '.', ''),
+      'Tot.Qty.' => number_format($tot_qty, 2, '.', ''),
+    ];
+
     return $cleaned_params;
   }
 
   private function _format_po_register_itemwise_for_csv($total_records = []) {
     $cleaned_params = [];
     $cntr = 0;
+    $tot_gross = $tot_tax = $tot_net_pay = $tot_qty = 0;    
     foreach($total_records as $key => $record_details) {
       $cntr++;
+      $tot_gross += $record_details['taxableAmount'];
+      $tot_tax += $record_details['taxValue'];
+      $tot_net_pay += $record_details['netPay'];
+      $tot_qty += $record_details['totalQty'];      
       $cleaned_params[$key] = [
-        'Sl. No.' => $cntr,
+        'SNo.' => $cntr,
         'Item Name' => $record_details['itemName'],
-        'HSN / SAC' => $record_details['hsnSacCode'],
+        'HSN/SAC' => $record_details['hsnSacCode'],
         'Brand Name' => $record_details['brandName'],
         'Lot No.' => $record_details['lotNo'],
         'PO No.' => $record_details['poNo'],
         'PO Date' => date('d-m-Y', strtotime($record_details['poDate'])),
         'Supplier Name' => $record_details['supplierName'],
-        'Item Rate (in Rs.)' => $record_details['itemRate'],
-        'Tax (in %)' => $record_details['taxPercent'],        
+        'Item Rate (Rs.)' => $record_details['itemRate'],
+        'Tax (%)' => $record_details['taxPercent'],        
         'Total Qty.' => $record_details['totalQty'],        
-        'Gross (in Rs.)' => $record_details['taxableAmount'],        
-        'Tax Amount (in Rs.)' => $record_details['taxValue'],        
+        'Gross (Rs.)' => $record_details['taxableAmount'],        
+        'Tax Amount (Rs.)' => $record_details['taxValue'],        
         'Net (Rs.)' => $record_details['netPay'],        
       ];
     }
+
+    $cleaned_params[] = [
+      'SNo.' => 'T O T A L S',
+      'Item Name' => '',
+      'HSN/SAC' => '',
+      'Brand Name' => '',
+      'Lot No.' => '',
+      'PO No.' => '',
+      'PO Date' => '',
+      'Supplier Name' => '',
+      'Item Rate (Rs.)' => '',
+      'Tax (%)' => '',        
+      'Total Qty.' => number_format($tot_qty, 2, '.', ''),        
+      'Gross (Rs.)' => number_format($tot_gross, 2, '.', ''), 
+      'Tax Amount (Rs.)' => number_format($tot_tax, 2, '.', ''),        
+      'Net (Rs.)' => number_format($tot_net_pay, 2, '.', ''),        
+    ];    
     return $cleaned_params;
   }  
 }
