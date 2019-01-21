@@ -13,8 +13,8 @@
 <link rel="icon" href="../assets/img/fav-icon.png" type="image/gif">
 <link href="/assets/css/elegant-icons-style.css" rel="stylesheet" />
 <link href="/assets/css/font-awesome.min.css" rel="stylesheet" />
-<link href="/assets/css/style.css" rel="stylesheet">
-<link href="/assets/css/style-responsive.css" rel="stylesheet">
+<link href="/assets/css/style.css<?php echo '?'.mt_rand() ?>" rel="stylesheet">
+<link href="/assets/css/style-responsive.css<?php echo '?'.mt_rand() ?>" rel="stylesheet">
 <link href="/assets/css/jquery-ui-1.10.4.min.css" rel="stylesheet">
 <link href="/assets/datetime/datepicker/css/datepicker.css" rel="stylesheet" />
 <link href="/assets/datetime/timepicker/css/timepicker.css" rel="stylesheet" />
