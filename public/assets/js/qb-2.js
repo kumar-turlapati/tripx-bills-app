@@ -1607,8 +1607,6 @@ function monthWiseSales() {
           totSalesReturns += parseFloat(returnNumber(saleDetails.returnAmount));
 
           totSales += ( parseFloat(returnNumber(saleDetails.cashSales)) + returnNumber(parseFloat(saleDetails.cardSales)) + returnNumber(parseFloat(saleDetails.splitSales)) + returnNumber(parseFloat(saleDetails.creditSales)) );
-          // totSalesReturns += parseFloat(saleDetails.returnamount);
-          // totSalesReturns = 0;
         });
 
         totNetSales = parseFloat(returnNumber(totSales)) - parseFloat(returnNumber(totSalesReturns));
@@ -1619,7 +1617,7 @@ function monthWiseSales() {
         $('#cs-creditsale').text(totCreditSales.toFixed(2));
 
         $('#cs-totals').text(totSales.toFixed(2));
-        $('#cs-returns').text(totSalesReturns.toFixed(2));
+        $('#cs-sreturn').text(totSalesReturns.toFixed(2));
         $('#cs-netsale').text(totNetSales.toFixed(2));
         // $('#ds-cashinhand').text(cashInHand.toFixed(2));
       }
