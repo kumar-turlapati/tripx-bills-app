@@ -67,7 +67,7 @@ class AsyncController {
       }
     } elseif($api_string==='day-sales') {
       $params['saleDate'] = date("d-m-Y");
-      if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 3) {
+      if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 3 || (int)$_SESSION['utype'] === 9) {
         $params['locationCode'] = '';
       } elseif(isset($_SESSION['lc']) && $_SESSION['lc'] !== '') {
         $params['locationCode'] = $_SESSION['lc'];
@@ -206,6 +206,17 @@ class AsyncController {
       $params['locationCode'] =  Utilities::clean_string($request->get('locationCode'));
       $params['auditCode'] = Utilities::clean_string($request->get('aC'));
       $api_url = 'stockaudit/upsert-item';
+      $response = $api_caller->sendRequest('post',$api_url,$params,false);
+      header("Content-type: application/json");
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
+    } elseif($api_string === 'change-mrp') {
+      $params['newMrp'] = Utilities::clean_string($request->get('newMrp'));
+      $params['lotAndItem'] =  Utilities::clean_string($request->get('lotAndItem'));
+      $api_url = 'inventory/change-mrp';
       $response = $api_caller->sendRequest('post',$api_url,$params,false);
       header("Content-type: application/json");
       if(is_array($response)) {

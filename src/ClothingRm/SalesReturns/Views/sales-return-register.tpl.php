@@ -135,10 +135,11 @@
                         <?php if($return_code !== ''): ?>
                           <a class="btn btn-primary" href="/sales-return/view/<?php echo $sales_code.'/'.$return_code ?>" title="View Sales Return Transaction">
                             <i class="fa fa-eye"></i>
-                          </a>&nbsp;
+                          </a>
+                          <?php /*&nbsp;
                           <a class="btn btn-primary" href="javascript: printSalesReturnBill('<?php echo $return_code ?>')" title="Print Sales Return Bill">
                             <i class="fa fa-print"></i>
-                          </a>
+                          </a> */?>
                         <?php endif; ?>
                       </div>
                     </td>

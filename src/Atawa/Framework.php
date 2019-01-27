@@ -56,11 +56,11 @@ class Framework {
         if(is_array($controller_response[1]) && count($controller_response[1]) > 0) {
           $view_vars = $controller_response[1];
         } else {
-          $view_vars = array();
+          $view_vars = [];
         }
       } else {
         $controller_output = $controller_response;
-        $view_vars = array();
+        $view_vars = [];
       }
 
       if(!isset($view_vars['render'])) {
@@ -68,9 +68,9 @@ class Framework {
       }
 
       if($path === '/login') {
-        $page_content = $this->template->render_view('login', array('content'=>$controller_output, 'view_vars'=>$view_vars));
+        $page_content = $this->template->render_view('login', array('content' => $controller_output,  'path_url' => '/login','view_vars' => $view_vars));
       } elseif($view_vars['render']) {
-        $page_content = $this->template->render_view('layout', array('content'=>$controller_output, 'view_vars'=>$view_vars));
+        $page_content = $this->template->render_view('layout', array('content' => $controller_output, 'path_url' => $path, 'view_vars' => $view_vars));
       } else {
         $page_content = $controller_output;
       }

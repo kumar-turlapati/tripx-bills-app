@@ -19,8 +19,14 @@
 <link href="/assets/datetime/datepicker/css/datepicker.css" rel="stylesheet" />
 <link href="/assets/datetime/timepicker/css/timepicker.css" rel="stylesheet" />
 <link href="/assets/js/jauto/styles.css" rel="stylesheet" />
-<link href="/assets/js/jqplot1.0.9/jquery.jqplot.min.css" rel="stylesheet" />
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<?php if(isset($path_url) && $path_url === '/dashboard'): ?>
+  <link href="/assets/js/jqplot1.0.9/jquery.jqplot.min.css" rel="stylesheet" />
+<?php endif; ?>
+
+<?php if(isset($path_url) && $path_url === '/login'): ?>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 -->
 <!--[if lt IE 9]>
       <script src="js/html5shiv.js"></script>

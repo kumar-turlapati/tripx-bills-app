@@ -308,6 +308,16 @@ $routes->add('list_item_threshold', new Routing\Route('/inventory/item-threshold
   'pageNo' => 1,
 )));
 
+// mrp register
+$routes->add('change_mrp', new Routing\Route('/inventory/change-mrp/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::changeMrpAction',
+  'pageNo' => null,
+)));
+$routes->add('mrp_register', new Routing\Route('/inventory/mrp-register', array(
+  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::mrpRegisterAction',   
+)));
+
+
 // async calls
 $routes->add('async', new Routing\Route('/async/{apiString}', array(
   '_controller' => 'ClothingRm\\Async\\Controller\\AsyncController::asyncRequestAction',

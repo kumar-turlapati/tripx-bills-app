@@ -39,7 +39,7 @@
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
-                    <select class="form-control" name="supplierCode" id="supplierCode">
+                    <select class="form-control" name="supplierID" id="supplierID">
                       <?php foreach($suppliers as $key=>$value): ?>
                        <option value="<?php echo $key ?>">
                           <?php echo $value ?>

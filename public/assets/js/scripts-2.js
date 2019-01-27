@@ -106,6 +106,43 @@ function initializeJS() {
     });
   }
 
+  if( $('#changeMrpForm').length > 0 ) {
+    $('.itemnames').Tabledit({
+      url: '/async/change-mrp',      
+      editButton: false,
+      deleteButton: false,
+      hideIdentifier: false,
+      columns: {
+        identifier: [1,'lotAndItem'],
+        editable: [
+          [2, 'newMrp']
+        ]
+      },
+      onDraw: function() {
+        if($('[name="newMrp"]').length>0) {
+          $('[name="newMrp"]').attr('title', 'Add new MRP and Hit Enter to Save.');
+        }
+      },
+      onAjax: function(action, serialize) {
+        var urlParams = new URLSearchParams(serialize);
+        var newMrp = returnNumber(parseFloat(urlParams.get('newMrp')));
+        if(newMrp > 0) {
+          var lotAndItem = urlParams.get('lotAndItem');
+          var oldMrp = returnNumber(parseFloat($('#om__'+lotAndItem).text()));
+          if(newMrp > oldMrp) {
+            return true;
+          } else {
+            bootbox.alert({
+              message: "New MRP should be greater than old MRP. If you want to reduce the current MRP, please use Promocodes or Discount option."
+            });
+            return false;
+          }
+        }
+        return;
+      }
+    });
+  }
+
   if($('#stockAuditItems').length > 0) {
     $('#itemnames').Tabledit({
       url: '/async/auditQty?locationCode=' + $('#locationCode').val() + '&aC=' + $('#aC').val(),
@@ -144,7 +181,6 @@ function initializeJS() {
       $('#filterSubmit, #filterReset, #printAuditReport').attr('disabled', true);
       $('#stockAuditItems').submit();
     });
-    
     $('#printAuditReport').on('click', function(e){
       e.preventDefault();
       var auditCode = $('#aC').val();

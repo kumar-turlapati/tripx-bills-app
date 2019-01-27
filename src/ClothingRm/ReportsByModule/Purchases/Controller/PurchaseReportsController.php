@@ -369,7 +369,7 @@ class PurchaseReportsController {
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
     $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
     $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
-    $cleaned_params['supplierCode'] = Utilities::clean_string($form_data['supplierCode']);
+    $cleaned_params['supplierID'] = Utilities::clean_string($form_data['supplierID']);
 
     if(count($form_errors) > 0) {
       return ['status' => false, 'form_errors' => $form_errors];
