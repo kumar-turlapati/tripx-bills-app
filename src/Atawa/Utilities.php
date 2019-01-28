@@ -497,7 +497,7 @@ class Utilities
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
 
-        '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
+        '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
 
         '/print-sales-bill-small', '/print-sales-bill', 
 
