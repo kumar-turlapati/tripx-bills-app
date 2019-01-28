@@ -479,7 +479,7 @@ class Utilities
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
         '/async/finyDefault',
 
-        '/sales/list', '/sales-return/view', '/sales-return/list', 
+        '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
         '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', 
         '/grn/list', '/purchase-return/register', '/fin/payment-vouchers',
         '/fin/receipt-vouchers', '/fin/credit-notes', '/fin/petty-cash-book', '/stock-transfer/register',
@@ -908,4 +908,3 @@ class Utilities
 
 
 }
-
