@@ -51,15 +51,17 @@
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
-                    foreach($client_locations as $key=>$value): 
-                      $location_key_a = explode('`', $key);
-                      if((int)$location_id === (int)$location_key_a[1]) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
+                    foreach($client_locations as $key => $value):
+                      $selected = $location_code = '';
+                      if($key !== '') {
+                        $location_key_a = explode('`', $key);
+                        if((int)$location_id === (int)$location_key_a[1]) {
+                          $selected = 'selected="selected"';
+                          $location_code = $location_key_a[0];
+                        }
                       }
                   ?>
-                    <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                    <option value="<?php echo $location_code ?>" <?php echo $selected ?>><?php echo $value ?></option>
                   <?php endforeach; ?>
                 </select>
               </div>

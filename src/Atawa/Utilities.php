@@ -423,8 +423,8 @@ class Utilities
       5 => 'Sales operator',
       6 => 'Stores operator',
       7 => 'Purchase operator',
-      // 4 => 'Sales executive',
       10 => 'Marketing user',
+      11 => 'Finance user',
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
       return $user_types[$user_type];
@@ -461,55 +461,116 @@ class Utilities
 
   public static function acls($role_id='', $path='') {
     $path_a = explode('/', $path);
-    if(is_array($path_a) && count($path_a)>3) {
+    if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn') {
       $path = '/'.$path_a[1].'/'.$path_a[2];
+    } elseif(is_array($path_a)) {
+      $path = '/'.$path_a[1];
     }
-    $denied_permissions = [
-      3 => [
+    // dump($path_a, $path);
+    // exit;
+
+    $allowed_pages = [
+
+      // for Manager
+      9 => [
+
+        '/dashboard', '/error-404', '/logout',
+
+        '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
+
+        '/sales/list', '/sales-return/view', '/sales-return/list', 
+        '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', 
+        '/grn/list', '/purchase-return/register', '/fin/payment-vouchers',
+        '/fin/receipt-vouchers', '/fin/credit-notes', '/fin/petty-cash-book', '/stock-transfer/register',
+        '/barcodes/list', '/sales-indents/list', '/inventory/available-qty', '/inventory/track-item',
+        '/sales/search-bills', '/purchases/search-bills',
+
+        '/reports/stock-report', '/reports/opbal', '/reports/sales-register', '/reports/itemwise-sales-register', '/reports/sales-summary-by-month', 
+        '/reports/day-sales', '/reports/sales-by-tax-rate', '/reports/po-register', '/reports/po-register-itemwise', '/reports/payables',
+        '/reports/receivables', '/reports/item-master', '/reports/customer-master', 
       ],
-      4 => [
-        '/categories/list', '/suppliers/remove', '/opbal/list', '/opbal/add',
-        '/opbal/update', '/inventory/stock-adjustment', '/inventory/stock-adjustments-list',
-        '/inventory/trash-expired-items', '/fin/supp-opbal', '/fin/supp-opbal',
-        '/fin/supp-opbal', '/fin/bank', '/fin/bank', '/fin/bank',
-        '/users/list', '/users/update', '/users/create', '/admin-options/enter-bill-no',
-        '/admin-options/edit-business-info', '/admin-options/edit-sales-bill', 
-        '/admin-options/edit-po', '/admin-options/update-batch-qtys', '/admin-options/delete-sale-bill',
-        '/taxes/add', '/taxes/update', '/taxes/list', '/sales-summary-by-month', '/stock-report',
-        '/stock-report-new', '/adj-entries',
-        '/adj-entries', '/io-analysis', '/inventory-profitability', '/mom-comparison',
-        '/admin-options/edit-business-info',
-      ],
+
+      // for Sales Operator
       5 => [
-        '/categories/list', '/suppliers/remove', '/opbal/list', '/opbal/add',
-        '/opbal/update', '/inventory/stock-adjustment', '/inventory/stock-adjustments-list',
-        '/inventory/trash-expired-items', '/fin/supp-opbal', '/fin/supp-opbal',
-        '/fin/supp-opbal', '/fin/bank', '/fin/bank', '/fin/bank',
-        '/users/list', '/users/update', '/users/create', '/admin-options/enter-bill-no',
-        '/admin-options/edit-business-info', '/admin-options/edit-sales-bill', 
-        '/admin-options/edit-po', '/admin-options/update-batch-qtys', '/admin-options/delete-sale-bill',
-        '/taxes/add', '/taxes/update', '/taxes/list', '/sales-summary-by-month', '/stock-report',
-        '/stock-report-new', '/adj-entries',
-        '/adj-entries', '/io-analysis', '/inventory-profitability', '/mom-comparison',
-        '/admin-options/edit-business-info',        
+
+        '/dashboard', '/error-404', '/logout',
+
+        '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
+
+        '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
+
+        '/print-sales-bill-small', '/print-sales-bill', 
+
+        '/sales-return/entry', '/sales-return/view', '/sales-return/list', '/print-sales-return-bill',
+
+        '/stock-audit/create', '/stock-audit/update', '/stock-audit/print', '/stock-audit/register',
+        '/stock-audit/items',
+
+        '/products/list', '/categories/list',
+
+        '/mfgs/list',
+
+        '/inventory/track-item', '/inventory/search-products', 
+
+        '/customers/create', '/customers/update', '/customers/view', '/customers/list', 
+
+        '/fin/pc-voucher', '/fin/pc-vouchers', '/fin/petty-cash-book', 
+
+        '/taxes/list', 
+
+        '/promo-offers/list', 
+
+        '/stock-transfer/out', '/stock-transfer/register', '/stock-transfer/choose-location', 
+
+        '/loyalty-member/add', '/loyalty-member/update', '/loyalty-members/list', '/loyalty-member/ledger', 
+
+        '/barcodes/list', '/barcodes/print', '/barcode/opbal',
+
+        '/reports/sales-register', '/reports/itemwise-sales-register', '/reports/day-sales', '/reports/sales-summary-by-month', 
+        '/reports/sales-by-tax-rate', 
       ],
-      6 => [
+
+      6  => [
       ],
-      7 => [
+
+      7  => [
+        '/dashboard', '/error-404', '/logout',
+
+        '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/get-supplier-details',
+
+        '/products/list', '/categories/list', '/mfgs/list', '/suppliers/list',
+        '/taxes/list', '/fin/supp-opbal/list', '/inward-entry', '/inward-entry/bulk-upload',
+        '/stock-transfer/choose-location', '/stock-transfer/out', '/inward-entry/list', '/grn/list', '/stock-transfer/register',
+        '/purchase-return/register', '/barcodes/list', '/purchases/search-bills', '/inventory/track-item',
+        '/opbal/list', '/reports/stock-report', '/reports/opbal', '/reports/item-master',
+        '/reports/po-register', '/reports/po-register-itemwise',
+
+        '/products/update', '/products/create', '/category/create', '/category/update',
+        '/mfg/create', '/mfg/update', '/suppliers/create', '/taxes/add', '/taxes/update',
+
+        '/fin/supp-opbal',
+
+        '/barcode/generate', '/inward-entry/view', '/purchase-return/entry', '/fin/debit-note',
+        '/grn/view', '/print-grn',
+
+        '/opbal/add', '/opbal/update', 
       ],
+
+      10 => [
+      ],      
     ];
 
-    # validate permission
-    if(array_key_exists($role_id, $denied_permissions)) {
-      $is_denied = array_search($path, $denied_permissions[$role_id]);
-      if($is_denied!==false) {
-        Utilities::redirect('/error-404');
-      } else {
-        return true;
+    // validate permission
+    if(array_key_exists($role_id, $allowed_pages) && (int)$role_id !== 3) {
+      $is_allowed = array_search($path, $allowed_pages[$role_id]);
+      // dump($path, $allowed_pages[$role_id], $is_allowed);
+      // exit;
+      if($is_allowed === false ) {
+        Utilities::redirect('/error-404?source='.$path);
       }
     }
 
-    return false;
+    return true;
   }
 
   public static function show_batchno_expiry() {

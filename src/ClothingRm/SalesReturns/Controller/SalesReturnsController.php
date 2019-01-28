@@ -284,21 +284,12 @@ class SalesReturnsController {
     # check for filter variables.
     if(count($request->request->all()) > 0) {
       $search_params = $request->request->all();
-    }
-    if(!isset($search_params['pageNo'])) {
+    } else {
       $search_params['pageNo'] = $page_no;
-    }
-    if(!isset($search_params['perPage'])) {
       $search_params['perPage'] = $per_page;
-    }
-    if(!isset($search_params['fromDate'])) {
-      $search_params['fromDate'] = date("d-m-Y");
-    }
-    if(!isset($search_params['toDate'])) {
+      $search_params['fromDate'] = date("01-m-Y");
       $search_params['toDate'] = date("d-m-Y");
-    }
-    if((int)$_SESSION['utype'] > 3) {
-      $search_params['locationCode'] = $_SESSION['lc'];
+      $search_params['locationCode'] = (int)$_SESSION['utype'] !== 3 && (int)$_SESSION['utype'] !== 9 ? $_SESSION['lc'] : '';
     }
 
     # ---------- get location codes from api -----------------------
@@ -306,21 +297,25 @@ class SalesReturnsController {
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
-    } 
+    }
 
-    # initiate Model.
+    if((int)$_SESSION['utype'] === 3 || (int)$_SESSION['utype'] === 9) {
+      $client_locations = [''=>'All Stores'] + $client_locations;
+    }
+
+    // initiate Model.
     $sales_return_model = new SalesReturns;
 
-    # hit API.
+    // hit API.
     $sales_return_api_call = $sales_return_model->get_all_sales_returns($search_params);
     $api_status = $sales_return_api_call['status'];
 
     // dump($sales_return_api_call);
     // exit;
 
-    # check api status
+    // check api status
     if($api_status) {
-      # check whether we got products or not.
+      // check whether we got products or not.
       if(count($sales_return_api_call['sales_returns'])>0) {
         $sales_returns_a = $sales_return_api_call['sales_returns'];
         $slno = Utilities::get_slno_start(count($sales_return_api_call['sales_returns']), $per_page, $page_no);
@@ -367,7 +362,7 @@ class SalesReturnsController {
       'page_links_to_start' => $page_links_to_start,
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
-      'client_locations' => [''=>'All Stores'] + $client_locations,
+      'client_locations' => $client_locations,
       'location_ids' => $location_ids,      
     );
 

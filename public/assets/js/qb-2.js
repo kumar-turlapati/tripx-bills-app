@@ -139,6 +139,18 @@ function initializeJS() {
           }
         }
         return;
+      },
+      onSuccess: function(axResponse, textStatus, jqXHR) {
+        if(axResponse.status === 'success') {
+          var responseMessage = axResponse.response.updateMessage;
+        } else if(axResponse.status === 'failed') {
+          var responseMessage = 'Error: ' + axResponse.errorcode + ', ' + axResponse.errortext;
+        } else {
+          var responseMessage = 'Unknown Error.';
+        }
+        bootbox.alert({
+          message: responseMessage
+        });
       }
     });
   }

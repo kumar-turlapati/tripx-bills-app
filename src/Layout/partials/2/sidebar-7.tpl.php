@@ -22,7 +22,7 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/inward-entry"><i class="fa fa-compass"></i> Purchase Entry</a></li>
+          <li><a href="/inward-entry"><i class="fa fa-laptop"></i> Purchase Entry</a></li>
           <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase Entry From Files</a></li>          
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock Transfer</a></li>
         </ul>
@@ -32,8 +32,8 @@
           <i class="fa fa-book"></i> Registers <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
-          <li><a href="/inward-entry/list"><i class="fa fa-compass"></i> Purchase Register</a></li>
-          <li><a href="/grn/list"><i class="fa fa-laptop"></i> GRN Register</a></li>
+          <li><a href="/inward-entry/list"><i class="fa fa-laptop"></i> Purchase Register</a></li>
+          <li><a href="/grn/list"><i class="fa fa-gavel"></i> GRN Register</a></li>
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Transfer Register</a></li>
           <li><a href="/purchase-return/register"><i class="fa fa-undo"></i> Purchase Return Register</a></li>
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>

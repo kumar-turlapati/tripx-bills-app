@@ -9,7 +9,7 @@
     $fromDate = $search_params['fromDate'];
     $query_params[] = 'fromDate='.$fromDate;
   } else {
-    $fromDate = $current_date;
+    $fromDate = date("01-m-Y");
   }
   if(isset($search_params['toDate']) && $search_params['toDate'] !='' ) {
     $toDate = $search_params['toDate'];
@@ -89,69 +89,71 @@
     			  </form>        
     			</div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-striped table-hover font12">
-            <thead>
-              <tr>
-                <th width="5%"  class="text-center valign-middle">Sno.</th>
-                <th width="10%" class="text-center valign-middle">MRN No.</th>
-                <th width="10%" class="text-center valign-middle">Return date</th>
-                <th width="10%" class="text-center valign-middle">Store name</th>                
-                <th width="15%" class="text-center valign-middle">Bill No.&Date</th>
-                <th width="8%" class="text-center valign-middle">Sale value<br />(in Rs.)</th>
-                <th width="8%" class="text-center valign-middle">Return value<br />(in Rs.)</th>
-                <th width="8%" class="text-center valign-middle">Credit notes<br />raised (in Rs.)</th>
-                <th width="13%" class="text-center valign-middle">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <?php if(count($sales_returns)>0): ?>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font12">
+              <thead>
+                <tr>
+                  <th width="5%"  class="text-center valign-middle">Sno.</th>
+                  <th width="10%" class="text-center valign-middle">MRN No.</th>
+                  <th width="10%" class="text-center valign-middle">Return date</th>
+                  <th width="10%" class="text-center valign-middle">Store name</th>                
+                  <th width="15%" class="text-center valign-middle">Bill No.&Date</th>
+                  <th width="8%" class="text-center valign-middle">Sale value<br />(in Rs.)</th>
+                  <th width="8%" class="text-center valign-middle">Return value<br />(in Rs.)</th>
+                  <th width="8%" class="text-center valign-middle">Credit notes<br />raised (in Rs.)</th>
+                  <th width="13%" class="text-center valign-middle">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                  $cntr = $sl_no;
+                  foreach($sales_returns as $sales_return_details):
+                    $return_date = date("d-m-Y", strtotime($sales_return_details['returnDate']));
+                    $mrn_no = $sales_return_details['mrnNo'];
+                    $bill_no = $sales_return_details['billNo'];
+                    $invoice_date = date("d-m-Y", strtotime($sales_return_details['invoiceDate']));
+                    $sale_value = $sales_return_details['netPay'];
+                    $return_value = $sales_return_details['returnAmount'];
+                    $return_status = $sales_return_details['returnStatus'];
+                    $sales_code = $sales_return_details['invoiceCode'];
+                    $return_code = $sales_return_details['returnCode'];
+                    $location_id = $sales_return_details['locationID'];
+                    $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
+                    $cn_value = $sales_return_details['cnValue'];
+                ?>
+                    <tr class="text-uppercase text-right font11">
+                      <td class="text-center valign-middle"><?php echo $cntr ?></td>
+                      <td class="text-left valign-middle"><?php echo $mrn_no ?></td>
+                      <td class="text-left valign-middle"><?php echo $return_date ?></td>       
+                      <td class="text-left valign-middle"><?php echo $location_name ?></td>                    
+                      <td class="valign-middle"><?php echo $bill_no.' / '.$invoice_date ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($sale_value,2) ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($return_value,2) ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($cn_value,2) ?></td>
+                      <td class="valign-middle">
+                        <div class="btn-actions-group">
+                          <?php if($return_code !== ''): ?>
+                            <a class="btn btn-primary" href="/sales-return/view/<?php echo $sales_code.'/'.$return_code ?>" title="View Sales Return Transaction">
+                              <i class="fa fa-eye"></i>
+                            </a>
+                            <?php /*&nbsp;
+                            <a class="btn btn-primary" href="javascript: printSalesReturnBill('<?php echo $return_code ?>')" title="Print Sales Return Bill">
+                              <i class="fa fa-print"></i>
+                            </a> */?>
+                          <?php endif; ?>
+                        </div>
+                      </td>
+                    </tr>
               <?php
-                $cntr = $sl_no;
-                foreach($sales_returns as $sales_return_details):
-                  $return_date = date("d-m-Y", strtotime($sales_return_details['returnDate']));
-                  $mrn_no = $sales_return_details['mrnNo'];
-                  $bill_no = $sales_return_details['billNo'];
-                  $invoice_date = date("d-m-Y", strtotime($sales_return_details['invoiceDate']));
-                  $sale_value = $sales_return_details['netPay'];
-                  $return_value = $sales_return_details['returnAmount'];
-                  $return_status = $sales_return_details['returnStatus'];
-                  $sales_code = $sales_return_details['invoiceCode'];
-                  $return_code = $sales_return_details['returnCode'];
-                  $location_id = $sales_return_details['locationID'];
-                  $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
-                  $cn_value = $sales_return_details['cnValue'];
+                $cntr++;
+                endforeach; 
               ?>
-                  <tr class="text-uppercase text-right font11">
-                    <td class="text-center valign-middle"><?php echo $cntr ?></td>
-                    <td class="text-left valign-middle"><?php echo $mrn_no ?></td>
-                    <td class="text-left valign-middle"><?php echo $return_date ?></td>       
-                    <td class="text-left valign-middle"><?php echo $location_name ?></td>                    
-                    <td class="valign-middle"><?php echo $bill_no.' / '.$invoice_date ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($sale_value,2) ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($return_value,2) ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($cn_value,2) ?></td>
-                    <td class="valign-middle">
-                      <div class="btn-actions-group">
-                        <?php if($return_code !== ''): ?>
-                          <a class="btn btn-primary" href="/sales-return/view/<?php echo $sales_code.'/'.$return_code ?>" title="View Sales Return Transaction">
-                            <i class="fa fa-eye"></i>
-                          </a>
-                          <?php /*&nbsp;
-                          <a class="btn btn-primary" href="javascript: printSalesReturnBill('<?php echo $return_code ?>')" title="Print Sales Return Bill">
-                            <i class="fa fa-print"></i>
-                          </a> */?>
-                        <?php endif; ?>
-                      </div>
-                    </td>
-                  </tr>
-            <?php
-              $cntr++;
-              endforeach; 
-            ?>
-            </tbody>
-          </table>
-          <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>
-        </div>
+              </tbody>
+            </table>
+            <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>
+          </div>
+        <?php endif; ?>
       </div>
     </section>
   </div>

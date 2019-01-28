@@ -4,6 +4,11 @@
   } else {
     $category_name = '';
   }
+  if(isset($submitted_data['locationCode'])) {
+    $location_code = $submitted_data['locationCode'];
+  } else {
+    $location_code = '';
+  }  
   if(isset($submitted_data['status'])) {
     $status = $submitted_data['status'];
   } else {
