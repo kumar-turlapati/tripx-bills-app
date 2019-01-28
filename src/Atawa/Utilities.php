@@ -495,7 +495,7 @@ class Utilities
 
         '/dashboard', '/error-404', '/logout',
 
-        '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
+        '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
 
