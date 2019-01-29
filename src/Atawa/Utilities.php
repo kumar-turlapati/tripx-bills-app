@@ -556,7 +556,7 @@ class Utilities
         '/barcode/generate', '/inward-entry/view', '/purchase-return/entry', '/fin/debit-note',
         '/grn/view', '/print-grn', '/grn/create', 
 
-        '/opbal/add', '/opbal/update', 
+        '/opbal/add', '/opbal/update', '/barcodes/print', '/barcode/opbal', 
       ],
 
       10 => [
