@@ -424,7 +424,8 @@ class Utilities
       6 => 'Stores operator',
       7 => 'Purchase operator',
       10 => 'Marketing user',
-      11 => 'Finance user',
+      // 11 => 'Finance user',
+      12 => 'Business head',
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
       return $user_types[$user_type];
@@ -480,7 +481,7 @@ class Utilities
         '/async/finyDefault',
 
         '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
-        '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', 
+        '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', '/inward-entry/view',
         '/grn/list', '/purchase-return/register', '/fin/payment-vouchers',
         '/fin/receipt-vouchers', '/fin/credit-notes', '/fin/petty-cash-book', '/stock-transfer/register',
         '/barcodes/list', '/sales-indents/list', '/inventory/available-qty', '/inventory/track-item',
@@ -490,6 +491,28 @@ class Utilities
         '/reports/day-sales', '/reports/sales-by-tax-rate', '/reports/po-register', '/reports/po-register-itemwise', '/reports/payables',
         '/reports/receivables', '/reports/item-master', '/reports/customer-master', 
       ],
+
+      // for Business head
+      12 => [
+
+        '/dashboard', '/error-404', '/logout',
+
+        '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
+        '/async/finyDefault',
+
+        '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
+        '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', '/inward-entry/view',
+        '/grn/list', '/purchase-return/register', '/fin/payment-vouchers',
+        '/fin/receipt-vouchers', '/fin/credit-notes', '/fin/petty-cash-book', '/stock-transfer/register',
+        '/barcodes/list', '/sales-indents/list', '/inventory/available-qty', '/inventory/track-item',
+        '/sales/search-bills', '/purchases/search-bills',
+
+        '/reports/stock-report', '/reports/opbal', '/reports/sales-register', '/reports/itemwise-sales-register', '/reports/sales-summary-by-month', 
+        '/reports/day-sales', '/reports/sales-by-tax-rate', '/reports/po-register', '/reports/po-register-itemwise', '/reports/payables',
+        '/reports/receivables', '/reports/item-master', '/reports/customer-master', 
+
+        '/reports/inventory-profitability', '/reports/material-movement',
+      ],      
 
       // for Sales Operator
       5 => [
@@ -535,6 +558,7 @@ class Utilities
       6  => [
       ],
 
+      // for Purchase Operator
       7  => [
         '/dashboard', '/error-404', '/logout',
 
@@ -560,7 +584,7 @@ class Utilities
       ],
 
       10 => [
-      ],      
+      ],
     ];
 
     // validate permission
@@ -693,7 +717,7 @@ class Utilities
           $client_locations[$location_code] = $loc_details['locationName'];
         }
       }        
-      if( ($utype !== 3 && $utype !== 9 && $utype !== 7) && !$return_all) {
+      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12) && !$return_all) {
         $client_locations = array_intersect($client_locations, [$_SESSION['lc'] => $_SESSION['lname']]);
       }
     }

@@ -7,7 +7,7 @@
   $user_type = (int)$_SESSION['utype'];
   $tabs = [];
 
-  if($user_type === 3 || $user_type === 9) {
+  if($user_type === 3 || $user_type === 9 || $user_type === 12) {
     $tabs = [
               '#tSales' => ['Sales', 'tSales'], 
               // '#tPurchases' => ['Purchases', 'tPurchases'], 
@@ -37,7 +37,7 @@
     </ul>
 
     <div class="tab-content">
-      <?php if($user_type === 3 || $user_type === 9 || $user_type === 5): ?>
+      <?php if($user_type === 3 || $user_type === 9 || $user_type === 5 || $user_type === 12): ?>
         <div role="tabpanel" class="tab-pane active" id="tSales">
           <div class="row">
             <div class="col-md-6" id="daySales">
@@ -85,7 +85,7 @@
                 </div>
               </div>
             </div>
-            <?php if($user_type === 3 || $user_type === 9): ?>
+            <?php if($user_type === 3 || $user_type === 9 || $user_type === 12): ?>
               <div class="col-md-6" id="monthwiseSales">
                 <div class="widgetSec">
                   <div class="widgetHeader">Cumulative sales for the month of <?php echo $mon_year_string ?></div>
@@ -123,7 +123,7 @@
               </div>
             <?php endif; ?>
           </div>
-          <?php if($user_type === 3 || $user_type === 9): ?>      
+          <?php if($user_type === 3 || $user_type === 9 || $user_type === 12): ?>      
             <div class="row" id="salesDayGraph">
               <div class="col-md-12">
                 <div class="widgetSec">
