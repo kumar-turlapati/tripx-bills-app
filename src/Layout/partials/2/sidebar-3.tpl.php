@@ -122,7 +122,8 @@
               <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Tran. Register</a></li>          
               <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock Adj. Register</a></li>
               <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>
-              <li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li>          
+              <li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li>
+              <li><a href="/inventory/changed-mrp-register"><i class="fa fa-edit"></i> Changed MRP Register</a></li>          
             </ul>            
           </li>
           <li class="sub-menu">
@@ -146,6 +147,7 @@
           <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Inventory Openings</a></li>          
           <li><a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a></li>
           <li><a href="/barcode/opbal"><i class="fa fa-barcode"></i> Barcodes for Opening</a></li>          
+          <li><a href="/inventory/change-mrp"><i class="fa fa-edit"></i> Change MRP</a></li>          
         </ul>
       </li>
       <li class="sub-menu">

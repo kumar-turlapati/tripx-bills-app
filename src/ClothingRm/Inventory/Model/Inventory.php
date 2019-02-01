@@ -14,7 +14,6 @@ class Inventory
 	}
 	
 	public function get_available_qtys($search_params=array()) {
-
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'inventory/qty-available/'.$client_id;
@@ -43,6 +42,30 @@ class Inventory
 			);
 		}
 	}
+
+	public function changed_mrp_register($search_params = []) {
+		// fetch client id
+		$request_uri = 'inventory/changed-mrp-register';
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$request_uri,$search_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,
+				'items' => $response['response']['changedRates'], 
+				'total_pages' => $response['response']['total_pages'],
+				'total_records' => $response['response']['total_records'],
+				'record_count' => $response['response']['this_page'],
+			);				
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}
+	}	
 
 	public function get_inventory_item_details($search_params=array()) {
 

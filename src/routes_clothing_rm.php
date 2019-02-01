@@ -313,7 +313,7 @@ $routes->add('change_mrp', new Routing\Route('/inventory/change-mrp/{pageNo}', a
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::changeMrpAction',
   'pageNo' => null,
 )));
-$routes->add('mrp_register', new Routing\Route('/inventory/mrp-register', array(
+$routes->add('mrp_register', new Routing\Route('/inventory/changed-mrp-register', array(
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::mrpRegisterAction',   
 )));
 
