@@ -752,6 +752,9 @@ $routes->add('report_grn_register', new Routing\Route('/reports/grn-register', a
 $routes->add('report_item_master', new Routing\Route('/reports/item-master', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Masters\\Controller\\MastersReportsController::itemMasterReport',
 )));
+$routes->add('report_item_master_barcodes', new Routing\Route('/reports/item-master-with-barcodes', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Masters\\Controller\\MastersReportsController::itemMasterWithBarcodes',
+)));
 $routes->add('report_customer_master', new Routing\Route('/reports/customer-master', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Masters\\Controller\\MastersReportsController::customerMasterReport',
 )));

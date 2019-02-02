@@ -167,6 +167,165 @@ class MastersReportsController {
     return [$this->template->render_view('item-master', $template_vars), $controller_vars];
   }
 
+  public function itemMasterWithBarcodes(Request $request) {
+   
+    $default_location = $_SESSION['lc'];
+    $page_no = 1; $per_page = 30;
+    $total_records = $categories_a = [];
+
+    $client_locations = Utilities::get_client_locations();
+    $categories_a = $this->products_api->get_product_categories();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_item_master_data($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+        $form_data['pageNo'] = $page_no;
+        $form_data['perPage'] = $per_page;
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/item-master-with-barcodes');        
+      }
+
+      // hit api
+      $inven_api_response = $this->inven_api->item_master_with_barcodes($form_data);
+      if($inven_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/item-master-with-barcodes');
+      } else {
+        $total_records = $inven_api_response['response']['items'];
+        $total_pages = $inven_api_response['response']['total_pages'];
+        if($total_pages>1) {
+          for($i=2;$i<=$total_pages;$i++) {
+            $form_data['pageNo'] = $i;
+            $inven_api_response = $this->inven_api->item_master_with_barcodes($form_data);
+            if($inven_api_response['status']) {
+              $total_records = array_merge($total_records, $inven_api_response['response']['items']);
+            }
+          }
+        }
+        // dump($total_records);
+        // exit;
+
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+
+        $heading1 = 'Barcode Register with Closing Balances - '.$location_name;
+        $heading2 = 'As on '.date('jS F, Y');
+        $heading3 = '';
+        if($form_data['brandName'] !== '') {
+          $heading3 .= 'Brand Name: '.$form_data['brandName'];
+        }
+        if($form_data['categoryCode'] !== '') {
+          $category_name = $categories_a[$form_data['categoryCode']];
+          if($heading3 !== '') {
+            $heading3 .= ', ';
+          }
+          $heading3 .= 'Category Name: '.$category_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2], [$heading3] ];
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        $total_records = $this->_format_data_for_item_master_with_barcodes($total_records);
+        Utilities::download_as_CSV_attachment('BarcodeRegister', $csv_headings, $total_records);
+        return;
+      }
+      
+      // start PDF printing.
+      $item_widths = array(10,24,40,25,23,23,18,14,14);
+      $slno = $tot_amount = $tot_qty = $tot_amount_mrp = 0;
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('P','A4');
+      $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+      $pdf->SetFont('Arial','B',14);
+      $pdf->Cell(0,5,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Cell(0,5,$heading2,'',1,'C');
+      if($heading3 !== '') {
+        $pdf->SetFont('Arial','B',8);
+        $pdf->Cell(0,5,$heading3,'B',1,'C');
+      }
+
+      $pdf->SetFont('Arial','B',8);
+      $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Barcode','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'Item Name','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'Lot No.','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'Category','RTB',0,'C');        
+      $pdf->Cell($item_widths[5],6,'Brand','RTB',0,'C');        
+      $pdf->Cell($item_widths[6],6,'Purch.Rate','RTB',0,'C');
+      $pdf->Cell($item_widths[7],6,'Clos.Qty.','RTB',0,'C');      
+      $pdf->Cell($item_widths[8],6,'MRP','RTB',0,'C');      
+      $pdf->SetFont('Arial','',8);
+      
+      $slno = 0;
+      $total_purch_value = $tot_closing_qty = 0;
+      foreach($total_records as $item_details) {
+        $slno++;
+
+        $barcode = $item_details['barcode'];
+        $item_name = substr($item_details['itemName'],0,25);
+        $lot_no = $item_details['lotNo'];
+        $category_name = substr($item_details['categoryName'],0,10);
+        $brand_name = substr($item_details['mfgName'],0,10);
+        $purchase_rate = $item_details['purchaseRate'];
+        $closing_qty = $item_details['closingQty'];
+        $mrp = $item_details['mrp'];
+
+        $tot_closing_qty += $closing_qty;
+        $total_purch_value += ($purchase_rate * $closing_qty);
+        
+        $pdf->Ln();
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,$barcode,'LRTB',0,'R');
+        $pdf->Cell($item_widths[2],6,$item_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,$lot_no,'RTB',0,'L');
+        $pdf->Cell($item_widths[4],6,$category_name,'RTB',0,'L');            
+        $pdf->Cell($item_widths[5],6,$brand_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[6],6,number_format($purchase_rate,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[7],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[8],6,number_format($mrp,2,'.',''),'RTB',0,'R');      
+      }
+      $pdf->SetFont('Arial','B',8);
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] +
+                      $item_widths[3] + $item_widths[4] + $item_widths[5];
+      $pdf->Ln();
+      $pdf->Cell($totals_width,6,'T O T A L S','LRB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($total_purch_value,2,'.',''),'RB',0,'R');      
+      $pdf->Cell($item_widths[7],6,number_format($tot_closing_qty,2,'.',''),'RB',0,'R');      
+      $pdf->Output();
+    }
+
+    $controller_vars = array(
+      'page_title' => 'Print Barcode Register with Available Qtys.',
+      'icon_name' => 'fa fa-print',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'categories' => array(''=>'All Categories') + $categories_a,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+    );
+
+    // render template
+    return [$this->template->render_view('item-master-with-barcodes', $template_vars), $controller_vars];
+  }  
+
   public function customerMasterReport(Request $request) {
     $default_location = $_SESSION['lc'];
     $page_no = 1; $per_page = 10;
@@ -360,6 +519,53 @@ class MastersReportsController {
         'Tax Percent' => $record_details['taxPercent'],
       ];
     }
+    return $cleaned_params;
+  }
+
+  private function _format_data_for_item_master_with_barcodes($total_records = []) {
+    $cleaned_params = [];
+
+    $slno = $total_purch_value = $tot_closing_qty = 0;
+    foreach($total_records as $key => $item_details) {
+      $slno++;
+
+      $barcode = $item_details['barcode'];
+      $item_name = $item_details['itemName'];
+      $lot_no = $item_details['lotNo'];
+      $category_name = $item_details['categoryName'];
+      $brand_name = $item_details['mfgName'];
+      $purchase_rate = $item_details['purchaseRate'];
+      $closing_qty = $item_details['closingQty'];
+      $mrp = $item_details['mrp'];
+
+      $cleaned_params[$key] = [
+        'Sl.No.' => $slno,
+        'Barcode' => $barcode,
+        'Item Name' => $item_name,
+        'Lot No.' => $lot_no,
+        'Category' => $category_name,
+        'Brand' => $brand_name,
+        'Purchase Rate' => number_format($purchase_rate, 2, '.', ''),
+        'Closing Qty.' => number_format($closing_qty, 2, '.', ''),
+        'M.R.P' => number_format($mrp, 2, '.', ''),
+      ];
+
+      $tot_closing_qty += $closing_qty;
+      $total_purch_value += ($purchase_rate * $closing_qty);
+    }
+
+    $cleaned_params[count($cleaned_params)] = [
+      'Sl.No.' => 'T O T A L S',
+      'Barcode' => '',
+      'Item Name' => '',
+      'Lot No.' => '',
+      'Category' => '',
+      'Brand' => '',
+      'Purchase Rate' => number_format($total_purch_value, 2, '.', ''),
+      'Closing Qty.' => number_format($tot_closing_qty, 2, '.', ''),
+      'M.R.P' => '',
+    ];
+
     return $cleaned_params;
   }
 

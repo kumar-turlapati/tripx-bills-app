@@ -286,6 +286,28 @@ class Inventory
 		}		
 	}	
 
+	public function item_master_with_barcodes($params = []) {
+		// fetch client id
+		$request_uri = '/reports/inventory/items-list-with-bc';
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$request_uri,$params);
+
+		// collect response
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,
+				'response' => $response['response'],
+			);				
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false,
+				'apierror' => $response['reason']
+			);
+		}		
+	}	
 
 	/********************************** Threshold Items Qtys.**********************************
 	*******************************************************************************************/
