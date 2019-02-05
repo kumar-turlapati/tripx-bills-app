@@ -1,5 +1,7 @@
 <?php
   $current_date = date("d-m-Y");
+  $from_date = '01-'.date("m-Y");
+  $to_date = date("d-m-Y");
   $page_url = '/reports/sales-summary-by-month';
 ?>
 <div class="row">
@@ -12,6 +14,19 @@
     			  <form class="form-validate form-horizontal" method="POST">
       				<div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1">Filters</div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" placeholder="From Date" value="<?php echo $from_date ?>" />
+                    <span class="add-on"><i class="fa fa-calendar"></i></span>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" placeholder="To Date" value="<?php echo $to_date ?>" />
+                    <span class="add-on"><i class="fa fa-calendar"></i></span>
+                  </div>
+                </div>
+                <?php /*
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="month" id="month">
@@ -44,6 +59,7 @@
                     </select>
                   </div>
                 </div>
+                */ ?>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">

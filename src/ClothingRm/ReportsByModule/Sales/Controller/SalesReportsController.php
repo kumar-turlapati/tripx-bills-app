@@ -204,6 +204,8 @@ class SalesReportsController {
 
       // hit api
       $sales_api_response = $this->sales_model->get_itemwise_sales_report($form_data);
+      // dump($sales_api_response);
+      // exit;
       if($sales_api_response['status'] === false) {
         $error_message = Constants::$REPORTS_ERROR_MESSAGE;
         $this->flash->set_flash_message($error_message, 1);
@@ -261,7 +263,7 @@ class SalesReportsController {
       $pdf->Ln(5);
       $pdf->Cell($item_widths[0],6,'SNo.','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
-      $pdf->Cell($item_widths[2],6,'HSN/SAC','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'Brand','RTB',0,'C');
       $pdf->Cell($item_widths[3],6,'Category','RTB',0,'C');
       $pdf->Cell($item_widths[4],6,'Item Rate','RTB',0,'C');
       $pdf->Cell($item_widths[5],6,'Sold Qty.','RTB',0,'C');
@@ -282,7 +284,7 @@ class SalesReportsController {
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,substr($record_details['itemName'],0,18),'RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,$record_details['hsnSacCode'],'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,substr($record_details['brandName'],0,12),'RTB',0,'L');
         $pdf->Cell($item_widths[3],6,substr($record_details['categoryName'],0,12),'RTB',0,'L');            
         $pdf->Cell($item_widths[4],6,number_format($record_details['saleRate'],2,'.',''),'RTB',0,'R');
         $pdf->Cell($item_widths[5],6,number_format($record_details['soldQty'],2,'.',''),'RTB',0,'R');
@@ -543,9 +545,8 @@ class SalesReportsController {
         } else {
           $location_name = '';
         }
-        $month_name = date('F', mktime(0, 0, 0, $form_data['month'], 10));        
         $heading1 = 'Daywise Sales Summary';
-        $heading2 = 'for the month of '.$month_name.', '.$form_data['year'];
+        $heading2 = 'from '.$form_data['fromDate'].' to '.$form_data['toDate'];
         if($location_name !== '') {
           $heading1 .= ' - '.$location_name;
         }
@@ -715,7 +716,7 @@ class SalesReportsController {
       if($sales_api_response['status'] === false) {
         $error_message = Constants::$REPORTS_ERROR_MESSAGE;
         $this->flash->set_flash_message($error_message, 1);
-        Utilities::redirect('/reports/itemwise-sales-register');
+        Utilities::redirect('/reports/sales-by-tax-rate');
       } else {
         $sales_summary = $sales_api_response['summary'];
         if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
@@ -723,9 +724,8 @@ class SalesReportsController {
         } else {
           $location_name = '';
         }        
-        $month_name = date('F', mktime(0, 0, 0, $form_data['month'], 10));
         $heading1 = 'Sales by Tax Rate';
-        $heading2 = 'for the month of '.$month_name.', '.$form_data['year'];
+        $heading2 = '( from '.$form_data['fromDate'].' to '.$form_data['toDate'].' )';
         if($location_name !== '') {
           $heading1 .= ' :: '.$location_name;
         }        
@@ -922,6 +922,325 @@ class SalesReportsController {
     return [$this->template->render_view('sales-by-tax-rate', $template_vars), $controller_vars];    
   }
 
+  public function salesByHsnCodes(Request $request) {
+
+    $default_location = $_SESSION['lc'];
+    $client_locations = Utilities::get_client_locations();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_sales_summary_bymon($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-by-tax-rate');        
+      }
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_sales_summary_by_hsnsac_code($form_data);
+      // dump($sales_api_response);
+      // exit;
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-by-tax-rate');
+      } else {
+        $sales_summary = $sales_api_response['summary']['items_list'];
+        $daywise_summary = $sales_api_response['summary']['tot_records'];
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }        
+        $heading1 = 'Sales by HSN/SAC Code';
+        $heading2 = '( from '.$form_data['fromDate'].' to '.$form_data['toDate'].' )';
+        if($location_name !== '') {
+          $heading1 .= ' :: '.$location_name;
+        }        
+        $csv_headings = [ [$heading1], [$heading2] ];
+      }
+
+      // inject day totals against the last repeat day of each date.
+      $sales_sum_keys = array_column($sales_summary, 'tranDate');
+      $rev_sales_sum_keys = array_reverse($sales_sum_keys, true);
+      foreach($daywise_summary as $key => $day_details) {
+        $last_key_of_the_day = array_search($day_details['tranDate'], $rev_sales_sum_keys);
+        if($last_key_of_the_day !== false) {
+          $sales_summary[$last_key_of_the_day]['cashPayments'] = $day_details['cashPayments'];
+          $sales_summary[$last_key_of_the_day]['cardPayments'] = $day_details['cardPayments'];
+          $sales_summary[$last_key_of_the_day]['creditSales'] = $day_details['creditSales'];
+          $sales_summary[$last_key_of_the_day]['cnotePayments'] = $day_details['cnotePayments'];
+          $sales_summary[$last_key_of_the_day]['returnAmount'] = $day_details['returnAmount'];
+        }
+      }
+
+      // dump($sales_summary);
+      // exit;
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        $sales_summary = $this->_format_sales_by_hsn_code_for_csv($sales_summary);
+        Utilities::download_as_CSV_attachment('SalesRegisterByHsnCodes', $csv_headings, $sales_summary);
+        return;
+      }
+
+      $item_widths = array(13,13,12,28,11,16,16,9,12,9,12,9,12,9,12,13,13,13,13,13,11,13);
+      $totals_width = $item_widths[0]+$item_widths[1];
+      $slno = 0;
+      $gst_summary = [];
+
+      $grand_tot_qty = $grand_billable = $grand_taxable = $grand_igst_value = 0;
+      $grand_cgst_value = $grand_sgst_value = 0;
+
+      // start PDF printing.
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('L','A4');
+
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,0,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading2,'',1,'C');
+
+      $pdf->SetFont('Arial','B',6);
+      $pdf->Ln(5);
+      $pdf->Cell($item_widths[0],6,'Date','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Qty.','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'UOM','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'ItemName','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'HSN/SAC','RTB',0,'C');
+      $pdf->Cell($item_widths[5],6,'Billed','RTB',0,'C');
+      $pdf->Cell($item_widths[6],6,'Taxable','RTB',0,'C');
+      $pdf->Cell($item_widths[7],6,'IGST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[8],6,'IGST','RTB',0,'C'); 
+      $pdf->Cell($item_widths[9],6,'CGST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[10],6,'CGST','RTB',0,'C'); 
+      $pdf->Cell($item_widths[11],6,'SGST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[12],6,'SGST','RTB',0,'C');
+      $pdf->Cell($item_widths[13],6,'GST%','RTB',0,'C');  
+      $pdf->Cell($item_widths[14],6,'GST','RTB',0,'C');
+      $pdf->Cell($item_widths[15],6,'Cash','RTB',0,'C');
+      $pdf->Cell($item_widths[16],6,'Card','RTB',0,'C');
+      $pdf->Cell($item_widths[17],6,'Credit','RTB',0,'C');
+      $pdf->Cell($item_widths[18],6,'Cnote','RTB',0,'C');
+      $pdf->Cell($item_widths[19],6,'Returns','RTB',0,'C');
+      $pdf->Cell($item_widths[20],6,'R.off','RTB',0,'C');      
+      $pdf->Cell($item_widths[21],6,'NetSales','RTB',0,'C');
+      $pdf->SetFont('Arial','',6);
+
+      $codewise_taxable = $codewise_gst = 0;
+      $tot_cash_payments = $tot_card_payments = $tot_credit_sales = $tot_cnote_payments = 0;
+      $tot_return_amount = $tot_day_round_off = $tot_net_sales = 0;
+
+      foreach($sales_summary as $day_details) {
+        $date = date("d-m-Y", strtotime($day_details['tranDate']));
+        $hsn_sac_code = substr($day_details['hsnSacCode'],0,4);
+
+        $cash_payments = isset($day_details['cashPayments']) ? $day_details['cashPayments'] : 0;
+        $card_payments = isset($day_details['cardPayments']) ? $day_details['cardPayments'] : 0;
+        $credit_sales = isset($day_details['creditSales']) ? $day_details['creditSales'] : 0;
+        $cnote_payments = isset($day_details['cnotePayments']) ? $day_details['cnotePayments'] : 0;
+        $return_amount = isset($day_details['returnAmount']) ? $day_details['returnAmount'] : 0;
+        $day_round_off = 0;
+        $net_day_sales = ($cash_payments+$card_payments+$credit_sales+$cnote_payments) - $return_amount;
+
+        $gst_summary = [];
+        if($day_details['fivePercentItemQty'] > 0) {
+          $gst_summary[5] = [
+            'qty' => $day_details['fivePercentItemQty'],
+            'billable' => $day_details['fivePercentBillable'],
+            'taxable' => $day_details['fivePercentTaxable'],
+            'igst' => $day_details['fivePercentIgstAmt'],
+            'cgst' => $day_details['fivePercentCgstAmt'],
+            'sgst' => $day_details['fivePercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['fivePercentItemQty'];
+          $grand_billable += $day_details['fivePercentBillable'];
+          $grand_taxable += $day_details['fivePercentTaxable'];
+
+          $grand_igst_value += $day_details['fivePercentIgstAmt'];
+          $grand_cgst_value += $day_details['fivePercentCgstAmt'];
+          $grand_sgst_value += $day_details['fivePercentSgstAmt'];
+        }
+        if($day_details['twelvePercentItemQty'] > 0) {
+          $gst_summary[12] = [
+            'qty' => $day_details['twelvePercentItemQty'],
+            'billable' => $day_details['twelvePercentBillable'],
+            'taxable' => $day_details['twelvePercentTaxable'],
+            'igst' => $day_details['twelvePercentIgstAmt'],
+            'cgst' => $day_details['twelvePercentCgstAmt'],
+            'sgst' => $day_details['twelvePercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['twelvePercentItemQty'];
+          $grand_billable += $day_details['twelvePercentBillable'];
+          $grand_taxable += $day_details['twelvePercentTaxable'];
+          
+          $grand_igst_value += $day_details['twelvePercentIgstAmt'];
+          $grand_cgst_value += $day_details['twelvePercentCgstAmt'];        
+          $grand_sgst_value += $day_details['twelvePercentSgstAmt'];
+        }
+        if($day_details['eighteenPercentItemQty'] > 0) {
+          $gst_summary[18] = [
+            'qty' => $day_details['eighteenPercentItemQty'],
+            'billable' => $day_details['eighteenPercentBillable'],
+            'taxable' => $day_details['eighteenPercentTaxable'],
+            'igst' => $day_details['eighteenPercentIgstAmt'],
+            'cgst' => $day_details['eighteenPercentCgstAmt'],
+            'sgst' => $day_details['eighteenPercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['eighteenPercentItemQty'];
+          $grand_billable += $day_details['eighteenPercentBillable'];
+          $grand_taxable += $day_details['eighteenPercentTaxable'];
+
+          $grand_igst_value += $day_details['eighteenPercentIgstAmt'];
+          $grand_sgst_value += $day_details['eighteenPercentSgstAmt'];
+          $grand_cgst_value += $day_details['eighteenPercentCgstAmt'];        
+        }
+        if($day_details['twentyEightPercentItemQty'] > 0) {
+          $gst_summary[28] = [
+            'qty' => $day_details['twentyEightPercentItemQty'],
+            'billable' => $day_details['twentyEightPercentBillable'],
+            'taxable' => $day_details['twentyEightPercentTaxable'],
+            'igst' => $day_details['twentyEightPercentIgstAmt'],
+            'cgst' => $day_details['twentyEightPercentCgstAmt'],
+            'sgst' => $day_details['twentyEightPercentSgstAmt'],
+          ];
+          $grand_tot_qty += $day_details['twentyEightPercentItemQty'];
+          $grand_billable += $day_details['twentyEightPercentBillable'];
+          $grand_taxable += $day_details['twentyEightPercentTaxable'];
+
+          $grand_igst_value += $day_details['twentyEightPercentIgstAmt'];
+          $grand_cgst_value += $day_details['twentyEightPercentCgstAmt'];        
+          $grand_sgst_value += $day_details['twentyEightPercentSgstAmt'];
+        }
+
+        // dump($gst_summary);
+        // exit;
+
+        foreach($gst_summary as $key => $gst_summary_details) {
+
+          if($gst_summary_details['igst'] > 0) {
+            $igst_amount = number_format($gst_summary_details['igst'],2,'.','');
+            $igst_percent = number_format($key,2);
+            $cgst_amount = $sgst_amount = '';
+          } else {
+            $cgst_amount = number_format($gst_summary_details['cgst'],2,'.','');
+            $sgst_amount = number_format($gst_summary_details['sgst'],2,'.','');
+            $cgst_percent = $sgst_percent = number_format($key/2, 2);
+            $igst_percent = '';
+            $igst_amount = '';
+          }
+
+          $codewise_taxable += $gst_summary_details['taxable'];
+          $codewise_gst += ($gst_summary_details['igst'] + $gst_summary_details['cgst'] + $gst_summary_details['sgst']);
+
+          /* It implies that we reached end of day. */
+          if(isset($day_details['cashPayments'])) {
+            $total_codewise_day_sales = ($codewise_taxable+$codewise_gst)-$return_amount;
+            $day_round_off = ($net_day_sales-$total_codewise_day_sales);
+
+            // dump($date.'====>'.$net_day_sales.'===>'.$total_codewise_day_sales);
+
+            if($cash_payments > 0) {
+              $cash_payments -= $day_round_off;
+            } elseif($card_payments > 0) {
+              $card_payments -= $day_round_off;
+            } elseif($credit_sales > 0) {
+              $credit_sales -= $day_round_off;
+            }
+            $codewise_taxable = $codewise_gst = 0;
+
+            $tot_cash_payments += $cash_payments;
+            $tot_card_payments += $card_payments;
+            $tot_credit_sales += $credit_sales;
+            $tot_cnote_payments += $cnote_payments;
+            $tot_return_amount += $return_amount;
+            $tot_day_round_off += $day_round_off;
+            $tot_net_sales += $net_day_sales;
+          }
+
+
+          $pdf->Ln();
+          $pdf->Cell($item_widths[0],6,$date,'LRTB',0,'L');
+          $pdf->Cell($item_widths[1],6,number_format($gst_summary_details['qty'],2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
+          $pdf->Cell($item_widths[3],6,'','RTB',0,'L');
+          $pdf->Cell($item_widths[4],6,$hsn_sac_code,'RTB',0,'C');
+          $pdf->Cell($item_widths[5],6,number_format($gst_summary_details['billable'],2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[6],6,number_format($gst_summary_details['taxable'],2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[7],6,$igst_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths[8],6,$igst_amount,'RTB',0,'R');
+          $pdf->Cell($item_widths[9],6,$cgst_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths[10],6,$cgst_amount,'RTB',0,'R');
+          $pdf->Cell($item_widths[11],6,$sgst_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths[12],6,$sgst_amount,'RTB',0,'R');
+          $pdf->Cell($item_widths[13],6,number_format($key,2),'RTB',0,'R');
+          $pdf->Cell($item_widths[14],6,number_format($gst_summary_details['igst']+$gst_summary_details['cgst']+$gst_summary_details['sgst'], 2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[15],6,number_format($cash_payments,2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[16],6,number_format($card_payments,2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[17],6,number_format($credit_sales,2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[18],6,number_format($cnote_payments,2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[19],6,number_format($return_amount,2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[20],6,number_format($day_round_off,2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[21],6,number_format($net_day_sales,2,'.',''),'RTB',0,'R');
+        }
+      }
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',6);
+      $pdf->Cell($item_widths[0],6,'','LRTB',0,'L');
+      $pdf->Cell($item_widths[1],6,number_format($grand_tot_qty,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,'','RTB',0,'L');           
+      $pdf->Cell($item_widths[4],6,'','RTB',0,'L');           
+      $pdf->Cell($item_widths[5],6,number_format($grand_billable,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($grand_taxable,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[7],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[8],6,$grand_igst_value>0 ? number_format($grand_igst_value, 2, '.', '') : '' ,'RTB',0,'R');
+      $pdf->Cell($item_widths[9],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[10],6,$grand_cgst_value>0 ? number_format($grand_cgst_value, 2, '.', '') : '','RTB',0,'R');
+      $pdf->Cell($item_widths[11],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[12],6,$grand_sgst_value>0 ? number_format($grand_sgst_value, 2, '.', '') : '','RTB',0,'R');
+      $pdf->Cell($item_widths[13],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[14],6,number_format($grand_igst_value+$grand_cgst_value+$grand_sgst_value, 2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[15],6,number_format($tot_cash_payments,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[16],6,number_format($tot_card_payments,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[17],6,number_format($tot_credit_sales,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[18],6,number_format($tot_cnote_payments,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[19],6,number_format($tot_return_amount,2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[20],6,number_format($tot_day_round_off,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[21],6,number_format($tot_net_sales,2,'.',''),'RTB',0,'R');
+      $pdf->SetFont('Arial','B',6);
+
+      $pdf->Output();      
+    }
+
+    // controller variables.
+    $controller_vars = array(
+      'page_title' => 'Sales by HSN/SAC Codewise',
+      'icon_name' => 'fa fa-inr',
+    );    
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'months' => Utilities::get_calender_months(), 
+      'years' => Utilities::get_calender_years(1),
+      'def_month' => date("m"),
+      'def_year' => date("Y"),
+    );
+
+    // render template
+    return [$this->template->render_view('sales-by-hsn-code', $template_vars), $controller_vars];    
+  }
+
   private function _get_sales_executives() {
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
@@ -994,15 +1313,15 @@ class SalesReportsController {
     } else {
       $form_errors['StoreName'] = 'Invalid Store Name.';
     }
-    if($form_data['month'] !== '') {
-      $cleaned_params['month'] = Utilities::clean_string($form_data['month']);
+    if($form_data['fromDate'] !== '') {
+      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
     } else {
-      $cleaned_params['month'] = date("m");
+      $cleaned_params['fromDate'] = '01-'.date("m-Y");
     }
-    if($form_data['year'] !== '') {
-      $cleaned_params['year'] = Utilities::clean_string($form_data['year']);
+    if($form_data['toDate'] !== '') {
+      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
     } else {
-      $cleaned_params['year'] = date("Y");
+      $cleaned_params['toDate'] = date("d-m-Y");
     }    
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
@@ -1104,7 +1423,7 @@ class SalesReportsController {
       $cleaned_params[$key] = [
         'SNo.' => $slno ,
         'Item Name' => $record_details['itemName'],
-        'HSN/SAC' => $record_details['hsnSacCode'],
+        'Brand' => $record_details['brandName'],
         'Category' => $record_details['categoryName'],
         'Item Rate' => number_format($record_details['saleRate'],2,'.',''), 
         'Sold Qty.' => number_format($record_details['soldQty'],2,'.','') ,
@@ -1324,5 +1643,197 @@ class SalesReportsController {
 
     return $cleaned_params;
   }
-  
+
+  private function _format_sales_by_hsn_code_for_csv($sales_summary = []) {
+    $cleaned_params = [];
+
+    $codewise_taxable = $codewise_gst = 0;
+    $tot_cash_payments = $tot_card_payments = $tot_credit_sales = $tot_cnote_payments = 0;
+    $tot_return_amount = $tot_day_round_off = $tot_net_sales = 0;
+
+    $grand_tot_qty = $grand_billable = $grand_taxable = $grand_igst_value = 0;
+    $grand_cgst_value = $grand_sgst_value = 0;
+
+    foreach($sales_summary as $day_details) {
+      $date = date("d-m-Y", strtotime($day_details['tranDate']));
+      $hsn_sac_code = substr($day_details['hsnSacCode'],0,4);
+
+      $cash_payments = isset($day_details['cashPayments']) ? $day_details['cashPayments'] : 0;
+      $card_payments = isset($day_details['cardPayments']) ? $day_details['cardPayments'] : 0;
+      $credit_sales = isset($day_details['creditSales']) ? $day_details['creditSales'] : 0;
+      $cnote_payments = isset($day_details['cnotePayments']) ? $day_details['cnotePayments'] : 0;
+      $return_amount = isset($day_details['returnAmount']) ? $day_details['returnAmount'] : 0;
+      $day_round_off = 0;
+      $net_day_sales = ($cash_payments+$card_payments+$credit_sales+$cnote_payments) - $return_amount;
+
+      $gst_summary = [];
+      if($day_details['fivePercentItemQty'] > 0) {
+        $gst_summary[5] = [
+          'qty' => $day_details['fivePercentItemQty'],
+          'billable' => $day_details['fivePercentBillable'],
+          'taxable' => $day_details['fivePercentTaxable'],
+          'igst' => $day_details['fivePercentIgstAmt'],
+          'cgst' => $day_details['fivePercentCgstAmt'],
+          'sgst' => $day_details['fivePercentSgstAmt'],
+        ];
+        $grand_tot_qty += $day_details['fivePercentItemQty'];
+        $grand_billable += $day_details['fivePercentBillable'];
+        $grand_taxable += $day_details['fivePercentTaxable'];
+
+        $grand_igst_value += $day_details['fivePercentIgstAmt'];
+        $grand_cgst_value += $day_details['fivePercentCgstAmt'];
+        $grand_sgst_value += $day_details['fivePercentSgstAmt'];
+      }
+      if($day_details['twelvePercentItemQty'] > 0) {
+        $gst_summary[12] = [
+          'qty' => $day_details['twelvePercentItemQty'],
+          'billable' => $day_details['twelvePercentBillable'],
+          'taxable' => $day_details['twelvePercentTaxable'],
+          'igst' => $day_details['twelvePercentIgstAmt'],
+          'cgst' => $day_details['twelvePercentCgstAmt'],
+          'sgst' => $day_details['twelvePercentSgstAmt'],
+        ];
+        $grand_tot_qty += $day_details['twelvePercentItemQty'];
+        $grand_billable += $day_details['twelvePercentBillable'];
+        $grand_taxable += $day_details['twelvePercentTaxable'];
+        
+        $grand_igst_value += $day_details['twelvePercentIgstAmt'];
+        $grand_cgst_value += $day_details['twelvePercentCgstAmt'];        
+        $grand_sgst_value += $day_details['twelvePercentSgstAmt'];
+      }
+      if($day_details['eighteenPercentItemQty'] > 0) {
+        $gst_summary[18] = [
+          'qty' => $day_details['eighteenPercentItemQty'],
+          'billable' => $day_details['eighteenPercentBillable'],
+          'taxable' => $day_details['eighteenPercentTaxable'],
+          'igst' => $day_details['eighteenPercentIgstAmt'],
+          'cgst' => $day_details['eighteenPercentCgstAmt'],
+          'sgst' => $day_details['eighteenPercentSgstAmt'],
+        ];
+        $grand_tot_qty += $day_details['eighteenPercentItemQty'];
+        $grand_billable += $day_details['eighteenPercentBillable'];
+        $grand_taxable += $day_details['eighteenPercentTaxable'];
+
+        $grand_igst_value += $day_details['eighteenPercentIgstAmt'];
+        $grand_sgst_value += $day_details['eighteenPercentSgstAmt'];
+        $grand_cgst_value += $day_details['eighteenPercentCgstAmt'];        
+      }
+      if($day_details['twentyEightPercentItemQty'] > 0) {
+        $gst_summary[28] = [
+          'qty' => $day_details['twentyEightPercentItemQty'],
+          'billable' => $day_details['twentyEightPercentBillable'],
+          'taxable' => $day_details['twentyEightPercentTaxable'],
+          'igst' => $day_details['twentyEightPercentIgstAmt'],
+          'cgst' => $day_details['twentyEightPercentCgstAmt'],
+          'sgst' => $day_details['twentyEightPercentSgstAmt'],
+        ];
+        $grand_tot_qty += $day_details['twentyEightPercentItemQty'];
+        $grand_billable += $day_details['twentyEightPercentBillable'];
+        $grand_taxable += $day_details['twentyEightPercentTaxable'];
+
+        $grand_igst_value += $day_details['twentyEightPercentIgstAmt'];
+        $grand_cgst_value += $day_details['twentyEightPercentCgstAmt'];        
+        $grand_sgst_value += $day_details['twentyEightPercentSgstAmt'];
+      }
+
+      // dump($gst_summary);
+      // exit;
+
+      foreach($gst_summary as $key => $gst_summary_details) {
+
+        if($gst_summary_details['igst'] > 0) {
+          $igst_amount = number_format($gst_summary_details['igst'],2,'.','');
+          $igst_percent = number_format($key,2);
+          $cgst_amount = $sgst_amount = '';
+        } else {
+          $cgst_amount = number_format($gst_summary_details['cgst'],2,'.','');
+          $sgst_amount = number_format($gst_summary_details['sgst'],2,'.','');
+          $cgst_percent = $sgst_percent = number_format($key/2, 2);
+          $igst_percent = '';
+          $igst_amount = '';
+        }
+
+        $codewise_taxable += $gst_summary_details['taxable'];
+        $codewise_gst += ($gst_summary_details['igst'] + $gst_summary_details['cgst'] + $gst_summary_details['sgst']);
+
+        /* It implies that we reached end of day. */
+        if(isset($day_details['cashPayments'])) {
+          $total_codewise_day_sales = ($codewise_taxable+$codewise_gst)-$return_amount;
+          $day_round_off = ($net_day_sales-$total_codewise_day_sales);
+
+          // dump($date.'====>'.$net_day_sales.'===>'.$total_codewise_day_sales);
+
+          if($cash_payments > 0) {
+            $cash_payments -= $day_round_off;
+          } elseif($card_payments > 0) {
+            $card_payments -= $day_round_off;
+          } elseif($credit_sales > 0) {
+            $credit_sales -= $day_round_off;
+          }
+          $codewise_taxable = $codewise_gst = 0;
+
+          $tot_cash_payments += $cash_payments;
+          $tot_card_payments += $card_payments;
+          $tot_credit_sales += $credit_sales;
+          $tot_cnote_payments += $cnote_payments;
+          $tot_return_amount += $return_amount;
+          $tot_day_round_off += $day_round_off;
+          $tot_net_sales += $net_day_sales;
+        }
+
+        $cleaned_params[] = [
+          'Date' => $date,
+          'Qty.' => number_format($gst_summary_details['qty'],2, '.', ''),
+          'UOM' => '',
+          'Item / Category Name' => '',
+          'HSN/SAC Code' => $hsn_sac_code,
+          'Billed Amount' => number_format($gst_summary_details['billable'],2, '.', ''),
+          'Taxable Amount' => number_format($gst_summary_details['taxable'],2, '.', '') ,
+          'IGST%' => $igst_percent,
+          'IGST Value' => $igst_amount,
+          'CGST%' => $cgst_percent,
+          'CGST Value' => $cgst_amount,
+          'SGST%' => $sgst_percent,
+          'SGST Value' => $sgst_amount,
+          'GST%' => number_format($key,2),
+          'GST Value' => number_format($gst_summary_details['igst']+$gst_summary_details['cgst']+$gst_summary_details['sgst'], 2, '.', ''),
+          'Cash' => number_format($cash_payments,2, '.', '') ,
+          'Card' => number_format($card_payments,2, '.', ''),
+          'Credit' => number_format($credit_sales,2, '.', ''),
+          'Cnote' => number_format($cnote_payments,2, '.', ''),
+          'Returns' => number_format($return_amount,2, '.', ''),
+          'Rounding off' => number_format($day_round_off,2,'.',''),
+          'Net Sales' => number_format($net_day_sales,2,'.',''),
+        ];
+      }
+    }
+
+    $cleaned_params[count($cleaned_params)] = [
+      'Date' => 'REPORT T O T A L S',
+      'Qty.' => number_format($grand_tot_qty,2, '.', ''),
+      'UOM' => '',
+      'Item / Category Name' => '',
+      'HSN/SAC Code' => '',
+      'Billed Amount' => number_format($grand_billable,2, '.', ''),
+      'Taxable Amount' => number_format($grand_taxable,2, '.', '') ,
+      'IGST%' => '',
+      'IGST Value' => $grand_igst_value>0 ? number_format($grand_igst_value, 2, '.', '') : '',
+      'CGST%' => '',
+      'CGST Value' => $grand_cgst_value>0 ? number_format($grand_cgst_value, 2, '.', '') : '',
+      'SGST%' => '',
+      'SGST Value' => $grand_sgst_value>0 ? number_format($grand_sgst_value, 2, '.', '') : '',
+      'GST%' => '',
+      'GST Value' => number_format($grand_igst_value+$grand_cgst_value+$grand_sgst_value, 2, '.', ''),
+      'Cash' => number_format($tot_cash_payments,2, '.', '') ,
+      'Card' => number_format($tot_card_payments,2, '.', ''),
+      'Credit' => number_format($tot_credit_sales,2, '.', ''),
+      'Cnote' => number_format($tot_cnote_payments,2, '.', ''),
+      'Returns' => number_format($tot_return_amount,2, '.', ''),
+      'Rounding off' => number_format($tot_day_round_off,2,'.',''),
+      'Net Sales' => number_format($tot_net_sales,2,'.',''),
+    ];
+
+    return $cleaned_params; 
+  }
+
 }

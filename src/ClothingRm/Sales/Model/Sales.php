@@ -109,6 +109,24 @@ class Sales {
 		}
 	}
 
+	// get monthwise sales summary by tax rate
+	public function get_sales_summary_by_hsnsac_code($params=[]) {
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get','tax-reports/sales-abs-mon/hsn-code-wise',$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'summary' => $response['response'],
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}
+	}	
+
 	// get monthwise sales summary
 	public function get_sales_summary_bymon($params=[]) {
 		$api_caller = new ApiCaller();
