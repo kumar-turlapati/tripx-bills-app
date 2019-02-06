@@ -27,7 +27,11 @@
   } else {
     $current_date = date("d-m-Y");
   }
-
+  if(isset($submitted_data['locationCode']) && $submitted_data['locationCode'] !== '') {
+    $location_code = $submitted_data['locationCode'];
+  } else {
+    $location_code = '';
+  }
   // dump($errors);
   // exit;
 ?>
