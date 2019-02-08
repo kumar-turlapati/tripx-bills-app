@@ -491,7 +491,7 @@ class Utilities
         '/reports/day-sales', '/reports/sales-by-tax-rate', '/reports/po-register', '/reports/po-register-itemwise', '/reports/payables',
         '/reports/receivables', '/reports/item-master', '/reports/customer-master',
 
-        '/reports/item-master-with-barcodes',
+        '/reports/item-master-with-barcodes', '/reports/sales-billwise-itemwise',
       ],
 
       // for Business head
@@ -515,7 +515,7 @@ class Utilities
 
         '/reports/inventory-profitability', '/reports/material-movement',
 
-        '/reports/item-master-with-barcodes',
+        '/reports/item-master-with-barcodes', '/reports/sales-billwise-itemwise',
       ],      
 
       // for Sales Operator
@@ -556,7 +556,7 @@ class Utilities
         '/barcodes/list', '/barcodes/print', '/barcode/opbal',
 
         '/reports/sales-register', '/reports/itemwise-sales-register', '/reports/day-sales', '/reports/sales-summary-by-month', 
-        '/reports/sales-by-tax-rate', 
+        '/reports/sales-by-tax-rate', '/reports/sales-billwise-itemwise',
       ],
 
       6  => [

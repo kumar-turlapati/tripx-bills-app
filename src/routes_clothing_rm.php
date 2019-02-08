@@ -717,6 +717,9 @@ $routes->add('report_itemwise_sales', new Routing\Route('/reports/sales-by-tax-r
 $routes->add('report_hsnsac_sales', new Routing\Route('/reports/sales-by-hsn-sac-code', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesByHsnCodes',
 )));
+$routes->add('report_sales_billwise_itemwise', new Routing\Route('/reports/sales-billwise-itemwise', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesBillwiseItemwise',
+)));
 
 // reports - inventory
 $routes->add('report_stock', new Routing\Route('/reports/stock-report', array(

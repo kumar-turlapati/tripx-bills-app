@@ -321,6 +321,203 @@ class SalesReportsController {
 
     // render template
     return [$this->template->render_view('itemwise-sales-register', $template_vars), $controller_vars];
+  }
+
+  // prints billwise and itemwise sales register
+  public function salesBillwiseItemwise(Request $request) {
+    $default_location = $_SESSION['lc'];
+    $page_no = 1; $per_page = 300;
+    $total_records = [];
+
+    $client_locations = Utilities::get_client_locations();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_billwise_itemwise($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-billwise-itemwise');        
+      }
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_billwise_itemwise_sales($form_data);
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-billwise-itemwise');
+      } else {
+        $total_records = $sales_api_response['summary']['sales'];
+        $total_pages = $sales_api_response['summary']['total_pages'];
+        if($total_pages>1) {
+          for($i=2;$i<=$total_pages;$i++) {
+            $form_data['pageNo'] = $i;
+            $sales_api_response = $this->sales_model->get_billwise_itemwise_sales($form_data);
+            if($sales_api_response['status']) {
+              $total_records = array_merge($total_records,$sales_api_response['summary']['sales']);
+            }
+          }
+        }
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+        $heading1 = 'Billwise and Itemwise Sales Register';
+        $heading2 = '( from '.$form_data['fromDate'].' to '.$form_data['toDate'].' )';
+        if($location_name !== '') {
+          $heading1 .= ' - '.$location_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2] ];
+      }
+
+/*      $format = $form_data['format'];
+      if($format === 'csv') {
+        $total_records = $this->_format_itemwise_sales_register_for_csv($total_records);
+        Utilities::download_as_CSV_attachment('ItemwiseSalesRegister', $csv_headings, $total_records);
+        return;
+      }*/
+
+
+      // start PDF printing.
+      $item_widths = array(10,16,18,42,13,16,18,18,18,22);
+                        //  0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+      $slno = 0;
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('P','A4');
+
+      // Print Bill Information.
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,0,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading2,'',1,'C');
+
+      $pdf->SetFont('Arial','B',8);
+      $pdf->Ln(5);
+      $pdf->Cell($item_widths[0],6,'SNo.','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'Bill No.','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'Bill Date','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'Item Name','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'Qty.','RTB',0,'C');
+      $pdf->Cell($item_widths[5],6,'Item Rate','RTB',0,'C');
+      $pdf->Cell($item_widths[6],6,'Gross Amt.','RTB',0,'C');  
+      $pdf->Cell($item_widths[7],6,'Discount','RTB',0,'C');
+      $pdf->Cell($item_widths[8],6,'Net Amount','RTB',0,'C');
+      $pdf->Cell($item_widths[9],6,'Cust.Name','RTB',0,'C');      
+      $pdf->SetFont('Arial','',8);
+
+      $tot_sold_qty = $tot_amount = $tot_discount = $tot_net_pay = 0;
+      $slno = 0;
+      $old_bill_no = $new_bill_no = $total_records[0]['invoiceNo'];
+      $bill_qty = 0;
+      foreach($total_records as $key => $record_details) {
+        $slno++;
+        $new_bill_no = $record_details['invoiceNo'];
+        if($old_bill_no !== $new_bill_no) {
+
+          $bill_total = $total_records[$key-1]['billAmount'];
+          $bill_discount = $total_records[$key-1]['billDiscount'];
+          $netpay =  $total_records[$key-1]['netpay'];
+
+          $pdf->Ln();
+          $pdf->SetFont('Arial','B',8);
+          $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3],6,'BILL TOTALS','LRTB',0,'R');
+          $pdf->Cell($item_widths[4],6,number_format($bill_qty,2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
+          $pdf->Cell($item_widths[6],6,number_format($bill_total, 2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[7],6,number_format($bill_discount, 2, '.', ''),'RTB',0,'R');
+          $pdf->Cell($item_widths[8],6,number_format($netpay, 2, '.', ''),'RTB',0,'R');  
+          $pdf->Cell($item_widths[9],6,'','RTB',0,'L');
+          $pdf->SetFont('Arial','',8);
+
+          $tot_sold_qty += $bill_qty;
+          $tot_amount += $bill_total;
+          $tot_discount += $bill_discount;
+          $tot_net_pay += $netpay;
+
+          $old_bill_no = $new_bill_no;
+          $bill_qty = $bill_total = $bill_discount = $netpay = 0;
+        }        
+
+        $bill_qty += $record_details['soldQty'];
+        $item_amount = round($record_details['soldQty']*$record_details['mrp'], 2);
+        $item_value = $item_amount - $record_details['itemDiscount'];
+
+        if($record_details['customerName'] !== '') {
+          $customer_name = $record_details['customerName'];
+        } elseif($record_details['tmpCustomerName'] !== '') {
+          $customer_name = $record_details['tmpCustomerName'];
+        } else {
+          $customer_name = '';
+        }
+
+        $pdf->Ln();
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,$record_details['invoiceNo'],'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,date("d-m-Y", strtotime($record_details['invoiceDate'])),'RTB',0,'L');            
+        $pdf->Cell($item_widths[3],6,substr($record_details['itemName'],0,18),'RTB',0,'L');
+        $pdf->Cell($item_widths[4],6,number_format($record_details['soldQty'],2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[5],6,number_format($record_details['mrp'],2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,number_format($item_amount,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[7],6,number_format($record_details['itemDiscount'],2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,number_format($item_value,2,'.',''),'RTB',0,'R');  
+        $pdf->Cell($item_widths[9],6,substr($customer_name,0,10),'RTB',0,'L');
+      }
+
+      $bill_total = $total_records[$key]['billAmount'];
+      $bill_discount = $total_records[$key]['billDiscount'];
+      $netpay =  $total_records[$key]['netpay'];
+
+      $tot_sold_qty += $bill_qty;
+      $tot_amount += $bill_total;
+      $tot_discount += $bill_discount;
+      $tot_net_pay += $netpay;      
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',8);
+      $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3],6,'BILL TOTALS','LRTB',0,'R');
+      $pdf->Cell($item_widths[4],6,number_format($bill_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($bill_total, 2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[7],6,number_format($bill_discount, 2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($netpay, 2, '.', ''),'RTB',0,'R');  
+      $pdf->Cell($item_widths[9],6,'','RTB',0,'L');
+
+      $pdf->Ln();
+      $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3],6,'REPORT TOTALS','LRTB',0,'R');
+      $pdf->Cell($item_widths[4],6,number_format($tot_sold_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,'','RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($tot_amount, 2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[7],6,number_format($tot_discount, 2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($tot_net_pay, 2, '.', ''),'RTB',0,'R');  
+      $pdf->Cell($item_widths[9],6,'','RTB',0,'L');
+      $pdf->SetFont('Arial','',8);      
+
+      $pdf->Output();
+    }
+
+    $controller_vars = array(
+      'page_title' => 'Print Itemwise Sales Register',
+      'icon_name' => 'fa fa-print',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format'],
+    );
+
+    // render template
+    return [$this->template->render_view('item-bill-wise-sales-register', $template_vars), $controller_vars];
   }  
 
   // day sales report
@@ -1283,6 +1480,33 @@ class SalesReportsController {
     } else {
       return ['status' => true, 'cleaned_params' => $cleaned_params];
     }
+  }
+
+  private function _validate_form_data_billwise_itemwise($form_data = []) {
+    $cleaned_params = $form_errors = [];
+    if($form_data['locationCode'] !== '') {
+      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    } else {
+      $form_errors['StoreName'] = 'Invalid Store Name.';
+    }
+    if($form_data['fromDate'] !== '') {
+      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
+    } else {
+      $form_errors['FromDate'] = 'Invalid From Date.';
+    }
+    if($form_data['toDate'] !== '') {
+      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
+    } else {
+      $form_errors['ToDate'] = 'Invalid To Date.';
+    }
+
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }    
   }
 
   private function _validate_form_data_day_sales($form_data = []) {

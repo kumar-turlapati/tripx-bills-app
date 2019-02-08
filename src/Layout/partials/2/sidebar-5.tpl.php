@@ -66,6 +66,7 @@
               <li><a href="/reports/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
               <li><a href="/reports/day-sales"><i class="fa fa-angle-right"></i> Sales by Day</a></li>
               <li><a href="/reports/itemwise-sales-register"><i class="fa fa-angle-right"></i> Itemwise Sales Register</a></li>
+              <li><a href="/reports/sales-billwise-itemwise"><i class="fa fa-angle-right"></i> Bill&amp;Item wise Sales</a></li>
             </ul>
           </li>
         </ul>

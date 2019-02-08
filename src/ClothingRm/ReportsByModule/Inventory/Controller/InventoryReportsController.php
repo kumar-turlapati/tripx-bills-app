@@ -933,8 +933,8 @@ class InventoryReportsController {
       Utilities::redirect('/inward-entry/list');
     }
 
-    dump($purchase_details);
-    exit;
+    // dump($purchase_details);
+    // exit;
 
     $print_date_time = date("d-M-Y h:ia");
     $slno = $total_qty = 0;

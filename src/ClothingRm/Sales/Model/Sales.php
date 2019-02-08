@@ -109,7 +109,7 @@ class Sales {
 		}
 	}
 
-	// get monthwise sales summary by tax rate
+	// get monthwise sales summary by hsn/sac code
 	public function get_sales_summary_by_hsnsac_code($params=[]) {
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get','tax-reports/sales-abs-mon/hsn-code-wise',$params);
@@ -125,7 +125,25 @@ class Sales {
 				'apierror' => $response['reason']
 			);
 		}
-	}	
+	}
+
+	// get billwise itemwise sales register
+	public function get_billwise_itemwise_sales($params=[]) {
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get','reports/sales-billwise-itemwise',$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'summary' => $response['response'],
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}
+	}		
 
 	// get monthwise sales summary
 	public function get_sales_summary_bymon($params=[]) {
