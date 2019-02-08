@@ -186,12 +186,12 @@ class ProductsController {
     $products_list = $product_api_call->get_products($page_no, $per_page, $search_params);
     $api_status = $products_list['status'];
     $client_id = Utilities::get_current_client_id();
+    $categories = array('' => 'All Categories') + $product_api_call->get_product_categories($location_code);
 
     // check api status
     if($api_status) {
       // check whether we got products or not.
       if(count($products_list['products']) >0) {
-        $categories = array('' => 'All Categories') + $product_api_call->get_product_categories($location_code);
         $slno = Utilities::get_slno_start(count($products_list['products']), $per_page, $page_no);
         $to_sl_no = $slno+$per_page;
         $slno++;
