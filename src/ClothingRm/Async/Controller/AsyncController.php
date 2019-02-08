@@ -81,8 +81,13 @@ class AsyncController {
       header("Content-type: application/json");
       echo $response;
     } elseif($api_string==='monthly-sales') {
-      $params['month'] = Utilities::clean_string($request->get('saleMonth'));
-      $params['year'] = Utilities::clean_string($request->get('saleYear'));
+      $sale_month = Utilities::clean_string($request->get('saleMonth'));
+      $sale_year = Utilities::clean_string($request->get('saleYear'));
+      $no_of_days = Utilities::get_number_of_days_in_month($sale_month, $sale_year);
+
+      $params['fromDate'] = '01-'.$sale_month.'-'.$sale_year;
+      $params['toDate'] = $no_of_days.'-'.$sale_month.'-'.$sale_year;
+
       $api_url = 'reports/sales-abs-mon/'.$client_id;
       $response = $api_caller->sendRequest('get',$api_url,$params,false);
       header("Content-type: application/json");

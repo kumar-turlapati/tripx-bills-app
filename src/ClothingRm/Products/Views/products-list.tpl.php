@@ -9,6 +9,12 @@
   } else {
     $medname = '';
   }
+  if(isset($search_params['mfg']) && $search_params['mfg'] !='') {
+    $mfg = $search_params['mfg'];
+    $query_params[] = 'mfg='.$mfg;
+  } else {
+    $mfg = '';
+  }  
   if(isset($search_params['category']) && $search_params['category'] !='' ) {
     $category = $search_params['category'];
     $query_params[] = 'category='.$category;
@@ -49,18 +55,6 @@
               <div class="col-sm-12 col-md-1 col-lg-1 text-right">
     					  <label class="control-label text-right"><b>Filter by</b></label>          
               </div>
-    				  <div class="col-sm-12 col-md-2 col-lg-2">
-    					 <input placeholder="Product name" type="text" name="psName" id="psName" class="form-control" value="<?php echo $medname ?>">
-    				  </div>
-    				  <div class="col-sm-12 col-md-2 col-lg-2">
-      					<div class="select-wrap">
-      						<select class="form-control" name="category" id="category">
-      						  <?php foreach($categories as $key=>$value): ?>
-      							   <option value="<?php echo $key ?>"><?php echo $value ?></option>
-      						  <?php endforeach; ?>
-      						</select>
-      					 </div>
-    				  </div>
               <div class="col-sm-12 col-md-2 col-lg-2">
                 <div class="select-wrap">
                   <select class="form-control" name="locationCode" id="locationCode">
@@ -80,6 +74,28 @@
                   </select>
                  </div>
               </div>              
+              <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="select-wrap">
+                  <select class="form-control" name="category" id="category">
+                    <?php 
+                      foreach($categories as $key=>$value):
+                        if($key === $category) {
+                          $selected = ' selected = "selected"';
+                        } else {
+                          $selected = '';
+                        }
+                    ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                 </div>
+              </div>
+              <div class="col-sm-12 col-md-2 col-lg-2">
+                <input placeholder="Brand" type="text" name="mfg" id="mfg" class="form-control brandAc" value="<?php echo $mfg ?>">
+              </div>              
+    				  <div class="col-sm-12 col-md-2 col-lg-2">
+    					   <input placeholder="Product name" type="text" name="psName" id="psName" class="form-control inameAc" value="<?php echo $medname ?>">
+    				  </div>
               <div class="col-sm-12 col-md-3 col-lg-3">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>

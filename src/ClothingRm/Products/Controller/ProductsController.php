@@ -191,7 +191,7 @@ class ProductsController {
     if($api_status) {
       // check whether we got products or not.
       if(count($products_list['products']) >0) {
-        $categories = array('' => 'All Categories')+$product_api_call->get_product_categories();
+        $categories = array('' => 'All Categories') + $product_api_call->get_product_categories($location_code);
         $slno = Utilities::get_slno_start(count($products_list['products']), $per_page, $page_no);
         $to_sl_no = $slno+$per_page;
         $slno++;

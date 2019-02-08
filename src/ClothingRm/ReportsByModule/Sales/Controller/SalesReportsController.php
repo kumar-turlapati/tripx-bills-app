@@ -374,12 +374,12 @@ class SalesReportsController {
         $csv_headings = [ [$heading1], [$heading2] ];
       }
 
-/*      $format = $form_data['format'];
+      $format = $form_data['format'];
       if($format === 'csv') {
-        $total_records = $this->_format_itemwise_sales_register_for_csv($total_records);
-        Utilities::download_as_CSV_attachment('ItemwiseSalesRegister', $csv_headings, $total_records);
+        $total_records = $this->_format_billwise_itemwise_sr_for_csv($total_records);
+        Utilities::download_as_CSV_attachment('BillwiseItemwiseSalesRegister', $csv_headings, $total_records);
         return;
-      }*/
+      }
 
 
       // start PDF printing.
@@ -504,7 +504,7 @@ class SalesReportsController {
     }
 
     $controller_vars = array(
-      'page_title' => 'Print Itemwise Sales Register',
+      'page_title' => 'Print Billwise and Itemwise Sales Register',
       'icon_name' => 'fa fa-print',
     );
 
@@ -513,7 +513,7 @@ class SalesReportsController {
       'flash_obj' => $this->flash,
       'client_locations' => array(''=>'All Stores') + $client_locations,
       'default_location' => $default_location,
-      'format_options' => ['pdf'=>'PDF Format'],
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
     );
 
     // render template
@@ -2058,6 +2058,133 @@ class SalesReportsController {
     ];
 
     return $cleaned_params; 
+  }
+
+  private function _format_billwise_itemwise_sr_for_csv($total_records = []) {
+    $cleaned_params = [];
+
+    $tot_sold_qty = $tot_amount = $tot_discount = $tot_net_pay = 0;
+    $slno = $bill_qty = 0;
+    $old_bill_no = $new_bill_no = $total_records[0]['invoiceNo'];
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $new_bill_no = $record_details['invoiceNo'];
+      if($old_bill_no !== $new_bill_no) {
+
+        $bill_total = $total_records[$key-1]['billAmount'];
+        $bill_discount = $total_records[$key-1]['billDiscount'];
+        $netpay =  $total_records[$key-1]['netpay'];
+
+        $cleaned_params[] = [
+          'Sl. No.' => '',
+          'Bill No.' => '',
+          'Bill Date' => '',
+          'Item Name' => 'BILL TOTALS',
+          'Qty.' => number_format($bill_qty,2,'.',''),
+          'Item Rate' => '',
+          'Gross Amt.' => number_format($bill_total,2,'.',''),
+          'Discount' => number_format($bill_discount,2,'.',''),
+          'Net Amount' => number_format($netpay,2,'.',''),
+          'Cust.Name' => '',
+        ];
+        $cleaned_params[] = [
+          'Sl. No.' => '',
+          'Bill No.' => '',
+          'Bill Date' => '',
+          'Item Name' => '',
+          'Qty.' => '',
+          'Item Rate' => '',
+          'Gross Amt.' => '',
+          'Discount' => '',
+          'Net Amount' => '',
+          'Cust.Name' => '',
+        ];        
+
+        $tot_sold_qty += $bill_qty;
+        $tot_amount += $bill_total;
+        $tot_discount += $bill_discount;
+        $tot_net_pay += $netpay;
+
+        $old_bill_no = $new_bill_no;
+        $bill_qty = $bill_total = $bill_discount = $netpay = 0;
+      }        
+
+      $bill_qty += $record_details['soldQty'];
+      $item_amount = round($record_details['soldQty']*$record_details['mrp'], 2);
+      $item_value = $item_amount - $record_details['itemDiscount'];
+
+      if($record_details['customerName'] !== '') {
+        $customer_name = $record_details['customerName'];
+      } elseif($record_details['tmpCustomerName'] !== '') {
+        $customer_name = $record_details['tmpCustomerName'];
+      } else {
+        $customer_name = '';
+      }
+
+      $cleaned_params[] = [
+        'Sl. No.' => $slno,
+        'Bill No.' => $record_details['invoiceNo'],
+        'Bill Date' => date("d-m-Y", strtotime($record_details['invoiceDate'])),
+        'Item Name' => $record_details['itemName'],
+        'Qty.' => number_format($record_details['soldQty'],2,'.',''),
+        'Item Rate' => number_format($record_details['mrp'],2,'.',''),
+        'Gross Amt.' => number_format($item_amount,2,'.',''),
+        'Discount' => number_format($record_details['itemDiscount'],2,'.',''),
+        'Net Amount' => number_format($item_value,2,'.',''),
+        'Cust.Name' => $customer_name, 
+      ];
+    }
+
+    // dump($cleaned_params);
+    // exit;
+
+    $bill_total = $total_records[$key]['billAmount'];
+    $bill_discount = $total_records[$key]['billDiscount'];
+    $netpay =  $total_records[$key]['netpay'];
+
+    $tot_sold_qty += $bill_qty;
+    $tot_amount += $bill_total;
+    $tot_discount += $bill_discount;
+    $tot_net_pay += $netpay;      
+
+    $cleaned_params[] = [
+      'Sl. No.' => '',
+      'Bill No.' => '',
+      'Bill Date' => '',
+      'Item Name' => 'BILL TOTALS',
+      'Qty.' => number_format($bill_qty,2,'.',''),
+      'Item Rate' => '',
+      'Gross Amt.' => number_format($bill_total,2,'.',''),
+      'Discount' => number_format($bill_discount,2,'.',''),
+      'Net Amount' => number_format($netpay,2,'.',''),
+      'Cust.Name' => '',
+    ];
+    $cleaned_params[] = [
+      'Sl. No.' => '',
+      'Bill No.' => '',
+      'Bill Date' => '',
+      'Item Name' => '',
+      'Qty.' => '',
+      'Item Rate' => '',
+      'Gross Amt.' => '',
+      'Discount' => '',
+      'Net Amount' => '',
+      'Cust.Name' => '',
+    ];
+    $cleaned_params[] = [
+      'Sl. No.' => '',
+      'Bill No.' => '',
+      'Bill Date' => '',
+      'Item Name' => 'REPORT TOTALS',
+      'Qty.' => number_format($tot_sold_qty,2,'.',''),
+      'Item Rate' => '',
+      'Gross Amt.' => number_format($tot_amount,2,'.',''),
+      'Discount' => number_format($tot_discount,2,'.',''),
+      'Net Amount' => number_format($tot_net_pay,2,'.',''),
+      'Cust.Name' => '',
+    ];
+
+    return $cleaned_params;
   }
 
 }
