@@ -234,6 +234,7 @@ class UploadInventoryController
         $packed_qty = Utilities::clean_string($imported_record_details['PackedQty']);
         $brand_name = Utilities::clean_string($imported_record_details['BrandName']);
         $rack_no = Utilities::clean_string($imported_record_details['RackNo']);
+        $item_sku = Utilities::clean_string($imported_record_details['ItemSku']);
 
         if(!is_numeric($closing_qty)) {
           $error_flag = true;
@@ -278,6 +279,7 @@ class UploadInventoryController
           $cleaned_array[$key]['PackedQty'] = round($packed_qty,2);
           $cleaned_array[$key]['BrandName'] = $brand_name;
           $cleaned_array[$key]['RackNo'] = $rack_no;
+          $cleaned_array[$key]['ItemSku'] = $item_sku;
         }
       }
     }
