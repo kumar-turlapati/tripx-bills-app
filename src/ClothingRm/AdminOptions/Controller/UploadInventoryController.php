@@ -267,8 +267,6 @@ class UploadInventoryController
         if($hsn_sac_code !== '' && !is_numeric(str_replace([' '], '', $hsn_sac_code))) {
           $error_flag = true;
           $xl_errors[$key]['GST'] = 'Invalid HsnSacCode at Row - '.($key+2);          
-        } else {
-          $hsn_sac_code = '';
         }
         if(!is_numeric($packed_qty) || $packed_qty < 0) {
           $error_flag = true;
