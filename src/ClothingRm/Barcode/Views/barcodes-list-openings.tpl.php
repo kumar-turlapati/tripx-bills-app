@@ -120,6 +120,7 @@
                       $item_key = $item_code.'__'.$lot_no.'__'.$packed_qty;
                       $item_sku = $opening_details['itemSku'];
                       $mfg_name = $opening_details['mfgName'];
+                      $cno = $opening_details['cno'];
 
                       $tot_opening_value_pur += ($opening_qty * $purchase_rate);
                       $tot_opening_value_sale += ($opening_qty * $opening_rate);
@@ -187,9 +188,9 @@
                         />
                         <input
                           type="hidden" 
-                          name="itemSku[<?php echo $item_key ?>]" 
-                          id="itemSku_<?php echo $item_key ?>" 
-                          value="<?php echo $item_sku ?>" 
+                          name="cno[<?php echo $item_key ?>]" 
+                          id="cno_<?php echo $item_key ?>" 
+                          value="<?php echo $cno ?>" 
                         />
                         <input
                           type="hidden" 

@@ -222,12 +222,18 @@ class UploadInventoryController
     $xl_errors = [];
     $error_flag = false;
     foreach($imported_records as $key => $imported_record_details) {
-      $item_name = Utilities::clean_string($imported_record_details['ItemName']);
+      if(isset($imported_record_details['ItemName'])) {
+        $item_name = Utilities::clean_string($imported_record_details['ItemName']);
+      } else {
+        $error_flag = true;
+        $xl_errors[$key]['ItemName'] = '`ItemName` column is not available. Check your Excel File..';
+        break;
+      }
       if($item_name !== '') {
         $closing_qty = Utilities::clean_string($imported_record_details['ClosingQty']);
         $purchase_price = Utilities::clean_string($imported_record_details['PurchasePrice']);
         $sale_price = Utilities::clean_string($imported_record_details['SalePrice']);
-        $units_per_pack = Utilities::clean_string($imported_record_details['UnitsPerPack']);
+        // $units_per_pack = Utilities::clean_string($imported_record_details['UnitsPerPack']);
         $category_name = Utilities::clean_string($imported_record_details['CategoryName']);
         $gst = Utilities::clean_string($imported_record_details['GST']);
         $hsn_sac_code = Utilities::clean_string($imported_record_details['HsnSacCode']);
@@ -235,6 +241,8 @@ class UploadInventoryController
         $brand_name = Utilities::clean_string($imported_record_details['BrandName']);
         $rack_no = Utilities::clean_string($imported_record_details['RackNo']);
         $item_sku = Utilities::clean_string($imported_record_details['ItemSku']);
+        $cno = Utilities::clean_string($imported_record_details['ContainerOrCaseNo']);
+        $uom_name = Utilities::clean_string($imported_record_details['UomName']);        
 
         if(!is_numeric($closing_qty)) {
           $error_flag = true;
@@ -248,10 +256,10 @@ class UploadInventoryController
           $error_flag = true;
           $xl_errors[$key]['SalePrice'] = 'Invalid sale price at Row - '.($key+2);
         }
-        if($units_per_pack !== '' && !is_numeric($units_per_pack)) {
-          $error_flag = true;
-          $xl_errors[$key]['UnitsPerPack'] = 'Invalid units per pack at Row - '.($key+2);
-        }
+        // if($units_per_pack !== '' && !is_numeric($units_per_pack)) {
+        //   $error_flag = true;
+        //   $xl_errors[$key]['UnitsPerPack'] = 'Invalid units per pack at Row - '.($key+2);
+        // }
         if(!is_numeric($gst)) {
           $error_flag = true;
           $xl_errors[$key]['GST'] = 'Invalid GST percent at Row - '.($key+2);
@@ -272,7 +280,7 @@ class UploadInventoryController
           $cleaned_array[$key]['ClosingQty'] = $closing_qty;
           $cleaned_array[$key]['PurchasePrice'] = $purchase_price;
           $cleaned_array[$key]['SalePrice'] = $sale_price;
-          $cleaned_array[$key]['UnitsPerPack'] = $units_per_pack;
+          // $cleaned_array[$key]['UnitsPerPack'] = $units_per_pack;
           $cleaned_array[$key]['CategoryName'] = $category_name;
           $cleaned_array[$key]['GST'] = $gst;
           $cleaned_array[$key]['HsnSacCode'] = $hsn_sac_code;
@@ -280,6 +288,8 @@ class UploadInventoryController
           $cleaned_array[$key]['BrandName'] = $brand_name;
           $cleaned_array[$key]['RackNo'] = $rack_no;
           $cleaned_array[$key]['ItemSku'] = $item_sku;
+          $cleaned_array[$key]['ContainerOrCaseNo'] = $cno;
+          $cleaned_array[$key]['UomName'] = $uom_name;
         }
       }
     }

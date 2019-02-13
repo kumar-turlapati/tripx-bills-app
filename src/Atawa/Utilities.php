@@ -865,7 +865,7 @@ class Utilities
       'indent' => 'Indent Sticker',
       'mrp' => 'MRP Sticker',
       'worate' => 'Sticker Without Rate',
-      'sku-small' => 'SKU Format - 5 column',
+      'sku-small' => 'Warehouse Sticker with Case/Container/Box No.',
     ];
   }
 

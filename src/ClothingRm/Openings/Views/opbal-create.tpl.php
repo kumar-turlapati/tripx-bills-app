@@ -11,6 +11,7 @@
   $tax_percent = isset($submitted_data['taxPercent']) && $submitted_data['taxPercent'] !== '' ? $submitted_data['taxPercent'] + 0 : '';
   $location_code = isset($submitted_data['locationID']) && isset($location_codes[$submitted_data['locationID']]) ? $location_codes[$submitted_data['locationID']] : '';
   $packed_qty = isset($submitted_data['packedQty']) ? $submitted_data['packedQty'] : 1;
+  $cno = isset($submitted_data['cno']) ? $submitted_data['cno'] : '';
   $lot_no = isset($submitted_data['lotNo']) ? $submitted_data['lotNo'] : '';
   if($opening_qty === '') {
     $opening_qty = isset($submitted_data['opQty']) ? $submitted_data['opQty'] : '';
@@ -119,13 +120,20 @@
                 <span class="error"><?php echo $errors['packed_qty'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Container/Box/Case No.</label>
+              <input type="text" class="form-control noEnterKey" name="cno" id="cno" value="<?php echo $cno ?>" />
+              <?php if(isset($errors['cno'])): ?>
+                <span class="error"><?php echo $errors['cno'] ?></span>
+              <?php endif; ?>
+            </div>
             <?php if($update_mode): ?>
               <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
                 <label class="control-label">Lot No. (auto generated)</label>
                 <input type="text" class="form-control noEnterKey" name="lotNo" id="lotNo" value="<?php echo $lot_no ?>" disabled="disabled" />
               </div>
             <?php endif; ?>
-            </div>
+          </div>
           <div class="text-center">
             <button class="btn btn-primary" id="Save">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>

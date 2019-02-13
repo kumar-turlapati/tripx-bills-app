@@ -19,6 +19,9 @@
   if(count($printable_array)<=0) {
     die("Unable to print....");
   }
+
+  // dump($printable_array);
+  // exit;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -104,7 +107,7 @@
         $print_qty = $print_qty_details[0];
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
         $print_item_mrp = number_format($print_qty_details[2],2,'.','');
-        $item_sku = $print_qty_details[5];
+        $cno = $print_qty_details[5];
         $packed_qty = $print_qty_details[4];
         $mfg_name = substr(strtoupper($print_qty_details[6]), 0, 12);
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
@@ -114,7 +117,7 @@
         <div class="rate">BRAND : <?php echo $mfg_name ?></div>
         <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
         <div class="barCode"><?php echo $barcode ?></div>
-        <div class="mfgDate"><?php echo 'CNU: '.$item_sku.' - '.$packed_qty ?></div>
+        <div class="mfgDate"><?php echo 'CASE: '.$cno.' - '.$packed_qty.' PCS.' ?></div>
       </div>
       <?php
         $tot_sticker_count++;

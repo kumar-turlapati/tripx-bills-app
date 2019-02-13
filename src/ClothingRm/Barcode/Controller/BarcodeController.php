@@ -376,7 +376,7 @@ class BarcodeController
       if(isset($form_data['op']) && $form_data['op'] === 'save') {
         $location_code = $form_data['locationCode'];
         $item_names = $form_data['itemNames'];
-        $item_skus = $form_data['itemSku'];
+        $cnos_list = $form_data['cno'];
         $item_mfgs = $form_data['mfgNames'];
         $item_rates = $form_data['itemRates'];
         $barcodes_a = $form_data['opBarcode'];
@@ -398,10 +398,10 @@ class BarcodeController
                   } else {
                     $item_name = 'Invalid';
                   }
-                  if(isset($item_skus[$item_key])) {
-                    $item_sku = $item_skus[$item_key];
+                  if(isset($cnos_list[$item_key])) {
+                    $cno = $cnos_list[$item_key];
                   } else {
-                    $item_sku = '';
+                    $cno = '';
                   }
                   if(isset($mfg_names[$item_key])) {
                     $mfg_name = $mfg_names[$item_key];
@@ -419,7 +419,7 @@ class BarcodeController
                     $print_qty = 0;
                   }
                   $item_key_a = explode("__", $item_key);
-                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku, $mfg_name]; 
+                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name]; 
                 }
               }
             } else {
@@ -447,10 +447,10 @@ class BarcodeController
               } else {
                 $barcode = 'Invalid';
               }
-              if(isset($item_skus[$item_key])) {
-                $item_sku = $item_skus[$item_key];
+              if(isset($cnos_list[$item_key])) {
+                $cno = $cnos_list[$item_key];
               } else {
-                $item_sku = '';
+                $cno = '';
               }
               if(isset($mfg_names[$item_key])) {
                 $mfg_name = $mfg_names[$item_key];
@@ -458,7 +458,7 @@ class BarcodeController
                 $mfg_name = '';
               }
               $item_key_a = explode("__", $item_key);
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku, $mfg_name];
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name];
             }
           }
           if(count($print_array_final)>0) {
@@ -497,9 +497,9 @@ class BarcodeController
     }
 
     $openings = $this->openings_model->opbal_list($search_params);
-    # check api status
+    // check api status
     if($openings['status']) {
-      # check whether we got products or not.
+      // check whether we got products or not.
       if(count($openings['openings'])>0) {
         $slno = Utilities::get_slno_start(count($openings['openings']), $per_page, $page_no);
         $to_sl_no = $slno+$per_page;
