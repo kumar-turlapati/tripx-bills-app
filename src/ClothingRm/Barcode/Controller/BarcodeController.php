@@ -370,15 +370,19 @@ class BarcodeController
     $per_page = 100;
     if( count($request->request->all()) > 0) {
       $form_data = $request->request->all();
+      // dump($form_data);
+      // exit;
       # check whether the form is submitted or filtered.
       if(isset($form_data['op']) && $form_data['op'] === 'save') {
         $location_code = $form_data['locationCode'];
         $item_names = $form_data['itemNames'];
         $item_skus = $form_data['itemSku'];
+        $item_mfgs = $form_data['mfgNames'];
         $item_rates = $form_data['itemRates'];
         $barcodes_a = $form_data['opBarcode'];
         $sticker_qtys = $form_data['stickerQty'];
         $indent_format = $form_data['indentFormat'];
+        $mfg_names = $form_data['mfgNames'];
 
         $form_validation = $this->_validate_op_barcode_form($form_data);
         if($form_validation['status']) {
@@ -398,6 +402,11 @@ class BarcodeController
                     $item_sku = $item_skus[$item_key];
                   } else {
                     $item_sku = '';
+                  }
+                  if(isset($mfg_names[$item_key])) {
+                    $mfg_name = $mfg_names[$item_key];
+                  } else {
+                    $mfg_name = '';
                   }                  
                   if(isset($item_rates[$item_key])) {
                     $item_rate = $item_rates[$item_key];
@@ -410,7 +419,7 @@ class BarcodeController
                     $print_qty = 0;
                   }
                   $item_key_a = explode("__", $item_key);
-                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku]; 
+                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku, $mfg_name]; 
                 }
               }
             } else {
@@ -442,9 +451,14 @@ class BarcodeController
                 $item_sku = $item_skus[$item_key];
               } else {
                 $item_sku = '';
-              }              
+              }
+              if(isset($mfg_names[$item_key])) {
+                $mfg_name = $mfg_names[$item_key];
+              } else {
+                $mfg_name = '';
+              }
               $item_key_a = explode("__", $item_key);
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku];
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku, $mfg_name];
             }
           }
           if(count($print_array_final)>0) {
