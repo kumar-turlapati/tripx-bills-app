@@ -249,6 +249,9 @@ class BarcodeController
       case 'worate':
         $print_tpl = 'barcode-print-stickers-wor-html';
         break;
+      case 'sku-small':
+        $print_tpl = 'barcode-print-stickers-sku-small-html';
+        break;        
     }
 
     // build variables
@@ -371,6 +374,7 @@ class BarcodeController
       if(isset($form_data['op']) && $form_data['op'] === 'save') {
         $location_code = $form_data['locationCode'];
         $item_names = $form_data['itemNames'];
+        $item_skus = $form_data['itemSku'];
         $item_rates = $form_data['itemRates'];
         $barcodes_a = $form_data['opBarcode'];
         $sticker_qtys = $form_data['stickerQty'];
@@ -390,6 +394,11 @@ class BarcodeController
                   } else {
                     $item_name = 'Invalid';
                   }
+                  if(isset($item_skus[$item_key])) {
+                    $item_sku = $item_skus[$item_key];
+                  } else {
+                    $item_sku = '';
+                  }                  
                   if(isset($item_rates[$item_key])) {
                     $item_rate = $item_rates[$item_key];
                   } else {
@@ -401,7 +410,7 @@ class BarcodeController
                     $print_qty = 0;
                   }
                   $item_key_a = explode("__", $item_key);
-                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2]]; 
+                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku]; 
                 }
               }
             } else {
@@ -429,8 +438,13 @@ class BarcodeController
               } else {
                 $barcode = 'Invalid';
               }
+              if(isset($item_skus[$item_key])) {
+                $item_sku = $item_skus[$item_key];
+              } else {
+                $item_sku = '';
+              }              
               $item_key_a = explode("__", $item_key);
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2]];
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $item_sku];
             }
           }
           if(count($print_array_final)>0) {
@@ -442,7 +456,7 @@ class BarcodeController
           }
 
         } else {
-          $this->flash->set_flash_message($form_validation['errors'],1);
+          $this->flash->set_flash_message(json_encode($form_validation['errors']),1);
         }
 
       } else {
@@ -517,6 +531,7 @@ class BarcodeController
       'categories' => $categories_a,
       'client_locations' => $client_locations,
       'location_code' => $location_code,
+      'sticker_print_type_a' => ['' => 'Choose'] + Utilities::get_barcode_sticker_print_formats(),      
     );
 
     // build variables

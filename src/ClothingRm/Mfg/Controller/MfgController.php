@@ -145,7 +145,7 @@ class MfgController
   }
 
   public function listMfgs(Request $request) {
-    $mfgs_list = $search_params = $mfgs = [];
+    $mfgs_list = $search_params = $mfgs = $mfgs_a = [];
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
     $page_success = $page_error = '';
@@ -198,7 +198,7 @@ class MfgController
       }
     } else {
       $page_error = $api_response['apierror'];
-      $this->flash->set_flash_message($page_error);      
+      $this->flash->set_flash_message($page_error, 1);      
     }
 
     # build variables

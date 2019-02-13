@@ -34,6 +34,7 @@ class SupplierController {
       if($supplier_response['status']===true) {
         $supplier_details = $supplier_response['supplierDetails'];
         $update_flag = true;
+        $submitted_data = $supplier_details;
       }
       $page_title = 'Update Supplier '.(isset($supplier_details['supplierName'])?' - '.$supplier_details['supplierName']:'');
       $btn_label = 'Update Supplier';

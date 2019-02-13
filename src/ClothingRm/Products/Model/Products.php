@@ -82,12 +82,8 @@ class Products
 
 		// check for data in posted forms
 		if($params['itemName'] =='') {
-				$errors['itemName'] = $this->_errorDescriptions('itemName');
+			$errors['itemName'] = $this->_errorDescriptions('itemName');
 		}
-
-/*	if($params['unitsPerPack'] == '') {
-			$errors['unitsPerPack'] = $this->_errorDescriptions('unitsPerPack');
-		}*/
 
 		if($params['hsnSacCode'] !== '' && (!is_numeric($params['hsnSacCode']) || strlen($params['hsnSacCode']) > 8) ) {
 			$errors['hsnSacCode'] = 'Invalid HSN / SAC code.';

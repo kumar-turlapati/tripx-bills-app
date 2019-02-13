@@ -79,10 +79,10 @@
                     <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                   <?php endforeach; ?>
                 </select>
-                <?php if(isset($form_errors['status'])): ?>
-                  <span class="error"><?php echo $form_errors['status'] ?></span>
-                <?php endif; ?> 
-              </div>              
+              </div>
+              <?php if(isset($form_errors['status'])): ?>
+                <span class="error"><?php echo $form_errors['status'] ?></span>
+              <?php endif; ?>
             </div>
           </div>
           <div class="text-center">

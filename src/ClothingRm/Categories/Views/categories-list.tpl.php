@@ -104,7 +104,7 @@
                     $location_code = isset($location_codes[$category_details['locationID']]) ? $location_codes[$category_details['locationID']] : '';
                     $location_name = isset($location_ids[$category_details['locationID']]) ? $location_ids[$category_details['locationID']] : '';
                 ?>
-                  <tr class="text-right font12">
+                  <tr class="text-right font11">
                     <td class="text-right valign-middle"><?php echo $cntr ?></td>
                     <td class="text-left valign-middle"><?php echo $category_name ?></td>
                     <td class="text-left valign-middle"><?php echo $location_name ?></td>
@@ -130,7 +130,7 @@
                   <td>&nbsp;</td>
                 </tr>
             <?php else: ?>
-                <tr><td colspan="6" align="center" class="font14">No categories is available.</td></tr>
+                <tr><td colspan="6" align="center" class="font14">No categories are available.</td></tr>
             <?php endif; ?>
             </tbody>
           </table>

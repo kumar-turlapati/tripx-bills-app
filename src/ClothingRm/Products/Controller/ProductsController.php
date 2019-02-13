@@ -175,7 +175,7 @@ class ProductsController {
       'medname' => $ps_name,
     ];
 
-    # ---------- get location codes from api -----------------
+    // ---------- get location codes from api -----------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);

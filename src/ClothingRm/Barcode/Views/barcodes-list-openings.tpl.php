@@ -118,6 +118,7 @@
                       $barcode = $opening_details['barcode'];
                       $packed_qty = $opening_details['packedQty'];
                       $item_key = $item_code.'__'.$lot_no.'__'.$packed_qty;
+                      $item_sku = $opening_details['itemSku'];
 
                       $tot_opening_value_pur += ($opening_qty * $purchase_rate);
                       $tot_opening_value_sale += ($opening_qty * $opening_rate);
@@ -182,7 +183,13 @@
                           name="itemRates[<?php echo $item_key ?>]" 
                           id="itemRate_<?php echo $item_key ?>" 
                           value="<?php echo $opening_rate ?>" 
-                        />                      
+                        />
+                        <input
+                          type="hidden" 
+                          name="itemSku[<?php echo $item_key ?>]" 
+                          id="itemSku_<?php echo $item_key ?>" 
+                          value="<?php echo $item_sku ?>" 
+                        />                        
                       </tr>
                 <?php
                   $cntr++;
@@ -207,9 +214,9 @@
                 <label class="control-label">Sticker format</label>
                 <div class="select-wrap">
                   <select class="form-control" name="indentFormat" id="indentFormat">
-                    <option value="indent">Indent Sticker</option>
-                    <option value="mrp">MRP Sticker</option>
-                    <option value="worate">Sticker Without Rate</option>                    
+                    <?php foreach($sticker_print_type_a as $key => $value): ?>
+                      <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                    <?php endforeach; ?>
                   </select>
                 </div>
               </div>

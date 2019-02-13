@@ -99,9 +99,10 @@
                     <td>
                       <div class="btn-actions-group">
                         <?php if($supplier_code !== ''): ?>
+                          <?php /*
                           <a class="btn btn-primary" href="/fin/supplier-ledger?suppCode=<?php echo $supplier_code ?>" title="View Ledger">
                             <i class="fa fa-eye"></i>
-                          </a>
+                          </a> */ ?>
                           <a class="btn btn-primary" href="/suppliers/update/<?php echo $supplier_code ?>" title="Edit Supplier">
                             <i class="fa fa-pencil"></i>
                           </a>

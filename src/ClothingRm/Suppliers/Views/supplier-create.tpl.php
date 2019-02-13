@@ -1,10 +1,13 @@
 <?php
   use Atawa\Utilities;
-  if(isset($form_data['locState'])) {
-    $state_id = $form_data['locState'];
+  if(isset($submitted_data['locState'])) {
+    $state_id = $submitted_data['locState'];
+  } elseif(isset($submitted_data['stateCode'])) {
+    $state_id = $submitted_data['stateCode'];
   } else {
     $state_id = 0;
-  }  
+  }
+  // dump($submitted_data);
 ?>
 <div class="row">
   <div class="col-lg-12"> 

@@ -141,7 +141,7 @@
                       $address .= $address === '' ? $user_details['cityName'] : ', '.$user_details['cityName'];
                     }
                 ?>
-                    <tr class="text-right font12">
+                    <tr class="text-right font11">
                       <td class="valign-middle"><?php echo $cntr ?></td>
                       <td class="text-left valign-middle"><?php echo $user_name ?></td>
                       <td class="text-left valign-middle"><?php echo $user_type ?></td>

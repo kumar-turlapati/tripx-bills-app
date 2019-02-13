@@ -50,6 +50,7 @@
   } else {
     $location_code = '';
   }
+  $uom = isset($submitted_data['uom']) ? $submitted_data['uom'] : '';
 
   // dump($submitted_data, $location_ids, $location_codes);
 ?>
@@ -156,6 +157,22 @@
               <?php endif; ?>              
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Measurement units (Max. 5 characters)</label>
+              <input
+                type="text" 
+                class="form-control noEnterKey"
+                name="uom"
+                id="uom"
+                value="<?php echo $uom ?>"
+                maxlength="5"
+              >
+              <?php if(isset($errors['uom'])): ?>
+                <span class="error"><?php echo $errors['uom'] ?></span>
+              <?php endif; ?>
+            </div>
+            <input type="hidden" name="taxPercent" id="taxPercent" value="" />
+            <?php /*
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Tax rate</label>
               <div class="select-wrap">
                 <select class="form-control" name="taxPercent" id="taxPercent">
@@ -174,7 +191,7 @@
                   <span class="error"><?php echo $errors['taxRate'] ?></span>
                 <?php endif; ?>
               </div>              
-            </div>
+            </div> */ ?>
           </div>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
@@ -225,7 +242,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Store name</label>
               <?php if($update_flag === false): ?>
                 <div class="select-wrap">

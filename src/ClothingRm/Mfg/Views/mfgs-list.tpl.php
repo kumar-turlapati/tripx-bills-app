@@ -86,7 +86,7 @@
                     $location_id = $mfg_details['locationID'];
                     $location_code = isset($location_codes[$location_id]) ? $location_codes[$location_id] : '';
                 ?>
-                  <tr class="text-right font14">
+                  <tr class="text-right font11">
                     <td class="text-right valign-middle"><?php echo $cntr ?></td>
                     <td class="text-left valign-middle"><?php echo $mfg_name ?></td>
                     <td class="text-left valign-middle"><?php echo $status ?></td>

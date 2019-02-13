@@ -13,10 +13,10 @@
             </a> 
           </div>
         </div>
-        <h2 class="hdg-reports text-center">Available Tax Rates</h2>
+        <?php /*<h2 class="hdg-reports text-center">Available Tax Rates</h2> */ ?>
         <div class="table-responsive">
           <table class="table table-striped table-hover">
-            <thead>
+            <thead class="font14">
               <tr>
                 <th width="5%" class="text-center">Sno.</th>
                 <th width="50%" class="text-center">Tax Name</th>
@@ -38,7 +38,7 @@
                     $is_compound = 'No';
                   }
               ?>
-                  <tr class="text-right font12">
+                  <tr class="text-right font11">
                     <td class="text-right valign-middle"><?php echo $cntr ?></td>
                     <td class="text-left valign-middle"><?php echo $tax_name ?></td>
                     <td class="text-right valign-middle"><?php echo $tax_percent.' %' ?></td>
@@ -58,7 +58,7 @@
             ?>
             <?php } else { ?>
               <tr>
-                <td colspan="5" align="center"><b>Tax rates are not yet configured...</b></td>
+                <td colspan="4" align="center"><b>Tax rates are not yet configured...</b></td>
               </tr>
             <?php } ?>
             </tbody>

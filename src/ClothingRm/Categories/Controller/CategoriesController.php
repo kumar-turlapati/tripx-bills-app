@@ -176,10 +176,10 @@ class CategoriesController
       if(count($categories_list['categories']) >0) {
         $categories = $categories_list['categories'];
       } else {
-        $page_error = $categories_list['apierror'];
+        $page_error = 'No records found.';
       }
     } else {
-      $page_error = $categories_list['apierror'];
+      $page_error =  'An error occurred while performing this action.';
     }
 
     // build variables
