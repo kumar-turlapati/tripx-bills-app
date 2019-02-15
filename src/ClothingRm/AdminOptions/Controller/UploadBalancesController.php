@@ -265,11 +265,12 @@ class UploadBalancesController {
         $pincode = Utilities::clean_string($imported_record_details['Pincode']);
         $phones = Utilities::clean_string($imported_record_details['Phones']);
         $mobile_no = Utilities::clean_string($imported_record_details['MobileNo']);
-        $bill_no = Utilities::clean_string($imported_record_details['BillNo']);
-        $bill_date = Utilities::clean_string($imported_record_details['BillDate']);
-        $balance = Utilities::clean_string($imported_record_details['Balance']);
-        $credit_days = Utilities::clean_string($imported_record_details['CreditDays']);
-        $sexe_id = Utilities::clean_string($imported_record_details['SalesExecutiveLoginId']);
+
+        $bill_no = isset($imported_record_details['BillNo']) ? Utilities::clean_string($imported_record_details['BillNo']) : '';
+        $bill_date = isset($imported_record_details['BillDate']) ? Utilities::clean_string($imported_record_details['BillDate']) : '';
+        $balance = isset($imported_record_details['BillDate']) ? Utilities::clean_string($imported_record_details['Balance']) : '';
+        $credit_days = isset($imported_record_details['CreditDays']) ? Utilities::clean_string($imported_record_details['CreditDays']) : '';
+        $sexe_id = isset($imported_record_details['SalesExecutiveLoginId']) ? Utilities::clean_string($imported_record_details['SalesExecutiveLoginId']) : '';
 
         if($customer_type !== 'c' && $customer_type !== 'b') {
           $error_flag = true;
@@ -315,10 +316,14 @@ class UploadBalancesController {
           $cleaned_array[$key]['BillDate'] = $bill_date;
           $cleaned_array[$key]['Balance'] = $balance;
           $cleaned_array[$key]['CreditDays'] = $credit_days;
-          $cleaned_array[$key]['SalesExecutiveId'] = $sexe_id;
+          $cleaned_array[$key]['SalesExecutiveLoginId'] = $sexe_id;
         }
       }
     }
+
+    // dump($cleaned_array);
+    // exit;
+
     if(count($xl_errors)>0) {
       $response = ['status' => false, 'errors' => $xl_errors];
     } else {
