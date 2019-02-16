@@ -226,6 +226,7 @@ class InventoryController {
   public function availableQtyList(Request $request) {
     $items_list = $search_params = $items = [];
     $client_locations = $location_ids = $categories_a = [];
+    $totals = [];
 
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
@@ -256,6 +257,9 @@ class InventoryController {
 
     $categories_a = $products_api->get_product_categories($search_params['locationCode']);
     $items_list = $this->inven_api->get_available_qtys($search_params);
+    // dump($items_list);
+    // exit;
+
     $api_status = $items_list['status'];
 
     $per_page = isset($search_params['perPage']) ? $search_params['perPage'] : 100;

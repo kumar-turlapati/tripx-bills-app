@@ -285,6 +285,7 @@ function initializeJS() {
       var totalRows = $('#tBodyowItems tr').length;
       var upp = itemDetails.upp;
       var moq = itemDetails.mOq;
+      var cno = itemDetails.cno;
       var orderQty = (parseFloat(moq)*1).toFixed(2);
       var customerType = $('#customerType').val();
 
@@ -311,7 +312,13 @@ function initializeJS() {
         var tableRowBegin = '<tr id="tr_'+barcode+'" class="bcRow" index="' + nextIndex + '">';
         var itemSlno = '<td align="right" style="vertical-align:middle;" class="itemSlno">' + nextIndex + '</td>';
         var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
-        var lotNoInput = '<td style="vertical-align:middle;"><input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly /></td>';
+        var lotNoInput = '<td style="vertical-align:middle;">'+
+                         '<input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly />';
+        if(cno !== '') {
+          lotNoInput += '<span style="font-size:10px;text-align:center;font-weight:bold;">CASE: '+cno+'</span></td>';
+        } else {
+          lotNoInput += '</td>';
+        }
         var qtyAvailableInput = '<td style="vertical-align:middle;"><input type="text" class="qtyAvailable text-right noEnterKey" name="itemDetails[itemAvailQty][]" id="qtyava_' + nextIndex + '" index="' + nextIndex + '" value="' + availableQty + '"  readonly  size="10" /></td>';
         var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="'+orderQty+'" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" /></td>';
         var mrpInput = '<td style="vertical-align:middle;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10" /></td>';
@@ -330,6 +337,57 @@ function initializeJS() {
       $('.saleItemQty').trigger('change');
     }
   }
+
+  if( $('#stBarcode').length>0 ) {
+    $('#stBarcode').on('keypress', function (e) {
+     if (e.keyCode == 13) {
+       var barcode = $(this).val();
+       if(barcode.length !== 13) {
+        alert('Invalid barcode');
+        return false;
+       }
+       var locationCode = $('#locationCode').val();
+       var transferCode = $('#transferCode').val();
+       var scannedQty = parseFloat($('#trScannedQty').text());
+       var transferQty = parseFloat($('#trTransQty').text());
+       if(scannedQty < transferQty) {
+         jQuery.ajax("/async/getTrDetailsByCode?barcode="+barcode+'&locationCode='+locationCode+'&transferCode='+transferCode, {
+            success: function(itemDetails) {
+              if(itemDetails.status === 'success') {
+                scannedQty = parseFloat(itemDetails.qty);
+                transferQty = parseFloat($('#trTransQty').text());
+                var diffQty = parseFloat(transferQty - scannedQty);
+                if(diffQty <= 0) {
+                  $('#stBarcode').attr('disabled', true);
+                  bootbox.alert({
+                    message: "Scanning completed. Click on Save Button / స్కానింగ్ పూర్తి ఐనది. ఈ బదిలీ సేవ్ చేయటానికి అంగీకరణ బటన్ ప్రెస్ చెయ్యండి."
+                  });
+                }
+                $('#trScannedQty').text(scannedQty.toFixed(2));
+                $('#trDiff').text(diffQty.toFixed(2));
+              } else {
+                bootbox.alert({
+                  message: "Barcode not found in this transfer. Please check. / మీరు స్కాన్ చేసిన బార్ కోడ్ ఈ ట్రాన్స్ఫర్ ఆర్డర్  లో లేదు. దయచేసి సరి చూసుకోండి."
+                });
+                $('#stBarcode').val('');
+              }
+            },
+            error: function(e) {
+              bootbox.alert({
+                message: "Barcode not found in this transfer. Please check. / మీరు స్కాన్ చేసిన బార్ కోడ్ ఈ ట్రాన్స్ఫర్ ఆర్డర్  లో లేదు. దయచేసి సరి చూసుకోండి."
+              });
+              $('#stBarcode').val('');
+            }
+         });
+       } else {
+          bootbox.alert({
+            message: "Scanning completed already. Click on Save Button / స్కానింగ్ పూర్తి ఐనది. ఈ బదిలీ సేవ్ చేయటానికి అంగీకరణ బటన్ ప్రెస్ చెయ్యండి."
+          });
+       }
+       e.preventDefault();
+     }
+    });
+  }  
 
   if( $('#indentBarcode').length>0 ) {
     if( $('.messageContainer').length>0 ) {

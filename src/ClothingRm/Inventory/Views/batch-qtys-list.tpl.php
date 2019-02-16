@@ -110,9 +110,11 @@
                   <th width="15%" class="text-left">Category name</th>
                   <th width="15%" class="text-left">Brand name</th>
                   <th width="15%" class="text-left">Store name</th>
-                  <th width="8%" class="text-center">M.R.P<br />( in Rs. )</th>
+                  <th width="10%" class="text-left">Lot no.</th>
+                  <th width="10%" class="text-left">CASE / Box no.</th>
+                  <th width="8%" class="text-center">M.R.P<br />(in Rs.)</th>
                   <th width="8%" class="text-center">Available<br />Qty.</th>
-                  <th width="10%" class="text-center">Value<br />( in Rs. )</th>                
+                  <th width="10%" class="text-center">Value<br />(in Rs.)</th>                
                 </tr>
               </thead>
               <tbody>
@@ -125,6 +127,8 @@
                     $brand_name = $item_details['brandName'];
                     $item_code = $item_details['itemCode'];
                     $ava_qty = $item_details['closingQty'];
+                    $lot_no = $item_details['lotNo'];
+                    $cno = $item_details['cno'];
                     $item_rate = $item_details['mrp'];
                     $item_value = $ava_qty * $item_rate;
                     $location_id = $item_details['locationID'];
@@ -141,6 +145,8 @@
                     <td class="text-left"><?php echo $category_name ?></td>                 
                     <td class="text-left"><?php echo $brand_name ?></td>                 
                     <td class="text-left"><?php echo $location_name ?></td>
+                    <td class="text-left"><?php echo $lot_no ?></td>
+                    <td class="text-left"><?php echo $cno ?></td>                                        
                     <td class="text-right"><?php echo number_format($item_rate,2,'.','') ?></td>
                     <td class="text-right"><?php echo number_format($ava_qty,2,'.','') ?></td>
                     <td class="text-right"><?php echo number_format($item_value,2,'.','') ?></td>                    
@@ -150,12 +156,12 @@
                 endforeach;
               ?>
                 <tr>
-                  <td colspan="6" style="font-size:14px;font-weight:bold;text-align:right;">PAGE TOTALS (MRP * Available Qty.)</td>
+                  <td colspan="8" style="font-size:14px;font-weight:bold;text-align:right;">PAGE TOTALS (MRP * Available Qty.)</td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($total_qty, 2, '.', '') ?></td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($total_value, 2, '.', '') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="6" style="font-size:14px;font-weight:bold;text-align:right;">STORE TOTALS (MRP * Available Qty.)</td>
+                  <td colspan="8" style="font-size:14px;font-weight:bold;text-align:right;">STORE TOTALS (MRP * Available Qty.)</td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($store_totals['totalQty'], 2, '.', '') ?></td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($store_totals['totalValue'], 2, '.', '') ?></td>
                 </tr>
