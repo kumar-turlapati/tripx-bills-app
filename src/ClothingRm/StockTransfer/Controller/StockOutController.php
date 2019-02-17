@@ -129,7 +129,9 @@ class StockOutController
     // validate transfer code.
     if(!is_null($request->get('transferCode')) && $request->get('transferCode') !== '') {
       $transfer_code = Utilities::clean_string($request->get('transferCode'));
-      $transfer_details_reponse = $this->sto_model->get_stock_out_entry_details($transfer_code);
+      $transfer_details_reponse = $this->sto_model->get_stock_out_entry_details($transfer_code, 'from', 1);
+      // dump($transfer_details_reponse);
+      // exit;
       if($transfer_details_reponse['status'] === false) {
         $this->flash->set_flash_message('Invalid Transfer Code', 1);
         Utilities::redirect('/stock-transfer/register');
@@ -187,9 +189,119 @@ class StockOutController
     return array($template->render_view('stock-out-view', $template_vars), $controller_vars);
   }
 
+  public function stockOutValidateAction(Request $request) {
+    $page_error = $page_success = $from_location = $to_location = '';
+    $qtys_a = $form_data = $form_errors = $taxes = [];
+
+    $transfer_code = Utilities::clean_string($request->get('transferCode'));
+    $transfer_details_reponse = $this->sto_model->get_stock_out_entry_details($transfer_code, 'to');
+    // dump($transfer_details_reponse);
+    // exit;
+    if($transfer_details_reponse['status'] === false) {
+      $this->flash->set_flash_message('Invalid Transfer Code', 1);
+      Utilities::redirect('/stock-transfer/register');
+    }    
+
+    // check whether the form is submmitted.
+    if(count($request->request->all()) > 0) {
+
+      // validate session exists or not.
+      if(isset($_SESSION[$transfer_code]) && count($_SESSION[$transfer_code]) > 0) {
+        $scanned_data = [];
+        foreach($_SESSION[$transfer_code] as $transfer_key => $transfer_details) {
+          $scanned_data['itemLotNos'][] = $transfer_key;
+          $scanned_data['scannedQty'][] = $transfer_details['scanned'];
+        }
+      } else {
+        $this->flash->set_flash_message('Unable to retrieve Scanned data.', 1);
+        Utilities::redirect('/stock-transfer/register');
+      }
+
+      // hit api and save the scanned data.
+      $api_response = $this->sto_model->post_scanned_items_in_stock_transfer($scanned_data, $transfer_code);
+      if($api_response['status']) {
+        $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i> Stock transfer successfully completed.');
+        Utilities::redirect('/stock-transfer/register');               
+      } else {
+        $this->flash->set_flash_message('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> '.$api_response['apierror'], 1);
+        Utilities::redirect('/stock-transfer/register');
+      }
+
+    // validate transfer code.
+    } elseif(!is_null($request->get('transferCode')) && $request->get('transferCode') !== '') {
+      $form_data = $this->_map_form_data_with_api_response($transfer_details_reponse['stoDetails']);
+      if(isset($_SESSION[$transfer_code])) {
+        unset($_SESSION[$transfer_code]);
+      }
+      $transfer_items = $transfer_details_reponse['stoDetails']['itemDetails'];
+      if(count($transfer_items) > 0) {
+        foreach($transfer_items as $key => $item_details) {
+          $session_item_key = $item_details['itemCode'].'__'.$item_details['lotNo'];
+          $transfer_qty = $item_details['itemQty'];
+          $_SESSION[$transfer_code][$session_item_key]['actual']  = $transfer_qty;
+          $_SESSION[$transfer_code][$session_item_key]['scanned'] = 0;
+        }
+      } else {
+        $this->flash->set_flash_message('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Flushed Items or No items are available in this stock transfer.', 1);
+        Utilities::redirect('/stock-transfer/register');
+      }
+    }
+
+    for($i=1;$i<=500;$i++) {
+      $qtys_a[$i] = $i;
+    }
+
+    // ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true, true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];
+      $location_names[$location_key_a[0]] = $location_value;
+    }
+
+    // ---------- get tax percents from api ----------------------
+    $taxes_a = $this->taxes_model->list_taxes();
+    if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
+      $taxes_raw = $taxes_a['taxes'];
+      foreach($taxes_a['taxes'] as $tax_details) {
+        $taxes[$tax_details['taxCode']] = $tax_details['taxPercent'];
+      }
+    }
+
+    // dump($_SESSION);
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Validate Stock Transfer / స్టాక్ బదిలీ సరిచూసుకొనే ప్రక్రియ',
+      'icon_name' => 'fa fa-check',
+    );
+
+    $template_vars = array(
+      'qtys_a' => array(0=>'Choose')+$qtys_a,
+      'errors' => $form_errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => 'Transfer Stock',
+      'form_data' => $form_data,
+      'flash_obj' => $this->flash,
+      'taxes' => $taxes,
+      'taxcalc_opt_a' => array('e'=>'Exluding Item Rate', 'i' => 'Including Item Rate'),      
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'transfer_code' => $transfer_code,
+    );
+
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('stock-out-validate', $template_vars), $controller_vars);    
+  }
+
   private function _map_form_data_with_api_response($form_data = []) {
     $cleaned_params = [];
-    if(isset($form_data['itemDetails'])) {
+    if(isset($form_data['itemDetails']) && $form_data['itemDetails'] > 0) {
       foreach($form_data['itemDetails'] as $key => $item_details) {
         $cleaned_params['itemName'][$key] = $item_details['itemName'];
         $cleaned_params['itemAvailQty'][$key] = '';
@@ -197,12 +309,15 @@ class StockOutController
         $cleaned_params['itemRate'][$key] = $item_details['mrp'];
         $cleaned_params['itemTaxPercent'][$key] = $item_details['taxPercent'];
         $cleaned_params['lotNo'][$key] = $item_details['lotNo'];
+        $cleaned_params['status'][$key] = $item_details['status'];
       }
       unset($form_data['itemDetails']);
       $form_data['itemDetails'] = $cleaned_params;
-      return $form_data;
+    } else {
+      $form_data['itemDetails'] = [];      
     }
-    return [];
+    
+    return $form_data;
   }
 
   // List of stock out transactions.

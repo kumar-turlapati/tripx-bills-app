@@ -20,10 +20,10 @@ class StockOut
 		}
 	}
 
-	public function get_stock_out_entry_details($transfer_code = '') {
+	public function get_stock_out_entry_details($transfer_code = '', $fetch = 'from', $item_status = 0) {
 		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get','stock-out/details/'.$transfer_code,[]);
+		$response = $api_caller->sendRequest('get','stock-out/details/'.$transfer_code,['fetch'=>$fetch, 'itemStatus' => $item_status]);
 		$status = $response['status'];
 		if($status === 'success') {
 			return array('status'=>true,'stoDetails' => $response['response']['stoDetails']);
@@ -43,6 +43,19 @@ class StockOut
 			return array('status'=>true,'data'=>$response);
 		} elseif($status === 'failed') {
 			return array('status'=>false, 'apierror'=>$response['reason']);
+		}
+	}
+
+	public function post_scanned_items_in_stock_transfer($scanned_data = [], $transfer_code = '') {
+		// call api.
+		$api_uri = 'stock-out/save-scanned-data/'.$transfer_code;
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post',$api_uri,$scanned_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status'=>true);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
 		}
 	}
 }

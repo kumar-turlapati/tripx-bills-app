@@ -15,7 +15,7 @@
           <li><a href="/suppliers/list"><i class="fa fa-address-card"></i> Suppliers</a></li>
           <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
           <li><a href="/taxes/list"><i class="fa fa-scissors"></i> Taxes</a></li>
-          <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>
+          <?php /*<li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li> */ ?>
           <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores</a></li>
           <li><a href="/fin/bank/list"><i class="fa fa-university"></i> Banks</a></li>
           <li><a href="/bu/list"><i class="fa fa-user-circle-o"></i> Business Users</a></li>
@@ -267,6 +267,7 @@
               <li><a href="/reports/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
               <li><a href="/reports/itemwise-sales-register"><i class="fa fa-angle-right"></i> Itemwise Sales Register</a></li>
               <li><a href="/reports/sales-billwise-itemwise"><i class="fa fa-angle-right"></i> Bill&amp;Item wise Sales</a></li>
+              <li><a href="/reports/sales-billwise-itemwise-casewise"><i class="fa fa-angle-right"></i> Casewise Sales Register</a></li>
               <li><a href="/reports/sales-summary-by-month"><i class="fa fa-angle-right"></i> Sales Summary</a></li>              
               <li><a href="/reports/day-sales"><i class="fa fa-angle-right"></i> Sales by Day</a></li>
               <li><a href="/reports/sales-by-tax-rate"><i class="fa fa-angle-right"></i> Sales by Tax Rate</a></li>

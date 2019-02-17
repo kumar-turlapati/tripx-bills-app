@@ -51,7 +51,7 @@ class AsyncController {
       } else {
         echo $response;
       }
-    } elseif($api_string==='add-thr-qty') {
+/*    } elseif($api_string==='add-thr-qty') {
       $params['itemName'] = $request->get('mCode');
       $params['thrQty'] = $request->get('thQty');
       $params['byCode'] = true;
@@ -64,7 +64,7 @@ class AsyncController {
         } else {
           echo $response;
         }
-      }
+      }*/
     } elseif($api_string==='day-sales') {
       $params['saleDate'] = date("d-m-Y");
       if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 3 || (int)$_SESSION['utype'] === 9) {
@@ -114,7 +114,7 @@ class AsyncController {
       $response = Utilities::get_applicable_tax_percent($taxable_value, $total_qty);
       header("Content-type: application/json");
       echo json_encode($response);
-    } elseif($api_string === 'get-ref-details') {
+/*    } elseif($api_string === 'get-ref-details') {
       $ref_code =  Utilities::clean_string($request->get('refCode'));
       $api_url = 'loyalty/member/details/'.$ref_code;
       $params['q'] = 'by_ref_code';
@@ -124,7 +124,7 @@ class AsyncController {
         echo json_encode($response);
       } else {
         echo $response;
-      }
+      }*/
     } elseif($api_string === 'getItemDetailsByCode') {
       $barcode =  Utilities::clean_string($request->get('bc'));
       $locationCode = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
@@ -152,12 +152,12 @@ class AsyncController {
       } else {
         echo $response;
       }
-    } elseif($api_string === 'bcAc' && !is_null($request->get('a'))) {
+/*    } elseif($api_string === 'bcAc' && !is_null($request->get('a'))) {
       $params['q'] = Utilities::clean_string($request->get('a'));
       $response = $api_caller->sendRequest('get','barcode/ac',$params,false);
       if(count($response)>0 && is_array($response)) {
         echo implode($response,"\n");
-      }
+      }*/
     } elseif($api_string === 'custAc' && !is_null($request->get('a'))) {
       $params['q'] = Utilities::clean_string($request->get('a'));
       $response = $api_caller->sendRequest('get','customers/ac/get-names',$params,false);
@@ -229,6 +229,48 @@ class AsyncController {
       } else {
         echo $response;
       }
+    } elseif($api_string === 'getTrDetailsByCode') {
+      $location_code =  Utilities::clean_string($request->get('locationCode'));
+      $barcode = Utilities::clean_string($request->get('barcode'));
+      $transfer_code = Utilities::clean_string($request->get('transferCode'));
+      $api_url = 'stock-out/validate/'.$barcode.'/'.$location_code.'/'.$transfer_code;
+      $response = $api_caller->sendRequest('post',$api_url,[],false);
+      if(!is_array($response)) {
+        $response = json_decode($response, true);
+      }
+     
+      $scanned_qty = 0;
+
+      // validate response.
+      if($response['status'] === 'success') {
+        // store the session id.
+        $session_key = $response['response']['itemCode'].'__'.$response['response']['lotNo'];
+        if( isset($_SESSION[$transfer_code][$session_key]['scanned']) ) {
+
+          // prevent same barcode scanned infinite times to reach the goal.
+          $allowed_qty = $_SESSION[$transfer_code][$session_key]['actual'];
+
+          // echo $session_key;
+          // echo json_encode($_SESSION[$transfer_code]);
+          // exit;
+
+          if($_SESSION[$transfer_code][$session_key]['scanned'] < $_SESSION[$transfer_code][$session_key]['actual']) {
+            $scanned_qty += $_SESSION[$transfer_code][$session_key]['scanned'] + $response['response']['mOq'];
+            $_SESSION[$transfer_code][$session_key]['scanned'] = $scanned_qty;
+            $output = ['status' => 'success', 'qty' => $_SESSION[$transfer_code][$session_key]['scanned']];
+          } else {
+            $output = ['status' => 'failed', 'error' => 'Transferred Qty for this Barcode already reached. Further scanning is not allowed. / ఈ బార్ కోడ్  యొక్క స్కానింగ్ ముగిసింది. మరల ఈ బార్ కోడ్ స్కాన్ చేయబడదు.']; 
+          }
+        } else {
+          $_SESSION[$transfer_code][$session_key]['scanned'] = $response['response']['mOq'];
+          $output = ['status' => 'success', 'qty' => $_SESSION[$transfer_code][$session_key]['scanned']];
+        }
+      } else {
+        $output = ['status' => 'failed', 'error' => 'Barcode does not exists in this transfer./ ఈ బార్ కోడ్ ట్రాన్స్ఫర్ ఎంట్రీ లో లేదు.']; 
+      }
+
+      header("Content-type: application/json");
+      echo json_encode($output);
     }
     exit;
   }

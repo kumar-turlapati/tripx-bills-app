@@ -1,4 +1,6 @@
 <?php
+  use Atawa\Utilities;
+
   $current_date = isset($form_data['transferDate']) && $form_data['transferDate']!=='' ? date("d-m-Y", strtotime($form_data['transferDate'])) : date("d-m-Y");
   $from_location_name = $location_ids[$form_data['fromLocationID']];
   $to_location_name = $location_ids[$form_data['toLocationID']];
@@ -7,6 +9,8 @@
   $round_off = $form_data['roundOff'];
   $netpay = $form_data['netpay'];
   $total_qty = $form_data['totalQty'];
+
+  // dump($form_data['itemDetails']);
 ?>
 
 <div class="row">
@@ -54,6 +58,7 @@
               </thead>
               <tbody>
                 <?php
+                if(count($form_data['itemDetails']) > 0):
                   $tot_bill_amount = $tot_qty = 0;
                   for($i=1;$i<=count($form_data['itemDetails']['itemName']);$i++):
                     $bill_amount = 0;
@@ -83,12 +88,17 @@
                     } else {
                       $lot_no = '';
                     }
-                    if($item_qty && $item_rate>0) {
+
+                    if($item_qty && $item_rate>0 && (int)$form_data['itemDetails']['status'][$ex_index] === 1) {
                       $bill_amount = $item_qty * $item_rate;
                       $tot_bill_amount += $bill_amount;
-                      $tot_qty += $item_qty;
+                    } else {
+                      $bill_amount = $tot_bill_amount = 0;
                     }
+                    $tot_qty += $item_qty;
                 ?>
+
+                <?php if( ((int)$form_data['itemDetails']['status'][$ex_index] === 1) || Utilities::is_admin()): ?>
                   <tr>
                     <td align="right" style="vertical-align:middle;"><?php echo $i ?></td>
                     <td style="vertical-align:middle;"><?php echo $item_name ?></td>
@@ -104,7 +114,23 @@
                     ><?php echo number_format($bill_amount, 2, '.', '') ?>
                     </td>                    
                   </tr>
-                <?php endfor; ?>
+                <?php else: ?>
+                  <tr>
+                    <td colspan="7" style="vertical-align:middle;font-weight:bold;font-size:15px;color:#FC4445;text-align:center;">Stock Transfer is in progress. Not yet received by `<?php echo $from_location_name ?>`</td>
+                  </tr>
+                
+                <?php endif; ?>
+
+                <?php
+                  endfor;
+
+                else: ?>
+
+                  <tr>
+                    <td colspan="7" style="font-weight:bold;font-size:16px;color:red;text-align:center;">Stock Transfer is in Progress...</td>
+                  </tr>
+
+                <?php endif; ?>
                   <tr>
                     <td colspan="6" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
                     <td id="grossAmount" class="" style="font-size:16px;text-align:right;font-weight:bold;"><?php echo number_format($bill_amount, 2, '.', '') ?></td>

@@ -17,7 +17,7 @@
               <li><a href="/sales/list"><i class="fa fa-angle-right"></i> Sales</a></li>
               <li><a href="/sales-return/list"><i class="fa fa-angle-right"></i> Sales Return</a></li>
               <li><a href="/promo-offers/list"><i class="fa fa-angle-right"></i> Promo Offers</a></li>
-              <li><a href="/loyalty-members/list"><i class="fa fa-angle-right"></i> Loyalty Members</a></li>
+              <?php /*<li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li> */ ?>
             </ul>
           </li>
           <li class="sub-menu">

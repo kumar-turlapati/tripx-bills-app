@@ -315,7 +315,7 @@ function initializeJS() {
         var lotNoInput = '<td style="vertical-align:middle;">'+
                          '<input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly />';
         if(cno !== '') {
-          lotNoInput += '<span style="font-size:10px;text-align:center;font-weight:bold;">CASE: '+cno+'</span></td>';
+          lotNoInput += '<span style="font-size:11px;text-align:center;font-weight:bold;color:#FC4445">CASE: '+cno+'</span></td>';
         } else {
           lotNoInput += '</td>';
         }
@@ -337,6 +337,59 @@ function initializeJS() {
       $('.saleItemQty').trigger('change');
     }
   }
+
+  if( $('#stBarcode').length>0 ) {
+    $('#stBarcode').on('keypress', function (e) {
+     if (e.keyCode == 13) {
+       var barcode = $(this).val();
+       if(barcode.length !== 13) {
+        alert('Invalid barcode');
+        return false;
+       }
+       var locationCode = $('#locationCode').val();
+       var transferCode = $('#transferCode').val();
+       var scannedQty = parseFloat($('#trScannedQty').text());
+       var transferQty = parseFloat($('#trTransQty').text());
+       if(scannedQty < transferQty) {
+         jQuery.ajax("/async/getTrDetailsByCode?barcode="+barcode+'&locationCode='+locationCode+'&transferCode='+transferCode, {
+            success: function(itemDetails) {
+              if(itemDetails.status === 'success') {
+                scannedQty += parseFloat(itemDetails.qty);
+                transferQty = parseFloat($('#trTransQty').text());
+                var diffQty = parseFloat(transferQty - scannedQty);
+                // console.log(scannedQty, transferQty, diffQty);
+                if(diffQty <= 0) {
+                  $('#stBarcode').attr('disabled', true);
+                  bootbox.alert({
+                    message: "Scanning completed. Click on Save Button / స్కానింగ్ పూర్తి ఐనది. ఈ బదిలీ సేవ్ చేయటానికి అంగీకరణ బటన్ ప్రెస్ చెయ్యండి."
+                  });
+                }
+                $('#trScannedQty').text(scannedQty.toFixed(2));
+                $('#trDiff').text(diffQty.toFixed(2));
+                $('#stBarcode').val('');
+              } else {
+                bootbox.alert({
+                  message: itemDetails.error
+                });
+                $('#stBarcode').val('');
+              }
+            },
+            error: function(e) {
+              bootbox.alert({
+                message: "Barcode not found in this transfer. Please check. / మీరు స్కాన్ చేసిన బార్ కోడ్ ఈ ట్రాన్స్ఫర్ ఆర్డర్  లో లేదు. దయచేసి సరి చూసుకోండి."
+              });
+              $('#stBarcode').val('');
+            }
+         });
+       } else {
+          bootbox.alert({
+            message: "Scanning completed already. Click on Save Button / స్కానింగ్ పూర్తి ఐనది. ఈ బదిలీ సేవ్ చేయటానికి అంగీకరణ బటన్ ప్రెస్ చెయ్యండి."
+          });
+       }
+       e.preventDefault();
+     }
+    });
+  }  
 
   if( $('#indentBarcode').length>0 ) {
     if( $('.messageContainer').length>0 ) {
@@ -594,11 +647,16 @@ function initializeJS() {
               if(objLength>0) {
                 jQuery(lotNoRef).empty().append(bnoFirstOption);
                 jQuery.each(lotNos.response, function (index, lotNoDetails) {
+                  var cno = lotNoDetails.cno;
+                  var lotNoText = lotNoDetails.lotNo;
+                  if(cno !== '') {
+                    lotNoText += ' [ CASE: ' + cno + ' ]';
+                  }
                   lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
                   jQuery(lotNoRef).append(
                     jQuery("<option></option>").
                     attr("value",lotNoDetails.lotNo).
-                    text(lotNoDetails.lotNo)
+                    text(lotNoText)
                   );
                 });
               } else {

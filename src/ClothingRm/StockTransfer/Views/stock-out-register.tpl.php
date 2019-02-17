@@ -167,10 +167,9 @@
                   <td class="valign-middle">
                   <?php if($voucher_no>0): ?>
                     <div class="btn-actions-group" align="right">
-                      <?php /*                  
-                      <a class="btn btn-primary" href="#" title="Print this voucher">
-                        <i class="fa fa-print"></i>
-                      </a>&nbsp;&nbsp; */ ?>
+                      <a class="btn btn-warning" href="/stock-transfer/validate/<?php echo $transfer_code ?>" title="Validate Stock Transfer">
+                        <i class="fa fa-check"></i>
+                      </a>&nbsp;&nbsp;
                       <a class="btn btn-primary" href="/stock-transfer/out/<?php echo $transfer_code ?>" title="View this voucher">
                         <i class="fa fa-eye"></i>
                       </a>

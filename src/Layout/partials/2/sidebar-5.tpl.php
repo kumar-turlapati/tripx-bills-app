@@ -10,7 +10,7 @@
         </a>
         <ul class="sub">
           <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
-          <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>          
+          <?php /*<li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li> */ ?>
         </ul>
       </li>
       <li class="sub-menu">
