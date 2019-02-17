@@ -426,6 +426,7 @@ class Utilities
       10 => 'Marketing user',
       // 11 => 'Finance user',
       12 => 'Business head',
+      13 => 'Dispatch clerk',
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
       return $user_types[$user_type];
@@ -590,6 +591,14 @@ class Utilities
       ],
 
       10 => [
+      ],
+
+      13 => [
+        '/dashboard', '/error-404', '/logout',
+
+        '/async/getTrDetailsByCode',
+
+        '/stock-transfer/validate', '/stock-transfer/register', '/stock-transfer/out',
       ],
     ];
 

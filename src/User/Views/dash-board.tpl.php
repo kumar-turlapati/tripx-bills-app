@@ -20,14 +20,14 @@
               '#tInventory' => ['Inventory', 'tInventory'], 
             ];
   } else {
-    $tabs = [
-              '#tSales' => ['Sales', 'tSales'], 
-            ];
+    // $tabs = [
+    //           '#tSales' => ['Sales', 'tSales'], 
+    //         ];
   }
 ?>
 <div>
   <form id="dfyForm"><input type="hidden" name="dfyDashboard" id="dfyDashboard" /></form>
-  <?php if( count($tabs) > 0):?>
+  <?php if(count($tabs) > 0): ?>
     <ul class="nav nav-tabs" role="tablist" id="dbContainer">
     <?php foreach($tabs as $key => $tab_details): ?>
       <li role="presentation" class="active">
@@ -167,6 +167,14 @@
       <div role="tabpanel" class="tab-pane" id="tPurchases">...</div>
       <div role="tabpanel" class="tab-pane" id="tInventory">...</div>
       <div role="tabpanel" class="tab-pane" id="tFinance">...</div>
+    </div>
+  <?php endif; ?>
+  <?php if($user_type === 13): ?>
+    <div align="center" style="padding:100px;border:2px dotted #225992;">
+      <h2>
+        <span style="color:#FC4445;font-weight:bold;">Welcome to Inward and Outward Section.</span><br />
+        <span style="color:#2E1114;font-weight:bold;">స్టాక్ ఇన్వార్డ్ మరియు అవుట్ వార్డ్ విభాగానికి స్వాగతం.</span>
+      </h2>
     </div>
   <?php endif; ?>
 </div>
