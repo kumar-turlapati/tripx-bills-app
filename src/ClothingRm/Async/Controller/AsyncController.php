@@ -255,9 +255,9 @@ class AsyncController {
           // exit;
 
           if($_SESSION[$transfer_code][$session_key]['scanned'] < $_SESSION[$transfer_code][$session_key]['actual']) {
-            $scanned_qty += $_SESSION[$transfer_code][$session_key]['scanned'] + $response['response']['mOq'];
+            $scanned_qty = $_SESSION[$transfer_code][$session_key]['scanned'] + $response['response']['mOq'];
             $_SESSION[$transfer_code][$session_key]['scanned'] = $scanned_qty;
-            $output = ['status' => 'success', 'qty' => $_SESSION[$transfer_code][$session_key]['scanned']];
+            $output = ['status' => 'success', 'qty' => $scanned_qty];
           } else {
             $output = ['status' => 'failed', 'error' => 'Transferred Qty for this Barcode already reached. Further scanning is not allowed. / ఈ బార్ కోడ్  యొక్క స్కానింగ్ ముగిసింది. మరల ఈ బార్ కోడ్ స్కాన్ చేయబడదు.']; 
           }
