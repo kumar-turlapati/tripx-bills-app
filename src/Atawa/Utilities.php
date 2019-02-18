@@ -525,7 +525,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout',
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
-        '/async/finyDefault',
+        '/async/finyDefault', '/async/getTrDetailsByCode',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
 
@@ -550,7 +550,8 @@ class Utilities
 
         '/promo-offers/list', 
 
-        '/stock-transfer/out', '/stock-transfer/register', '/stock-transfer/choose-location', 
+        '/stock-transfer/out', '/stock-transfer/register', '/stock-transfer/choose-location',
+        '/stock-transfer/validate',
 
         '/loyalty-member/add', '/loyalty-member/update', '/loyalty-members/list', '/loyalty-member/ledger', 
 
