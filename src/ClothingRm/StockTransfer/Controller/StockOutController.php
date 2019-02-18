@@ -208,14 +208,26 @@ class StockOutController
       // validate session exists or not.
       if(isset($_SESSION[$transfer_code]) && count($_SESSION[$transfer_code]) > 0) {
         $scanned_data = [];
+        unset($_SESSION[$transfer_code]['total_scanned']);
         foreach($_SESSION[$transfer_code] as $transfer_key => $transfer_details) {
           $scanned_data['itemLotNos'][] = $transfer_key;
           $scanned_data['scannedQty'][] = $transfer_details['scanned'];
         }
+
+        // dump($scanned_data);
+        // exit;
+
+        if( isset($scanned_data['total_scanned']) ) {
+          unset($scanned_data['total_scanned']);
+        }
+
       } else {
         $this->flash->set_flash_message('Unable to retrieve Scanned data.', 1);
         Utilities::redirect('/stock-transfer/register');
       }
+
+      // dump($scanned_data);
+      // exit;
 
       // hit api and save the scanned data.
       $api_response = $this->sto_model->post_scanned_items_in_stock_transfer($scanned_data, $transfer_code);
@@ -241,6 +253,7 @@ class StockOutController
           $_SESSION[$transfer_code][$session_item_key]['actual']  = $transfer_qty;
           $_SESSION[$transfer_code][$session_item_key]['scanned'] = 0;
         }
+        $_SESSION[$transfer_code]['total_scanned'] = 0;        
       } else {
         $this->flash->set_flash_message('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Flushed Items or No items are available in this stock transfer.', 1);
         Utilities::redirect('/stock-transfer/register');

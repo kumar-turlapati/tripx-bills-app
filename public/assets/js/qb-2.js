@@ -348,10 +348,14 @@ function initializeJS() {
        }
        var locationCode = $('#locationCode').val();
        var transferCode = $('#transferCode').val();
-       var scannedQty = parseFloat($('#trScannedQty').text());
+       var scannedQty = 0;
        var transferQty = parseFloat($('#trTransQty').text());
        if(scannedQty < transferQty) {
          jQuery.ajax("/async/getTrDetailsByCode?barcode="+barcode+'&locationCode='+locationCode+'&transferCode='+transferCode, {
+           beforeSend: function() {
+              $('#stBarcode').attr('disabled', true);
+              $('#stBarcode').val('Validating Barcode. Please wait...');              
+            },
             success: function(itemDetails) {
               if(itemDetails.status === 'success') {
                 scannedQty += parseFloat(itemDetails.qty);
@@ -363,22 +367,32 @@ function initializeJS() {
                   bootbox.alert({
                     message: "Scanning completed. Click on Save Button / స్కానింగ్ పూర్తి ఐనది. ఈ బదిలీ సేవ్ చేయటానికి అంగీకరణ బటన్ ప్రెస్ చెయ్యండి."
                   });
+                  $('#stBarcode').val('');
+                  $('#trScannedQty').text(scannedQty.toFixed(2));
+                  $('#trDiff').text(diffQty.toFixed(2));                  
+                } else {
+                  $('#trScannedQty').text(scannedQty.toFixed(2));
+                  $('#trDiff').text(diffQty.toFixed(2));
+                  $('#stBarcode').attr('disabled', false);
+                  $('#stBarcode').val('');
+                  $('#stBarcode').focus();
                 }
-                $('#trScannedQty').text(scannedQty.toFixed(2));
-                $('#trDiff').text(diffQty.toFixed(2));
-                $('#stBarcode').val('');
               } else {
                 bootbox.alert({
                   message: itemDetails.error
                 });
+                $('#stBarcode').attr('disabled', false);
                 $('#stBarcode').val('');
+                $('#stBarcode').focus();
               }
             },
             error: function(e) {
               bootbox.alert({
                 message: "Barcode not found in this transfer. Please check. / మీరు స్కాన్ చేసిన బార్ కోడ్ ఈ ట్రాన్స్ఫర్ ఆర్డర్  లో లేదు. దయచేసి సరి చూసుకోండి."
               });
+              $('#stBarcode').attr('disabled', false);
               $('#stBarcode').val('');
+              $('#stBarcode').focus();
             }
          });
        } else {

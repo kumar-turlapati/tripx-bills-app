@@ -246,24 +246,25 @@ class AsyncController {
         // store the session id.
         $session_key = $response['response']['itemCode'].'__'.$response['response']['lotNo'];
         if( isset($_SESSION[$transfer_code][$session_key]['scanned']) ) {
-
           // prevent same barcode scanned infinite times to reach the goal.
-          $allowed_qty = $_SESSION[$transfer_code][$session_key]['actual'];
+          $allowed_qty_item = $_SESSION[$transfer_code][$session_key]['actual'];
+          $scanned_qty_item = $_SESSION[$transfer_code][$session_key]['scanned'];
+          $total_scanned = $_SESSION[$transfer_code]['total_scanned'];
 
           // echo $session_key;
           // echo json_encode($_SESSION[$transfer_code]);
           // exit;
 
-          if($_SESSION[$transfer_code][$session_key]['scanned'] < $_SESSION[$transfer_code][$session_key]['actual']) {
-            $scanned_qty = $_SESSION[$transfer_code][$session_key]['scanned'] + $response['response']['mOq'];
-            $_SESSION[$transfer_code][$session_key]['scanned'] = $scanned_qty;
-            $output = ['status' => 'success', 'qty' => $scanned_qty];
+          if($scanned_qty_item < $allowed_qty_item) {
+            $scanned_qty_item += $response['response']['mOq'];
+            $_SESSION[$transfer_code][$session_key]['scanned'] = $scanned_qty_item;
+            $total_scanned += $response['response']['mOq'];
+
+            $_SESSION[$transfer_code]['total_scanned'] = $total_scanned;
+            $output = ['status' => 'success', 'qty' => $total_scanned];
           } else {
             $output = ['status' => 'failed', 'error' => 'Transferred Qty for this Barcode already reached. Further scanning is not allowed. / ఈ బార్ కోడ్  యొక్క స్కానింగ్ ముగిసింది. మరల ఈ బార్ కోడ్ స్కాన్ చేయబడదు.']; 
           }
-        } else {
-          $_SESSION[$transfer_code][$session_key]['scanned'] = $response['response']['mOq'];
-          $output = ['status' => 'success', 'qty' => $_SESSION[$transfer_code][$session_key]['scanned']];
         }
       } else {
         $output = ['status' => 'failed', 'error' => 'Barcode does not exists in this transfer./ ఈ బార్ కోడ్ ట్రాన్స్ఫర్ ఎంట్రీ లో లేదు.']; 
