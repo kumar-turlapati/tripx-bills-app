@@ -17,12 +17,12 @@
   } elseif($user_type === 7) {
     $tabs = [
               '#tPurchases' => ['Purchases', 'tPurchases'], 
-              '#tInventory' => ['Inventory', 'tInventory'], 
+              // '#tInventory' => ['Inventory', 'tInventory'], 
             ];
-  } else {
-    // $tabs = [
-    //           '#tSales' => ['Sales', 'tSales'], 
-    //         ];
+  } elseif($user_type === 5) {
+    $tabs = [
+              '#tSales' => ['Sales', 'tSales'], 
+            ];
   }
 ?>
 <div>

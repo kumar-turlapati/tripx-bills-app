@@ -331,7 +331,7 @@ class StockOutController
     $from_locations = Utilities::get_client_locations(true);
     $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
 
-    $to_locations = Utilities::get_client_locations(true, true);
+    $to_locations = Utilities::get_client_locations(true);
     foreach($to_locations as $location_key => $location_value) {
         $location_key_a = explode('`', $location_key);
         $location_ids[$location_key_a[1]] = $location_value;
