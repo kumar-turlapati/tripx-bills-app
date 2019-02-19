@@ -35,7 +35,7 @@
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
   $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';
   $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'b2c';
-  $credit_days = isset($form_data['saCreditDays']) ? $form_data['saCreditDays'] : '';  
+  $credit_days = isset($form_data['saCreditDays']) ? $form_data['saCreditDays'] : '';
 
   $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
   $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
@@ -50,6 +50,8 @@
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
   $credit_days_input_style = (int)$payment_method === 3 ? '' : 'style="display:none;"';
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
+
+  $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';
 
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
 
@@ -716,7 +718,22 @@
                 </div>
               </div>
             </div>
-          </div>          
+          </div>
+
+          <div class="panel" style="margin-bottom:10px;display:none;" id="remarksWindow">
+            <div class="panel-body" style="border: 2px dashed;">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-8 col-lg-8">
+                  <label class="control-label">Remarks / Notes (200 characters maximum)</label>
+                  <input type="text" class="form-control noEnterKey" name="remarksInvoice" id="remarksInvoice" maxlength="200" value="<?php echo $remarks_invoice ?>">
+                  <?php if(isset($errors['remarksInvoice'])): ?>
+                    <span class="error"><?php echo $errors['remarksInvoice'] ?></span>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="text-center" id="saveWindow" style="<?php echo $tot_products > 0 ? '' : 'display:none;' ?>">
             <?php 
               if($promo_key !== '') {

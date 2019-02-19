@@ -265,7 +265,7 @@ function initializeJS() {
                 $('.saleItemQty').trigger('change');
               } else {
                 $('#totalItems, #grossAmount, #totDiscount, #taxableAmount, #gstAmount, #roundOff, #netPayBottom').text('');
-                $('#paymentMethodWindow, #customerWindow, #splitPaymentWindow, #saveWindow, #owItemsTable, #siOtherInfoWindow').hide();
+                $('#paymentMethodWindow, #customerWindow, #splitPaymentWindow, #saveWindow, #owItemsTable, #siOtherInfoWindow, #remarksWindow').hide();
                 $('#owBarcode').val('');
               }
             }
@@ -289,7 +289,7 @@ function initializeJS() {
       var orderQty = (parseFloat(moq)*1).toFixed(2);
       var customerType = $('#customerType').val();
 
-      $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems').show();
+      $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems, #remarksWindow').show();
       if(customerType === 'b2c') {
         $('#siOtherInfoWindow').hide();
       } else if(customerType === 'b2b') {
@@ -1198,13 +1198,24 @@ function initializeJS() {
 
     jQuery('.lotNo').on("change", function(e){
       var qtyAvailable = itemRate = itemType = '';
-      var itemIndex = jQuery(this).attr('index');
+      var itemIndex = parseInt(jQuery(this).attr('index'));
       var lotNo = jQuery(this).val();
       var avaQtyContainer = jQuery('#qtyava_'+itemIndex);
       var mrpContainer = jQuery('#mrp_'+itemIndex);
       var itemTypeContainer = jQuery('#itemType_'+itemIndex);
       if(lotNo !== '') {
         if(Object.keys(lotNosResponse[lotNo]).length>0) {
+          var selectedLotNo = '';
+          jQuery('.lotNo').each(function(i, obj) {
+            selectedLotNo = $(this).val();
+            if(selectedLotNo === lotNo && itemIndex !== i) {
+              $('#lotNo_'+itemIndex).val('');
+              bootbox.alert({
+                message: "This Lot No. is already selected.  A Lot No. must be unique and selected only once in the bill against the same item."
+              });
+              return false;              
+            }
+          });
           jQuery('#qtyava_'+itemIndex).val(lotNosResponse[lotNo].closingQty);
           jQuery('#qty_'+itemIndex).val(lotNosResponse[lotNo].mOq);          
           jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].mrp);

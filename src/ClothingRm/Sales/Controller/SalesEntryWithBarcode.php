@@ -447,7 +447,8 @@ class salesEntryWithBarcode {
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
     $from_indent = isset($form_data['fi']) ? 'y': 'n';
     $customer_type = $form_data['customerType'];
-    $credit_days = isset($form_data['saCreditDays']) ? Utilities::clean_string($form_data['saCreditDays']) : 0;    
+    $credit_days = isset($form_data['saCreditDays']) ? Utilities::clean_string($form_data['saCreditDays']) : 0;
+    $remarks_invoice = isset($form_data['remarksInvoice']) ? Utilities::clean_string($form_data['remarksInvoice']) : '';
 
     $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
     $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
@@ -697,6 +698,7 @@ class salesEntryWithBarcode {
     $cleaned_params['lrDate'] = $lr_date;
     $cleaned_params['challanNo'] = $chalan_no;
     $cleaned_params['fromIndent'] = $from_indent;
+    $cleaned_params['remarksInvoice'] = $remarks_invoice;
 
     # return response.
     if(count($form_errors)>0) {

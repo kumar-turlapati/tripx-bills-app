@@ -657,6 +657,12 @@ class SalesReportsController {
           $customer_name = '';
         }
 
+        if($record_details['remarksInvoice'] !== '') {
+          $remarks_invoice = substr($record_details['remarksInvoice'],0,25);
+        } else {
+          $remarks_invoice = '';
+        }
+
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,$record_details['invoiceNo'],'RTB',0,'L');
@@ -669,7 +675,9 @@ class SalesReportsController {
         $pdf->Cell($item_widths[8],6,number_format($record_details['itemDiscount'],2,'.',''),'RTB',0,'R');
         $pdf->Cell($item_widths[9],6,number_format($item_value,2,'.',''),'RTB',0,'R');  
         $pdf->Cell($item_widths[10],6,substr($customer_name,0,20),'RTB',0,'L');
-        $pdf->Cell($item_widths[11],6,'','RTB',0,'L');
+        $pdf->SetFont('Arial','',6);   
+        $pdf->Cell($item_widths[11],6,$remarks_invoice,'RTB',0,'L');
+        $pdf->SetFont('Arial','',8);        
       }
 
       $bill_total = $total_records[$key]['billAmount'];
