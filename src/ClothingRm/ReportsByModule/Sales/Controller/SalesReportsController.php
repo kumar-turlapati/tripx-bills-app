@@ -2300,6 +2300,7 @@ class SalesReportsController {
           'Discount' => number_format($bill_discount,2,'.',''),
           'Net Amount' => number_format($netpay,2,'.',''),
           'Customer Name' => '',
+          'Remarks / Notes' => '',
         ];
         $cleaned_params[] = [
           'Sl. No.' => '',
@@ -2313,6 +2314,7 @@ class SalesReportsController {
           'Discount' => '',
           'Net Amount' => '',
           'Customer Name' => '',
+          'Remarks / Notes' => '',
         ];        
 
         $tot_sold_qty += $bill_qty;
@@ -2327,6 +2329,11 @@ class SalesReportsController {
       $bill_qty += $record_details['soldQty'];
       $item_amount = round($record_details['soldQty']*$record_details['mrp'], 2);
       $item_value = $item_amount - $record_details['itemDiscount'];
+      if(isset($record_details['remarksInvoice'])) {
+        $remarks_invoice = $record_details['remarksInvoice'];
+      } else {
+        $remarks_invoice = '';
+      }
 
       if($record_details['customerName'] !== '') {
         $customer_name = $record_details['customerName'];
@@ -2348,6 +2355,7 @@ class SalesReportsController {
         'Discount' => number_format($record_details['itemDiscount'],2,'.',''),
         'Net Amount' => number_format($item_value,2,'.',''),
         'Customer Name' => $customer_name, 
+        'Remarks / Notes' => $remarks_invoice,
       ];
     }
 
@@ -2375,6 +2383,7 @@ class SalesReportsController {
       'Discount' => number_format($bill_discount,2,'.',''),
       'Net Amount' => number_format($netpay,2,'.',''),
       'Customer Name' => '',
+      'Remarks / Notes' => '',
     ];
     $cleaned_params[] = [
       'Sl. No.' => '',
@@ -2387,6 +2396,7 @@ class SalesReportsController {
       'Discount' => '',
       'Net Amount' => '',
       'Cust.Name' => '',
+      'Remarks / Notes' => '',
     ];
     $cleaned_params[] = [
       'Sl. No.' => '',
@@ -2400,6 +2410,7 @@ class SalesReportsController {
       'Discount' => number_format($tot_discount,2,'.',''),
       'Net Amount' => number_format($tot_net_pay,2,'.',''),
       'Cust.Name' => '',
+      'Remarks / Notes' => '',
     ];
 
     return $cleaned_params;
