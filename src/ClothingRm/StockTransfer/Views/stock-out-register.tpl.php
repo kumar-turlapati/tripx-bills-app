@@ -39,19 +39,14 @@
 
 <div class="row">
   <div class="col-lg-12">
-    <!-- Panel starts -->
     <section class="panelBox">
       <div class="panelBody">
-
         <?php echo Utilities::print_flash_message() ?>
-
         <?php if($page_error !== ''): ?>
           <div class="alert alert-danger" role="alert">
             <strong>Error!</strong> <?php echo $page_error ?> 
           </div>
         <?php endif; ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/stock-transfer/out" class="btn btn-default">
@@ -123,7 +118,7 @@
         </div>
         <div class="table-responsive">
           <?php if(count($transactions)>0): ?>
-           <table class="table table-striped table-hover">
+           <table class="table table-striped table-hover font11">
             <thead>
               <tr class="font12">
                 <th width="5%" class="text-center valign-middle">Sno</th>
@@ -155,7 +150,7 @@
                   $total_amount += $transfer_value;
                   $total_qty += $transfer_qty;
               ?>
-                <tr class="font12">
+                <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
                   <td class="valign-middle"><?php echo $voucher_date ?></td>
@@ -194,11 +189,5 @@
         </div>
       </div>
     </section>
-    <!-- Panel ends -->
   </div>
 </div>
-
-                      <?php /*
-                      <!--a class="btn btn-danger delDoctor" href="javascrip:void(0)" title="Remove Doctor" sid="<?php echo $doctor_code ?>">
-                        <i class="fa fa-times"></i>
-                      </a-->*/

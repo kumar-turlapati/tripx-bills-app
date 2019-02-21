@@ -10,6 +10,7 @@
         </a>
         <ul class="sub">
           <li><a href="/products/list"><i class="fa fa-cubes"></i> Products</a></li>
+          <li><a href="/hsnsac/list"><i class="fa fa-arrows-h"></i> HSN/SAC Codes</a></li>
           <li><a href="/categories/list"><i class="fa fa-window-restore"></i> Product Categories</a></li>
           <li><a href="/mfgs/list"><i class="fa fa-thumbs-o-up"></i> Brands / Mfgs.</a></li>
           <li><a href="/suppliers/list"><i class="fa fa-address-card"></i> Suppliers</a></li>

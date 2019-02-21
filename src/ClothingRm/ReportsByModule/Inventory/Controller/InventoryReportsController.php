@@ -37,7 +37,7 @@ class InventoryReportsController {
     $default_location = $_SESSION['lc'];
     $page_no = 1; $per_page = 300;
     $total_records = $categories_a = [];
-    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise'];
+    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise'];
     $neg_a = ['all' => 'All items', 'neg' => 'Negative values'];
 
     $client_locations = Utilities::get_client_locations();
@@ -46,6 +46,8 @@ class InventoryReportsController {
     if(count($request->request->all()) > 0) {
       // validate form data.
       $form_data = $request->request->all();
+      $group_by_original = Utilities::clean_string($form_data['groupBy']);
+
       $validation = $this->_validate_stock_report_data($form_data);
       if($validation['status']) {
         $form_data = $validation['cleaned_params'];
@@ -86,10 +88,12 @@ class InventoryReportsController {
           $location_name = '';
         }
 
-        if($form_data['groupBy'] === 'lot') {
+        if($group_by_original === 'lot') {
           $report_string = 'Lotwise';
-        } else {
+        } elseif($group_by_original === 'item') {
           $report_string = 'Itemwise';
+        } elseif($group_by_original === 'case') {
+          $report_string = 'Case/Container/Box wise';
         }
 
         $heading1 = $report_string.' Stock Report - '.$location_name;
@@ -136,7 +140,10 @@ class InventoryReportsController {
         $pdf->Cell(0,5,$heading3,'B',1,'C');
       }
 
-      $this->_add_page_heading_for_stock_report($pdf, $item_widths);
+      // dump($total_records);
+      // exit;
+
+      $this->_add_page_heading_for_stock_report($pdf, $item_widths, $group_by_original);
       $first_page = true;
       $row_cntr = 0;
       foreach($total_records as $item_details) {
@@ -160,6 +167,7 @@ class InventoryReportsController {
         $mrp = $item_details['mrp'];
         $purchase_rate = $item_details['purchaseRate'];
         $tax_percent = $item_details['taxPercent'];
+        $cno = $item_details['cno'];
 
         $amount = round($closing_qty * $purchase_rate, 2);
         
@@ -173,8 +181,10 @@ class InventoryReportsController {
         $tot_cl_qty += $closing_qty;
         $tot_amount += $amount;
 
-        if($form_data['groupBy'] === 'item') {
+        if($group_by_original === 'item') {
           $lot_no = '';
+        } elseif($group_by_original === 'case') {
+          $lot_no = $cno;
         }
         
         $pdf->Ln();
@@ -197,11 +207,11 @@ class InventoryReportsController {
         $pdf->Cell($item_widths[16],6,number_format($mrp,2,'.',''),'RTB',0,'R');
         if($first_page && $row_cntr === 23) {
           $pdf->AddPage('L','A4');
-          $this->_add_page_heading_for_stock_report($pdf, $item_widths);
+          $this->_add_page_heading_for_stock_report($pdf, $item_widths, $form_data['groupBy']);
           $first_page = false; $row_cntr = 0;
         } elseif ($row_cntr === 26) {
           $pdf->AddPage('L','A4');
-          $this->_add_page_heading_for_stock_report($pdf, $item_widths);
+          $this->_add_page_heading_for_stock_report($pdf, $item_widths, $form_data['groupBy']);
           $row_cntr = 0;
         }
       }
@@ -1257,6 +1267,12 @@ class InventoryReportsController {
 
   private function _validate_stock_report_data($form_data = []) {
     $cleaned_params = $form_errors = [];
+    $group_by = Utilities::clean_string($form_data['groupBy']);
+    if($group_by === 'case') {
+      $group_by_api = 'lot';
+    } else {
+      $group_by_api = $group_by;
+    }
     
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
@@ -1278,7 +1294,7 @@ class InventoryReportsController {
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
     $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
     $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
-    $cleaned_params['groupBy'] = Utilities::clean_string($form_data['groupBy']);
+    $cleaned_params['groupBy'] = $group_by_api;
     $cleaned_params['balanceType'] = Utilities::clean_string($form_data['balanceType']);
 
     if(count($form_errors) > 0) {
@@ -1613,13 +1629,17 @@ class InventoryReportsController {
     return $cleaned_params;
   }
 
-  private function _add_page_heading_for_stock_report(&$pdf=null, $item_widths=[]) {
+  private function _add_page_heading_for_stock_report(&$pdf=null, $item_widths=[], $group_by= '') {
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell($item_widths[0],  6,'Sno.','LRTB',0,'C');
     $pdf->Cell($item_widths[1],  6,'Item Name','RTB',0,'C');
     $pdf->Cell($item_widths[2],  6,'Category Name','RTB',0,'C');
     $pdf->Cell($item_widths[3],  6,'Brand Name','RTB',0,'C');
-    $pdf->Cell($item_widths[4],  6,'Lot No.','RTB',0,'C');
+    if($group_by === 'case') {
+      $pdf->Cell($item_widths[4],  6,'Case No.','RTB',0,'C');
+    } else {
+      $pdf->Cell($item_widths[4],  6,'Lot No.','RTB',0,'C');
+    }
     $pdf->Cell($item_widths[5],  6,'GST(%)','RTB',0,'C');        
     $pdf->Cell($item_widths[6],  6,'OP Qty.','RTB',0,'C');
     $pdf->Cell($item_widths[7],  6,'PU Qty.','RTB',0,'C');

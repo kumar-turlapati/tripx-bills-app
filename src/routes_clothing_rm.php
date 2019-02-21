@@ -565,6 +565,19 @@ $routes->add('list_taxes', new Routing\Route('/taxes/list', array(
   '_controller' => 'ClothingRm\\Taxes\\Controller\\TaxesController::listTaxes',
 )));
 
+// HSN / SAC codes Management
+$routes->add('add_hsnsac', new Routing\Route('/hsnsac/add', array(
+  '_controller' => 'HsnSacCodes\\Controller\\HsnSacCodesController::addHsnSacCode',
+)));
+$routes->add('update_hsnsac', new Routing\Route('/hsnsac/update/{hsnSacUniqueCode}', array(
+  '_controller' => 'HsnSacCodes\\Controller\\HsnSacCodesController::updateHsnSacCode',
+  'hsnSacUniqueCode' => null,
+)));
+$routes->add('list_hsnsac_codes', new Routing\Route('/hsnsac/list/{pageNo}', array(
+  '_controller' => 'HsnSacCodes\\Controller\\HsnSacCodesController::listHsnSacCodes',
+  'pageNo' => null,
+)));
+
 // promotional offers management.
 $routes->add('create_offer', new Routing\Route('/promo-offers/entry', array(
   '_controller' => 'ClothingRm\\PromoOffers\\Controller\\PromoOffersController::promoOfferEntryAction',

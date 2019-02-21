@@ -14,6 +14,34 @@ $(window).load(function() {
   }
 });
 
+(function (global) { 
+  if(typeof (global) === "undefined") {
+    throw new Error("window is undefined");
+  }
+  var _hash = "!";
+  var noBackPlease = function () {
+    global.location.href += "#";
+    global.setTimeout(function () {
+      global.location.href += "!";
+    }, 50);
+  };
+  global.onhashchange = function () {
+    if (global.location.hash !== _hash) {
+      global.location.hash = _hash;
+    }
+  };
+  global.onload = function () {            
+    noBackPlease();
+    document.body.onkeydown = function (e) {
+      var elm = e.target.nodeName.toLowerCase();
+      if (e.which === 8 && (elm !== 'input' && elm  !== 'textarea')) {
+        e.preventDefault();
+      }
+      e.stopPropagation();
+    };          
+  }
+})(window);
+
 function initializeJS() {
 	jQuery('.date').datepicker();
 	jQuery('#timepicker1').timepicker();
@@ -1681,7 +1709,11 @@ jQuery(document).ready(function(){
   initializeJS();
   if( $('#dbContainer').length>0 && ($('#monthwiseSales').length>0 || $('#salesDayGraph').length>0)) {
     monthWiseSales();
-  }  
+  }
+  $(document).bind("contextmenu",function(e){
+    alert('We are sorry. Right click is disabled!');
+    return false;
+  });  
 });
 
 function printSalesBill(bill_no) {
