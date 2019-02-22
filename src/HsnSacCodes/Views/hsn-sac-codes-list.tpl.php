@@ -89,7 +89,7 @@
             ?>
             <?php } else { ?>
               <tr>
-                <td colspan="4" align="center"><b>No records are available.</b></td>
+                <td colspan="6" align="center"><b>No records are available.</b></td>
               </tr>
             <?php } ?>
             </tbody>
