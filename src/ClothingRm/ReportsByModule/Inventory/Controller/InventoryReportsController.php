@@ -114,7 +114,7 @@ class InventoryReportsController {
 
       $format = $form_data['format'];
       if($format === 'csv') {
-        $total_records = $this->_format_stock_report_for_csv($total_records,$form_data['groupBy']);
+        $total_records = $this->_format_stock_report_for_csv($total_records,$group_by_original);
         Utilities::download_as_CSV_attachment('StockReport', $csv_headings, $total_records);
         return;
       }
@@ -1418,7 +1418,13 @@ class InventoryReportsController {
       $item_name = $item_details['itemName'];
       $category_name = $item_details['categoryName'];
       $brand_name = $item_details['brandName'];
-      $lot_no = $item_details['lotNo'];
+      if($group_by === 'case') {
+        $lot_no = $item_details['cno'];
+        $label = 'Case/Container/Box No.';
+      } else {
+        $lot_no = $item_details['lotNo'];
+        $label = 'Lot No.';
+      }
       $opening_qty = $item_details['openingQty'];
       $purchased_qty = $item_details['purchasedQty'];
       $sales_return_qty = $item_details['salesReturnQty'];
@@ -1450,7 +1456,7 @@ class InventoryReportsController {
         'Item Name' => $item_name,
         'Category Name' => $category_name,
         'Brand Name'  => $brand_name,
-        'Lot No.'     => $lot_no,
+        $label        => $lot_no,
         'GST (%)'     => number_format($tax_percent,2,'.',''),
         'OP Qty.'     => number_format($opening_qty,2,'.',''),
         'PU Qty.'     => number_format($purchased_qty,2,'.',''),
@@ -1471,7 +1477,7 @@ class InventoryReportsController {
         'Item Name' => '',
         'Category Name' => '',
         'Brand Name'  => '',
-        'Lot No.'     => '',
+        $label        => '',
         'GST (%)'     => '',
         'OP Qty.'     => number_format($tot_op_qty,2,'.',''),
         'PU Qty.'     => number_format($tot_pu_qty,2,'.',''),
