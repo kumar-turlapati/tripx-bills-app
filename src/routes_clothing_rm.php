@@ -754,6 +754,9 @@ $routes->add('report_profitability', new Routing\Route('/reports/inventory-profi
 $routes->add('report_materialMovement', new Routing\Route('/reports/material-movement', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::materialMovement',
 )));
+$routes->add('report_stock_transfer', new Routing\Route('/reports/stock-transfer-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::stockTransferRegister',
+)));
 $routes->add('report_printGRN', new Routing\Route('/print-grn/{grnCode}', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::printGRN',
   'grnCode' => null,
