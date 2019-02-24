@@ -610,6 +610,7 @@ function initializeJS() {
     $(this).attr('disabled', true);
     $('.cancelOp').attr('disabled', true);
     var buttonId = $(this).attr('id');
+    console.log('hello');
     if(buttonId === 'stoCancel') {
       window.location.href = '/stock-transfer/choose-location';
     } else if(buttonId === 'inwBulkUploadCancel') {
@@ -624,6 +625,8 @@ function initializeJS() {
       window.location.href = '/upload-debtors';
     } else if(buttonId === 'uploadSuppliers') {
       window.location.href = '/upload-creditors';
+    } else if(buttonId === 'validateStButton') {
+      window.location.href = '/stock-transfer/register';
     }
   });
 

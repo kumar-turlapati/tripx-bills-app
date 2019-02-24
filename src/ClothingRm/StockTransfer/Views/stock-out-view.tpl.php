@@ -58,8 +58,8 @@
               </thead>
               <tbody>
                 <?php
+                $tot_bill_amount = $tot_qty = 0;
                 if(count($form_data['itemDetails']) > 0):
-                  $tot_bill_amount = $tot_qty = 0;
                   for($i=1;$i<=count($form_data['itemDetails']['itemName']);$i++):
                     $bill_amount = 0;
                     $ex_index = $i-1;
@@ -133,7 +133,7 @@
                 <?php endif; ?>
                   <tr>
                     <td colspan="6" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
-                    <td id="grossAmount" class="" style="font-size:16px;text-align:right;font-weight:bold;"><?php echo number_format($bill_amount, 2, '.', '') ?></td>
+                    <td id="grossAmount" class="" style="font-size:16px;text-align:right;font-weight:bold;"><?php echo number_format($tot_bill_amount, 2, '.', '') ?></td>
                   </tr>
                   <tr>
                     <td colspan="6" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">(+/-) Round off</td>

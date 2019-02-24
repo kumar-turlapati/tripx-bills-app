@@ -58,6 +58,8 @@ class StockOutController
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
       $validate_form = $this->_validate_form_data($form_data, $location_names);
+      // dump($validate_form);
+      // exit;
       $status = $validate_form['status'];
       if($status) {
         $cleaned_params = $validate_form['cleaned_params'];

@@ -79,7 +79,7 @@
             <button class="btn btn-primary cancelOp" id="Save" name="op">
               <i class="fa fa-save"></i> Save / ట్రాన్స్ఫర్ ని అంగీకరించండి
             </button>
-            <button class="btn btn-danger cancelButton" id="stForm">
+            <button class="btn btn-danger cancelButton" id="validateStButton">
               <i class="fa fa-times"></i> Cancel / ఈ స్క్రీన్ ను రద్దు చెయ్యండి
             </button>
           </div>          

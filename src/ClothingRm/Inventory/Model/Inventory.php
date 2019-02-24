@@ -606,4 +606,17 @@ class Inventory
 		}		
 	}
 
+	public function stock_transfer_register($form_data=[]) {
+		$end_point = '/reports/stock-trasfer-register';
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$end_point,$form_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true, 'results' => $response['response'],);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}		
+	}
+
 }
