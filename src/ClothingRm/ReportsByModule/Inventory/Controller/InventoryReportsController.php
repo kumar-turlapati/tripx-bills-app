@@ -1599,7 +1599,7 @@ class InventoryReportsController {
         $pdf->Cell($item_widths[10],6,number_format($purchase_rate, 2, '.', ''),'RTB',0,'R');
         $pdf->Cell($item_widths[11],6,$tax_percent,'RTB',0,'R');
         $pdf->Cell($item_widths[12],6,number_format($item_amount, 2, '.', ''),'RTB',0,'R');
-        $pdf->Cell($item_widths[9],6,substr($adj_reason,0,16),'RTB',0,'L');
+        $pdf->Cell($item_widths[9],6,substr($adj_reason,0,20),'RTB',0,'L');
         $pdf->Ln();
       }
 
