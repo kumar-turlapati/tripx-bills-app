@@ -1581,7 +1581,7 @@ class InventoryReportsController {
         $tax_percent = $item_details['taxPercent'];
 
         $item_gross = round($purchase_rate*$adj_qty, 2);
-        $item_tax_amount = $item_gross > 0 ? round($item_gross*$tax_percent/100, 2) : 0;
+        $item_tax_amount = $item_gross <> 0 ? round($item_gross*$tax_percent/100, 2) : 0;
         $item_amount = $item_gross + $item_tax_amount;
 
         $tot_qty += $adj_qty;
@@ -2106,7 +2106,7 @@ class InventoryReportsController {
       $tax_percent = $item_details['taxPercent'];
 
       $item_gross = round($purchase_rate*$adj_qty, 2);
-      $item_tax_amount = $item_gross > 0 ? round($item_gross*$tax_percent/100, 2) : 0;
+      $item_tax_amount = $item_gross <> 0 ? round($item_gross*$tax_percent/100, 2) : 0;
       $item_amount = $item_gross + $item_tax_amount;
 
       $tot_qty += $adj_qty;
