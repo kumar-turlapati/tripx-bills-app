@@ -494,6 +494,8 @@ class Utilities
 
         '/reports/item-master-with-barcodes', '/reports/sales-billwise-itemwise', 
         '/reports/sales-billwise-itemwise-casewise',
+
+        '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
       ],
 
       // for Business head
@@ -519,6 +521,8 @@ class Utilities
 
         '/reports/item-master-with-barcodes', '/reports/sales-billwise-itemwise', 
         '/reports/sales-billwise-itemwise-casewise',
+
+        '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
       ],      
 
       // for Sales Operator
@@ -560,7 +564,10 @@ class Utilities
         '/barcodes/list', '/barcodes/print', '/barcode/opbal',
 
         '/reports/sales-register', '/reports/itemwise-sales-register', '/reports/day-sales', '/reports/sales-summary-by-month', 
-        '/reports/sales-by-tax-rate', '/reports/sales-billwise-itemwise',
+        '/reports/sales-by-tax-rate', '/reports/sales-billwise-itemwise', 
+        '/reports/sales-billwise-itemwise-casewise',
+
+        '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
       ],
 
       6  => [
@@ -591,6 +598,8 @@ class Utilities
         '/opbal/add', '/opbal/update', '/barcodes/print', '/barcode/opbal', 
 
         '/reports/item-master-with-barcodes', '/reports/item-master',
+
+        '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
       ],
 
       10 => [

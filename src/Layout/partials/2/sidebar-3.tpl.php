@@ -259,6 +259,7 @@
               <li><a href="/reports/stock-report"><i class="fa fa-angle-right"></i> Stock Report</a></li>
               <li><a href="/reports/opbal"><i class="fa fa-angle-right"></i> Opening Balances</a></li>
               <li><a href="/reports/stock-transfer-register"><i class="fa fa-angle-right"></i> Stock Transfer</a></li>
+              <li><a href="/reports/stock-adjustment-register"><i class="fa fa-angle-right"></i> Stock Adjustments</a></li>              
             </ul>
           </li>
           <li class="sub-menu">

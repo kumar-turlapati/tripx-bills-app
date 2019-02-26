@@ -52,7 +52,6 @@
           */ ?>
         </ul>
       </li>
-
       <li class="sub-menu">
         <a href="javascript:">
           <i class="fa fa-sitemap fa-3x"></i> Reports <span class="menu-arrow arrow_carrot-right"></span>
@@ -69,6 +68,15 @@
               <li><a href="/reports/sales-billwise-itemwise"><i class="fa fa-angle-right"></i> Bill&amp;Item wise Sales</a></li>
             </ul>
           </li>
+          <li class="sub-menu">
+            <a data-toggle="modal" href="javascript:">
+              <i class="fa fa-database"></i> Inventory&nbsp;&amp;&nbsp;Stores <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/reports/stock-transfer-register"><i class="fa fa-angle-right"></i> Stock Transfer</a></li>
+              <li><a href="/reports/stock-adjustment-register"><i class="fa fa-angle-right"></i> Stock Adjustments</a></li>              
+            </ul>
+          </li>          
         </ul>
       </li>
     </ul>

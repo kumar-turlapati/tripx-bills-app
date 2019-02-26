@@ -1448,6 +1448,189 @@ class InventoryReportsController {
     return [$this->template->render_view('stock-transfer-register', $template_vars), $controller_vars];
   }
 
+  public function stockAdjustmentRegister(Request $request) {
+    $default_location = $_SESSION['lc'];
+    $page_no = 1; $per_page = 300;
+    $total_records = $categories_a = [];
+
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];
+      $location_names[$location_key_a[0]] = $location_value;
+    }
+
+    // dump($location_ids, $location_codes, $location_names);
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_stock_transfer_data($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+        $form_data['pageNo'] = $page_no;
+        $form_data['perPage'] = $per_page;
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/stock-adjustment-register');
+      }
+
+      // hit api
+      $inven_api_response = $this->inven_api->stock_adjustment_register($form_data);
+      // dump($inven_api_response);
+      // exit;
+      if($inven_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/stock-adjustment-register');
+      } else {
+        $total_records = $inven_api_response['results']['results'];
+        $total_pages = $inven_api_response['results']['total_pages'];
+        if($total_pages>1) {
+          for($i=2; $i<=$total_pages; $i++) {
+            $form_data['pageNo'] = $i;
+            $inven_api_response = $this->inven_api->stock_adjustment_register($form_data);
+            if($inven_api_response['status']) {
+              $total_records = array_merge($total_records, $inven_api_response['results']['results']);
+            }
+          }
+        }
+        
+        // dump($total_records);
+        // exit;
+
+        if(is_array($location_names) && count($location_names)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $location_names[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+
+        $heading1 = 'Stock Adjustment Register';
+        $heading2 = 'From '.date('jS F, Y', strtotime($form_data['fromDate'])).' To '.date('jS F, Y', strtotime($form_data['toDate']));
+        $heading3 = '';
+        if($location_name !== '') {
+          $heading1 .= ' - '.$location_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2]];
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        $total_records = $this->_format_stock_adjustment_report_for_csv($total_records, $location_ids);
+        Utilities::download_as_CSV_attachment('StockAdjustmentRegister', $csv_headings, $total_records);
+        return;
+      }
+
+      // start PDF printing.
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('L','A4');
+      $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+      $pdf->SetFont('Arial','B',13);
+      $pdf->Cell(0,0,$heading1,'',1,'C');
+
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Ln(5);
+      $pdf->Cell(0,0,$heading2,'',1,'C');
+                      //    0, 1, 2, 3, 4, 5, 6, 7, 8, 9  10  11  12
+      $item_widths = array(10,17,24,40,23,23,25,23,16,34, 15, 13, 15);
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] +
+                      $item_widths[3] + $item_widths[4] + $item_widths[5] +
+                      $item_widths[6] + $item_widths[7];
+      
+      $pdf->Ln(3); 
+
+      $pdf->SetFont('Arial','B',8);
+      $pdf->Cell($item_widths[0],6,'Sno.','LTR',0,'C');
+      $pdf->Cell($item_widths[1],6,'Adj.Date','LTR',0,'C');
+      $pdf->Cell($item_widths[2],6,'Barcode','LTR',0,'C');
+      $pdf->Cell($item_widths[3],6,'Item Name','RT',0,'C');
+      $pdf->Cell($item_widths[4],6,'Brand Name','RT',0,'C');    
+      $pdf->Cell($item_widths[5],6,'Category','RT',0,'C');
+      $pdf->Cell($item_widths[6],6,'Lot No.','RT',0,'C');
+      $pdf->Cell($item_widths[7],6,'Case/Box No.','RT',0,'C');
+      $pdf->Cell($item_widths[8],6,'Adj.Qty.','RT',0,'C');
+      $pdf->Cell($item_widths[10],6,'Rate','RT',0,'C');
+      $pdf->Cell($item_widths[11],6,'Tax%','RT',0,'C');
+      $pdf->Cell($item_widths[12],6,'Amount','RT',0,'C');
+      $pdf->Cell($item_widths[9],6,'Reason','RT',0,'C');
+      $pdf->SetFont('Arial','',8);
+      $pdf->Ln();
+
+      // dump($location_names);
+      // exit;
+      
+      $slno = $tot_qty = $tot_item_amount = 0;
+      foreach($total_records as $item_details) {
+        $slno++;
+        $item_gross = $item_tax_amount = $item_amount = 0;
+
+        $adj_date = date("d-m-Y", strtotime($item_details['adjDate']));
+        $item_name = substr($item_details['itemName'], 0, 15);
+        $brand_name = substr($item_details['brandName'], 0, 10);
+        $category_name = substr($item_details['categoryName'], 0, 10);
+        $lot_no = $item_details['lotNo'];
+        $cno = $item_details['cno'];
+        $barcode = $item_details['barcode'];
+        $adj_qty = $item_details['adjQty'];
+        $adj_reason = $item_details['adjReason'];
+        $purchase_rate = $item_details['purchaseRate'];
+        $tax_percent = $item_details['taxPercent'];
+
+        $item_gross = round($purchase_rate*$tax_percent, 2);
+        $item_tax_amount = $item_gross > 0 ? round($item_gross/100, 2) : 0;
+        $item_amount = $item_gross + $item_tax_amount;
+
+        $tot_qty += $adj_qty;
+        $tot_item_amount += $item_amount;
+
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,$adj_date,'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,$barcode,'RTB',0,'L');    
+        $pdf->Cell($item_widths[3],6,$item_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[4],6,$brand_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[5],6,$category_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[6],6,$lot_no,'RTB',0,'L');
+        $pdf->Cell($item_widths[7],6,$cno,'RTB',0,'L');
+        $pdf->Cell($item_widths[8],6,number_format($adj_qty, 2, '.', ''),'RTB',0,'R');
+        $pdf->Cell($item_widths[10],6,number_format($purchase_rate, 2, '.', ''),'RTB',0,'R');
+        $pdf->Cell($item_widths[11],6,$tax_percent,'RTB',0,'R');
+        $pdf->Cell($item_widths[12],6,number_format($item_amount, 2, '.', ''),'RTB',0,'R');
+        $pdf->Cell($item_widths[9],6,substr($adj_reason,0,16),'RTB',0,'L');
+        $pdf->Ln();
+      }
+
+      $pdf->SetFont('Arial','B',10);
+      $pdf->Cell($totals_width,6,'Totals','LRB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($tot_qty,2,'.',''),'BR',0,'R');
+      $pdf->Cell($item_widths[10],6,'','BR',0,'R');
+      $pdf->Cell($item_widths[11]+$item_widths[12],6,number_format($tot_item_amount, 2, '.', ''),'BR',0,'R');            
+      $pdf->SetFont('Arial','B',11);
+
+      $pdf->Output();
+    }
+
+
+    $controller_vars = array(
+      'page_title' => 'Stock Adjustment Register',
+      'icon_name' => 'fa fa-print',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+    );
+
+    // render template
+    return [$this->template->render_view('stock-adj-register', $template_vars), $controller_vars];    
+  }
+
   private function _validate_stock_report_data($form_data = []) {
     $cleaned_params = $form_errors = [];
     $group_by = Utilities::clean_string($form_data['groupBy']);
@@ -1901,6 +2084,68 @@ class InventoryReportsController {
     ];
 
     return $cleaned_params;
+  }
+
+  private function _format_stock_adjustment_report_for_csv($total_records = [], $location_ids = []) {
+
+    $cleaned_params = [];
+    $slno = $tot_qty = $tot_item_amount = 0;
+    foreach($total_records as $key => $item_details) {
+      $slno++;
+      $adj_date = date("d-m-Y", strtotime($item_details['adjDate']));
+      $item_name = $item_details['itemName'];
+      $brand_name = $item_details['brandName'];
+      $category_name = $item_details['categoryName'];
+      $lot_no = $item_details['lotNo'];
+      $cno = $item_details['cno'];
+      $barcode = $item_details['barcode'];
+      $adj_qty = $item_details['adjQty'];
+      $adj_reason = $item_details['adjReason'];
+
+      $purchase_rate = $item_details['purchaseRate'];
+      $tax_percent = $item_details['taxPercent'];
+
+      $item_gross = round($purchase_rate*$tax_percent, 2);
+      $item_tax_amount = $item_gross > 0 ? round($item_gross/100, 2) : 0;
+      $item_amount = $item_gross + $item_tax_amount;
+
+      $tot_qty += $adj_qty;
+      $tot_item_amount += $item_amount;      
+
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Adjustment Date' => $adj_date,
+        'Barcode' => $barcode,
+        'Item Name' => $item_name,
+        'Brand Name' => $brand_name,
+        'Category' => $category_name,
+        'Lot No.' => $lot_no,
+        'Case/Box No.' => $cno,
+        'Adjusted Qty.' => $adj_qty,
+        'Purchase Rate' => number_format($purchase_rate,2,'.',''),
+        'Tax Percent' => number_format($tax_percent,2,'.',''),
+        'Item Amount' => number_format($item_amount,2,'.',''),
+        'Reason' => $adj_reason,
+      ];
+    }
+    
+    $cleaned_params[count($cleaned_params)] = [
+      'Sno.' => '',
+      'Adjustment Date' => '',
+      'Barcode' => '',
+      'Item Name' => 'TOTALS',
+      'Brand Name' => '',
+      'Category' => '',
+      'Lot No.' => '',
+      'Case/Box No.' => '',
+      'Adjusted Qty.' => number_format($tot_qty,2,'.',''),
+      'Purchase Rate' => '',
+      'Tax Percent' => '',
+      'Item Amount' => number_format($tot_item_amount,2,'.',''),
+      'Reason' => '',
+    ];
+
+    return $cleaned_params;    
   }
 
   private function _add_page_heading_for_stock_report(&$pdf=null, $item_widths=[], $group_by= '') {
