@@ -156,7 +156,7 @@ class FinyController {
         $fin_year_name = $finys[$submitted_finy_code];
         $api_response = $this->finy_model->set_active_fin_year(['finyCode' => $submitted_finy_code]);
         if($api_response['status']) {
-          $message = 'Financial year `'.$fin_year_name.'` is Default and Active Financial year now.';
+          $message = 'Financial year `'.$fin_year_name.'` is Default and Active Financial year now. You must logout to see the changes.';
           $this->flash->set_flash_message($message);
           Utilities::redirect('/finy/list');
         } else {

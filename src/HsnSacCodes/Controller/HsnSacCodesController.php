@@ -121,6 +121,7 @@ class HsnSacCodesController
   public function listHsnSacCodes(Request $request) {
 
     $devices_a = $search_params = $users_a = $users = [];
+    $hsn_sac_codes = [];
     $page_error = '';
     
     $total_pages = $total_records = $record_count = $page_no = 0 ;

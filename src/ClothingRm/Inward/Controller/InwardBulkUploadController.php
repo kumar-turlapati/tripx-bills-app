@@ -260,6 +260,9 @@ class InwardBulkUploadController
             $category_name = Utilities::clean_string($item_details['CategoryName']);
             $rack_no = Utilities::clean_string($item_details['RackNo']);
             $brand_name = Utilities::clean_string($item_details['BrandName']);
+            $cno = Utilities::clean_string($item_details['cno']);
+
+            $imported_records[$key]['cno'] = $cno;
 
             if($item_name === '') {
               $form_errors['itemDetails'][$key]['itemName'] = 'Matched item name is required.';

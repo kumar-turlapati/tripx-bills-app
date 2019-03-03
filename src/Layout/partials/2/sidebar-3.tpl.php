@@ -16,7 +16,7 @@
           <li><a href="/suppliers/list"><i class="fa fa-address-card"></i> Suppliers</a></li>
           <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
           <li><a href="/taxes/list"><i class="fa fa-scissors"></i> Taxes</a></li>
-          <?php /*<li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li> */ ?>
+          <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>
           <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores</a></li>
           <li><a href="/fin/bank/list"><i class="fa fa-university"></i> Banks</a></li>
           <li><a href="/bu/list"><i class="fa fa-user-circle-o"></i> Business Users</a></li>

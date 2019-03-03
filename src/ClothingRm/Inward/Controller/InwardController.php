@@ -199,6 +199,8 @@ class InwardController
         $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
+        $cnos = array_column($purchase_details['itemDetails'], 'cno');
+
         if(count($item_names)>50) {
           $total_item_rows = count($item_names);
         }
@@ -222,6 +224,8 @@ class InwardController
         $form_data['itemDiscount'] = $discounts;
         $form_data['hsnCodes'] = $hsn_codes;
         $form_data['packedQty'] = $packed_qtys;
+        $form_data['cnos'] = $cnos;
+
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
           $this->flash->set_flash_message($page_error, 1);
@@ -350,6 +354,7 @@ class InwardController
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
         $billed_qtys = array_column($purchase_details['itemDetails'],'billedQty');        
+        $cnos = array_column($purchase_details['itemDetails'], 'cno');
 
         # unser item details from api data.
         unset($purchase_details['itemDetails']);
@@ -373,7 +378,9 @@ class InwardController
         $form_data['mrp'] = $mrps;
         $form_data['itemDiscount'] = $discounts;  
         $form_data['hsnCodes'] = $hsn_codes;
-        $form_data['packedQty'] = $packed_qtys;        
+        $form_data['packedQty'] = $packed_qtys;
+        $form_data['cnos'] = $cnos;
+
         if($form_data['grnFlag'] === 'yes') {
           $is_grn_generated = true;
         } else {
@@ -612,6 +619,7 @@ class InwardController
         $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
+        $cnos = array_column($purchase_details['itemDetails'], 'cno');
 
         $total_item_rows = count($item_names);
 
@@ -634,6 +642,8 @@ class InwardController
         $form_data['itemDiscount'] = $discounts;
         $form_data['hsnCodes'] = $hsn_codes;
         $form_data['packedQty'] = $packed_qtys;
+        $form_data['cnos'] = $cnos;
+
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
           $this->flash->set_flash_message($page_error, 1);
@@ -860,7 +870,7 @@ class InwardController
       $item_discounts = $form_data['itemDiscount'];
       $item_hsnsac_codes_a = $form_data['hsnSacCode'];
       $packed_qty_a = $form_data['packedQty'];
-      // $rack_nos_a = $form_data['rackNo'];
+      $cno_a = $form_data['cno'];
       $category_names_a = $form_data['categoryName'];
       $brand_names_a = $form_data['brandName'];
 
@@ -878,14 +888,14 @@ class InwardController
           $discount_amount = Utilities::clean_string($item_discounts[$key]);
           $hsn_sac_code = Utilities::clean_string($item_hsnsac_codes_a[$key]);
           $packed_qty = Utilities::clean_string($packed_qty_a[$key]);
-          // $rack_no = Utilities::clean_string($rack_nos_a[$key]);
+          $cno = Utilities::clean_string($cno_a[$key]);
           $category_name = Utilities::clean_string($category_names_a[$key]);
           $brand_name = Utilities::clean_string($brand_names_a[$key]);
 
           $cleaned_params['itemDetails']['itemName'][] = $item_name;
           $cleaned_params['itemDetails']['categoryName'][] = $category_name;
           $cleaned_params['itemDetails']['brandName'][] = $brand_name;
-          // $cleaned_params['itemDetails']['rackNo'][] = $rack_no;
+          $cleaned_params['itemDetails']['cno'][] = $cno;
 
           if( !is_numeric($inward_qty) ) {
             $form_errors['itemDetails'][$key]['inwardQty'] = 'Invalid item qty';
@@ -1052,6 +1062,7 @@ class InwardController
       $form_data['categoryName'][$key] = $item_details['CategoryName'];
       $form_data['rackNo'][$key] = $item_details['RackNo'];
       $form_data['brandName'][$key] = $item_details['BrandName'];
+      $form_data['cno'][$key] = $item_details['cno'];
     }
     return $form_data;
   }

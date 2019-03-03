@@ -114,7 +114,7 @@ class AsyncController {
       $response = Utilities::get_applicable_tax_percent($taxable_value, $total_qty);
       header("Content-type: application/json");
       echo json_encode($response);
-/*    } elseif($api_string === 'get-ref-details') {
+    } elseif($api_string === 'get-ref-details') {
       $ref_code =  Utilities::clean_string($request->get('refCode'));
       $api_url = 'loyalty/member/details/'.$ref_code;
       $params['q'] = 'by_ref_code';
@@ -124,7 +124,7 @@ class AsyncController {
         echo json_encode($response);
       } else {
         echo $response;
-      }*/
+      }
     } elseif($api_string === 'getItemDetailsByCode') {
       $barcode =  Utilities::clean_string($request->get('bc'));
       $locationCode = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';

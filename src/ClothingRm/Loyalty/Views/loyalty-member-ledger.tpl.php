@@ -93,7 +93,11 @@
                   </tr>
               </tbody>
             </table>
+
+          <?php else: ?>
+            <div style="text-align:center;margin-top:10px;font-weight:bold;color:red;font-size:14px;border:1px dotted;">No transactions are available for Card No. <?php echo $member_details['cardNo'] ?></div>
           <?php endif; ?>
+
           <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>
         </div>
       </div>

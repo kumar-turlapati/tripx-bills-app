@@ -218,7 +218,7 @@ class CreditNotesController
       $cleaned_params['cnType'] = $cn_type;
       # validate ref. no here itself.
       if($cn_type === 'lo') {
-        if(is_numeric($ref_no) && strlen($ref_no)<=6) {
+        if(is_numeric($ref_no)) {
           $cleaned_params['refNo'] = $ref_no;
         } else {
           $form_errors['refNo'] = 'Invalid Card No. Must be less than or equal to 6 digits.';

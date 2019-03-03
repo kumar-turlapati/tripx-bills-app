@@ -86,7 +86,7 @@
                 name="cardNo" 
                 id="cardNo" 
                 value="<?php echo $card_no ?>"
-                maxlength="6"
+                maxlength="10"
               >
               <?php if(isset($form_errors['cardNo'])): ?>
                 <span class="error"><?php echo $form_errors['cardNo'] ?></span>
@@ -102,7 +102,7 @@
                 name="refCardNo"
                 id="refCardNo" 
                 value="<?php echo $ref_card_no ?>"
-                maxlength="6"
+                maxlength="10"
               >
               <?php if(isset($form_errors['refCardNo'])): ?>
                 <span class="error"><?php echo $form_errors['refCardNo'] ?></span>

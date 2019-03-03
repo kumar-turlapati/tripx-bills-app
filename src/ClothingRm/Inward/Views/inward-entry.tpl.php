@@ -409,7 +409,7 @@
             <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable">
               <thead>
                 <tr>
-                  <th style="width:245px;" class="text-center purItem">Item name</th>
+                  <th style="width:220px;" class="text-center purItem">Item name</th>
                   <th style="width:80px;"  class="text-center purItem">HSN / SAC Code</th>                  
                   <th style="width:50px;"  class="text-center">Received<br />qty.</th>
                   <th style="width:50px"   class="text-center">Free<br />qty.</th>
@@ -422,7 +422,8 @@
                   <th style="width:70px"   class="text-center">Taxable Amt.<br />( in Rs. )</th>
                   <th style="width:73px"   class="text-center">G.S.T<br />( in % )</th>
                   <th style="width:50px"   class="text-center">Brand</th>                  
-                  <th style="width:50px"   class="text-center">Category</th>                                    
+                  <th style="width:50px"   class="text-center">Category</th>
+                  <th style="width:20px"   class="text-center">Container<br />No.</th>                  
                 </tr>
               </thead>
               <tbody>
@@ -494,7 +495,12 @@
                     $brand_name = $form_data['brandName'][$i-1];
                   } else {
                     $brand_name = '';
-                  }                  
+                  }
+                  if( isset($form_data['cno'][$i-1]) && $form_data['cno'][$i-1] !== '' ) {
+                    $cno = $form_data['cno'][$i-1];
+                  } else {
+                    $cno = '';
+                  }                                 
 
                   $billed_qty = $inward_qty-$free_qty;
                   if(is_numeric($packed_qty) && $packed_qty>0) {
@@ -716,7 +722,18 @@
                       style="width:70px;font-size:12px;"
                       value="<?php echo $category_name ?>"
                     />
-                  </td>                     
+                  </td>
+                  <td style="width:20px;">
+                    <input
+                      type="text"
+                      name="cno[]"
+                      id="cno_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="CNO"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $cno ?>"
+                    />
+                  </td>                                     
                   <input 
                     type="hidden" 
                     id="inwItemTaxAmt_<?php echo $i ?>"

@@ -230,6 +230,7 @@ class LoyaltyController
   public function getLoyaltyMemberLedger(Request $request) {
 
     $transactions_a = $member_info = $location_ids = $location_codes = $query_totals = [];
+    $member_details = [];
     $page_error = '';
     
     $total_pages = $total_records = $record_count = 0 ;
@@ -246,6 +247,7 @@ class LoyaltyController
         $this->flash->set_flash_message('Invalid member (or) member does not exists',1);         
         Utilities::redirect('/loyalty-members/list');
       }
+      $member_details = $member_details['member_details'];
     } else {
       $this->flash->set_flash_message('Invalid member (or) member does not exists',1);         
       Utilities::redirect('/loyalty-members/list');      
@@ -296,6 +298,7 @@ class LoyaltyController
       'member_info' => $member_info,
       'query_totals' => $query_totals,
       'member_code' => $member_code,
+      'member_details' => $member_details,
       'total_pages' => $total_pages,
       'total_records' => $total_records,
       'record_count' => $record_count,

@@ -29,7 +29,7 @@
                 <th width="10%">Year short name</th>
                 <th width="10%">Start date</th>
                 <th width="10%">End date</th>
-                <th width="10%">Status</th>                
+                <th width="10%">Status</th>
                 <th width="10%" class="text-center">Actions</th>
               </tr>
             </thead>
@@ -43,15 +43,16 @@
                   $finy_short_name = $finy_details['finyShortName'];
                   $start_date = date("d-m-Y",strtotime($finy_details['startDate']));
                   $end_date = date("d-m-Y",strtotime($finy_details['endDate']));
-                  if($finy_details['status']) {
+                  if((int)$finy_details['status'] === 1) {
                     $status = 'Active';
                   } else {
                     $status = 'Inactive';
                   }
+                  $is_active = (int)$finy_details['isActive'] === 1 ? '<span style="font-weight:bold;font-size:14px;color:#225992"> [ Default ] </span>' : '';
               ?>
                   <tr class="text-right font12">
                     <td align="text-right" style="vertical-align:middle;"><?php echo $cntr ?></td>
-                    <td class="text-left valign-middle"><?php echo $finy_name ?></td>
+                    <td class="text-left valign-middle"><?php echo $finy_name.$is_active ?></td>
                     <td class="text-center valign-middle"><?php echo $finy_short_name ?></td>
                     <td class="text-left valign-middle"><?php echo $start_date ?></td>
                     <td class="text-left valign-middle"><?php echo $end_date ?></td>
