@@ -824,7 +824,19 @@ $routes->add('report_printIndentWr', new Routing\Route('/print-indent-wor', arra
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentWoRate',
 )));
 
-
+// year end jobs
+$routes->add('post_inventory', new Routing\Route('/year-end-jobs/post-inventory', array(
+  '_controller' => 'YearendJobs\\Controller\\YearendJobsController::postInventory',
+)));
+$routes->add('post_barcodes', new Routing\Route('/year-end-jobs/post-barcodes', array(
+  '_controller' => 'YearendJobs\\Controller\\YearendJobsController::postBarcodes',
+)));
+$routes->add('post_debtors', new Routing\Route('/year-end-jobs/post-debtors', array(
+  '_controller' => 'YearendJobs\\Controller\\YearendJobsController::postDebtors',
+)));
+$routes->add('post_creditors', new Routing\Route('/year-end-jobs/post-creditors', array(
+  '_controller' => 'YearendJobs\\Controller\\YearendJobsController::postCreditors',
+)));
 // $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
 //   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
 // )));

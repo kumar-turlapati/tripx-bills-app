@@ -41,8 +41,13 @@ class LoginController
         $gcaptcha_response = $login->validateGoogleCaptcha($site_private_key,$g_captcha_response);
         if($gcaptcha_response === false) {
           $error = 'Invalid captcha challenge. Try again.';
-        } elseif($user_id !== '' && $password !== '' && $login->validateUser($user_id, $password)) {
-          $this->_redirect_to_dashboard();
+        } elseif($user_id !== '' && $password !== '') {
+          $login_response = $login->validateUser($user_id, $password);
+          if(is_array($login_response) && count($login_response) > 0) {
+            $error = $login_response['reason'];
+          } else {
+            $this->_redirect_to_dashboard();
+          }
         } else {
           $error = 'Invalid Userid (or) Password';
         }

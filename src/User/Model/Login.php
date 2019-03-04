@@ -29,7 +29,7 @@ class Login
 		if ($status === 'success') {
 			return $this->setLoginCookie($response['response']);
 		} else {
-			return false;
+			return $response;
 		}
 	}
 

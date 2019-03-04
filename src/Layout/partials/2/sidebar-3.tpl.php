@@ -194,6 +194,17 @@
           </li>
           <li class="sub-menu">
             <a href="javascript:void(0)">
+              <i class="fa fa-cloud"></i> Yearend Jobs <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/year-end-jobs/post-inventory"><i class="fa fa-database"></i> Post Inventory</a></li>          
+              <li><a href="/year-end-jobs/post-barcodes"><i class="fa fa-barcode"></i> Post Barcodes</a></li>
+              <li><a href="/year-end-jobs/post-debtors"><i class="fa fa-plus"></i> Post Debtors</a></li> 
+              <li><a href="/year-end-jobs/post-creditors"><i class="fa fa-minus"></i> Post Creditors</a></li> 
+            </ul>
+          </li>          
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
               <i class="fa fa-upload"></i> Data Uploads <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">

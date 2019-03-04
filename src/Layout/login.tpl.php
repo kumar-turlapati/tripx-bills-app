@@ -16,7 +16,7 @@
           <div class="login-wrap">
             <h2 class="text-center">Login to Your Account</h2>
             <?php if(isset($error) && $error !== ''): ?>
-              <div><?php echo $error ?></div>
+              <div style="font-size:11px;font-weight:bold;color:red;text-align:left;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;<?php echo $error ?></div>
             <?php endif; ?>  
             <div class="input-group">
               <span class="input-group-addon">
