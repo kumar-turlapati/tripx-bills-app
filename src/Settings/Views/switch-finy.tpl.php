@@ -4,9 +4,9 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-left"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;<?php echo $def_finy_name ?> is active in your Instance. You can change it from below setting.</h2>
       <div class="panel-body">
-        <?php echo $flash_obj->print_flash_message(); ?>        
+        <?php echo $flash_obj->print_flash_message(); ?>
+        <?php /*
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/finy/list" class="btn btn-default">
@@ -17,6 +17,7 @@
             </a>            
           </div>
         </div>
+        */ ?>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="finYearSlnoForm">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
@@ -25,14 +26,13 @@
                 <select class="form-control" name="finyCode" id="finyCode">
                   <?php 
                     foreach($finys as $key=>$value):
-                      if($def_finy_code === $key) {
-                        $disabled = 'disabled="disabled"';
-                        $value .= ' [Not Selectable]';
+                      if($key === $def_finy) {
+                        $selected = 'disabled="disabled"';
                       } else {
-                        $disabled = '';
+                        $selected = '';
                       } 
                   ?>
-                    <option value="<?php echo $key ?>" <?php echo $disabled ?>><?php echo $value ?></option>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                   <?php endforeach; ?>
                 </select>
               </div>
@@ -42,13 +42,10 @@
             </div>
           </div>
           <div class="text-center">
-            <button class="btn btn-success" id="Save"><i class="fa fa-check"></i> Make Active</button>
+            <button class="btn btn-success" id="Save"><i class="fa fa-exchange"></i> Switch Financial Year</button>
           </div>
         </form>
       </div>
-      <div style="font-weight:bold;text-align:center;padding:5px;font-size:16px;margin-top:50px;color:green;">
-        Note: This option will Logout all the connected users instantly. Your account also will be logged out when the changes are updated successfully. Please ensure that no users are connected before switching the Financial year.
-      </div>      
     </section>
   </div>
 </div>

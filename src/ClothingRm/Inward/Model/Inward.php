@@ -43,6 +43,7 @@ class Inward
 		}
 	}
 
+	// change inward status
 	public function change_inward_status($params = [], $po_code = '') {
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'inward-entry/update-status/'.$po_code;
@@ -58,6 +59,7 @@ class Inward
 		}
 	}
 
+	// get purchase details
 	public function get_purchase_details($purchase_code='', $by_po_no=false) {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
@@ -85,6 +87,7 @@ class Inward
 		}
 	}
 
+	// get purchases
 	public function get_purchases($page_no=1, $per_page=100, $search_params=[]) {
 		$params = [];
 		$params['pageNo']  = $page_no;
@@ -137,6 +140,7 @@ class Inward
 		}	
 	}
 
+	// search purchase bills
 	public function search_purchase_bills($search_params = []) {
 		$request_uri = 'inward-entry/search';
 
@@ -151,6 +155,7 @@ class Inward
 		}
 	}
 
+	// delete a PO
 	public function delete_po($form_data=[]) {
 		$request_uri = 'purchases/delete';
 		// call api.
@@ -164,6 +169,7 @@ class Inward
 		}
 	}
 
+	// get itemwise purchases
 	public function get_purchases_itemwise($form_data=[]) {
 		// call api.
 		$api_caller = new ApiCaller();
@@ -172,6 +178,25 @@ class Inward
 		if ($status === 'success') {
 			return array(
 				'status' => true,  
+				'response' => $response['response'], 
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}
+	}
+
+	// get itemwise purchase returns
+	public function get_purchase_returns_itemwise($form_data = []) {
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get','reports/purchase-return-register',$form_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,
 				'response' => $response['response'], 
 			);
 		} elseif($status === 'failed') {

@@ -104,9 +104,9 @@
               </tr>
               <tr>
                 <td style="font-size:18px;font-weight:bold;text-align:right;" colspan="2"><?php echo number_format($total_return_value, 2, '.', '')?></td>
-                <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($round_off, 2, '.', '')?></td>                
                 <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($tax_amount, 2, '.', '')?></td>
-                <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($netpay, 2, '.', '')?></td>                
+                <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($round_off, 2, '.', '')?></td>
+                <td style="font-size:18px;font-weight:bold;text-align:right;"><?php echo number_format($netpay, 2, '.', '')?></td>
               </tr>
             </tbody>
           </table>

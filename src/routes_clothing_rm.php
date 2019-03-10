@@ -73,6 +73,9 @@ $routes->add('finy_list', new Routing\Route('/finy/list', array(
 $routes->add('finy_set_active', new Routing\Route('/finy/set-active', array(
   '_controller' => 'Settings\\Controller\\FinyController::setActiveFinYear',
 )));
+$routes->add('finy_switch', new Routing\Route('/finy/switch', array(
+  '_controller' => 'Settings\\Controller\\FinyController::switchFinYear',
+)));
 
 $routes->add('finy_slnos_add', new Routing\Route('/finy-slnos/create', array(
   '_controller' => 'Settings\\Controller\\FinySlnosController::createFinySlnos',
@@ -83,6 +86,10 @@ $routes->add('finy_slnos_update', new Routing\Route('/finy-slnos/update/{finySln
 )));
 $routes->add('finy_slnos_list', new Routing\Route('/finy-slnos/list', array(
   '_controller' => 'Settings\\Controller\\FinySlnosController::listFinySlnos',
+)));
+
+$routes->add('maintenance_mode', new Routing\Route('/maintenance-mode', array(
+  '_controller' => 'Settings\\Controller\\GeneralSettingsController::maintenanceMode',
 )));
 
 // products or services list
@@ -539,6 +546,7 @@ $routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-su
 )));
 
 
+
 // file uploader
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadInventoryController::uploadInventoryAction',
@@ -778,6 +786,9 @@ $routes->add('report_po_register', new Routing\Route('/reports/po-register', arr
 )));
 $routes->add('report_po_register_itemwise', new Routing\Route('/reports/po-register-itemwise', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::itemwisePoRegister',
+)));
+$routes->add('report_po_return_register', new Routing\Route('/reports/po-return-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::poReturnRegister',
 )));
 $routes->add('report_grn_register', new Routing\Route('/reports/grn-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Purchases\\Controller\\PurchaseReportsController::grnRegister',

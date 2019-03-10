@@ -4,6 +4,9 @@
       <li class="active">
         <a class="" href="/dashboard"> <i class="icon_house_alt"></i> Dashboard</a> 
       </li>
+      <li>
+        <a href="/finy/switch"> <i class="fa fa-exchange"></i> Switch Financial Year</a> 
+      </li>      
       <li class="sub-menu">
         <a href="javascript:void(0)">
           <i class="fa fa-bars"></i> Masters <span class="menu-arrow arrow_carrot-right"></span>
@@ -65,6 +68,7 @@
               <li><a href="/reports/sales-register"><i class="fa fa-angle-right"></i> Sales Register</a></li>
               <li><a href="/reports/day-sales"><i class="fa fa-angle-right"></i> Sales by Day</a></li>
               <li><a href="/reports/itemwise-sales-register"><i class="fa fa-angle-right"></i> Itemwise Sales Register</a></li>
+              <li><a href="/reports/sales-billwise-itemwise-casewise"><i class="fa fa-angle-right"></i> Casewise Sales Register</a></li>              
               <li><a href="/reports/sales-billwise-itemwise"><i class="fa fa-angle-right"></i> Bill&amp;Item wise Sales</a></li>
             </ul>
           </li>

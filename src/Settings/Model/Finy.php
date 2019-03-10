@@ -57,6 +57,7 @@ class Finy {
 		}
 	}
 
+	// set active financial year.
 	public function set_active_fin_year($form_data = []) {
 		$response = $this->api_caller->sendRequest('post','finy/set-active',$form_data);
 		$status = $response['status'];
@@ -65,5 +66,17 @@ class Finy {
 		} elseif($status === 'failed') {
 			return array('status'=>false,'apierror'=>$response['reason']);
 		}
-	}	
+	}
+
+	// switch financial year.
+	public function switch_finy($form_data = []) {
+		$response = $this->api_caller->sendRequest('post','finy/switch',$form_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status'=>true);
+		} elseif($status === 'failed') {
+			return array('status'=>false,'apierror'=>$response['reason']);
+		}
+	}
+
 }

@@ -9,6 +9,7 @@ use Atawa\Utilities;
 use Atawa\Template;
 use Atawa\Flash;
 use Settings\Model\Finy;
+use Atawa\ApiCaller;
 
 class FinyController {
 	
@@ -18,6 +19,7 @@ class FinyController {
     $this->template = new Template(__DIR__.'/../Views/');
     $this->flash = new Flash;
     $this->finy_model = new Finy;
+    $this->api_caller = new ApiCaller;
   }
 
   // create finy
@@ -138,12 +140,19 @@ class FinyController {
   public function setActiveFinYear(Request $request) {
 
     $finys = $form_data = $form_errors = [];
+    $def_finy = '';
 
     $finy_response = $this->finy_model->get_finys();
     if($finy_response['status'] && count($finy_response['finys']) > 0) {
       $finy_codes = array_column($finy_response['finys'], 'finyCode');
       $finy_names = array_column($finy_response['finys'], 'finyName');
-      $finys = array_combine($finy_codes, $finy_names);
+      foreach($finy_response['finys'] as $key => $finy_details) {
+        if((int)$finy_details['isActive'] === 1) {
+          $def_finy_name = $finy_details['finyName'];
+          $def_finy_code = $finy_details['finyCode'];
+        }
+        $finys[$finy_details['finyCode']] = $finy_details['finyName'];
+      }
     } else {
       $this->flash->set_flash_message('No Financial years were defined for activation.');
       Utilities::redirect('/finy/list');
@@ -152,7 +161,7 @@ class FinyController {
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();
       $submitted_finy_code = Utilities::clean_string($submitted_data['finyCode']);
-      if($submitted_finy_code !== '' && in_array($submitted_finy_code, array_keys($finys))) {
+      if($submitted_finy_code !== '' && in_array($submitted_finy_code, array_keys($finys)) && $submitted_finy_code !== $def_finy_code) {
         $fin_year_name = $finys[$submitted_finy_code];
         $api_response = $this->finy_model->set_active_fin_year(['finyCode' => $submitted_finy_code]);
         if($api_response['status']) {
@@ -174,15 +183,81 @@ class FinyController {
       'errors' => $form_errors,
       'flash_obj' => $this->flash,
       'finys' => ['' => 'Choose'] + $finys,
+      'def_finy_name' => $def_finy_name,
+      'def_finy_code' => $def_finy_code,
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Settings - Financial Year',
+      'page_title' => 'Settings - Set Active Financial Year',
       'icon_name' => 'fa fa-cogs',      
     );
 
     return array($this->template->render_view('set-active-finyear', $template_vars), $controller_vars);
+  }
+
+  // switch financial year
+  public function switchFinYear(Request $request) {
+    $finys = $form_data = $form_errors = [];
+    $def_finy = '';
+
+    $finy_response = $this->finy_model->get_finys();
+    if($finy_response['status'] && count($finy_response['finys']) > 0) {
+      $def_start_date = $_SESSION['finy_s_date'];
+      $def_end_date = $_SESSION['finy_e_date'];
+      foreach($finy_response['finys'] as $key => $finy_details) {
+        if($finy_details['startDate'] === $_SESSION['finy_s_date'] && $finy_details['endDate'] === $_SESSION['finy_e_date']) {
+          $def_finy = $finy_details['finyCode'];
+        }
+        $finys[$finy_details['finyCode']] = $finy_details['finyName'];
+      }
+    } else {
+      $this->flash->set_flash_message('No Financial years were defined for activation.');
+      Utilities::redirect('/finy/list');
+    }
+
+    if( count($request->request->all())>0 ) {
+      $submitted_data = $request->request->all();
+      $submitted_finy_code = Utilities::clean_string($submitted_data['finyCode']);
+      if($submitted_finy_code !== '' && in_array($submitted_finy_code, array_keys($finys)) && $submitted_finy_code !== $def_finy) {
+        $fin_year_name = $finys[$submitted_finy_code];
+        $api_response = $this->finy_model->switch_finy(['finyCode' => $submitted_finy_code]);
+        if($api_response['status']) {
+          // update default dates.
+          $response = $this->api_caller->sendRequest('get','finy/default',[],false);
+          if(!is_array($response)) {
+            $response = json_decode($response, true);
+          }
+          Utilities::_set_fin_start_end_dates($response['response']);
+
+          $message = '<i class="fa fa-check" aria-hidden="true"></i>&nbsp;You are switched to Financial year `'.$fin_year_name.'` successfully.';
+          $this->flash->set_flash_message($message);
+          Utilities::redirect('/finy/switch');
+        } else {
+          $api_error = $api_response['apierror'];
+          $this->flash->set_flash_message($api_error, 1);
+        }
+      } else {
+        $form_errors = array('finyCode' => 'Invalid Financial year.');
+      }
+    }    
+
+    // prepare form variables.
+    $template_vars = array(
+      'submitted_data' => $form_data,
+      'errors' => $form_errors,
+      'flash_obj' => $this->flash,
+      'finys' => ['' => 'Choose'] + $finys,
+      'def_finy' => $def_finy,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Switch Financial Year',
+      'icon_name' => 'fa fa-cogs',      
+    );
+
+    return array($this->template->render_view('switch-finy', $template_vars), $controller_vars);
   }
 
   // validate finy

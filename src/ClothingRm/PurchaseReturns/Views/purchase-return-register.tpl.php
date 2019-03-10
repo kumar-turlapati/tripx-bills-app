@@ -24,7 +24,7 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&',$query_params);
   }
-  $pagination_url = '/purchase-return/register';
+  $pagination_url = $page_url = '/purchase-return/register';
 ?>
 <div class="row">
   <div class="col-lg-12">

@@ -49,7 +49,7 @@
             <div class="error-details">We are unable to authorize your device with name<br />
             <span class="ldBar" style="font-size:30px;font-weight:bold;color:#cb5249;text-decoration:underline;" id="__bq_pub"></span>
             <br />Send the above device name to your Administrator for accessing this application further. 
-            <br />Without white-listing your device, you can not proceed further.
+            <br />Without white-listing your device, you can not proceed.
             <br /><br /><h4>Please close this window and <a href="/login" class="hyperlink">login</a> again when your device is accepted by your administrator.</h4></div>
         </div>
       </div>

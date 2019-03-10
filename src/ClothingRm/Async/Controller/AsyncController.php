@@ -196,13 +196,13 @@ class AsyncController {
         echo $response;
       }
     } elseif($api_string === 'finyDefault') {
-      if(!isset($_SESSION['fy_s_date']) && !isset($_SESSION['fy_e_date'])) {
+      // if(!isset($_SESSION['fy_s_date']) && !isset($_SESSION['fy_e_date'])) {
         $response = $api_caller->sendRequest('get','finy/default',[],false);
         if(!is_array($response)) {
           $response = json_decode($response, true);
         }
-        $this->_set_fin_start_end_dates($response['response']);
-      }
+        Utilities::_set_fin_start_end_dates($response['response']);
+      // }
       echo 'QwikBills V.1.0';
     } elseif($api_string === 'auditQty') {
       $params = [];
@@ -287,16 +287,6 @@ class AsyncController {
       case '':
         return 'products/ac';
         break;
-    }
-  }
-
-  private function _set_fin_start_end_dates($response=[]) {
-    if(isset($response['startDate']) && isset($response['endDate'])) {
-      $_SESSION['finy_s_date'] = $response['startDate'];
-      $_SESSION['finy_e_date'] = $response['endDate']; 
-    } else {
-      $_SESSION['finy_s_date'] = '1970-08-24';
-      $_SESSION['finy_e_date'] = '1970-08-24';      
     }
   }
 }

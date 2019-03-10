@@ -496,6 +496,8 @@ class Utilities
         '/reports/sales-billwise-itemwise-casewise',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
+
+        '/finy/switch',
       ],
 
       // for Business head
@@ -523,6 +525,8 @@ class Utilities
         '/reports/sales-billwise-itemwise-casewise',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
+
+        '/finy/switch',
       ],      
 
       // for Sales Operator
@@ -568,6 +572,8 @@ class Utilities
         '/reports/sales-billwise-itemwise-casewise',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
+
+        '/finy/switch',
       ],
 
       6  => [
@@ -600,6 +606,8 @@ class Utilities
         '/reports/item-master-with-barcodes', '/reports/item-master',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
+
+        '/finy/switch',
       ],
 
       10 => [
@@ -611,14 +619,14 @@ class Utilities
         '/async/getTrDetailsByCode',
 
         '/stock-transfer/validate', '/stock-transfer/register', '/stock-transfer/out',
+
+        '/finy/switch',
       ],
     ];
 
     // validate permission
     if(array_key_exists($role_id, $allowed_pages) && (int)$role_id !== 3) {
       $is_allowed = array_search($path, $allowed_pages[$role_id]);
-      // dump($path, $allowed_pages[$role_id], $is_allowed);
-      // exit;
       if($is_allowed === false ) {
         Utilities::redirect('/error-404?source='.$path);
       }
@@ -984,4 +992,13 @@ class Utilities
     return ((($year % 4) == 0) && ((($year % 100) != 0) || (($year %400) == 0)));
   }  
 
+  public static function _set_fin_start_end_dates($response=[]) {
+    if(isset($response['startDate']) && isset($response['endDate'])) {
+      $_SESSION['finy_s_date'] = $response['startDate'];
+      $_SESSION['finy_e_date'] = $response['endDate']; 
+    } else {
+      $_SESSION['finy_s_date'] = '1981-08-24';
+      $_SESSION['finy_e_date'] = '1981-08-24';      
+    }
+  }
 }

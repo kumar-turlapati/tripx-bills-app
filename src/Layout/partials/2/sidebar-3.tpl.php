@@ -2,7 +2,10 @@
   <div id="sidebar"  class="nav-collapse "> 
     <ul class="sidebar-menu">
       <li class="active">
-        <a class="" href="/dashboard"> <i class="icon_house_alt"></i> Dashboard</a> 
+        <a href="/dashboard"> <i class="icon_house_alt"></i> Dashboard</a> 
+      </li>
+      <li>
+        <a href="/finy/switch"> <i class="fa fa-exchange"></i> Switch Financial Year</a> 
       </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
@@ -190,6 +193,7 @@
               <li><a href="/finy/list"><i class="fa fa-angle-right"></i> Financial Years</a></li>          
               <li><a href="/finy-slnos/list"><i class="fa fa-angle-right"></i> FY Serial Nos.</a></li>
               <li><a href="/finy/set-active"><i class="fa fa-angle-right"></i> Set Active FY</a></li> 
+              <li><a href="/maintenance-mode"><i class="fa fa-angle-right"></i> Maintenance Mode</a></li> 
             </ul>
           </li>
           <li class="sub-menu">

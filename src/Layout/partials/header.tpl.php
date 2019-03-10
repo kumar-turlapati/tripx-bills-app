@@ -4,6 +4,19 @@
   } else {
     $uname = 'My Profile';
   }
+
+  if(isset($_SESSION['cname']) && $_SESSION['cname'] !== '') {
+    if(isset($_SESSION['finy_s_date']) &&  isset($_SESSION['finy_e_date'])) {
+      $from_year = date("Y",strtotime($_SESSION['finy_s_date']));
+      $to_year = date("Y",strtotime($_SESSION['finy_e_date']));
+      $finy_string = '<sup style="font-size:14px;color:#d9534f;font-weight:bold;">[ FY: '.$from_year.' - '.$to_year.' ]</sup>';
+    } else {
+      $finy_string = '';
+    }
+    $org_name = trim($_SESSION['cname'].' '.$finy_string);
+  } else {
+    $org_name = '';
+  }
 ?>
 <nav class="navbar navbar-default">
 <section id="container" class="">
@@ -26,7 +39,7 @@
                   <div class="log-arrow-up"></div>
                   <li class="eborder-top ff-contact red"><b>Feel free to contact us:</b></li>
                   <li> <a href="#"><i class="fa fa-phone"></i> 91 98490 11005</a> </li>
-                  <li> <a href="mailto:support@qwikbills.com"><i class="fa fa-envelope"></i> support@atawa.net</a> </li>
+                  <li> <a href="mailto:support@qwikbills.com"><i class="fa fa-envelope"></i> support@qwikbills.com</a> </li>
                 </ul>
               </li>
               <li id="user-info" class="dropdown"> 
@@ -47,7 +60,7 @@
       </div>
       </div>
       <div class="theme-name">
-      	<h1><?php echo isset($_SESSION['cname']) && $_SESSION['cname'] !== '' ? $_SESSION['cname'] : '' ?></h1>
+      	<h1><?php echo trim($org_name) ?></h1>
       </div>
   </header>
   <?php if( isset($_SESSION['token_valid']) && $_SESSION['token_valid'] && $show_page_name ): ?>
