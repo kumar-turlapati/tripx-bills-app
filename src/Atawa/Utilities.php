@@ -496,6 +496,7 @@ class Utilities
         '/reports/sales-billwise-itemwise-casewise',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
+        '/reports/po-return-register',
 
         '/finy/switch',
       ],
@@ -525,6 +526,7 @@ class Utilities
         '/reports/sales-billwise-itemwise-casewise',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
+        '/reports/po-return-register',
 
         '/finy/switch',
       ],      
@@ -606,6 +608,7 @@ class Utilities
         '/reports/item-master-with-barcodes', '/reports/item-master',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
+        '/reports/po-return-register',
 
         '/finy/switch',
       ],

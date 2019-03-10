@@ -84,6 +84,7 @@
               <li><a href="/reports/po-register-itemwise"><i class="fa fa-angle-right"></i> PO Register Itemwise</a></li>
               <li><a href="/reports/item-master"><i class="fa fa-angle-right"></i> Item Master</a></li>
               <li><a href="/reports/item-master-with-barcodes"><i class="fa fa-angle-right"></i> Barcode Register</a></li>
+              <li><a href="/reports/po-return-register"><i class="fa fa-angle-right"></i> PO Return Register</a></li>
             </ul>
           </li>          
         </ul>
