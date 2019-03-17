@@ -248,7 +248,7 @@ class Sales {
 			return array(
 				'status' => true,
 				'shippingStatusInfo' => $response['response']['shippingStatusInfo'], 
-				'smsStatus' => $response['response']['smsStatus'],
+				'smsStatus' => isset($response['response']['smsStatus']) ? $response['response']['smsStatus'] : null,
 				'smsFlag' => $response['response']['smsFlag'],
 			);
 		} elseif($status === 'failed') {

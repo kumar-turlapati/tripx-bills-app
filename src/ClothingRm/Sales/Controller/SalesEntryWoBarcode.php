@@ -728,7 +728,7 @@ class SalesEntryWoBarcode {
           $message = '<i class="fa fa-check" aria-hidden="true"></i> Shipping details were updated successfully';
           if($api_response['smsFlag']) {
             $message .= ' <i class="fa fa-mobile" aria-hidden="true"></i> SMS sent successfully.';
-          } else {
+          } elseif($api_response['smsStatus'] !== null) {
             $message .= '<span class="error-msg"><i class="fa fa-mobile" aria-hidden="true"></i> '.$api_response['smsStatus'].'</span>';
           }
           $this->flash->set_flash_message($message);
