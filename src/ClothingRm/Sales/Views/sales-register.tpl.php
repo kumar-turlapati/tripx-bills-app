@@ -227,7 +227,7 @@
                         <a class="btn btn-primary" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
                           <i class="fa fa-undo" aria-hidden="true"></i>
                         </a>
-                        <a class="btn btn-default" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
+                        <a class="btn btn-danger" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
                           <i class="fa fa-truck" aria-hidden="true"></i>
                         </a>                        
                         <?php if(Utilities::is_admin()): ?>
