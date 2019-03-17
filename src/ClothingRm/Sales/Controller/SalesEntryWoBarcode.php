@@ -230,6 +230,8 @@ class SalesEntryWoBarcode {
         $flash->set_flash_message($page_error,1);
         Utilities::redirect('/sales/list');
       }
+      // dump($sales_response);
+      // exit;
     } else {
       $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
       Utilities::redirect('/sales/list');
@@ -468,18 +470,6 @@ class SalesEntryWoBarcode {
       $sa_executives = [];
     }
 
-    # ---------- check for last bill printing ----
-    if($request->get('lastBill')) {
-      $bill_to_print = $request->get('lastBill');
-    } else {
-      $bill_to_print = '';
-    }
-    if( !is_null($request->get('format')) && ($request->get('format') === 'bill' || $request->get('format') === 'invoice')) {
-      $print_format = $request->get('format');
-    } else {
-      $print_format = 'bill';
-    }    
-
     # --------------- build variables -----------------
     $controller_vars = array(
       'page_title' => 'View Invoice :: Bill No - '.$form_data['billNo'],
@@ -496,10 +486,8 @@ class SalesEntryWoBarcode {
       'page_error' => $page_error,
       'page_success' => $page_success,
       'btn_label' => 'Update Invoice',
-      'print_format' => $print_format,      
       'taxes' => $taxes,
       'form_data' => $form_data,
-      'bill_to_print' => $bill_to_print,
       'taxcalc_opt_a' => array('e'=>'Exluding Item Rate', 'i' => 'Including Item Rate'),
       'flash_obj' => $this->flash,
       'client_locations' => array(''=>'Choose') + $client_locations,
@@ -715,6 +703,175 @@ class SalesEntryWoBarcode {
 
     # render template
     return array($this->template->render_view('search-sale-bills', $template_vars),$controller_vars);    
+  }
+
+  public function salesShippingEntryAction(Request $request) {
+
+    $page_error = $page_success = $default_location = '';
+    $form_data = $client_locations = [];
+    $no_of_rows = 0;
+    $yes_no_options = [0=>'No', 1=>'Yes'];
+    
+    // check form is submitted or not.
+    if( count($request->request->all()) > 0) {
+
+      $sales_code = Utilities::clean_string($request->get('salesCode'));      
+      $form_data = $request->request->all();
+      $validation = $this->_validate_shipping_info($form_data);
+      if($validation['status'] === false ) {
+        $form_errors = $validation['errors'];
+        $this->flash->set_flash_message('You have errors in this Form.',1);
+      } else {
+        $cleaned_params = $validation['cleaned_params'];
+        $api_response = $this->sales->update_shipping_info($cleaned_params, $sales_code);
+        if($api_response['status']) {
+          $message = '<i class="fa fa-check" aria-hidden="true"></i> Shipping details were updated successfully';
+          if($api_response['smsFlag']) {
+            $message .= ' <i class="fa fa-mobile" aria-hidden="true"></i> SMS sent successfully.';
+          } else {
+            $message .= '<span class="error-msg"><i class="fa fa-mobile" aria-hidden="true"></i> '.$api_response['smsStatus'].'</span>';
+          }
+          $this->flash->set_flash_message($message);
+          Utilities::redirect('/sales/shipping-info/'.$sales_code);
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error,1);
+          $form_data = $cleaned_params;  
+        }        
+      }
+
+    // check SalesCode exists or not.
+    } elseif($request->get('salesCode') && $request->get('salesCode')!=='') {
+      $sales_code = Utilities::clean_string($request->get('salesCode'));
+      $sales_response = $this->sales->get_sales_details($sales_code);
+      if($sales_response['status']) {
+        $form_data = $sales_response['saleDetails'];
+      } else {
+        $page_error = $sales_response['apierror'];
+        $this->flash->set_flash_message($page_error,1);
+        Utilities::redirect('/sales/list');
+      }
+
+    //send the user back if nothing happens above.
+    } else {
+      $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
+      Utilities::redirect('/sales/list');
+    }
+
+    // get states
+    $states_a = Constants::$LOCATION_STATES;
+    asort($states_a);    
+
+    // get client locations
+    $client_locations_resp = $this->user_model->get_client_locations();
+    if($client_locations_resp['status']) {
+      foreach($client_locations_resp['clientLocations'] as $loc_details) {
+        $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
+      }
+    }    
+
+    // --------------- build variables -----------------
+    $controller_vars = array(
+      'page_title' => 'Add Shipping Information',
+      'icon_name' => 'fa fa-truck',
+    );
+    
+    // ---------------- prepare form variables. ---------
+    $template_vars = array(
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'form_data' => $form_data,
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'states' => [0=>'Choose'] + $states_a,
+      'yes_no_options' => $yes_no_options,
+    );
+
+    return array($this->template->render_view('sales-shipping-info', $template_vars),$controller_vars);
+  }
+
+  private function _validate_shipping_info($form_data = []) {
+    $cleaned_params = $form_errors = [];
+
+    $transporter_name = Utilities::clean_string($form_data['transporterName']);
+    $lr_nos = Utilities::clean_string($form_data['lrNo']);
+    $lr_date = Utilities::clean_string($form_data['lrDate']);
+    $challan_no = Utilities::clean_string($form_data['challanNo']);
+    
+    $address1 = Utilities::clean_string($form_data['address1']);
+    $city_name = Utilities::clean_string($form_data['cityName']);
+    $state_id = Utilities::clean_string($form_data['stateID']);
+    $pincode = Utilities::clean_string($form_data['pincode']);
+    $mobile_no = Utilities::clean_string($form_data['mobileNo']);
+    $phones = Utilities::clean_string($form_data['phones']);
+    $way_bill_no = Utilities::clean_string($form_data['wayBillNo']);
+    $send_sms = Utilities::clean_string($form_data['sendSMS']);
+    $bill_no = Utilities::clean_string($form_data['billNo']);
+
+    // dump($form_data);
+    // exit;
+
+    if($transporter_name === '') {
+      $form_errors['transporterName'] = $transporter_name;
+    } else {
+      $cleaned_params['transporterName'] = $transporter_name;
+    }
+    if($lr_nos === '') {
+      $form_errors['lrNos'] = $lr_nos;
+    } else {
+      $cleaned_params['lrNos'] = $lr_nos;
+    }
+    if($lr_date === '') {
+      $form_errors['lrDate'] = $lr_date;
+    } else {
+      $cleaned_params['lrDate'] = $lr_date;
+    }
+    if($address1 === '') {
+      $form_errors['address1'] = $address1;
+    } else {
+      $cleaned_params['address1'] = $address1;
+    }
+    if($city_name === '') {
+      $form_errors['cityName'] = $city_name;
+    } else {
+      $cleaned_params['cityName'] = $city_name;
+    }
+    if($state_id === '') {
+      $form_errors['stateID'] = $state_id;
+    } else {
+      $cleaned_params['stateID'] = $state_id;
+    }
+    if(!Utilities::validateMobileNo($mobile_no)) {
+      $form_errors['mobileNo'] = 'Invalid mobile number.';
+    } else {
+      $cleaned_params['mobileNo'] = $mobile_no;
+    }
+    if((int)$send_sms === 0 || (int)$send_sms === 1) {
+      $cleaned_params['sendSMS'] = (int)$send_sms;
+    } else {
+      $form_errors['sendSMS'] = 'Invalid message choice.';
+    }
+    if($challan_no === '') {
+      $form_errors['challanNo'] = $challan_no;
+    } else {
+      $cleaned_params['challanNo'] = $challan_no;
+    }
+    $cleaned_params['wayBillNo'] = $way_bill_no;
+    $cleaned_params['phones'] = $phones;
+    $cleaned_params['billNo'] = $bill_no;
+
+    if(count($form_errors) > 0) {
+      return [
+        'status' => false,
+        'errors' => $form_errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];      
+    }
   }
 
   // validate form data

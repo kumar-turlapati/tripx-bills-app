@@ -1,6 +1,9 @@
 <?php
   use Atawa\Utilities;
 
+  // dump($submitted_data);
+  // exit;
+
   if(isset($submitted_data['locationName']) && $submitted_data['locationName'] !== '' ) {
     $location_name = $submitted_data['locationName'];
   } else {
@@ -16,7 +19,9 @@
   } else {
     $pincode = '';
   }
-  if(isset($submitted_data['phones']) && $submitted_data['phones'] !== '' ) {
+  if(isset($submitted_data['phone']) && $submitted_data['phone'] !== '' ) {
+    $phone = $submitted_data['phone'];
+  } elseif(isset($submitted_data['phones']) && $submitted_data['phones'] !== '' ) {
     $phone = $submitted_data['phones'];
   } else {
     $phone = '';
@@ -50,6 +55,21 @@
     $address2 = $submitted_data['address2'];
   } else {
     $address2 = '';
+  }
+  if(isset($submitted_data['smsSenderID']) && $submitted_data['smsSenderID'] !== '' ) {
+    $sms_sender_id = $submitted_data['smsSenderID'];
+  } else {
+    $sms_sender_id = '';
+  }
+  if(isset($submitted_data['smsCompanyShortName']) && $submitted_data['smsCompanyShortName'] !== '' ) {
+    $sms_company_short_name = $submitted_data['smsCompanyShortName'];
+  } else {
+    $sms_company_short_name = '';
+  }
+  if(isset($submitted_data['allowMrpEditing']) && $submitted_data['allowMrpEditing'] !== '' ) {
+    $allow_mrp_editing = (int)$submitted_data['allowMrpEditing'];
+  } else {
+    $allow_mrp_editing = 0; 
   }  
 ?>
 <div class="row">
@@ -202,7 +222,7 @@
           </div>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Location short name (Printed on Sales Bills)</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Location short name (Printed on Invoices)</label>
               <input
                 type="text"
                 class="form-control" 
@@ -215,7 +235,61 @@
                 <span class="error"><?php echo $form_errors['locationNameShort'] ?></span>
               <?php endif; ?>
             </div>
-          </div>      
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;SMS Sender ID (Max. 6 chars)</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                name="smsSenderID"
+                id="smsSenderID"
+                value="<?php echo $sms_sender_id ?>"
+                maxlength="6"
+              >
+              <?php if(isset($form_errors['smsSenderID'])): ?>
+                <span class="error"><?php echo $form_errors['smsSenderID'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;Store Name in SMS (Max. 20 Chars.)</span>
+              </label>
+              <input
+                type="text" 
+                class="form-control"
+                name="smsCompanyShortName"
+                id="smsCompanyShortName"
+                value="<?php echo $sms_company_short_name ?>"
+                maxlength="20"
+              >
+              <?php if(isset($form_errors['smsCompanyShortName'])): ?>
+                <span class="error"><?php echo $form_errors['smsCompanyShortName'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-inr" aria-hidden="true"></i>&nbsp;Allow MRP Editing?</span>
+              </label>
+              <select class="form-control" name="mrpEditing" id="mrpEditing">
+                <?php 
+                  foreach($mrp_editing_a as $key=>$value):
+                    if($allow_mrp_editing === (int)$key) {
+                      $selected = 'selected = "selected"';
+                    } else {
+                      $selected = '';
+                    }
+                ?>
+                  <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                <?php endforeach; ?>
+              </select>
+              <?php if(isset($errors['mrpEditing'])): ?>
+                <span class="error"><?php echo $errors['mrpEditing'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>          
           <input type="hidden" value="<?php echo $sel_location_code ?>" id="locationCode" name="locationCode" />
           <div class="text-center">
             <button class="btn btn-success" id="Save">

@@ -15,7 +15,6 @@
   $store_name = isset($client_locations[$form_data['locationID']]) ? $client_locations[$form_data['locationID']] : '';
   $payment_method = isset($payment_methods[$form_data['paymentMethod']]) ? $payment_methods[$form_data['paymentMethod']] : '';
   $inward_status = isset($form_data['status']) ? $form_data['status'] : 0;
-  $store_name = isset($client_locations[$form_data['locationID']]) ? $client_locations[$form_data['locationID']] : '';
 
   $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
   $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';

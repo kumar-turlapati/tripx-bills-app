@@ -145,7 +145,7 @@ class Utilities
   }   
 
   public static function validateMobileNo($mobile_no='') {
-  	if( strlen(trim(str_replace("\r\n",'',$mobile_no)))<10 ) {
+  	if( strlen(trim(str_replace("\r\n",'',$mobile_no))) !== 10 ) {
   		return false;
   	} elseif(!is_numeric($mobile_no)) {
   		return false;
@@ -1002,6 +1002,15 @@ class Utilities
     } else {
       $_SESSION['finy_s_date'] = '1981-08-24';
       $_SESSION['finy_e_date'] = '1981-08-24';      
+    }
+  }
+
+  public static function get_location_state_name($state_id = '') {
+    $states_a = Constants::$LOCATION_STATES;
+    if(isset($states_a[$state_id])) {
+      return $states_a[$state_id];
+    } else {
+      return '';
     }
   }
 }

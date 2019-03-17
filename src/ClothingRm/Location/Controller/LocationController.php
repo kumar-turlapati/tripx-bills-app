@@ -25,6 +25,7 @@ class LocationController
   public function addLocation(Request $request) {
 
     $submitted_data = $form_errors = [];
+    $mrp_editing_a = [0=>'No', 1=>'Yes'];
 
     $states_a = Constants::$LOCATION_STATES;
     asort($states_a);
@@ -56,7 +57,8 @@ class LocationController
       'form_errors' => $form_errors,
       'states' => [0=>'Choose'] + $states_a,
       'countries' => [0=>'Choose'] + $countries_a,
-      'client_business_state' => $client_business_state,      
+      'client_business_state' => $client_business_state,
+      'mrp_editing_a' => $mrp_editing_a,
     );
 
     // build variables
@@ -73,6 +75,7 @@ class LocationController
 
     $submitted_data = $form_errors = [];
     $sel_location_code = '';
+    $mrp_editing_a = [0=>'No', 1=>'Yes'];
 
     $states_a = Constants::$LOCATION_STATES;
     asort($states_a);
@@ -127,6 +130,7 @@ class LocationController
       'countries' => [0=>'Choose'] + $countries_a,
       'client_business_state' => $client_business_state,  
       'sel_location_code' => $sel_location_code,
+      'mrp_editing_a' => $mrp_editing_a,
     );
 
     // build variables
@@ -179,6 +183,24 @@ class LocationController
     $pincode = Utilities::clean_string($form_data['pincode']);
     $phone = Utilities::clean_string($form_data['phone']);
     $gst_no = Utilities::clean_string($form_data['locGstNo']);
+
+    $sms_sender_id = Utilities::clean_string($form_data['smsSenderID']);
+    $sms_company_name = Utilities::clean_string($form_data['smsCompanyShortName']);
+    $allow_mrp_editing = (int)Utilities::clean_string($form_data['mrpEditing']);
+
+    if($sms_sender_id !== '') {
+      if(strlen($sms_sender_id) === 6 && ctype_alpha($sms_sender_id)) {
+        $cleaned_params['smsSenderID'] = $sms_sender_id;
+      } else {
+        $errors['smsSenderID'] = 'Invalid Sender ID.';
+      }
+    }
+    
+    if(strlen($sms_company_name) <= 20) {
+      $cleaned_params['smsCompanyShortName'] = $sms_company_name;
+    } else {
+      $errors['smsCompanyShortName'] = 'Invalid Company Short Name.';
+    }
 
     if(ctype_alnum(str_replace(' ', '', $location_name))) {
       $cleaned_params['locationName'] = $location_name;
@@ -233,6 +255,11 @@ class LocationController
       } else {
         $cleaned_params['locGstNo'] = $gst_no;
       }
+    }
+    if($allow_mrp_editing === 0 || $allow_mrp_editing === 1) {
+      $cleaned_params['allowMrpEditing'] = $allow_mrp_editing;
+    } else {
+      $errors['allowMrpEditing'] = 'Invalid MRP Editing.';
     }
     if(count($errors)>0) {
       return array('status' => false, 'errors' => $errors);

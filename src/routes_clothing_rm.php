@@ -240,6 +240,10 @@ $routes->add('sales_view', new Routing\Route('/sales/view-invoice/{salesCode}', 
   '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::salesViewAction',
   'salesCode' => null,
 )));
+$routes->add('sales_add_shipping_info', new Routing\Route('/sales/shipping-info/{salesCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::salesShippingEntryAction',
+  'salesCode' => null,
+)));
 
 // Sales Return routes
 $routes->add('sales_return_entry', new Routing\Route('/sales-return/entry/{salesCode}', array(
@@ -544,9 +548,6 @@ $routes->add('adminOptions_deleteInvoice', new Routing\Route('/admin-options/del
 $routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-summary', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::orgSummary',
 )));
-
-
-
 // file uploader
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadInventoryController::uploadInventoryAction',

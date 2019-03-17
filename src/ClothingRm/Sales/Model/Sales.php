@@ -164,6 +164,7 @@ class Sales {
 		}
 	}	
 
+	// get sales summary by day
 	public function get_sales_summary_byday($search_params) {
 		$client_id = Utilities::get_current_client_id();
 		$end_point = 'reports/daily-sales/'.$client_id;
@@ -184,6 +185,7 @@ class Sales {
 		}
 	}
 
+	// get itemwise sales report
 	public function get_itemwise_sales_report($search_params=array()) {
 		$client_id = Utilities::get_current_client_id();
 		$end_point = 'reports/daily-item-sales/'.$client_id;
@@ -202,6 +204,7 @@ class Sales {
 		}
 	}
 
+	// search sales bills.
 	public function search_sale_bills($search_params = []) {
 		$client_id = Utilities::get_current_client_id();
 		$end_point = 'sales-entry/search/'.$client_id;
@@ -236,6 +239,22 @@ class Sales {
 		}
 	}
 
+	public function update_shipping_info($cleaned_params=[], $sales_code='') {
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post', 'sales-entry/shipping-info/'.$sales_code, $cleaned_params);
+		$status = $response['status'];
+		if($status === 'success') {
+			return array(
+				'status' => true,
+				'shippingStatusInfo' => $response['response']['shippingStatusInfo'], 
+				'smsStatus' => $response['response']['smsStatus'],
+				'smsFlag' => $response['response']['smsFlag'],
+			);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
 
 }
 

@@ -182,6 +182,7 @@
                 } else {
                   $payment_method = 'Invalid';
                 }
+                $customer_code = $sales_details['customerCode'];
                 
                 $tot_bill_amount += $sales_details['billAmount'];
                 $tot_disc_amount += $sales_details['discountAmount'];
@@ -192,7 +193,13 @@
             ?>
                 <tr class="text-uppercase text-right font11">
                   <td class="valign-middle"><?php echo $cntr ?></td>
-                  <td class="text-left med-name valign-middle"><?php echo $customer_name ?></td>
+                  <td class="text-left med-name valign-middle">
+                    <?php if($customer_code !== ''): ?>
+                      <a href="/customers/update/<?php echo $customer_code ?>" target="_blank" class="blue"><?php echo $customer_name ?></a>
+                    <?php else: ?>
+                      <?php echo $customer_name ?>
+                    <?php endif; ?>
+                  </td>
                   <?php /*<td class="text-left med-name valign-middle"><?php echo $mobile_number ?></td>*/ ?>
                   <td class="text-left med-name valign-middle">
                     <span style="font-weight:bold;"><?php echo $payment_method ?></span>
@@ -212,20 +219,23 @@
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>
                         <a class="btn btn-danger" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
-                          <i class="fa fa-print"></i>
+                          <i class="fa fa-print" aria-hidden="true"></i>
                         </a>
                         <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
-                          <i class="fa fa-print"></i>
+                          <i class="fa fa-print" aria-hidden="true"></i>
                         </a>                        
                         <a class="btn btn-primary" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
-                          <i class="fa fa-undo"></i>
+                          <i class="fa fa-undo" aria-hidden="true"></i>
                         </a>
+                        <a class="btn btn-default" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
+                          <i class="fa fa-truck" aria-hidden="true"></i>
+                        </a>                        
                         <?php if(Utilities::is_admin()): ?>
                           <a class="btn btn-warning" href="/sales/update-with-barcode/<?php echo $sales_code ?>" title="Edit Invoice Using Barcode">
-                            <i class="fa fa-pencil"></i>
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
                           </a>
                           <a class="btn btn-info" href="/sales/update/<?php echo $sales_code ?>" title="Edit Invoice Without Barcode">
-                            <i class="fa fa-pencil"></i>
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
                           </a>
                         <?php endif; ?>
                         <?php /*
