@@ -316,7 +316,11 @@ function initializeJS() {
       var cno = itemDetails.cno;
       var orderQty = (parseFloat(moq)*1).toFixed(2);
       var customerType = $('#customerType').val();
-
+      if( $('#editKey').length>0 ) {
+        var editableMrps = $('#editKey').val();
+      } else {
+        var editableMrps = 0;
+      }
       $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems, #remarksWindow').show();
       if(customerType === 'b2c') {
         $('#siOtherInfoWindow').hide();
@@ -347,9 +351,14 @@ function initializeJS() {
         } else {
           lotNoInput += '</td>';
         }
+
         var qtyAvailableInput = '<td style="vertical-align:middle;"><input type="text" class="qtyAvailable text-right noEnterKey" name="itemDetails[itemAvailQty][]" id="qtyava_' + nextIndex + '" index="' + nextIndex + '" value="' + availableQty + '"  readonly  size="10" /></td>';
         var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="'+orderQty+'" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" /></td>';
-        var mrpInput = '<td style="vertical-align:middle;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10" /></td>';
+        var mrpInput = '<td style="vertical-align:middle;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10"';
+        if(parseInt(editableMrps) === 0) {
+          mrpInput += ' readonly';
+        }
+        mrpInput += ' /></td>';
         var grossAmount = '<td class="grossAmount" id="grossAmount_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+grossAmount+'</td>';
         var discounInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemDiscount][]" id="discount_' + nextIndex + '" size="10" class="saDiscount noEnterKey"  index="'+ nextIndex +'"  /></td>';
         var taxableInput = '<td class="taxableAmt text-right" id="taxableAmt_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+taxableAmount+'</td>';
@@ -1269,7 +1278,12 @@ function initializeJS() {
     $('#outwardEntryForm').on('change', '.saleItemQty', function(){
       var itemIndex = jQuery(this).attr('index');      
       updateSaleItemRow(itemIndex);
-    });    
+    });
+
+    $('#outwardEntryForm').on('change', '.mrp', function(){
+      var itemIndex = jQuery(this).attr('index');      
+      updateSaleItemRow(itemIndex);
+    });
 
     $('#refCode').on('blur', function(e){
       var refCode = returnNumber($(this).val());
@@ -1491,7 +1505,8 @@ function initializeJS() {
   if($('#dbContainer').length>0 && $('#daySales').length>0) { 
     var saleDates = [];
     var saleAmounts = [];
-    jQuery.ajax("/async/day-sales",{
+    
+/*    jQuery.ajax("/async/day-sales",{
         method:"GET",
         success: function(apiResponse) {
           if(apiResponse.status === 'success') {
@@ -1516,7 +1531,7 @@ function initializeJS() {
         error: function(e) {
           alert('An error occurred while fetching Day Sales');
         }
-    });
+    });*/
   }
 
   $('#sfGraphReload').on("click", function(e){

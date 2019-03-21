@@ -1,4 +1,5 @@
 <?php
+  use Atawa\Utilities;
 
   // dump($form_data);
   // dump($errors);
@@ -57,6 +58,7 @@
   $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
   $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
+  $sales_category = isset($form_data['saleCategory']) ? $form_data['saleCategory'] : '';  
 
   if(isset($form_data['splitPaymentCash']) && $form_data['splitPaymentCash']>0) {
     $split_payment_cash =  $form_data['splitPaymentCash'];
@@ -86,10 +88,10 @@
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
 
   $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';
-
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
-
   $form_submit_url = '/sales/update-with-barcode/'.$ic;
+
+  $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -270,7 +272,7 @@
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
-                        readonly
+                        <?php echo Utilities::is_mrp_editable() ? "" : "readonly" ?>
                         class = "mrp text-right noEnterKey"
                         id = "mrp_<?php echo $i+1 ?>"
                         index = "<?php echo $i+1 ?>"
@@ -369,6 +371,7 @@
               </tfoot>
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
+            <input type="hidden" name="editKey" id="editKey" value="<?php echo $editable_mrps ?>" />            
           </div>
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0 && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">
@@ -750,8 +753,7 @@
               </div>
             </div>
           </div>
-
-          <div class="panel" style="margin-bottom:10px;display:none;" id="remarksWindow">
+          <div class="panel" style="margin-bottom:10px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="remarksWindow">
             <div class="panel-body" style="border: 2px dashed;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-8 col-lg-8">
@@ -761,10 +763,28 @@
                     <span class="error"><?php echo $errors['remarksInvoice'] ?></span>
                   <?php endif; ?>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sales category</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="salesCategory" id="salesCategory">
+                      <?php 
+                        foreach($sa_categories as $key=>$value): 
+                          if($sales_category === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
               </div>
             </div>
           </div>
-
           <div class="text-center" id="saveWindow" style="<?php echo $tot_products > 0 ? '' : 'display:none;' ?>">
             <?php 
               if($promo_key !== '') {

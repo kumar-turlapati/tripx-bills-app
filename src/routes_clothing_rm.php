@@ -849,16 +849,40 @@ $routes->add('post_debtors', new Routing\Route('/year-end-jobs/post-debtors', ar
 $routes->add('post_creditors', new Routing\Route('/year-end-jobs/post-creditors', array(
   '_controller' => 'YearendJobs\\Controller\\YearendJobsController::postCreditors',
 )));
+
+// adj reasons
+$routes->add('add_adj_reason', new Routing\Route('/stock-adj-reason/add', array(
+  '_controller' => 'StockAdjReasons\\Controller\\StockAdjReasonsController::addAdjReason',
+)));
+$routes->add('update_adj_reason', new Routing\Route('/stock-adj-reason/update/{reasonCode}', array(
+  '_controller' => 'StockAdjReasons\\Controller\\StockAdjReasonsController::updateAdjReason',
+  'reasonCode' => null,
+)));
+$routes->add('list_adj_reasons', new Routing\Route('/stock-adj-reasons/list', array(
+  '_controller' => 'StockAdjReasons\\Controller\\StockAdjReasonsController::listAdjReasonCodes',
+)));
+
+// sales categories
+$routes->add('add_sales_category', new Routing\Route('/sales-category/add', array(
+  '_controller' => 'SalesCategory\\Controller\\SalesCategoryController::addSalesCategory',
+)));
+$routes->add('update_sales_category', new Routing\Route('/sales-category/update/{categoryCode}', array(
+  '_controller' => 'SalesCategory\\Controller\\SalesCategoryController::updateSalesCategory',
+  'categoryCode' => null,
+)));
+$routes->add('list_sale_categories', new Routing\Route('/sales-category/list', array(
+  '_controller' => 'SalesCategory\\Controller\\SalesCategoryController::listSalesCategories',
+)));
+
+return $routes;
+
+/*
 // $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
 //   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
 // )));
 // $routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
 //   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
 // )));
-
-return $routes;
-
-/*
 
 // lead routes.
 $routes->add('lead_create', new Routing\Route('/lead/create', array(

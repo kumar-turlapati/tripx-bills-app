@@ -1,5 +1,5 @@
 <?php
-
+  use Atawa\Utilities;
   // dump($form_data);
   // dump($errors);
   // dump($offers_raw);
@@ -81,6 +81,7 @@
   $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
   $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
+  $sales_category = isset($form_data['saleCategory']) ? $form_data['saleCategory'] : '';  
 
   $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
@@ -282,7 +283,7 @@
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
-                        readonly
+                        <?php echo Utilities::is_mrp_editable() ? "" : "readonly" ?>
                         class = "mrp text-right noEnterKey"
                         id = "mrp_<?php echo $i-1 ?>"
                         index = "<?php echo $i-1 ?>"
@@ -728,6 +729,25 @@
                       <?php 
                         foreach($customer_types as $key=>$value): 
                           if($customer_type === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sales category</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="salesCategory" id="salesCategory">
+                      <?php 
+                        foreach($sa_categories as $key=>$value): 
+                          if($sales_category === $key) {
                             $selected = 'selected="selected"';
                           } else {
                             $selected = '';

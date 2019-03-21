@@ -16,6 +16,7 @@ use ClothingRm\Finance\Model\CreditNote;
 use ClothingRm\PromoOffers\Model\PromoOffers;
 use BusinessUsers\Model\BusinessUsers;
 use User\Model\User;
+use SalesCategory\Model\SalesCategory;
 
 class SalesEntryWoBarcode {
 	protected $views_path;
@@ -30,7 +31,8 @@ class SalesEntryWoBarcode {
     $this->user_model = new User;
     $this->cn_model = new CreditNote;
     $this->promo_key = 'pr0M0Aplied';
-    $this->bu_model = new BusinessUsers;    
+    $this->bu_model = new BusinessUsers;
+    $this->sc_model = new SalesCategory;
 	}
 
   // create sales transaction
@@ -40,18 +42,19 @@ class SalesEntryWoBarcode {
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = [];
+    $sa_categories = ['' => 'Choose'];
     $customer_types = Constants::$CUSTOMER_TYPES;    
 
     $page_error = $page_success = $promo_key = '';
 
-    # ---------- end of initializing variables -----------------
+    // ---------- end of initializing variables -----------------
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
     }
 
     $no_of_rows = 15;
 
-    # ---------- get tax percents from api ----------------------
+    // ---------- get tax percents from api ----------------------
     $taxes_a = $this->taxes_model->list_taxes();
     if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
       $taxes_raw = $taxes_a['taxes'];
@@ -60,7 +63,7 @@ class SalesEntryWoBarcode {
       }
     }
 
-    # ---------- get live offers from api -------------------------
+    // ---------- get live offers from api -------------------------
     $offers_response = $this->offers_model->getLivePromoOffers();
     if($offers_response['status'] && count($offers_response['response']['offers'])>0 ) {
       $offers_raw = $offers_response['response']['offers'];
@@ -69,10 +72,13 @@ class SalesEntryWoBarcode {
       }
     }
 
-    # ---------- get location codes from api -----------------------
+    // get sales categories
+    $sa_categories += $this->_get_sa_categories();
+
+    // ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations();
 
-    # ---------- get business users --------------------------------
+    // ---------- get business users --------------------------------
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
     } else {
@@ -199,6 +205,7 @@ class SalesEntryWoBarcode {
       'promo_key' => $promo_key,
       'customer_types' => $customer_types,
       'no_of_rows' => $no_of_rows,
+      'sa_categories' => $sa_categories,
     );
 
     return array($this->template->render_view('sales-entry-wo-barcode', $template_vars),$controller_vars);
@@ -212,10 +219,12 @@ class SalesEntryWoBarcode {
       Utilities::redirect('/sales/list');
     }
 
-    # -------- initialize variables ---------------------------
+    // -------- initialize variables ---------------------------
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = [];
+    $sa_categories = ['' => 'Choose'];
+
     $customer_types = Constants::$CUSTOMER_TYPES;    
 
     $page_error = $page_success = $promo_key = '';
@@ -224,6 +233,11 @@ class SalesEntryWoBarcode {
       $sales_code = Utilities::clean_string($request->get('salesCode'));
       $sales_response = $this->sales->get_sales_details($sales_code);
       if($sales_response['status']) {
+        // check no of items. if items are more than 15 redirect to barcode mode.
+        if(isset($sales_response['itemDetails']) && count($sales_response['itemDetails']) > 15) {
+          $flash->set_flash_message('There are more than 15 products in this Invoice. You should edit this invoice using Barcode only.', 1);
+          Utilities::redirect('/sales/list');
+        }
         $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
       } else {
         $page_error = $sales_response['apierror'];
@@ -253,7 +267,10 @@ class SalesEntryWoBarcode {
       }
     }
 
-    # ---------- get live offers from api -------------------------
+    // get sales categories
+    $sa_categories += $this->_get_sa_categories();    
+
+    // ---------- get live offers from api -------------------------
     $offers_response = $this->offers_model->getLivePromoOffers();
     if($offers_response['status'] && count($offers_response['response']['offers'])>0 ) {
       $offers_raw = $offers_response['response']['offers'];
@@ -262,10 +279,10 @@ class SalesEntryWoBarcode {
       }
     }
 
-    # ---------- get location codes from api -----------------------
+    // ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations();
 
-    # ---------- get business users --------------------------------
+    // ---------- get business users --------------------------------
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
     } else {
@@ -392,7 +409,8 @@ class SalesEntryWoBarcode {
       'promo_key' => $promo_key,
       'customer_types' => $customer_types,
       'no_of_rows' => $no_of_rows,
-      'ic' => $sales_code,      
+      'ic' => $sales_code,
+      'sa_categories' => $sa_categories,      
     );
 
     return array($this->template->render_view('sales-update-wo-barcode', $template_vars),$controller_vars);
@@ -911,6 +929,7 @@ class SalesEntryWoBarcode {
     $customer_type = $form_data['customerType'];
     $credit_days = isset($form_data['saCreditDays']) ? Utilities::clean_string($form_data['saCreditDays']) : 0;
     $remarks_invoice = isset($form_data['remarksInvoice']) ? Utilities::clean_string($form_data['remarksInvoice']) : '';
+    $sales_category =  isset($form_data['salesCategory']) ? Utilities::clean_string($form_data['salesCategory']) : '';
 
     $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
     $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
@@ -1161,7 +1180,8 @@ class SalesEntryWoBarcode {
     $cleaned_params['lrDate'] = $lr_date;
     $cleaned_params['challanNo'] = $chalan_no;
     $cleaned_params['fromIndent'] = $from_indent;
-    $cleaned_params['remarksInvoice'] = $remarks_invoice;    
+    $cleaned_params['remarksInvoice'] = $remarks_invoice;  
+    $cleaned_params['salesCategory'] = $sales_category;  
 
     # return response.
     if(count($form_errors)>0) {
@@ -1393,5 +1413,17 @@ class SalesEntryWoBarcode {
     $cleaned_params = array_merge($invoice_details, $cleaned_params);
 
     return $cleaned_params;
+  }
+
+  private function _get_sa_categories() {
+    $sa_categories_response = $this->sc_model->list_sales_categories(['status'=>1]);
+    if($sa_categories_response['status']) {
+      $cat_keys = array_column($sa_categories_response['response'], 'salesCategoryCode');
+      $cat_names = array_column($sa_categories_response['response'], 'salesCategoryName');
+      $sa_categories = array_combine($cat_keys, $cat_names);
+      return $sa_categories;
+    } else {
+      return [];
+    }
   }
 }

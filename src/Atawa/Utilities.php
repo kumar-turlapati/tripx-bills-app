@@ -12,6 +12,20 @@ use User\Model\User;
 class Utilities
 {
 
+  public static function enc_dec_string($action = 'encrypt', $string = '') {
+    $token_config = Config::get_enc_dec_data();
+    $key = hash('sha256', $token_config['secret_key']);
+    // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+    $iv = substr(hash('sha256', $token_config['secret_iv']), 0, 16);
+    if( $action === 'encrypt' ) {
+      $output = openssl_encrypt($string, $token_config['encrypt_method'], $key, 0, $iv);
+      $output = base64_encode($output);
+    } elseif( $action === 'decrypt' ){
+      $output = openssl_decrypt(base64_decode($string), $token_config['encrypt_method'], $key, 0, $iv);
+    }
+    return $output;
+  }
+
 	public static function redirect($url, $type='external')
 	{
     $response = new RedirectResponse($url);
@@ -365,15 +379,30 @@ class Utilities
       } elseif($cookie_validation) {
         $this_device_id = $_SESSION['__bq_fp'];
         $allowed_devices = $_SESSION['__allowed_devices'];
+
+        // before validating in devices array from server 
+        // validate whether we have a cookie or not.
+        if(isset($_COOKIE['qbdid']) && $_COOKIE['qbdid'] !== '') {
+          // set dec device id in this device id.
+          $this_device_id = Utilities::enc_dec_string('decrypt', $_COOKIE['qbdid']);
+          // var_dump($this_device_id);
+          // exit;
+        }
+
         if(!in_array($this_device_id, $allowed_devices)) {
-          #unset cookie immediately
-          setcookie('__ata__','',time()-86400);
+          // unset cookie immediately
+          @setcookie('__ata__','',time()-86400);
+
+          // setcookie for Device.
+          Utilities::set_device_cookie($this_device_id);
+
           unset($_SESSION['ccode'], $_SESSION['uid'], $_SESSION['uname'], 
                 $_SESSION['utype'], $_SESSION['bc'], $_SESSION['lc'], 
                 $_SESSION['lname'], $_SESSION['token_valid'], $_SESSION['cname']
-              );
+                );
           Utilities::redirect('/error-device');
         }
+
       } else {
         session_destroy();
         Utilities::redirect('/login');
@@ -390,6 +419,7 @@ class Utilities
       $_SESSION['bc'] = $cookie_string_a[8];
       $_SESSION['lc'] = $cookie_string_a[9]; 
       $_SESSION['lname'] = $cookie_string_a[10];
+      $_SESSION['editable_mrps'] = $cookie_string_a[11];
       $_SESSION['token_valid'] = true;
       $_SESSION['last_access_time'] = $current_time;
       return true;
@@ -476,7 +506,7 @@ class Utilities
       // for Manager
       9 => [
 
-        '/dashboard', '/error-404', '/logout',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', 
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
         '/async/finyDefault',
@@ -504,7 +534,7 @@ class Utilities
       // for Business head
       12 => [
 
-        '/dashboard', '/error-404', '/logout',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
         '/async/finyDefault',
@@ -534,7 +564,7 @@ class Utilities
       // for Sales Operator
       5 => [
 
-        '/dashboard', '/error-404', '/logout',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
         '/async/finyDefault', '/async/getTrDetailsByCode',
@@ -583,7 +613,7 @@ class Utilities
 
       // for Purchase Operator
       7  => [
-        '/dashboard', '/error-404', '/logout',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/get-supplier-details',
         '/async/finyDefault',
@@ -617,7 +647,7 @@ class Utilities
       ],
 
       13 => [
-        '/dashboard', '/error-404', '/logout',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/getTrDetailsByCode',
 
@@ -634,7 +664,6 @@ class Utilities
         Utilities::redirect('/error-404?source='.$path);
       }
     }
-
     return true;
   }
 
@@ -817,16 +846,29 @@ class Utilities
     }
 
     $user_type = $_SESSION['utype'];
-    $this_device_id = $_SESSION['__bq_fp'];
     $allowed_devices = $_SESSION['__allowed_devices'];
+
+    // before validating in devices array from server 
+    // validate whether we have a cookie or not.
+    if(isset($_COOKIE['qbdid']) && $_COOKIE['qbdid'] !== '') {
+      // set dec device id in this device id.
+      $this_device_id = Utilities::enc_dec_string('decrypt', $_COOKIE['qbdid']);
+    } else {
+      $this_device_id = $_SESSION['__bq_fp'];
+    }
+
     switch ($user_type) {
       case 3:
         # code...
         break;
       default:
         if(!in_array($this_device_id, $allowed_devices)) {
-          #unset cookie immediately
+          // unset cookie immediately
           setcookie('__ata__','',time()-200400);
+
+          // set device cookie.
+          Utilities::set_device_cookie($this_device_id);
+
           unset($_SESSION['ccode'], $_SESSION['uid'], $_SESSION['uname'], 
                 $_SESSION['bc'], $_SESSION['lc'], 
                 $_SESSION['lname'], $_SESSION['token_valid'], $_SESSION['cname']
@@ -1011,6 +1053,21 @@ class Utilities
       return $states_a[$state_id];
     } else {
       return '';
+    }
+  }
+
+  public static function is_mrp_editable() {
+    return 
+      (isset($_SESSION['editable_mrps']) && (int)$_SESSION['editable_mrps'] === 1) ||
+      (isset($_SESSION['__utype']) && (int)$_SESSION['__utype'] === 3)
+      ? true 
+      : false;
+  }
+
+  public static function set_device_cookie($device_id = '') {
+    $enc_device_id = Utilities::enc_dec_string('encrypt', $device_id);
+    if(!isset($_COOKIE['qbdid'])) {
+      @setcookie('qbdid', $enc_device_id, time()+60*60*24*30);
     }
   }
 }

@@ -45,6 +45,7 @@
   $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
   $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
+  $sales_category = isset($form_data['saleCategory']) ? $form_data['saleCategory'] : '';
 
   $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
@@ -60,6 +61,8 @@
   } else {
     $form_submit_url = '/sales/entry-with-barcode';
   }
+  // dump($_SESSION);
+  $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -68,6 +71,7 @@
         <?php echo $flash_obj->print_flash_message(); ?>
         <div class="global-links actionButtons clearfix"> 
           <div class="pull-right text-right">
+            <a href="/sales/list" class="btn btn-default"><i class="fa fa-book"></i> Sales Register</a>&nbsp;&nbsp;
             <a href="/sales/entry" class="btn btn-default"><i class="fa fa-inr"></i> Sales Entry W/o Barcode</a>
           </div>
         </div>        
@@ -338,6 +342,7 @@
               </tfoot>
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
+            <input type="hidden" name="editKey" id="editKey" value="<?php echo $editable_mrps ?>" />
           </div>
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0  && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">
@@ -720,7 +725,7 @@
             </div>
           </div>
 
-          <div class="panel" style="margin-bottom:10px;display:none;" id="remarksWindow">
+          <div class="panel" style="margin-bottom:10px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="remarksWindow">
             <div class="panel-body" style="border: 2px dashed;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-8 col-lg-8">
@@ -730,6 +735,25 @@
                     <span class="error"><?php echo $errors['remarksInvoice'] ?></span>
                   <?php endif; ?>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sales category</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="salesCategory" id="salesCategory">
+                      <?php 
+                        foreach($sa_categories as $key=>$value): 
+                          if($sales_category === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
               </div>
             </div>
           </div>

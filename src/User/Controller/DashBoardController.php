@@ -17,6 +17,9 @@ class DashBoardController
 	}
 
   public function indexAction(Request $request) {
+
+    // dump($_SESSION);
+
     // prepare form variables.
     $template_vars = array(
       'cal_months' => Utilities::get_calender_months(),

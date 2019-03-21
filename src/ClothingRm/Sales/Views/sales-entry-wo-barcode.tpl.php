@@ -1,10 +1,9 @@
 <?php
-
+  use Atawa\Utilities;
   // dump($form_data);
   // dump($errors);
   // dump($offers_raw);
   // exit;
-
   // dump($print_format, $bill_to_print);
 
   if(isset($form_data['locationCode'])) {
@@ -48,15 +47,16 @@
   $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
   $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
+  $sales_category = isset($form_data['saleCategory']) ? $form_data['saleCategory'] : '';  
 
   $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
   $credit_days_input_style = (int)$payment_method === 3 ? '' : 'style="display:none;"';
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
-
   $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';  
 
   $form_submit_url = '/sales/entry';
+
   // dump($promo_key);
 ?>
 
@@ -254,7 +254,7 @@
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
-                        readonly
+                        <?php echo Utilities::is_mrp_editable() ? "" : "readonly" ?>
                         class = "mrp text-right noEnterKey"
                         id = "mrp_<?php echo $i-1 ?>"
                         index = "<?php echo $i-1 ?>"
@@ -712,10 +712,28 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Sales category</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="salesCategory" id="salesCategory">
+                      <?php 
+                        foreach($sa_categories as $key=>$value): 
+                          if($sales_category === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
           <div class="panel" style="margin-bottom:10px;">
             <div class="panel-body" style="border: 2px dashed;">
               <div class="form-group">
@@ -729,7 +747,6 @@
               </div>
             </div>
           </div>
-
           <div class="text-center">
             <?php 
               if($promo_key !== '') {
@@ -743,10 +760,6 @@
             <button class="<?php echo $button_class ?> cancelOp" id="SaveInvoice" name="op" value="SaveandPrintBill">
               <i class="<?php echo $button_icon ?>"></i> Save Bill &amp; Print
             </button>
-            <?php /*
-            <button class="btn btn-warning" id="SaveBill" name="op" value="SaveandPrintInvoice">
-              <i class="fa fa-save"></i> Save &amp; Print Invoice
-            </button> */ ?>
             <button class="btn btn-danger cancelButton" id="seWoBarcode">
               <i class="fa fa-times"></i> Cancel
             </button>                        

@@ -95,22 +95,18 @@ class Login
 		{
 			// $expires_in = time() + (int)$response['expires_in'];
 			$expires_in = time()+(int)$response['expires_in'];
-
 			$cookie_string = $response['access_token'].'##'.$response['refresh_token'].'##'.$expires_in.
 											 '##'.$response['cname'].'##'.$response['ccode'].'##'.$response['uid'].
 											 '##'.$response['uname'].'##'.$response['utype'].'##'.$response['bc'].
-											 '##'.$response['lc'].'##'.$response['lname'];
+											 '##'.$response['lc'].'##'.$response['lname'].'##'.$response['mrpEditable'];
 
 			if(isset($_SESSION['__allowed_devices'])) {
 				unset($_SESSION['__allowed_devices']);
 				unset($_SESSION['__just_logged_in']);				
 			}
 			$devices_a = count($response['devices']) > 0 ? array_column($response['devices'],'device_name') : [];
-			// dump($devices_a);
 			$_SESSION['__allowed_devices'] = $devices_a;
 			$_SESSION['__just_logged_in'] = true;
-
-			// dump($_SESSION, 'Kumar');
 
 			// set cookie
 			if (setcookie('__ata__',base64_encode($cookie_string),0,'/')) {
