@@ -839,13 +839,14 @@ class Utilities
       return;
     }
 
-    if( (!isset($_SESSION['utype']) && !is_numeric($_SESSION['utype'])) ||
-         !isset($_SESSION['__bq_fp']) || !isset($_SESSION['__allowed_devices'])
+    if( !isset($_SESSION['utype']) || 
+        !isset($_SESSION['__bq_fp']) || 
+        !isset($_SESSION['__allowed_devices']) 
       ) {
       Utilities::redirect('/login');
     }
 
-    $user_type = $_SESSION['utype'];
+    $user_type = (int)$_SESSION['utype'];
     $allowed_devices = $_SESSION['__allowed_devices'];
 
     // before validating in devices array from server 
