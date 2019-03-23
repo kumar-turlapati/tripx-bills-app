@@ -145,17 +145,17 @@
           <thead>
             <tr>
               <th width="3%"  class="text-center">Sno.</th>
-              <th width="15%" class="text-center">Customer<br />Name</th>
+              <th width="10%" class="text-center">Customer<br />Name</th>
               <?php /*<th width="7%" class="text-center">Mobile<br />Number</th>*/ ?>
               <th width="6%" class="text-center">Payment<br />Method</th>                
-              <th width="13%" class="text-center">Bill No. &amp; Date</th>
+              <th width="14%" class="text-center">Bill No. &amp; Date</th>
               <th width="6%" class="text-center">Bill Amount<br />(in Rs.)</th>
               <th width="6%" class="text-center">Discount<br />(in Rs.)</th>
               <th width="6%" class="text-center">Taxable<br />(in Rs.)</th>
               <th width="6%" class="text-center">GST<br />(in Rs.)</th>                
               <th width="5%" class="text-center">R.off<br />(in Rs.)</th>
-              <th width="5%" class="text-center">Net Pay<br />(in Rs.)</th>
-              <th width="23%" class="text-center">Actions</th>
+              <th width="6%" class="text-center">Net Pay<br />(in Rs.)</th>
+              <th width="26%" class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -261,22 +261,22 @@
           ?>
           <tr class="text-uppercase">
             <td colspan="4" align="right">PAGE TOTALS</td>
-            <td class="text-bold text-right"><?php echo number_format($tot_bill_amount,2) ?></td>
-            <td class="text-bold text-right"><?php echo number_format($tot_disc_amount,2) ?></td>
-            <td class="text-bold text-right"><?php echo number_format($tot_amount,2) ?></td>
-            <td class="text-bold text-right"><?php echo number_format($tot_tax_amount,2) ?></td>              
-            <td class="text-bold text-right"><?php echo number_format($tot_round_off,2) ?></td>
-            <td class="text-bold text-right"><?php echo number_format($tot_net_pay,2) ?></td>
+            <td class="text-bold text-right"><?php echo number_format($tot_bill_amount,2,'.','') ?></td>
+            <td class="text-bold text-right"><?php echo number_format($tot_disc_amount,2,'.','') ?></td>
+            <td class="text-bold text-right"><?php echo number_format($tot_amount,2,'.','') ?></td>
+            <td class="text-bold text-right"><?php echo number_format($tot_tax_amount,2,'.','') ?></td>              
+            <td class="text-bold text-right"><?php echo number_format($tot_round_off,2,'.','') ?></td>
+            <td class="text-bold text-right"><?php echo number_format($tot_net_pay,2,'.','') ?></td>
             <td>&nbsp;</td>
           </tr>
           <tr class="text-uppercase font14">
-            <td colspan="4" align="right">DAY SALES</td>
-            <td class="text-bold text-right"><?php echo isset($query_totals['billAmount']) ? number_format($query_totals['billAmount'],2) : "0.00" ?></td>
-            <td class="text-bold text-right"><?php echo isset($query_totals['discountAmount']) ? number_format($query_totals['discountAmount'],2) : "0.00" ?></td>
-            <td class="text-bold text-right"><?php echo isset($query_totals['totalAmount']) ? number_format($query_totals['totalAmount'],2) : "0.00"  ?></td>
-            <td class="text-bold text-right"><?php echo isset($query_totals['taxAmount']) ? number_format($query_totals['taxAmount'],2) : "0.00" ?></td>
-            <td class="text-bold text-right"><?php echo isset($query_totals['roundOff']) ? number_format($query_totals['roundOff'],2) : "0.00" ?></td>
-            <td class="text-bold text-right"><?php echo isset($query_totals['netPay']) ? number_format($query_totals['netPay'],2) : "0.00" ?></td>
+            <td colspan="4" align="right">TOTAL SALES</td>
+            <td class="text-bold text-right"><?php echo isset($query_totals['billAmount']) ? number_format($query_totals['billAmount'],2,'.','') : "0.00" ?></td>
+            <td class="text-bold text-right"><?php echo isset($query_totals['discountAmount']) ? number_format($query_totals['discountAmount'],2,'.','') : "0.00" ?></td>
+            <td class="text-bold text-right"><?php echo isset($query_totals['totalAmount']) ? number_format($query_totals['totalAmount'],2,'.','') : "0.00"  ?></td>
+            <td class="text-bold text-right"><?php echo isset($query_totals['taxAmount']) ? number_format($query_totals['taxAmount'],2,'.','') : "0.00" ?></td>
+            <td class="text-bold text-right"><?php echo isset($query_totals['roundOff']) ? number_format($query_totals['roundOff'],2,'.','') : "0.00" ?></td>
+            <td class="text-bold text-right"><?php echo isset($query_totals['netPay']) ? number_format($query_totals['netPay'],2,'.','') : "0.00" ?></td>
             <td>&nbsp;</td>      
           </tr>
         </tbody>
