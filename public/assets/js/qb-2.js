@@ -1506,7 +1506,7 @@ function initializeJS() {
     var saleDates = [];
     var saleAmounts = [];
     
-/*    jQuery.ajax("/async/day-sales",{
+    jQuery.ajax("/async/day-sales",{
         method:"GET",
         success: function(apiResponse) {
           if(apiResponse.status === 'success') {
@@ -1531,7 +1531,7 @@ function initializeJS() {
         error: function(e) {
           alert('An error occurred while fetching Day Sales');
         }
-    });*/
+    });
   }
 
   $('#sfGraphReload').on("click", function(e){
