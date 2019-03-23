@@ -154,8 +154,8 @@
               <th width="6%" class="text-center">Taxable<br />(in Rs.)</th>
               <th width="6%" class="text-center">GST<br />(in Rs.)</th>                
               <th width="5%" class="text-center">R.off<br />(in Rs.)</th>
-              <th width="7%" class="text-center">Net Pay<br />(in Rs.)</th>
-              <th width="22%" class="text-center">Actions</th>
+              <th width="5%" class="text-center">Net Pay<br />(in Rs.)</th>
+              <th width="23%" class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -172,10 +172,12 @@
                 $location_code = isset($location_codes[$sales_details['locationID']]) ? $location_codes[$sales_details['locationID']] : '';
                 if($sales_details['customerName'] !== '') {
                   $customer_name = $sales_details['customerName'];
+                  $customer_name_short = strlen($customer_name) > 15 ? substr($customer_name,0,15).'..' : $customer_name;
                 } elseif($sales_details['tmpCustName'] !== '') {
                   $customer_name = $sales_details['tmpCustName'];
+                  $customer_name_short = strlen($customer_name) > 15 ? substr($customer_name,0,15).'..' : $customer_name;
                 } else {
-                  $customer_name = '';
+                  $customer_name = $customer_name_short = '';
                 }
                 if($sales_details['paymentMethod'] !== '') {
                   $payment_method = Constants::$PAYMENT_METHODS_RC_SHORT[$sales_details['paymentMethod']];
@@ -193,11 +195,11 @@
             ?>
                 <tr class="text-uppercase text-right font11">
                   <td class="valign-middle"><?php echo $cntr ?></td>
-                  <td class="text-left med-name valign-middle">
+                  <td class="text-left med-name valign-middle" title="<?php echo $customer_name ?>">
                     <?php if($customer_code !== ''): ?>
-                      <a href="/customers/update/<?php echo $customer_code ?>" target="_blank" class="blue"><?php echo $customer_name ?></a>
+                      <a href="/customers/update/<?php echo $customer_code ?>" target="_blank" class="blue"><?php echo $customer_name_short ?></a>
                     <?php else: ?>
-                      <?php echo $customer_name ?>
+                      <?php echo $customer_name_short ?>
                     <?php endif; ?>
                   </td>
                   <?php /*<td class="text-left med-name valign-middle"><?php echo $mobile_number ?></td>*/ ?>

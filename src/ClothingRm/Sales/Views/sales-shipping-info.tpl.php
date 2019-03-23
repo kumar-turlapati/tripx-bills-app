@@ -38,7 +38,7 @@
   }  
   if(isset($submitted_data['lrDate'])) {
     $lr_date = $submitted_data['lrDate'];
-  } elseif(isset($form_data['lrDate'])) {
+  } elseif(isset($form_data['lrDate']) && $form_data['lrDate'] !== '') {
     $lr_date = date("d-m-Y", strtotime($form_data['lrDate']));
   } else {
     $lr_date = date("d-m-Y");

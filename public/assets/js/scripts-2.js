@@ -636,7 +636,10 @@ function initializeJS() {
       window.location.href = '/upload-creditors';
     } else if(buttonId === 'validateStButton') {
       window.location.href = '/stock-transfer/register';
+    } else if(buttonId === 'shippingPage') {
+      window.location.href = '/sales/list';      
     }
+
   });
 
   jQuery('.delPcVoucher').on("click", function(e){

@@ -726,16 +726,31 @@ class SalesEntryWoBarcode {
   public function salesShippingEntryAction(Request $request) {
 
     $page_error = $page_success = $default_location = '';
-    $form_data = $client_locations = [];
+    $form_data = $client_locations = $form_errors = $submitted_data = [];
     $no_of_rows = 0;
     $yes_no_options = [0=>'No', 1=>'Yes'];
+
+    // check if sales code is available or not.
+    if($request->get('salesCode') && $request->get('salesCode') !== '') {
+      $sales_code = Utilities::clean_string($request->get('salesCode'));
+      $sales_response = $this->sales->get_sales_details($sales_code);
+      if($sales_response['status']) {
+        $form_data = $sales_response['saleDetails'];
+      } else {
+        $page_error = $sales_response['apierror'];
+        $this->flash->set_flash_message($page_error,1);
+        Utilities::redirect('/sales/list');
+      }
+    } else {
+      $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
+      Utilities::redirect('/sales/list');
+    }    
     
     // check form is submitted or not.
     if( count($request->request->all()) > 0) {
-
       $sales_code = Utilities::clean_string($request->get('salesCode'));      
-      $form_data = $request->request->all();
-      $validation = $this->_validate_shipping_info($form_data);
+      $submitted_data = $request->request->all();
+      $validation = $this->_validate_shipping_info($submitted_data);
       if($validation['status'] === false ) {
         $form_errors = $validation['errors'];
         $this->flash->set_flash_message('You have errors in this Form.',1);
@@ -754,26 +769,9 @@ class SalesEntryWoBarcode {
         } else {
           $page_error = $api_response['apierror'];
           $this->flash->set_flash_message($page_error,1);
-          $form_data = $cleaned_params;  
-        }        
+          $submitted_data = $cleaned_params;  
+        }
       }
-
-    // check SalesCode exists or not.
-    } elseif($request->get('salesCode') && $request->get('salesCode')!=='') {
-      $sales_code = Utilities::clean_string($request->get('salesCode'));
-      $sales_response = $this->sales->get_sales_details($sales_code);
-      if($sales_response['status']) {
-        $form_data = $sales_response['saleDetails'];
-      } else {
-        $page_error = $sales_response['apierror'];
-        $this->flash->set_flash_message($page_error,1);
-        Utilities::redirect('/sales/list');
-      }
-
-    //send the user back if nothing happens above.
-    } else {
-      $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
-      Utilities::redirect('/sales/list');
     }
 
     // get states
@@ -799,11 +797,13 @@ class SalesEntryWoBarcode {
       'page_error' => $page_error,
       'page_success' => $page_success,
       'form_data' => $form_data,
+      'submitted_data' => $submitted_data,
       'flash_obj' => $this->flash,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'states' => [0=>'Choose'] + $states_a,
       'yes_no_options' => $yes_no_options,
+      'errors' => $form_errors,
     );
 
     return array($this->template->render_view('sales-shipping-info', $template_vars),$controller_vars);
@@ -830,13 +830,19 @@ class SalesEntryWoBarcode {
     // dump($form_data);
     // exit;
 
+    if($bill_no === '') {
+      $form_errors['billNo'] = 'Invalid bill no.';
+    } else {
+      $cleaned_params['billNo'] = $bill_no;
+    }
+
     if($transporter_name === '') {
-      $form_errors['transporterName'] = $transporter_name;
+      $form_errors['transporterName'] = 'Invalid transporter name.';
     } else {
       $cleaned_params['transporterName'] = $transporter_name;
     }
     if($lr_nos === '') {
-      $form_errors['lrNos'] = $lr_nos;
+      $form_errors['lrNo'] = 'Invalid LR No.';
     } else {
       $cleaned_params['lrNos'] = $lr_nos;
     }
@@ -846,17 +852,17 @@ class SalesEntryWoBarcode {
       $cleaned_params['lrDate'] = $lr_date;
     }
     if($address1 === '') {
-      $form_errors['address1'] = $address1;
+      $form_errors['address1'] = 'Invalid address.';
     } else {
       $cleaned_params['address1'] = $address1;
     }
     if($city_name === '') {
-      $form_errors['cityName'] = $city_name;
+      $form_errors['cityName'] = 'Invalid City name.';
     } else {
       $cleaned_params['cityName'] = $city_name;
     }
     if($state_id === '') {
-      $form_errors['stateID'] = $state_id;
+      $form_errors['stateID'] = 'Invalid State name.';
     } else {
       $cleaned_params['stateID'] = $state_id;
     }
@@ -877,7 +883,6 @@ class SalesEntryWoBarcode {
     }
     $cleaned_params['wayBillNo'] = $way_bill_no;
     $cleaned_params['phones'] = $phones;
-    $cleaned_params['billNo'] = $bill_no;
 
     if(count($form_errors) > 0) {
       return [
