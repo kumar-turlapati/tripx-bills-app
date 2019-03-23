@@ -172,10 +172,10 @@
                 $location_code = isset($location_codes[$sales_details['locationID']]) ? $location_codes[$sales_details['locationID']] : '';
                 if($sales_details['customerName'] !== '') {
                   $customer_name = $sales_details['customerName'];
-                  $customer_name_short = strlen($customer_name) > 15 ? substr($customer_name,0,15).'..' : $customer_name;
+                  $customer_name_short = strlen($customer_name) > 10 ? substr($customer_name,0,10).'..' : $customer_name;
                 } elseif($sales_details['tmpCustName'] !== '') {
                   $customer_name = $sales_details['tmpCustName'];
-                  $customer_name_short = strlen($customer_name) > 15 ? substr($customer_name,0,15).'..' : $customer_name;
+                  $customer_name_short = strlen($customer_name) > 10 ? substr($customer_name,0,10).'..' : $customer_name;
                 } else {
                   $customer_name = $customer_name_short = '';
                 }
