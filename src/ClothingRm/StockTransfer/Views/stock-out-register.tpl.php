@@ -178,8 +178,8 @@
             ?>
               <tr class="text-bold">
                 <td colspan="6" align="right" class="valign-middle">TOTALS</td>
-                <td align="right" class="valign-middle"><?php echo number_format($total_amount, 2) ?></td>
-                <td align="right" class="valign-middle"><?php echo number_format($total_qty, 2) ?></td>
+                <td align="right" class="valign-middle"><?php echo number_format($total_amount, 2, '.', '') ?></td>
+                <td align="right" class="valign-middle"><?php echo number_format($total_qty, 2, '.', '') ?></td>
                 <td>&nbsp;</td>
               </tr>
             </tbody>

@@ -399,7 +399,7 @@ function initializeJS() {
                 transferQty = parseFloat($('#trTransQty').text());
                 var diffQty = parseFloat(transferQty - scannedQty);
                 // console.log(scannedQty, transferQty, diffQty);
-                if(diffQty <= 0) {
+                if(diffQty == 0) {
                   $('#stBarcode').attr('disabled', true);
                   bootbox.alert({
                     message: "Scanning completed. Click on Save Button / స్కానింగ్ పూర్తి ఐనది. ఈ బదిలీ సేవ్ చేయటానికి అంగీకరణ బటన్ ప్రెస్ చెయ్యండి."
@@ -407,6 +407,18 @@ function initializeJS() {
                   $('#stBarcode').val('');
                   $('#trScannedQty').text(scannedQty.toFixed(2));
                   $('#trDiff').text(diffQty.toFixed(2));                  
+                } else if(diffQty < 0) {
+                  $('#stBarcode').attr('disabled', true);
+                  var message = "Scanned Qty. is more than actual Transfer Qty. and it is invalid. Please Rescan Again / స్కాన్ చేసిన సరుకు అసలు ట్రాన్స్ఫర్ చేయబడిన సరుకు కన్నా ఎక్కువగా ఉన్నది. ఇది చెల్లదు. మీరు మరల సరి చూసుకొని స్కాన్ చేయ గలరు.";
+                  alert(message);
+/*                $('#stBarcode').val('');
+                  $('#trScannedQty').text(scannedQty.toFixed(2));
+                  $('#trDiff').text(diffQty.toFixed(2));*/
+                  if($('#transferCode').length>0) {
+                    window.location.href = "/stock-transfer/validate/"+$('#transferCode').val();
+                  } else {
+                    window.location.href = "/stock-transfer/list";
+                  }
                 } else {
                   $('#trScannedQty').text(scannedQty.toFixed(2));
                   $('#trDiff').text(diffQty.toFixed(2));
@@ -744,6 +756,7 @@ function initializeJS() {
       if(lotNo !== '') {
         if(Object.keys(lotNosResponse[lotNo]).length>0) {
           jQuery('#qtyava_'+itemIndex).val(lotNosResponse[lotNo].closingQty);
+          jQuery('#qty_'+itemIndex).val(lotNosResponse[lotNo].mOq);
           jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].mrp);
           jQuery('#itemType_'+itemIndex).val(lotNosResponse[lotNo].itemType);
           jQuery('#saItemTax_'+itemIndex+' option[value="'+lotNosResponse[lotNo].taxPercent+'"]').attr('selected', 'selected');
@@ -751,7 +764,7 @@ function initializeJS() {
         }
       }
     });
-    jQuery('.saleItemQty').on('change', function(){
+    jQuery('.saleItemQty').on('blur', function(){
       var transferQty = parseInt($(this).val());
       var itemIndex = jQuery(this).attr('index');
       var lotNoRef = $('#lotNo_'+itemIndex);

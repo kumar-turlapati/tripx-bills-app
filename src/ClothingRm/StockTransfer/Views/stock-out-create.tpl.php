@@ -177,6 +177,9 @@
                         index="<?php echo $i-1 ?>" 
                         value="<?php echo $item_name ?>"
                       />
+                      <?php if(isset($errors['itemDetails']['itemName'][$ex_index])): ?>
+                        <span class="error"><?php echo $errors['itemDetails']['itemName'][$ex_index] ?></span>
+                      <?php endif; ?>
                     </td>
                     <td style="vertical-align:middle;">
                       <div class="select-wrap">
@@ -188,7 +191,10 @@
                         >
                           <option value="">Choose</option>
                         </select>
-                      </div>                      
+                      </div>
+                      <?php if(isset($errors['itemDetails']['lotNo'][$ex_index])): ?>
+                        <span class="error"><?php echo $errors['itemDetails']['lotNo'][$ex_index] ?></span>
+                      <?php endif; ?>                      
                     </td>                
                     <td style="vertical-align:middle;">
                       <input
@@ -201,8 +207,12 @@
                         size="10"
                         readonly
                       />
+                      <?php if(isset($errors['itemDetails']['itemAvailQty'][$ex_index])): ?>
+                        <span class="error"><?php echo $errors['itemDetails']['itemAvailQty'][$ex_index] ?></span>
+                      <?php endif; ?>                      
                     </td>
                     <td style="vertical-align:middle;" align="center">
+                      <?php /*
                       <div class="select-wrap">
                         <select 
                           class="form-control saleItemQty"
@@ -222,6 +232,19 @@
                           <?php endforeach; ?>
                         </select>
                       </div>
+                      */ ?>
+                      <input
+                        type="text"
+                        id="qty_<?php echo $i-1 ?>"
+                        name="itemDetails[itemSoldQty][]"
+                        size="10"
+                        value="<?php echo $item_qty ?>"
+                        class="form-control saleItemQty"
+                        index="<?php echo $i-1 ?>"                          
+                      />
+                      <?php if(isset($errors['itemDetails']['itemSoldQty'][$ex_index])): ?>
+                        <span class="error"><?php echo $errors['itemDetails']['itemSoldQty'][$ex_index] ?></span>
+                      <?php endif; ?>                      
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
@@ -233,6 +256,9 @@
                         value = "<?php echo $item_rate ?>"
                         name = "itemDetails[itemRate][]"
                       />
+                      <?php if(isset($errors['itemDetails']['itemRate'][$ex_index])): ?>
+                        <span class="error"><?php echo $errors['itemDetails']['itemRate'][$ex_index] ?></span>
+                      <?php endif; ?>                      
                     </td>
                     <td
                       style="vertical-align:middle;"
@@ -258,6 +284,9 @@
                           <?php endforeach; ?>                            
                         </select>
                       </div>
+                      <?php if(isset($errors['itemDetails']['itemTaxPercent'][$ex_index])): ?>
+                        <span class="error"><?php echo $errors['itemDetails']['itemTaxPercent'][$ex_index] ?></span>
+                      <?php endif; ?>                      
                       <input type="hidden" class="taxAmount" id="taxAmount_<?php echo $i-1 ?>" />
                       <input type="hidden" class="itemType" id="itemType_<?php echo $i-1 ?>" />                      
                     </td>

@@ -131,7 +131,8 @@ class StockOutController
     // validate transfer code.
     if(!is_null($request->get('transferCode')) && $request->get('transferCode') !== '') {
       $transfer_code = Utilities::clean_string($request->get('transferCode'));
-      $transfer_details_reponse = $this->sto_model->get_stock_out_entry_details($transfer_code, 'from', 1);
+      $transfer_status = Utilities::is_admin() ? 99 : 1;
+      $transfer_details_reponse = $this->sto_model->get_stock_out_entry_details($transfer_code, 'from', $transfer_status);
       // dump($transfer_details_reponse);
       // exit;
       if($transfer_details_reponse['status'] === false) {

@@ -89,7 +89,7 @@
                       $lot_no = '';
                     }
 
-                    if($item_qty && $item_rate>0 && (int)$form_data['itemDetails']['status'][$ex_index] === 1) {
+                    if($item_qty && $item_rate>0) {
                       $bill_amount = $item_qty * $item_rate;
                       $tot_bill_amount += $bill_amount;
                     } else {
@@ -118,18 +118,13 @@
                   <tr>
                     <td colspan="7" style="vertical-align:middle;font-weight:bold;font-size:15px;color:#FC4445;text-align:center;">Stock Transfer is in progress. Not yet received by `<?php echo $from_location_name ?>`</td>
                   </tr>
-                
                 <?php endif; ?>
-
                 <?php
                   endfor;
-
                 else: ?>
-
                   <tr>
                     <td colspan="7" style="font-weight:bold;font-size:16px;color:red;text-align:center;">Stock Transfer is in Progress...</td>
                   </tr>
-
                 <?php endif; ?>
                   <tr>
                     <td colspan="6" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
