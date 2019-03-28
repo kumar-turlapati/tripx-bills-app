@@ -375,6 +375,90 @@ function initializeJS() {
     }
   }
 
+  if( $('.transBarcode').length > 0) {
+    $('.transBarcode').on('blur', function(e){
+      var barcode = $(this).val();
+      var barcodeId = $(this).attr('id');
+      var rowId = barcodeId.split('_')[1];
+      if(barcode === '') {
+        $('#iname_'+rowId).removeAttr("readonly");
+      }
+    });
+
+    $('.transBarcode').on('keypress', function (e) {
+     if (e.keyCode == 13) {
+       var barcode = $(this).val();
+       var barcodeId = $(this).attr('id');
+       var rowId = parseInt(barcodeId.split('_')[1]);
+       if(barcode.length !== 13) {
+        alert('Invalid barcode');
+        return false;
+       }
+       var locationCode = $('#fromLocation').val();
+       jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+          success: function(itemDetails) {
+            if(itemDetails.status === 'success') {
+              var objLength = Object.keys(itemDetails.response.bcDetails).length;
+              if(objLength > 0) {
+                var itemName = itemDetails.response.bcDetails.itemName;
+                var availableQty = parseFloat(itemDetails.response.bcDetails.availableQty).toFixed(2);
+                var lotNo = itemDetails.response.bcDetails.lotNo;
+                var cno = itemDetails.response.bcDetails.cno;
+                var mOq = parseFloat(itemDetails.response.bcDetails.mOq).toFixed(2);
+                var taxPercent = parseFloat(itemDetails.response.bcDetails.taxPercent).toFixed(2);
+                var mrp = parseFloat(itemDetails.response.bcDetails.mrp).toFixed(2);
+                var transferQty = parseFloat(mOq*1).toFixed(2);
+                var itemAmount = parseFloat(mrp*transferQty).toFixed(2);
+                var lotNoRef = $('#lotNo_'+rowId);
+                var isLotExists = false;
+
+                /* check if lot no is already selected. */
+                jQuery('.lotNo').each(function(i, obj) {
+                  selectedLotNo = $(this).val();
+                  if(selectedLotNo === lotNo && rowId !== i) {
+                    isLotExists = true;
+                  }
+                });
+
+                if(isLotExists) {
+                  $('#barcode_'+rowId).focus().val('');
+                  alert("This Lot No. is already selected.  A Lot No. must be unique and selected only once against the same item.");
+                } else {
+                  $('#iname_'+rowId).attr('readonly', 'readonly');
+                  $('#iname_'+rowId).val(itemName);
+                  $('#qtyava_'+rowId).val(availableQty);
+                  $('#cno_'+rowId).text(cno);
+                  $('#qty_'+rowId).val(transferQty);
+                  $('#mrp_'+rowId).val(mrp);
+                  $('#grossAmount_'+rowId).text(itemAmount);
+                  $('#saItemTax_'+rowId+' option[value="'+taxPercent+'"]').attr('selected', 'selected');
+                  
+                  $('#qtyava_'+rowId).attr('readonly', 'readonly');
+                  $('#mrp_'+rowId).attr('readonly', 'readonly');
+                  // $('#saItemTax_'+rowId).attr('readonly', 'readonly');
+                  jQuery(lotNoRef).html(
+                    jQuery("<option></option>").
+                    attr("value",lotNo).
+                    text(lotNo)
+                  );
+                  updateTransferOutItemRow(rowId);
+                  var nextRowId = rowId+1;
+                  $('#barcode_'+nextRowId).focus();
+                }
+              } else {
+                alert('Barcode not found');                
+              }
+            }
+          },
+          error: function(e) {
+            alert('Barcode not found in the Selected store.');
+          }
+       });
+       e.preventDefault();
+     }
+    });
+  }
+
   if( $('#stBarcode').length>0 ) {
     $('#stBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
@@ -650,6 +734,8 @@ function initializeJS() {
       window.location.href = '/stock-transfer/register';
     } else if(buttonId === 'shippingPage') {
       window.location.href = '/sales/list';      
+    } else if(buttonId === 'stransfer') {
+      window.location.href = '/stock-transfer/register';      
     }
 
   });
@@ -926,7 +1012,7 @@ function initializeJS() {
   if($('#customerForm').length > 0) {
     $('#customerType').on('change', function(){
       var customerType = $(this).val();
-      if(customerType === 'b') {
+      if(customerType === 'b2b') {
         $('#bioContainer').hide();
         $('#age').val(0);
         $('#ageCategory').val('years');

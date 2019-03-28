@@ -7,13 +7,12 @@
   } else {
     $state_id = 0;
   }
-  // dump($submitted_data);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
+      <?php echo Utilities::print_flash_message() ?>
       <div class="panel-body">
-        <?php echo Utilities::print_flash_message() ?>
         <?php if($page_error !== ''): ?>
           <div class="alert alert-danger" role="alert">
             <strong>Error!</strong> <?php echo $page_error ?> 
@@ -31,9 +30,8 @@
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off">
-          <h2 class="hdg-reports borderBottom">Supplier Details</h2>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Supplier name</label>
               <input 
                 type="text" 
@@ -46,7 +44,7 @@
                 <span class="error"><?php echo $errors['supplierName'] ?></span>
               <?php endif; ?>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">GST No.</label>
               <input 
                 type="text" 
@@ -60,7 +58,7 @@
                   <span class="error"><?php echo $errors['tinNo'] ?></span>
               <?php endif; ?>              
             </div>            
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="status" id="status">
@@ -74,9 +72,8 @@
               </div>
             </div>
           </div>
-          <h2 class="hdg-reports borderBottom">Location Details</h2>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Address-1</label>
               <input type="text" class="form-control" name="address1" id="address1"
               value="<?php echo (isset($submitted_data['address1'])?$submitted_data['address1']:'') ?>"      
@@ -85,7 +82,7 @@
                 <span class="error"><?php echo $errors['address1'] ?></span>
               <?php endif; ?>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Address-2</label>
               <input type="text" class="form-control" name="address2" id="address2"
               value="<?php echo (isset($submitted_data['address2'])?$submitted_data['address2']:'') ?>"              
@@ -94,7 +91,7 @@
                 <span class="error"><?php echo $errors['address2'] ?></span>
               <?php endif; ?>              
             </div>          
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Pincode</label>
               <input type="text" class="form-control" name="pincode" id="pincode"
               value="<?php echo (isset($submitted_data['pincode'])?$submitted_data['pincode']:'') ?>"              
@@ -105,11 +102,11 @@
             </div>              
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Country name</label>
               <input type="text" class="form-control" name="countryID" id="countryID" value="India" readonly>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">State</label>
               <select class="form-control" name="locState" id="locState">
                 <?php 
@@ -127,14 +124,13 @@
                 <span class="error"><?php echo $form_errors['locState'] ?></span>
               <?php endif; ?>
             </div>          
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">City name</label>
-              <input type="text" class="form-control" name="cityID" id="cityID">
+              <input type="text" class="form-control" name="cityID" id="cityID" value="<?php echo isset($submitted_data['cityName']) ? $submitted_data['cityName'] : '' ?>" />
             </div>              
           </div>
-          <h2 class="hdg-reports borderBottom">Contact Details</h2>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Phone-1</label>
               <input type="text" class="form-control" name="phone1" id="phone1"
               value="<?php echo (isset($submitted_data['phone1'])?$submitted_data['phone1']:'') ?>"              
@@ -143,7 +139,7 @@
                 <span class="error"><?php echo $errors['phone1'] ?></span>
               <?php endif; ?>                
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Phone-2</label>
               <input type="text" class="form-control" name="phone2" id="phone2"
               value="<?php echo (isset($submitted_data['phone2'])?$submitted_data['phone2']:'') ?>"
@@ -152,7 +148,7 @@
                 <span class="error"><?php echo $errors['phone2'] ?></span>
               <?php endif; ?>               
             </div>          
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Mobile</label>
               <input type="text" class="form-control" name="mobileNo" id="mobileNo"
               value="<?php echo (isset($submitted_data['mobileNo'])?$submitted_data['mobileNo']:'') ?>"

@@ -136,7 +136,7 @@ class OpeningsController {
       }
       if($request->get('locationCode') !== '') {
         $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
-      }      
+      }
     } else {
       $search_params = [
         'locationCode' => $default_location,

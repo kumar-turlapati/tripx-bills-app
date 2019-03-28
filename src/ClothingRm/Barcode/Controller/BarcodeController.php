@@ -91,6 +91,9 @@ class BarcodeController
         $mfg_date = $purchase_details['purchaseDate'];
         $po_location_code = $purchase_details['locationID'];
 
+        // dump($purchase_details['itemDetails']);
+        // exit;
+
         // convert received item details to template item details.
         $item_names = array_column($purchase_details['itemDetails'],'itemName');
         $item_codes = array_column($purchase_details['itemDetails'],'itemCode');        
@@ -104,6 +107,7 @@ class BarcodeController
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $barcodes = array_column($purchase_details['itemDetails'],'barcode');
         $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
+        $uom_names = array_column($purchase_details['itemDetails'],'uomName');
 
         $submitted_item_details = $purchase_details['itemDetails'];
         $po_store_name = array_key_exists($purchase_response['purchaseDetails']['locationIDNumeric'], $location_ids) ? $location_ids[$purchase_response['purchaseDetails']['locationIDNumeric']] : 'Invalid Store';
@@ -114,6 +118,9 @@ class BarcodeController
           $item_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['itemName'];
           $mrps_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['mrp'];
           $packed_qtys_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['packedQty'];
+          $uom_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['uomName'];
+          $cno_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] =  $purchase_items['cno'];
+          $mfg_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['mfgName'];
         }
         unset($purchase_details['itemDetails']);
 
@@ -131,6 +138,7 @@ class BarcodeController
         $form_data['itemCode'] = $item_codes;
         $form_data['barcode'] = $barcodes;
         $form_data['packedQty'] = $packed_qtys;
+        $form_data['uomNames'] = $uom_names;
       }
     }
 
@@ -171,7 +179,7 @@ class BarcodeController
           $print_array = [];
           foreach($cleaned_params as $key => $print_qty) {
             if($print_qty > 0) {
-              $print_array[$api_response['barcodes'][$key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key]];
+              $print_array[$api_response['barcodes'][$key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key]];
             }
           }
         } else {
@@ -184,7 +192,7 @@ class BarcodeController
         $index_key = 0;
         foreach($cleaned_params as $key => $print_qty) {
           if($print_qty > 0) {
-            $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key]];
+            $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key]];
             $index_key++;
           }
         }
@@ -297,6 +305,9 @@ class BarcodeController
       'perPage' => $per_page,
     );
 
+    // dump($search_params);
+    // exit;
+
     $api_response = $this->bc_model->get_barcodes($search_params);
     if($api_response['status']) {
       if(count($api_response['response']['barcodes'])>0) {
@@ -372,7 +383,7 @@ class BarcodeController
       $form_data = $request->request->all();
       // dump($form_data);
       // exit;
-      # check whether the form is submitted or filtered.
+      // check whether the form is submitted or filtered.
       if(isset($form_data['op']) && $form_data['op'] === 'save') {
         $location_code = $form_data['locationCode'];
         $item_names = $form_data['itemNames'];
@@ -383,6 +394,7 @@ class BarcodeController
         $sticker_qtys = $form_data['stickerQty'];
         $indent_format = $form_data['indentFormat'];
         $mfg_names = $form_data['mfgNames'];
+        $uom_names = $form_data['uomNames'];
 
         $form_validation = $this->_validate_op_barcode_form($form_data);
         if($form_validation['status']) {
@@ -418,8 +430,13 @@ class BarcodeController
                   } else {
                     $print_qty = 0;
                   }
+                  if(isset($uom_names[$item_key])) {
+                    $uom_name = $uom_names[$item_key];
+                  } else {
+                    $uom_name = '';
+                  }                  
                   $item_key_a = explode("__", $item_key);
-                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name]; 
+                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name]; 
                 }
               }
             } else {
@@ -457,8 +474,13 @@ class BarcodeController
               } else {
                 $mfg_name = '';
               }
+              if(isset($uom_names[$item_key])) {
+                $uom_name = $uom_names[$item_key];
+              } else {
+                $uom_name = '';
+              }              
               $item_key_a = explode("__", $item_key);
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name];
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name];
             }
           }
           if(count($print_array_final)>0) {
@@ -497,6 +519,7 @@ class BarcodeController
     }
 
     $openings = $this->openings_model->opbal_list($search_params);
+    // dump($openings);
     // check api status
     if($openings['status']) {
       // check whether we got products or not.

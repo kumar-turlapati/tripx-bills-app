@@ -37,7 +37,7 @@
             <strong>Error!</strong> <?php echo $page_error ?> 
           </div>
         <?php endif; ?>
-		    <div class="panel">
+		    <div class="panel" style="margin-bottom:0px;">
           <div class="panel-body">
 			     <div id="filters-form">
       			  <form class="form-validate form-horizontal" method="POST">
@@ -62,21 +62,6 @@
                       </select>
                     </div>
                   </div>
-
-
-                  <?php /*
-                  <div class="col-sm-12 col-md-2 col-lg-2">
-                    <input type="text" placeholder="Batch no." name="batchNo" id="batchNo" class="form-control" value="<?php echo $batchNo ?>">
-                  </div>
-        				  <div class="col-sm-12 col-md-2 col-lg-2">
-          					<div class="select-wrap">
-          						<select class="form-control" name="category" id="category">
-          						  <?php foreach($categories as $key=>$value): ?>
-          							   <option value="<?php echo $key ?>"><?php echo $value ?></option>
-          						  <?php endforeach; ?>
-          						</select>
-          					</div>
-        				  </div>*/ ?>
         				  <div class="col-sm-12 col-md-2 col-lg-3">
           					<div class="col-sm-12"> 
           					  <button class="btn btn-success"><i class="fa fa-file-text"></i> Filter</button>
@@ -93,15 +78,18 @@
             <thead>
               <tr>
                 <th width="5%" class="text-center valign-middle">Sno.</th>
-                <th width="25%" class="text-left valign-middle">Item name</th>
-                <th width="10%" class="text-left valign-middle">Category</th> 
-                <th width="5%" class="text-center valign-middle">Opening qty.</th>
-                <th width="5%" class="text-center valign-middle">Packed/Unit</th>
+                <th width="20%" class="text-center valign-middle">Item name</th>
+                <th width="10%" class="text-center valign-middle">Category</th>
+                <th width="10%" class="text-center valign-middle">Brand name</th>
+                <th width="10%" class="text-center valign-middle">Case/Box<br />No.</th>
+                <th width="10%" class="text-center valign-middle">Lot No.</th>                                                
+                <th width="5%" class="text-center valign-middle">Opening<br />qty.</th>
+                <th width="5%" class="text-center valign-middle">Packed/<br />qty.</th>
                 <th width="5%" class="text-center valign-middle">Total qty.</th>                
                 <th width="8%" class="text-center valign-middle">Opening rate<br />(in Rs.)</th>
                 <th width="8%" class="text-center valign-middle">Opening value<br />(in Rs.)</th>
                 <th width="8%" class="text-center valign-middle">Purchase rate<br />(in Rs.)</th>                
-                <th width="5%" class="text-center valign-middle">Tax<br />(in %)</th>
+                <th width="5%" class="text-center valign-middle">Tax<br />(%)</th>
                 <th width="10%" class="text-center valign-middle">Options</th>
               </tr>
             </thead>
@@ -119,15 +107,20 @@
                   $opening_code = $opening_details['openingCode'];
                   $packed_qty = $opening_details['packedQty'];
                   $total_qty = round($opening_qty * $packed_qty, 2);
-
+                  $brand_name = $opening_details['mfgName'];
+                  $container_no = $opening_details['cno'];
+                  $lot_no = $opening_details['lotNo'];
                   $opening_value = round($opening_qty*$opening_rate*$packed_qty,2);
 
                   $tot_opening_stock_value += round($opening_qty*$purchase_rate*$packed_qty, 2);
               ?>
-                  <tr class="text-uppercase text-right font11">
+                  <tr class="text-right font11">
                     <td class="valign-middle"><?php echo $cntr ?></td>
                     <td class="text-left med-name valign-middle"><?php echo $item_name ?></td>
                     <td class="text-left med-name valign-middle"><?php echo $category_name ?></td>                    
+                    <td class="text-left valign-middle"><?php echo $brand_name ?></td>                    
+                    <td class="text-left valign-middle"><?php echo $container_no ?></td>                    
+                    <td class="text-left valign-middle"><?php echo $lot_no ?></td>                    
                     <td class="valign-middle"><?php echo number_format($opening_qty,2,'.','') ?></td>
                     <td class="valign-middle"><?php echo number_format($packed_qty,2,'.','') ?></td>
                     <td class="valign-middle"><?php echo number_format($total_qty,2,'.','') ?></td>
@@ -154,7 +147,7 @@
               endforeach; 
             ?>
               <tr>
-                <td colspan="7" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
+                <td colspan="10" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
                 <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_stock_value,2,'.','') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>

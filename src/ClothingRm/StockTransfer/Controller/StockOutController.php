@@ -326,6 +326,8 @@ class StockOutController
         $cleaned_params['itemTaxPercent'][$key] = $item_details['taxPercent'];
         $cleaned_params['lotNo'][$key] = $item_details['lotNo'];
         $cleaned_params['status'][$key] = $item_details['status'];
+        $cleaned_params['scannedDate'][$key] = $item_details['scanDate'];
+        $cleaned_params['cno'][$key] = $item_details['cno'];
       }
       unset($form_data['itemDetails']);
       $form_data['itemDetails'] = $cleaned_params;
@@ -498,7 +500,7 @@ class StockOutController
 
         # validate sold qty.
         if(!is_numeric($item_sold_qty) || $item_sold_qty<=0) {
-          $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid sold qty.';
+          $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid tran. qty.';
         } else {
           $cleaned_params['itemDetails']['itemSoldQty'][$item_key] = $item_sold_qty;
         }
@@ -526,7 +528,7 @@ class StockOutController
 
         # validate if sold qty. is more than available qty.
         if($item_sold_qty>$item_ava_qty) {
-          $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid sold qty.';
+          $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid tran. qty.';
         }
       }
     }
@@ -538,7 +540,7 @@ class StockOutController
     if($one_item_found === false) {
       $form_errors['itemDetails']['itemName'][0] = 'Invalid item name.';
       $form_errors['itemDetails']['itemAvailQty'][0] = 'Invalid available qty.';
-      $form_errors['itemDetails']['itemSoldQty'][0] = 'Invalid sold qty.';
+      $form_errors['itemDetails']['itemSoldQty'][0] = 'Invalid tran. qty.';
       $form_errors['itemDetails']['itemRate'][0] = 'Invalid item rate.';
       $form_errors['itemDetails']['itemTaxPercent'][0] = 'Invalid tax rate.';      
     }

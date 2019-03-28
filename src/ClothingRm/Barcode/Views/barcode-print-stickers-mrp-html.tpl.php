@@ -16,6 +16,7 @@
     $print_qty = $print_qty_details[0];
     $printable_array = array_merge($printable_array, array_fill(0, $print_qty, $print_qty_details));
   }
+  // dump($printable_array);
   if(count($printable_array)<=0) {
     die("Unable to print....");
   }
@@ -105,6 +106,7 @@
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
         $print_item_mrp = number_format($print_qty_details[2],2,'.','');
         $mfg_date = date("m/y", strtotime($print_qty_details[3]));
+        $uom_name = strtoupper(substr($print_qty_details[7],0,5));
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
     ?>
       <div>
@@ -112,7 +114,7 @@
         <div class="rate">MRP : <?php echo 'Rs.'.$print_item_mrp ?></div>
         <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
         <div class="barCode"><?php echo $barcode ?></div>
-        <div class="mfgDate"><?php echo 'Mfg.:'.$mfg_date.' - 1pc.' ?></div>
+        <div class="mfgDate"><?php echo 'Mfg.:'.$mfg_date.' - 1 '.$uom_name ?></div>
       </div>
       <?php
         $tot_sticker_count++;

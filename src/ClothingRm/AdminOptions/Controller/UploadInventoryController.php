@@ -133,7 +133,7 @@ class UploadInventoryController
 
     # build variables
     $controller_vars = array(
-      'page_title' => 'Import Inventory',
+      'page_title' => 'Upload Inventory',
       'icon_name' => 'fa fa-database',
     );
 

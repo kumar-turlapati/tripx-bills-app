@@ -127,9 +127,11 @@
             <table class="table table-striped table-hover font12">
               <thead>
                 <tr>
-                  <th width="5%"  class="text-center">Sno.</th>                  
+                  <th width="4%"  class="text-center">Sno.</th>
+                  <th width="10%"  class="text-center">Barcode</th>                                    
                   <th width="18%" class="text-center">Item name</th>
                   <th width="12%" class="text-center">Lot No</th>
+                  <th width="7%" class="text-center">Case/Box No.</th>                  
                   <th width="5%"  class="text-center">Available<br />qty.</th>
                   <th width="11%" class="text-center">Transfer<br />qty.</th>
                   <th width="8%"  class="text-center">M.R.P<br />( in Rs. )</th>
@@ -167,15 +169,30 @@
                 ?>
                   <tr>
                     <td align="right" style="vertical-align:middle;"><?php echo $i ?></td>
+                    <td align="left" style="vertical-align:middle;" title="Info: Remove the barcode to type Item name">
+                      <input 
+                        type="text" 
+                        name="itemDetails[barcode][]" 
+                        id="barcode_<?php echo $i-1 ?>" 
+                        size="13"
+                        class="noEnterKey transBarcode" 
+                        index="<?php echo $i-1 ?>"
+                        style="border:1px dashed #00AEFF;font-weight:bold;color:#AA3E39;"
+                      />
+                      <?php if(isset($errors['itemDetails']['barcode'][$ex_index])): ?>
+                        <span class="error"><?php echo $errors['itemDetails']['barcode'][$ex_index] ?></span>
+                      <?php endif; ?>
+                    </td>
                     <td style="vertical-align:middle;">
                       <input 
                         type="text" 
                         name="itemDetails[itemName][]" 
                         id="iname_<?php echo $i-1 ?>" 
-                        size="30" 
+                        size="20" 
                         class="inameAc saleItem noEnterKey" 
                         index="<?php echo $i-1 ?>" 
                         value="<?php echo $item_name ?>"
+                        style="width:200px;"
                       />
                       <?php if(isset($errors['itemDetails']['itemName'][$ex_index])): ?>
                         <span class="error"><?php echo $errors['itemDetails']['itemName'][$ex_index] ?></span>
@@ -195,7 +212,8 @@
                       <?php if(isset($errors['itemDetails']['lotNo'][$ex_index])): ?>
                         <span class="error"><?php echo $errors['itemDetails']['lotNo'][$ex_index] ?></span>
                       <?php endif; ?>                      
-                    </td>                
+                    </td>
+                    <td id="cno_<?php echo $i-1 ?>" style="vertical-align:middle;" align="right"></td>
                     <td style="vertical-align:middle;">
                       <input
                         type="text"
@@ -212,27 +230,6 @@
                       <?php endif; ?>                      
                     </td>
                     <td style="vertical-align:middle;" align="center">
-                      <?php /*
-                      <div class="select-wrap">
-                        <select 
-                          class="form-control saleItemQty"
-                          name="itemDetails[itemSoldQty][]"
-                          id="qty_<?php echo $i-1 ?>"
-                          index="<?php echo $i-1 ?>"             
-                        >
-                          <?php 
-                            foreach($qtys_a as $key=>$value):
-                               if((int)$item_qty === (int)$key) {
-                                $selected = 'selected="selected"';
-                               } else {
-                                $selected = '';
-                               }                                 
-                          ?>
-                            <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
-                      */ ?>
                       <input
                         type="text"
                         id="qty_<?php echo $i-1 ?>"
@@ -316,21 +313,21 @@
                   <?php } ?>
                 <?php endfor; ?>
                   <tr>
-                    <td colspan="7" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
+                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
                     <td id="grossAmount" class="" style="font-size:16px;text-align:right;font-weight:bold;"></td>
                   </tr>
                   <tr>
-                    <td colspan="7" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">(+) GST</td>
+                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">(+) GST</td>
                     <td id="gstAmount" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" class="gstAmount"></td>
                   </tr>
                   <tr>
-                    <td colspan="7" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">(+/-) Round off</td>
+                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">(+/-) Round off</td>
                     <td id="roundOff" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" class="roundOff"></td>
                   </tr>
                   <tr>
-                    <td colspan="7" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Net Pay</td>
+                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Net Pay</td>
                     <td id="netPayBottom" class="netPay" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;"></td>
-                  </tr>                  
+                  </tr>       
               </tbody>
             </table>
           </div>
@@ -338,6 +335,9 @@
             <button class="btn btn-primary" id="Save" name="op" value="Save">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
             </button>
+            <button class="btn btn-danger cancelButton" id="stransfer">
+              <i class="fa fa-times"></i> Cancel
+            </button>            
           </div>
         </form>  
       </div>
@@ -402,6 +402,23 @@
               endforeach;
             endif; 
           ?>
-
-
-                  */ ?>
+                      <div class="select-wrap">
+                        <select 
+                          class="form-control saleItemQty"
+                          name="itemDetails[itemSoldQty][]"
+                          id="qty_<?php echo $i-1 ?>"
+                          index="<?php echo $i-1 ?>"             
+                        >
+                          <?php 
+                            foreach($qtys_a as $key=>$value):
+                               if((int)$item_qty === (int)$key) {
+                                $selected = 'selected="selected"';
+                               } else {
+                                $selected = '';
+                               }                                 
+                          ?>
+                            <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                          <?php endforeach; ?>
+                        </select>
+                      </div>
+                      */ ?>

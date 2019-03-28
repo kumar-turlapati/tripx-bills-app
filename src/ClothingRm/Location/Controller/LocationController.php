@@ -202,12 +202,12 @@ class LocationController
       $errors['smsCompanyShortName'] = 'Invalid Company Short Name.';
     }
 
-    if(ctype_alnum(str_replace(' ', '', $location_name))) {
+    if(ctype_alnum(str_replace([' ', "'"], ['', ''], $location_name))) {
       $cleaned_params['locationName'] = $location_name;
     } else {
-      $errors['locationName'] = 'Invalid location name.';
+      $errors['locationName'] = 'Invalid location name. Only digits, alphabets, and single quote allowed.';
     }
-    if(ctype_alnum(str_replace(' ', '', $location_name_short))) {
+    if(ctype_alnum(str_replace([' ', "'"], ['', ''], $location_name_short))) {
       $cleaned_params['locationNameShort'] = $location_name_short;
     } else {
       $errors['locationNameShort'] = 'Invalid location short name.';

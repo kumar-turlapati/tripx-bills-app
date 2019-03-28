@@ -51,7 +51,7 @@
         <?php endif; ?>
   		  <div class="filters-block">
     		  <div id="filters-form">
-            <form class="form-validate form-horizontal" method="POST">
+            <form class="form-validate form-horizontal">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1"><b>Filter by</b></div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
@@ -101,9 +101,10 @@
                 <th width="5%" class="text-center valign-middle">Barcode</th>
                 <th width="8%" class="text-center valign-middle">Location Name</th>                
                 <th width="15%" class="text-center valign-middle">Supplier Name</th>                
-                <th width="18%" class="text-center valign-middle">Item Name</th>
+                <th width="15%" class="text-center valign-middle">Item Name</th>
                 <th width="8%" class="text-center valign-middle">Lot No.</span></th>
-                <th width="15%" class="text-center valign-middle">PO No. &amp; Date</span></th>                
+                <th width="7%" class="text-center valign-middle">Case/Box<br />No.</th>
+                <th width="12%" class="text-center valign-middle">PO No. &amp; Date</span></th>                
                 <th width="6%" class="text-center valign-middle">Available<br />Qty.</th>
                 <th width="7%" class="text-center valign-middle">MRP<br />(Rs.)</th>
                 <th width="5%" class="text-center valign-middle">Actions</th>
@@ -118,6 +119,7 @@
                   $item_name = substr($barcode_details['itemName'], 0, 20);
                   $supp_name = substr($barcode_details['supplierName'], 0, 20);
                   $lot_no = $barcode_details['lotNo'];
+                  $cno = $barcode_details['cno'];
                   $purchase_code = $barcode_details['purchaseCode'];
                   $available_qty = $barcode_details['availableQty'];
                   $mrp = $barcode_details['mrp'];
@@ -143,6 +145,7 @@
                   <td align="left" class="valign-middle"><?php echo $supp_name ?></td>                  
                   <td class="valign-middle" align="left"><?php echo $item_name ?></td>
                   <td align="right" class="valign-middle"><?php echo $lot_no ?></td>
+                  <td align="right" class="valign-middle"><?php echo $cno ?></td>
                   <td align="left" class="valign-middle">
                     <a href="/inward-entry/view/<?php echo $purchase_code ?>" title="View Purchase Order" class="hyperlink" target="_blank"><?php echo $po_string ?></a>
                   </td>

@@ -121,6 +121,7 @@
                       $item_sku = $opening_details['itemSku'];
                       $mfg_name = $opening_details['mfgName'];
                       $cno = $opening_details['cno'];
+                      $uom_name = $opening_details['uomName'];
 
                       $tot_opening_value_pur += ($opening_qty * $purchase_rate);
                       $tot_opening_value_sale += ($opening_qty * $opening_rate);
@@ -197,7 +198,13 @@
                           name="mfgNames[<?php echo $item_key ?>]" 
                           id="mfgNames_<?php echo $item_key ?>" 
                           value="<?php echo $mfg_name ?>" 
-                        />                                              
+                        />
+                        <input
+                          type="hidden" 
+                          name="uomNames[<?php echo $item_key ?>]" 
+                          id="uomNames_<?php echo $item_key ?>" 
+                          value="<?php echo $uom_name ?>" 
+                        />                                                                 
                       </tr>
                 <?php
                   $cntr++;
