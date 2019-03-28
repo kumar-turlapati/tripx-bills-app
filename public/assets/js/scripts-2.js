@@ -411,18 +411,37 @@ function initializeJS() {
                 var itemAmount = parseFloat(mrp*transferQty).toFixed(2);
                 var lotNoRef = $('#lotNo_'+rowId);
                 var isLotExists = false;
+                var existingLotId = null;
+
+                var selectedLotId = selectedLotNo = null;
 
                 /* check if lot no is already selected. */
                 jQuery('.lotNo').each(function(i, obj) {
                   selectedLotNo = $(this).val();
+                  selectedLotId = $(this).attr('id');
                   if(selectedLotNo === lotNo && rowId !== i) {
                     isLotExists = true;
+                    existingLotId = i;
                   }
                 });
 
+                // console.log(selectedLotNo, selectedLotId, isLotExists);
+
                 if(isLotExists) {
                   $('#barcode_'+rowId).focus().val('');
-                  alert("This Lot No. is already selected.  A Lot No. must be unique and selected only once against the same item.");
+                  var selectedLotIndex = existingLotId;
+                  var selectedLotQty = parseFloat($('#qty_'+selectedLotIndex).val());
+                  var newTransferQty = parseFloat(transferQty)+parseFloat(selectedLotQty); 
+                  var itemAmount = parseFloat(mrp*newTransferQty).toFixed(2);
+                  var availQty = parseFloat($('#qtyava_'+selectedLotIndex).val());
+                  if(newTransferQty <= availableQty) {
+                    $('#qty_'+selectedLotIndex).val(newTransferQty);
+                    $('#grossAmount_'+selectedLotIndex).text(itemAmount);
+                    updateTransferOutItemRow(selectedLotIndex);
+                  } else {
+                    alert('Available  Qty. is less than Transfer Qty!! Please check.');
+                    return false;
+                  }
                 } else {
                   $('#iname_'+rowId).attr('readonly', 'readonly');
                   $('#iname_'+rowId).val(itemName);
@@ -435,7 +454,6 @@ function initializeJS() {
                   
                   $('#qtyava_'+rowId).attr('readonly', 'readonly');
                   $('#mrp_'+rowId).attr('readonly', 'readonly');
-                  // $('#saItemTax_'+rowId).attr('readonly', 'readonly');
                   jQuery(lotNoRef).html(
                     jQuery("<option></option>").
                     attr("value",lotNo).
