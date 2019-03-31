@@ -1,9 +1,7 @@
 <?php
   use Atawa\Utilities;
-
   // dump($submitted_data);
   // exit;
-
   if(isset($submitted_data['locationName']) && $submitted_data['locationName'] !== '' ) {
     $location_name = $submitted_data['locationName'];
   } else {
@@ -13,16 +11,53 @@
     $location_name_short = $submitted_data['locationNameShort'];
   } else {
     $location_name_short = '';
-  }  
-  if(isset($submitted_data['pincode']) && $submitted_data['pincode'] !== '' ) {
+  }
+  if(isset($submitted_data['pincode']) && $submitted_data['pincode'] !== '') {
     $pincode = $submitted_data['pincode'];
+  } elseif(isset($submitted_data['locPincode']) && $submitted_data['locPincode'] !== '') {
+    $pincode = $submitted_data['locPincode'];
   } else {
     $pincode = '';
   }
-  if(isset($submitted_data['phone']) && $submitted_data['phone'] !== '' ) {
+  if(isset($submitted_data['countryID']) && $submitted_data['countryID'] !== '') {
+    $country_id = $submitted_data['countryID'];
+  } elseif(isset($submitted_data['locCountryID']) && $submitted_data['locCountryID'] !== '') {
+    $country_id = $submitted_data['locCountryID'];
+  } else {
+    $country_id = '';
+  }
+  if(isset($submitted_data['stateID']) && $submitted_data['stateID'] !== '') {
+    $state_id = $submitted_data['stateID'];
+  } elseif(isset($submitted_data['locStateID']) && $submitted_data['locStateID'] !== '') {
+    $state_id = $submitted_data['locStateID'];
+  } else {
+    $state_id = '';
+  }
+  if(isset($submitted_data['cityName']) && $submitted_data['cityName'] !== '') {
+    $city_name = $submitted_data['cityName'];
+  } elseif(isset($submitted_data['locCityName']) && $submitted_data['locCityName'] !== '') {
+    $city_name = $submitted_data['locCityName'];
+  } else {
+    $city_name = '';
+  }
+  if(isset($submitted_data['address1']) && $submitted_data['address1'] !== '') {
+    $address1 = $submitted_data['address1'];
+  } elseif(isset($submitted_data['locAddress1']) && $submitted_data['locAddress1'] !== '') {
+    $address1 = $submitted_data['locAddress1'];
+  } else {
+    $address1 = '';
+  }
+  if(isset($submitted_data['address2']) && $submitted_data['address2'] !== '') {
+    $address2 = $submitted_data['address2'];
+  } elseif(isset($submitted_data['locAddress2']) && $submitted_data['locAddress2'] !== '') {
+    $address2 = $submitted_data['locAddress2'];
+  } else {
+    $address2 = '';
+  }
+  if(isset($submitted_data['phone']) && $submitted_data['phone'] !== '') {
     $phone = $submitted_data['phone'];
-  } elseif(isset($submitted_data['phones']) && $submitted_data['phones'] !== '' ) {
-    $phone = $submitted_data['phones'];
+  } elseif(isset($submitted_data['locPhones']) && $submitted_data['locPhones'] !== '') {
+    $phone = $submitted_data['locPhones'];
   } else {
     $phone = '';
   }
@@ -30,32 +65,7 @@
     $gst_no = $submitted_data['locGstNo'];
   } else {
     $gst_no = '';
-  }
-  if(isset($submitted_data['countryID']) && $submitted_data['countryID'] !== '' ) {
-    $country_id = $submitted_data['countryID'];
-  } else {
-    $country_id = '';
-  }
-  if(isset($submitted_data['stateID']) && $submitted_data['stateID'] !== '' ) {
-    $state_id = $submitted_data['stateID'];
-  } else {
-    $state_id = '';
-  }
-  if(isset($submitted_data['cityName']) && $submitted_data['cityName'] !== '' ) {
-    $city_name = $submitted_data['cityName'];
-  } else {
-    $city_name = '';
-  }
-  if(isset($submitted_data['address1']) && $submitted_data['address1'] !== '' ) {
-    $address1 = $submitted_data['address1'];
-  } else {
-    $address1 = '';
-  }
-  if(isset($submitted_data['address2']) && $submitted_data['address2'] !== '' ) {
-    $address2 = $submitted_data['address2'];
-  } else {
-    $address2 = '';
-  }
+  }  
   if(isset($submitted_data['smsSenderID']) && $submitted_data['smsSenderID'] !== '' ) {
     $sms_sender_id = $submitted_data['smsSenderID'];
   } else {

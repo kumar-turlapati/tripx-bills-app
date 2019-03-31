@@ -1071,4 +1071,4 @@ class Utilities
       @setcookie('qbdid', $enc_device_id, time()+60*60*24*30);
     }
   }
-}
+ }

@@ -192,6 +192,7 @@ class StockOutController
     return array($template->render_view('stock-out-view', $template_vars), $controller_vars);
   }
 
+  // Stock transfer validate action.
   public function stockOutValidateAction(Request $request) {
     $page_error = $page_success = $from_location = $to_location = '';
     $qtys_a = $form_data = $form_errors = $taxes = [];
@@ -315,6 +316,34 @@ class StockOutController
     return array($template->render_view('stock-out-validate', $template_vars), $controller_vars);    
   }
 
+  // Delete stock transfer
+  public function stockOutDeleteAction(Request $request) {
+    $page_error = $page_success = $from_location = $to_location = '';
+    $qtys_a = $form_data = $form_errors = $taxes = [];
+
+    // validate transfer code.
+    if(!is_null($request->get('transferCode')) && $request->get('transferCode') !== '') {
+      $transfer_code = Utilities::clean_string($request->get('transferCode'));
+      $transfer_status = Utilities::is_admin() ? 99 : 1;
+      $transfer_details_reponse = $this->sto_model->get_stock_out_entry_details($transfer_code, 'from', $transfer_status);
+      if($transfer_details_reponse['status'] === false) {
+        $this->flash->set_flash_message('Invalid Transfer Code', 1);
+        Utilities::redirect('/stock-transfer/register');
+      } else {
+        $voucher_no = $transfer_details_reponse['stoDetails']['transferNo'];
+        $delete_response = $this->sto_model->delete_stock_transfer_voucher($transfer_code);
+        if($delete_response['status'] && $delete_response['response'] === 'Success') {
+          $message = 'Voucher No. ` '.$voucher_no.' ` deleted successfully.';
+          $this->flash->set_flash_message($message);
+        } else {
+          $message = 'An error occurred while deleting Voucher No. ` '.$voucher_no.' `.';
+          $this->flash->set_flash_message($message, 1);
+        }
+        Utilities::redirect('/stock-transfer/register');          
+      }
+    }
+  }
+
   private function _map_form_data_with_api_response($form_data = []) {
     $cleaned_params = [];
     if(isset($form_data['itemDetails']) && $form_data['itemDetails'] > 0) {
@@ -328,6 +357,7 @@ class StockOutController
         $cleaned_params['status'][$key] = $item_details['status'];
         $cleaned_params['scannedDate'][$key] = $item_details['scanDate'];
         $cleaned_params['cno'][$key] = $item_details['cno'];
+        $cleaned_params['barcode'][$key] = $item_details['barcode'];
       }
       unset($form_data['itemDetails']);
       $form_data['itemDetails'] = $cleaned_params;

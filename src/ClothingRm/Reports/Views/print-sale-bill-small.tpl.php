@@ -24,8 +24,13 @@
   $tmp_cust_name  =  $sale_details['tmpCustName'];
 
 	$business_name 	=		isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];
-	$business_add1	=		$sale_details['address1'];
-	$business_add2	=		$sale_details['address2'];
+	$business_add1	=		$sale_details['locAddress1'];
+	$business_add2	=		$sale_details['locAddress2'];
+  $city_name      =   $sale_details['locCityName'];
+  $state_name     =   Utilities::get_location_state_name($sale_details['locStateID']);
+  $phones         =   $sale_details['locPhones'];
+  $pincode        =   $sale_details['locPincode'];
+  $business_add3  =   $city_name.', '.$state_name.' - '.$pincode;
   $gst_no         =   $sale_details['locGstNo'];
 
   $card_no        =   $sale_details['cardNo'] > 0 ? '* ****'.$sale_details['cardNo'] : '';
@@ -62,7 +67,12 @@
 	  		<?php if($business_add2 !== ''): ?>
 	  			<h6 style="margin:0 0 0 0px; text-align:center;font-size:11px;"><?php echo $business_add2 ?></h6>
 	  		<?php endif; ?>
-	
+        <?php if($business_add3 !== ''): ?>
+          <h6 style="margin:0 0 0 0px; text-align:center;font-size:11px;"><?php echo $business_add3 ?></h6>
+        <?php endif; ?>
+        <?php if($phones !== ''): ?>
+          <h6 style="margin:0 0 0 0px; text-align:center;font-size:11px;"><?php echo 'Phone(s): '.$phones ?></h6>
+        <?php endif; ?>        
     		<?php if($gst_no !== ''): ?>
           <h3 style="margin: 0px 0 0px 0px;text-align:center;border-top: 1px dotted #000;font-size:18px;">Tax Invoice</h3>
           <h3 style="margin: 0px 0 0px 0px;text-align:center;font-size:12px;">GSTIN: <?php echo $gst_no ?></h3>

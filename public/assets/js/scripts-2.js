@@ -785,6 +785,21 @@ function initializeJS() {
     });
   }
 
+  // stock transfer delete entry
+  if( $('.delStransfer').length>0 ) {
+    jQuery('.delStransfer').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to remove this Stock transfer?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }
+
   if($('#searchPurchaseBills').length > 0) {
     $('#searchBy').on('change', function(e){
       var searchBy = $(this).val();

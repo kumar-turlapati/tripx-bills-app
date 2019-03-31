@@ -115,9 +115,18 @@ class ReportsController
       $customer_name = $tmp_cust_name;
     }
 
+    // dump($sale_details, $_SESSION);
+    // exit;
+
     $business_name  =   isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];
-    $business_add1  =   $sale_details['address1'];
-    $business_add2  =   $sale_details['address2'];
+    $business_add1  =   $sale_details['locAddress1'];
+    $business_add2  =   $sale_details['locAddress2'];
+    $city_name      =   $sale_details['locCityName'];
+    $state_name     =   Utilities::get_location_state_name($sale_details['locStateID']);
+    $pincode        =   $sale_details['locPincode'];
+    $business_add3  =   $city_name.', '.$state_name.' - '.$pincode;
+    $phones         =   $sale_details['locPhones'];
+
     $gst_no         =   $sale_details['locGstNo'];
     $card_no        =   $sale_details['cardNo'] > 0 ? '* ****'.$sale_details['cardNo'] : '';
     $auth_code      =   $sale_details['authCode'] > 0 ? $sale_details['authCode'] : '****';
@@ -125,10 +134,19 @@ class ReportsController
     $cn_no          =   $sale_details['cnNo'];
     $referral_no    =   $sale_details['refCardNo'];
 
+    $loc_address = [
+      'address1' => $business_add1,
+      'address2' => $business_add2,
+      'address3' => $business_add3,
+      'phones' => $phones,
+      'store_name' => $business_name,
+      'gst_no' => $gst_no,
+    ];
+
     // $gst_no = '';
 
     // start PDF printing.
-    $pdf = PDF::getInstance(true);
+    $pdf = PDF::getInstance(true, $loc_address);
     $pdf->AliasNbPages();
     $pdf->AddPage('P','A4');
 

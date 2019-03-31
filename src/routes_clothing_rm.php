@@ -625,6 +625,10 @@ $routes->add('stock_out_transfer_validate', new Routing\Route('/stock-transfer/v
   '_controller' => 'ClothingRm\\StockTransfer\\Controller\\StockOutController::stockOutValidateAction',
   'transferCode' => null,
 )));
+$routes->add('stock_out_transfer_delete', new Routing\Route('/stock-transfer/delete/{transferCode}', array(
+  '_controller' => 'ClothingRm\\StockTransfer\\Controller\\StockOutController::stockOutDeleteAction',
+  'transferCode' => null,
+)));
 $routes->add('stock_out_transfer_list', new Routing\Route('/stock-transfer/register/{pageNo}', array(
   '_controller' => 'ClothingRm\\StockTransfer\\Controller\\StockOutController::stockOutTransactionsList',
   'pageNo' => null,

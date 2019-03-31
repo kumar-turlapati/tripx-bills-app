@@ -124,12 +124,12 @@
                 <th width="5%" class="text-center valign-middle">Sno</th>
                 <th width="8%" class="text-center valign-middle">Voucher no.</th>
                 <th width="8%" class="text-center valign-middle">Voucher date</th>
-                <th width="20%" class="text-center valign-middle">From store</span></th>                
-                <th width="20%" class="text-center valign-middle">To store</th>
+                <th width="18%" class="text-center valign-middle">From store</span></th>                
+                <th width="18%" class="text-center valign-middle">To store</th>
                 <th width="8%" class="text-center valign-middle">Transfer code</th>
                 <th width="8%" class="text-center valign-middle">Transfer value</span></th>
                 <th width="8%" class="text-center valign-middle">Transfer qty.</span></th>                
-                <th width="8%" class="text-center valign-middle">Actions</th>
+                <th width="12%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -168,6 +168,11 @@
                       <a class="btn btn-primary" href="/stock-transfer/out/<?php echo $transfer_code ?>" title="View this voucher">
                         <i class="fa fa-eye"></i>
                       </a>
+                      <?php if(Utilities::is_admin()): ?>
+                        <a class="btn btn-danger delStransfer" href="/stock-transfer/delete/<?php echo $transfer_code ?>" title="Delete this voucher">
+                          <i class="fa fa-times"></i>
+                        </a>
+                      <?php endif; ?>
                     </div>
                   <?php endif; ?>
                   </td>

@@ -1450,6 +1450,8 @@ class SalesReportsController {
       foreach($sales_summary as $day_details) {
         $date = date("d-m-Y", strtotime($day_details['tranDate']));
         $hsn_sac_code = substr($day_details['hsnSacCode'],0,4);
+        $hsn_sac_short_name = substr($day_details['hsnsacDescShort'],0,25);
+        $uom_name = substr($day_details['uomName'],0,4);
 
         $cash_payments = isset($day_details['cashPayments']) ? $day_details['cashPayments'] : 0;
         $card_payments = isset($day_details['cardPayments']) ? $day_details['cardPayments'] : 0;
@@ -1574,12 +1576,11 @@ class SalesReportsController {
             $tot_net_sales += $net_day_sales;
           }
 
-
           $pdf->Ln();
           $pdf->Cell($item_widths[0],6,$date,'LRTB',0,'L');
           $pdf->Cell($item_widths[1],6,number_format($gst_summary_details['qty'],2, '.', ''),'RTB',0,'R');
-          $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
-          $pdf->Cell($item_widths[3],6,'','RTB',0,'L');
+          $pdf->Cell($item_widths[2],6,$uom_name,'RTB',0,'L');
+          $pdf->Cell($item_widths[3],6,$hsn_sac_short_name,'RTB',0,'L');
           $pdf->Cell($item_widths[4],6,$hsn_sac_code,'RTB',0,'C');
           $pdf->Cell($item_widths[5],6,number_format($gst_summary_details['billable'],2, '.', ''),'RTB',0,'R');
           $pdf->Cell($item_widths[6],6,number_format($gst_summary_details['taxable'],2, '.', ''),'RTB',0,'R');
@@ -2093,7 +2094,9 @@ class SalesReportsController {
 
     foreach($sales_summary as $day_details) {
       $date = date("d-m-Y", strtotime($day_details['tranDate']));
-      $hsn_sac_code = substr($day_details['hsnSacCode'],0,4);
+      $hsn_sac_code = $day_details['hsnSacCode'];
+      $hsn_sac_short_name = $day_details['hsnsacDescShort'];
+      $uom_name = $day_details['uomName'];      
 
       $cash_payments = isset($day_details['cashPayments']) ? $day_details['cashPayments'] : 0;
       $card_payments = isset($day_details['cardPayments']) ? $day_details['cardPayments'] : 0;
@@ -2221,8 +2224,8 @@ class SalesReportsController {
         $cleaned_params[] = [
           'Date' => $date,
           'Qty.' => number_format($gst_summary_details['qty'],2, '.', ''),
-          'UOM' => '',
-          'Item / Category Name' => '',
+          'UOM' => $uom_name,
+          'Item / Category Name' => $hsn_sac_short_name,
           'HSN/SAC Code' => $hsn_sac_code,
           'Billed Amount' => number_format($gst_summary_details['billable'],2, '.', ''),
           'Taxable Amount' => number_format($gst_summary_details['taxable'],2, '.', '') ,

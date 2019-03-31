@@ -46,6 +46,18 @@ class StockOut
 		}
 	}
 
+	public function delete_stock_transfer_voucher($transfer_code = '') {
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('delete','stock-out/'.$transfer_code,[]);
+		$status = $response['status'];
+		if($status === 'success') {
+			return array('status'=>true,'response'=>$response['response']['response']['deleteStatus']);
+		} elseif($status === 'failed') {
+			return array('status'=>false, 'apierror'=>$response['reason']);
+		}
+	}
+
 	public function post_scanned_items_in_stock_transfer($scanned_data = [], $transfer_code = '') {
 		// call api.
 		$api_uri = 'stock-out/save-scanned-data/'.$transfer_code;

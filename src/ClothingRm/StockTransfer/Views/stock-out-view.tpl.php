@@ -49,13 +49,14 @@
                 <tr>
                   <th width="5%"  class="text-center">Sno.</th>                  
                   <th width="20%" class="text-center">Item Name</th>
+                  <th width="9%" class="text-center">Barcode</th>
                   <th width="10%" class="text-center">Lot No.</th>
-                  <th width="10%" class="text-center">Case / Box No.</th>
+                  <th width="8%" class="text-center">Case / Box No.</th>
                   <th width="8%" class="text-center">GST<br />( in % )</th>
-                  <th width="9%" class="text-center">Transferred<br />Qty.</th>
+                  <th width="8%" class="text-center">Transferred<br />Qty.</th>
                   <th width="8%"  class="text-center">MRP<br />( in Rs. )</th>
-                  <th width="10%" class="text-center">Amount<br />( in Rs. )</th>
-                  <th width="15%" class="text-center">Status at<br />Destination</th>                  
+                  <th width="8%" class="text-center">Amount<br />( in Rs. )</th>
+                  <th width="17%" class="text-center">Status at<br />Destination</th>                  
                 </tr>
               </thead>
               <tbody>
@@ -94,6 +95,11 @@
                       $cno = $form_data['itemDetails']['cno'][$ex_index];
                     } else {
                       $cno = '';
+                    }
+                    if(isset($form_data['itemDetails']['barcode'][$ex_index])) {
+                      $barcode = $form_data['itemDetails']['barcode'][$ex_index];
+                    } else {
+                      $barcode = '';
                     }                    
                     if(isset($form_data['itemDetails']['scannedDate'][$ex_index])) {
                       $scanned_date = $form_data['itemDetails']['scannedDate'][$ex_index];
@@ -111,7 +117,7 @@
                     $in_status = (int)$form_data['itemDetails']['status'][$ex_index];
                     if($in_status === 1) {
                       if($scanned_date !== '0000-00-00 00:00:00' && $scanned_date !== '') {
-                        $status_text = '<span style="color:green;font-size:12px;font-weight:bold;">In time: '.date("d-m-Y, h:ia", strtotime($scanned_date)).'</span>';
+                        $status_text = '<span style="color:green;font-size:12px;font-weight:bold;">In time: '.date("d-m-y, h:ia", strtotime($scanned_date)).'</span>';
                       } else {
                         $status_text = '';
                       }
@@ -121,9 +127,10 @@
                 ?>
 
                 <?php if( ((int)$form_data['itemDetails']['status'][$ex_index] === 1) || Utilities::is_admin()): ?>
-                  <tr>
-                    <td align="right" style="vertical-align:middle;"><?php echo $i ?></td>
+                  <tr class="font11">
+                    <td align="right" class="valign-middle"><?php echo $i ?></td>
                     <td style="vertical-align:middle;"><?php echo $item_name ?></td>
+                    <td style="vertical-align:middle;font-weight:bold;"><?php echo $barcode ?></td>
                     <td style="vertical-align:middle;"><?php echo $lot_no ?></td>
                     <td style="vertical-align:middle;text-align:right;"><?php echo $cno ?></td>
                     <td style="vertical-align:middle;text-align:right;"><?php echo number_format((float)$tax_percent, 2, '.', '')?></td>
@@ -136,11 +143,11 @@
                       style="vertical-align:middle;text-align:right;"
                     ><?php echo number_format($bill_amount, 2, '.', '') ?>
                     </td>
-                    <td><?php echo $status_text ?></td>
+                    <td style="text-align:right;"><?php echo $status_text ?></td>
                   </tr>
                 <?php else: ?>
                   <tr>
-                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:15px;color:#FC4445;text-align:center;">Stock Transfer is in progress. Not yet received by `<?php echo $from_location_name ?>`</td>
+                    <td colspan="10" style="vertical-align:middle;font-weight:bold;font-size:15px;color:#FC4445;text-align:center;">Stock Transfer is in progress. Not yet received by `<?php echo $from_location_name ?>`</td>
                   </tr>
                 <?php endif; ?>
                 <?php
@@ -151,19 +158,19 @@
                   </tr>
                 <?php endif; ?>
                   <tr>
-                    <td colspan="8" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
+                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
                     <td id="grossAmount" class="" style="font-size:18px;text-align:right;font-weight:bold;color:#225992"><?php echo number_format($tot_bill_amount, 2, '.', '') ?></td>
                   </tr>
                   <tr>
-                    <td colspan="8" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">(+/-) Round off</td>
+                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">(+/-) Round off</td>
                     <td id="roundOff" style="vertical-align:middle;font-weight:bold;font-size:18px;text-align:right;color:#225992" class="roundOff"><?php echo number_format($round_off, 2, '.', '')  ?></td>
                   </tr>
                   <tr>
-                    <td colspan="8" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Net Pay</td>
+                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Net Pay</td>
                     <td id="netPayBottom" class="netPay" style="vertical-align:middle;font-weight:bold;font-size:18px;text-align:right;color:#225992"><?php echo number_format($netpay, 2, '.', '')  ?></td>
                   </tr>
                   <tr>
-                    <td colspan="5" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Total Qty.</td>
+                    <td colspan="6" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Total Qty.</td>
                     <td id="totalQty" class="netPay" style="vertical-align:middle;font-weight:bold;font-size:18px;text-align:right;color:#225992"><?php echo number_format($total_qty, 2, '.', '')  ?></td>
                     <td colspan="3">&nbsp;</td>                    
                   </tr>                   

@@ -112,7 +112,7 @@
                 <th width="10%" class="text-center">Brand Name</th>               
                 <th width="10%" class="text-center">Category</th>               
                 <th width="5%" class="text-center">Threshold<span class="brk">Qty.</span></th>                
-                <th width="5%" class="text-center">Units /<span class="brk">pack</span></th>
+                <th width="5%" class="text-center">Units of /<span class="brk">Measurement</span></th>
                 <th width="5%" class="text-center">M.R.P <span class="brk">(in Rs.)</span></th>
                 <th width="8%" class="text-center">HSN/SAC<span class="brk">Code</span></th>
                 <th width="8%" class="text-center">Rack Number</th>
@@ -148,6 +148,11 @@
                   } else {
                     $rack_no = '';
                   }
+                  if($product_details['uomName'] !== '') {
+                    $uom_name = $product_details['uomName'];
+                  } else {
+                    $uom_name = '';
+                  }                  
                   $thr_qty = $product_details['thrQty'];
                   $item_code = $product_details['itemCode'];
                   $item_sku = $product_details['itemSku'];
@@ -169,7 +174,7 @@
                     <td class="text-left"><?php echo substr($brandName,0,20) ?></td>
                     <td class="text-left"><?php echo substr($category_name,0,20) ?></td>
                     <td class="text-right"><?php echo $thr_qty ?></td>
-                    <td><?php echo $units_per_pack ?></td>
+                    <td class="text-right"><?php echo $uom_name ?></td>
                     <td class="text-bold"><?php echo $mrp ?></td>
                     <td class="text-right"><?php echo $hsnSacCode ?></td>
                     <td class="text-right"><?php echo $rack_no ?></td>
