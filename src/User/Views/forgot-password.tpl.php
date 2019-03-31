@@ -30,7 +30,7 @@
 	               		<i class="fa fa-mobile mobile-icon" aria-hidden="true"></i> Send OTP
 	               	</button>
 	               	<span class="resend">
-	               		<a href="javascript: sendOTP('resend')">Resend OTP</a>
+	               		<a href="javascript:void(0);" onclick="sendOTP('resend')">Resend OTP</a>
 	               	</span>
 	               </div>
 	            </div>

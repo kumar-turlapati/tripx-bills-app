@@ -44,47 +44,48 @@ $(window).load(function() {
       e.preventDefault();
     });
   }
-  function sendOTP(fpType) {
-    var userId = $('#emailID').val();
-    var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
-    if(!emailFilter.test(userId)) {
-      $('#emailID').focus();
-      alert('Please enter a valid username.');
-      return false;
-    }
+});
 
-    /* hit server to get the OTP */
-    jQuery.ajax("/send-otp", {
-      method:"POST",
-      data: $('#forgotPassword').serialize(),
-      success: function(response) {
-        if(response.status===false) {
-          alert(response.errortext);
-          return false;
-        }
-        if(response.status === true) {
-          $('#success-msg-fp').show();
-          $('#success-msg-fp').html(response.message);
-          $('#pass-fp').attr('disabled', false);
-          $('#submit-fp').attr('disabled', false);
-          $('#newpass-fp').attr('disabled', false);
-          $('#sendOtpBtn').attr('disabled', true);
-          if(fpType==='resend') {
-            alert('OTP has been resent successfully. Please use latest code to reset your password.');
-          }
-        } else {
-          $('#error-msg-fp').show();
-          $('#error-msg-fp').html(response.message);
-          if(fpType==='resend') {
-            alert('Unable to resend OTP.');
-          }        
-        }
-      },
-      error: function(e) {
-        $('#emailID').focus();
-        alert('An error occurred while processing your request.');
+function sendOTP(fpType) {
+  var userId = $('#emailID').val();
+  var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+  if(!emailFilter.test(userId)) {
+    $('#emailID').focus();
+    alert('Please enter a valid username.');
+    return false;
+  }
+
+  /* hit server to get the OTP */
+  jQuery.ajax("/send-otp", {
+    method:"POST",
+    data: $('#forgotPassword').serialize(),
+    success: function(response) {
+      if(response.status===false) {
+        alert(response.errortext);
         return false;
       }
-    });
-  }
-});
+      if(response.status === true) {
+        $('#success-msg-fp').show();
+        $('#success-msg-fp').html(response.message);
+        $('#pass-fp').attr('disabled', false);
+        $('#submit-fp').attr('disabled', false);
+        $('#newpass-fp').attr('disabled', false);
+        $('#sendOtpBtn').attr('disabled', true);
+        if(fpType==='resend') {
+          alert('OTP has been resent successfully. Please use latest code to reset your password.');
+        }
+      } else {
+        $('#error-msg-fp').show();
+        $('#error-msg-fp').html(response.message);
+        if(fpType==='resend') {
+          alert('Unable to resend OTP.');
+        }        
+      }
+    },
+    error: function(e) {
+      $('#emailID').focus();
+      alert('An error occurred while processing your request.');
+      return false;
+    }
+  });
+}
