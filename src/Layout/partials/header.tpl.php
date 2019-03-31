@@ -18,7 +18,7 @@
     $org_name = '';
   }
 ?>
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default" <?php echo isset($disable_sidebar) ? 'style="min-height:50px;"' : ''?>>
 <section id="container" class="">
   <header class="header dark-bg"> 
       <div class="navbar-header">
