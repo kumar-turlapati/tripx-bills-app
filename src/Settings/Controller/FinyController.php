@@ -219,7 +219,7 @@ class FinyController {
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();
       $submitted_finy_code = Utilities::clean_string($submitted_data['finyCode']);
-      if($submitted_finy_code !== '' && in_array($submitted_finy_code, array_keys($finys)) && $submitted_finy_code !== $def_finy) {
+      if($submitted_finy_code !== '' && in_array($submitted_finy_code, array_keys($finys))) { // && $submitted_finy_code !== $def_finy
         $fin_year_name = $finys[$submitted_finy_code];
         $api_response = $this->finy_model->switch_finy(['finyCode' => $submitted_finy_code]);
         if($api_response['status']) {

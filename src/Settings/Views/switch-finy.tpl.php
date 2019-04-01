@@ -26,11 +26,12 @@
                 <select class="form-control" name="finyCode" id="finyCode">
                   <?php 
                     foreach($finys as $key=>$value):
-                      if($key === $def_finy) {
+/*                      if($key === $def_finy) {
                         $selected = 'disabled="disabled"';
                       } else {
                         $selected = '';
-                      } 
+                      }*/ 
+                      $selected = '';
                   ?>
                     <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                   <?php endforeach; ?>

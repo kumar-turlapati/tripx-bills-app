@@ -137,6 +137,11 @@
                             <a class="btn btn-primary" href="/sales-return/view/<?php echo $sales_code.'/'.$return_code ?>" title="View Sales Return Transaction">
                               <i class="fa fa-eye"></i>
                             </a>
+                            <?php if(Utilities::is_admin()): ?>
+                              &nbsp;&nbsp;<a class="btn btn-danger" href="/sales-return/delete/<?php echo $sales_code.'/'.$return_code ?>" title="Delete Sales Return Transaction">
+                                <i class="fa fa-times"></i>
+                              </a>
+                            <?php endif; ?>
                             <?php /*&nbsp;
                             <a class="btn btn-primary" href="javascript: printSalesReturnBill('<?php echo $return_code ?>')" title="Print Sales Return Bill">
                               <i class="fa fa-print"></i>
