@@ -751,24 +751,24 @@
                 $net_pay = round($grand_total);
               ?>
                 <tr>
-                  <td colspan="13" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
+                  <td colspan="14" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
                   <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="13" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
+                  <td colspan="14" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
                   <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="13" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
+                  <td colspan="14" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
                   <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo number_format($round_off,2,'.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="13" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
+                  <td colspan="14" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
                   <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="13">
+                  <td style="vertical-align:middle;text-align:right;" colspan="14">
                     <textarea
                       class="form-control noEnterKey"
                       rows="3"
@@ -779,10 +779,10 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="14" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
+                  <td colspan="15" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
                 </tr>
                 <tr style="padding:0px;margin:0px;">
-                  <td colspan="14" style="padding:0px;margin:0px;">
+                  <td colspan="15" style="padding:0px;margin:0px;">
                     <table class="table table-striped table-hover font12 valign-middle">
                       <thead>
                         <th style="text-align:center;">GST Rate (in %)</th>

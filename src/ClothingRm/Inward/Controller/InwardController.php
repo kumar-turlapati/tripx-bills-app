@@ -185,7 +185,7 @@ class InwardController
       if($purchase_response['status']) {
         $purchase_details = $purchase_response['purchaseDetails'];
 
-        # convert received item details to template item details.
+        // convert received item details to template item details.
         $item_names = array_column($purchase_details['itemDetails'],'itemName');
         $inward_qtys = array_column($purchase_details['itemDetails'],'itemQty');
         $free_qtys = array_column($purchase_details['itemDetails'],'freeQty');
@@ -200,15 +200,17 @@ class InwardController
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
         $cnos = array_column($purchase_details['itemDetails'], 'cno');
+        $category_names =  array_column($purchase_details['itemDetails'], 'categoryName');
+        $brand_names =  array_column($purchase_details['itemDetails'], 'mfgName');
 
         if(count($item_names)>50) {
           $total_item_rows = count($item_names);
         }
 
-        # unset item details from api data.
+        // unset item details from api data.
         unset($purchase_details['itemDetails']);
 
-        # create form data variable.
+        // create form data variable.
         $form_data = $purchase_details;
 
         $form_data['itemName'] = $item_names;
@@ -224,7 +226,9 @@ class InwardController
         $form_data['itemDiscount'] = $discounts;
         $form_data['hsnCodes'] = $hsn_codes;
         $form_data['packedQty'] = $packed_qtys;
-        $form_data['cnos'] = $cnos;
+        $form_data['cno'] = $cnos;
+        $form_data['categoryName'] = $category_names;
+        $form_data['brandName'] = $brand_names;
 
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
