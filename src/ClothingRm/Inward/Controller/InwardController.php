@@ -624,6 +624,8 @@ class InwardController
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
         $cnos = array_column($purchase_details['itemDetails'], 'cno');
+        $lot_nos =  array_column($purchase_details['itemDetails'], 'lotNo');
+        $barcodes =  array_column($purchase_details['itemDetails'], 'barcode');
 
         $total_item_rows = count($item_names);
 
@@ -647,6 +649,8 @@ class InwardController
         $form_data['hsnCodes'] = $hsn_codes;
         $form_data['packedQty'] = $packed_qtys;
         $form_data['cnos'] = $cnos;
+        $form_data['lot_nos'] = $lot_nos;
+        $form_data['barcodes'] = $barcodes;
 
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
@@ -877,6 +881,7 @@ class InwardController
       $cno_a = $form_data['cno'];
       $category_names_a = $form_data['categoryName'];
       $brand_names_a = $form_data['brandName'];
+      $uom_names_a = $form_data['uom'];
 
       foreach($item_names_a as $key=>$item_name) {
         if($item_name !== '') {
@@ -895,11 +900,13 @@ class InwardController
           $cno = Utilities::clean_string($cno_a[$key]);
           $category_name = Utilities::clean_string($category_names_a[$key]);
           $brand_name = Utilities::clean_string($brand_names_a[$key]);
+          $uom_name = Utilities::clean_string($uom_names_a[$key]);
 
           $cleaned_params['itemDetails']['itemName'][] = $item_name;
           $cleaned_params['itemDetails']['categoryName'][] = $category_name;
           $cleaned_params['itemDetails']['brandName'][] = $brand_name;
           $cleaned_params['itemDetails']['cno'][] = $cno;
+          $cleaned_params['itemDetails']['uom'][] = $uom_name;
 
           if( !is_numeric($inward_qty) ) {
             $form_errors['itemDetails'][$key]['inwardQty'] = 'Invalid item qty';
@@ -1067,6 +1074,7 @@ class InwardController
       $form_data['rackNo'][$key] = $item_details['RackNo'];
       $form_data['brandName'][$key] = $item_details['BrandName'];
       $form_data['cno'][$key] = $item_details['cno'];
+      $form_data['uomName'][$key] = $item_details['uomName'];
     }
     return $form_data;
   }

@@ -406,7 +406,7 @@
             <span class="error"><?php echo $form_errors['itemDetailsError'] ?></span>
           <?php endif; ?>          
           <div class="table-responsive">
-            <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable">
+            <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="width:1300px;">
               <thead>
                 <tr>
                   <th style="width:220px;" class="text-center purItem">Item name</th>
@@ -424,6 +424,7 @@
                   <th style="width:50px"   class="text-center">Brand</th>                  
                   <th style="width:50px"   class="text-center">Category</th>
                   <th style="width:20px"   class="text-center">Container<br />No.</th>                  
+                  <th style="width:20px"   class="text-center">UOM<br />Name</th>                  
                 </tr>
               </thead>
               <tbody>
@@ -500,7 +501,12 @@
                     $cno = $form_data['cno'][$i-1];
                   } else {
                     $cno = '';
-                  }                                 
+                  }
+                  if( isset($form_data['uomName'][$i-1]) && $form_data['uomName'][$i-1] !== '' ) {
+                    $uom_name = $form_data['uomName'][$i-1];
+                  } else {
+                    $uom_name = '';
+                  }                                               
 
                   $billed_qty = $inward_qty-$free_qty;
                   if(is_numeric($packed_qty) && $packed_qty>0) {
@@ -733,7 +739,18 @@
                       style="width:70px;font-size:12px;"
                       value="<?php echo $cno ?>"
                     />
-                  </td>                                     
+                  </td>
+                  <td style="width:20px;">
+                    <input
+                      type="text"
+                      name="uom[]"
+                      id="uom_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="UOM"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $uom_name ?>"
+                    />
+                  </td>                                                     
                   <input 
                     type="hidden" 
                     id="inwItemTaxAmt_<?php echo $i ?>"
@@ -751,24 +768,24 @@
                 $net_pay = round($grand_total);
               ?>
                 <tr>
-                  <td colspan="14" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
+                  <td colspan="15" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
                   <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="14" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
+                  <td colspan="15" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
                   <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="14" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
+                  <td colspan="15" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
                   <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo number_format($round_off,2,'.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="14" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
+                  <td colspan="15" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
                   <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="14">
+                  <td style="vertical-align:middle;text-align:right;" colspan="15">
                     <textarea
                       class="form-control noEnterKey"
                       rows="3"
@@ -779,10 +796,10 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="15" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
+                  <td colspan="16" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
                 </tr>
                 <tr style="padding:0px;margin:0px;">
-                  <td colspan="15" style="padding:0px;margin:0px;">
+                  <td colspan="16" style="padding:0px;margin:0px;">
                     <table class="table table-striped table-hover font12 valign-middle">
                       <thead>
                         <th style="text-align:center;">GST Rate (in %)</th>
@@ -838,7 +855,7 @@
               </tbody>
             </table>
           </div>
-          <div class="text-center">
+          <div class="text-center" style="margin-top:10px;">
             <button class="btn btn-danger" id="inwCancel">
               <i class="fa fa-times"></i> Cancel
             </button>

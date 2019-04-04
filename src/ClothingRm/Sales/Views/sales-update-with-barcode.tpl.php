@@ -569,7 +569,7 @@
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label">Date of sale (dd-mm-yyyy)</label>
                   <div class="form-group">
-                    <div class="col-lg-12" style="padding-left:0px;">
+                    <div class="col-lg-12">
                       <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                         <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
                         <span class="add-on"><i class="fa fa-calendar"></i></span>

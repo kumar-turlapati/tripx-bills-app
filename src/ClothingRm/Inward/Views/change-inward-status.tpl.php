@@ -75,7 +75,10 @@
                 <tr>
                   <th style="width:240px;" class="text-center purItem">Item name</th>
                   <th style="width:80px;"  class="text-center purItem">HSN / SAC Code</th>                  
-                  <th style="width:50px;"  class="text-center">Received<br />qty.</th>
+                  <th style="width:50px;"  class="text-center purItem">CASE /<br />Container No.</th>                  
+                  <th style="width:50px;"  class="text-center purItem">Lot No.</th>                  
+                  <th style="width:50px;"  class="text-center purItem">Barcode</th>                  
+                  <th style="width:50px;"  class="text-center">Rcvd.<br />qty.</th>
                   <th style="width:50px"   class="text-center">Free<br />qty.</th>
                   <th style="width:50px"   class="text-center">Billed<br />qty.</th>
                   <th style="width:60px"   class="text-center">Packed/<br />Unit</th>                  
@@ -143,6 +146,21 @@
                     $packed_qty = $form_data['packedQty'][$i-1];
                   } else {
                     $packed_qty = '';
+                  }
+                  if( isset($form_data['cnos'][$i-1]) && $form_data['cnos'][$i-1] !== '' ) {
+                    $cno = $form_data['cnos'][$i-1];
+                  } else {
+                    $cno = '';
+                  }
+                  if( isset($form_data['lot_nos'][$i-1]) && $form_data['lot_nos'][$i-1] !== '' ) {
+                    $lot_no = $form_data['lot_nos'][$i-1];
+                  } else {
+                    $lot_no = '';
+                  }
+                  if( isset($form_data['barcode'][$i-1]) && $form_data['barcode'][$i-1] !== '' ) {
+                    $barcode = $form_data['barcode'][$i-1];
+                  } else {
+                    $barcode = '-';
                   }                  
 
                   if(is_numeric($packed_qty) && $packed_qty>0) {
@@ -170,8 +188,11 @@
                   }
               ?>
                 <tr class="purchaseItemRow">
-                  <td style="width:300px;"><?php echo $item_name ?></td>
-                  <td style="width:80px;"><?php echo $hsn_code ?></td>                  
+                  <td style="width:240px;"><?php echo $item_name ?></td>
+                  <td style="width:80px;"><?php echo $hsn_code ?></td>
+                  <td style="width:50px;"><?php echo $cno ?></td>
+                  <td style="width:50px;"><?php echo $lot_no ?></th>                  
+                  <td style="width:50px;"><?php echo $barcode ?></th>                  
                   <td style="width:50px;" align="right"><?php echo number_format($inward_qty,2,'.','') ?></td>
                   <td style="width:50px;" align="right"><?php echo number_format($free_qty,2,'.','') ?></td>
                   <td style="width:55px;" align="right"><?php echo number_format($billed_qty,2,'.','') ?></td>
