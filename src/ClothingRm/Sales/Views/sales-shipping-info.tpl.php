@@ -19,7 +19,7 @@
     $billing_address .= ' - '.$form_data['pincode'];
   }
 
-  // dump($form_data);
+  // dump($form_data, $submitted_data);
 
   // prefill shipping details
   if(isset($submitted_data['transporterName'])) {
@@ -50,9 +50,10 @@
   } else {
     $challan_no = '';
   }
-  if(isset($submitted_data['invoiceNo']) && $submitted_data['invoiceNo'] !== '') {
-    $invoice_no = $submitted_data['invoiceNo'];
-  } elseif(isset($form_data['customBillNo']) && $form_data['customBillNo'] !== '') {
+
+  $qb_invoice_number = isset($form_data['billNo']) && $form_data['billNo'] !== '' ? $form_data['billNo'] : '';
+
+  if(isset($form_data['customBillNo']) && $form_data['customBillNo'] !== '') {
     $invoice_no = $form_data['customBillNo'];
   } elseif(isset($form_data['billNo']) && $form_data['billNo'] !== '') {
     $invoice_no = $form_data['billNo'];
@@ -131,7 +132,7 @@
               <td width="10%" class="text-center valign-middle" style="font-size:14px;color:#2E1114;font-weight:bold;">Store Name</td>
             </tr>
             <tr>
-              <td style="vertical-align:middle;font-weight:bold;font-size:12px;text-align:center;"><?php echo $invoice_no ?></td>
+              <td style="vertical-align:middle;font-weight:bold;font-size:12px;text-align:center;"><?php echo $qb_invoice_number ?></td>
               <td style="vertical-align:middle;font-weight:bold;font-size:12px;text-align:center;"><?php echo $invoice_date ?></td>
               <td style="vertical-align:middle;font-weight:bold;font-size:12px;text-align:center;"><?php echo $customer_name ?></td>
               <td style="vertical-align:middle;font-weight:bold;font-size:12px;text-align:center;"><?php echo $store_name ?></td>

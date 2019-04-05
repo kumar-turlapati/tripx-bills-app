@@ -863,7 +863,7 @@ class Utilities
         # code...
         break;
       default:
-        if(!in_array($this_device_id, $allowed_devices)) {
+        if(in_array($this_device_id, $allowed_devices) === false) {
           // unset cookie immediately
           setcookie('__ata__','',time()-200400);
 

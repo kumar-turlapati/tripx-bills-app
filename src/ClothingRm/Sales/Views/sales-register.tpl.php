@@ -165,7 +165,7 @@
               $tot_round_off = $tot_net_pay = 0;
               foreach($sales as $sales_details):
                 // dump($sales_details);
-              // exit;
+                // exit;
                 $sales_code = $sales_details['invoiceCode'];
                 $invoice_date = date("d-M-Y", strtotime($sales_details['invoiceDate']));
                 $mobile_number = $sales_details['mobileNo'];
@@ -192,6 +192,7 @@
                 $tot_tax_amount += $sales_details['taxAmount'];
                 $tot_round_off += $sales_details['roundOff'];
                 $tot_net_pay += $sales_details['netPay'];
+                $tax_calc_option = $sales_details['taxCalcOption'] === 'e' ? 'E' : 'I';
             ?>
                 <tr class="text-uppercase text-right font11">
                   <td class="valign-middle"><?php echo $cntr ?></td>
@@ -214,7 +215,7 @@
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['billAmount'],2) ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['discountAmount'],2) ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['totalAmount'],2) ?></td>                    
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['taxAmount'],2) ?></td>
+                  <td class="text-right valign-middle"><?php echo number_format($sales_details['taxAmount'],2).' ['. $tax_calc_option.']' ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['roundOff'],2) ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['netPay'],2) ?></td>    
                   <td>
