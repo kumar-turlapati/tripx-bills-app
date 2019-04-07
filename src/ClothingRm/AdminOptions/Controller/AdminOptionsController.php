@@ -14,6 +14,7 @@ use ClothingRm\Inventory\Model\Inventory;
 use ClothingRm\Inward\Model\Inward;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Grn\Model\GrnNew;
+use ClothingRm\SalesReturns\Model\SalesReturns;
 use User\Model\User;
 
 class AdminOptionsController
@@ -30,6 +31,7 @@ class AdminOptionsController
 		$this->flash = new Flash;
     $this->supplier_model = new Supplier;
     $this->grn_model = new GrnNew;
+    $this->sales_return_model = new SalesReturns;
 	}
 
   // delete Org. Summary
@@ -74,7 +76,7 @@ class AdminOptionsController
       } else {
         $api_response = $this->grn_model->deleteGRN($form_validation['cleaned_params']);
         if($api_response['status']) {
-          $this->flash->set_flash_message('GRN Deleted successfully. PO No `'.$form_validation['cleaned_params']['poNo'].'` is editable now.');
+          $this->flash->set_flash_message('GRN Deleted successfully. PO No `'.$form_validation['cleaned_params']['vocNo'].'` is editable now.');
           Utilities::redirect('/admin-options/delete-grn');
         } else {
           $page_error = $api_response['apierror'];
@@ -199,7 +201,54 @@ class AdminOptionsController
 
     // render template
     return array($this->template->render_view('delete-invoice',$template_vars),$controller_vars);
+  }
+
+  // delete Sales Return
+  public function deleteSalesReturn(Request $request) {
+    $form_errors = $submitted_data = [];
+
+    // get location codes
+    $client_locations = Utilities::get_client_locations();
+
+    // check for form Submission
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $form_validation = $this->_validate_sales_return_details($submitted_data, $client_locations);
+      if($form_validation['status']===false) {
+        $form_errors = $form_validation['errors'];
+      } else {
+        $submitted_data = $form_validation['cleaned_params'];
+        $api_response = $this->sales_return_model->remove_sales_return_transaction($submitted_data);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('Sales Return Voucher Deleted successfully.');
+          Utilities::redirect('/admin-options/delete-invoice');
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
+        }
+      }
+    }    
+
+     // prepare form variables.
+    $template_vars = array(
+      'errors' => $form_errors,
+      'submitted_data' => $submitted_data,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'flash_obj' => $this->flash,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Delete Sales Return',
+      'icon_name' => 'fa fa-repeat',
+    );
+
+    // render template
+    return array($this->template->render_view('delete-sales-return',$template_vars),$controller_vars);
   }  
+
+
 
   // update business information
 	public function editBusinessInfoAction(Request $request) {
@@ -322,6 +371,7 @@ class AdminOptionsController
     $voc_no = isset($form_data['vocNo']) ? Utilities::clean_string($form_data['vocNo']) : '';
     $supplier_id = isset($form_data['supplierID']) ? Utilities::clean_string($form_data['supplierID']) : '';
     $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : '';
+    $delete_reason = isset($form_data['deleteReason']) ? Utilities::clean_string($form_data['deleteReason']) : '';
     $location_keys = array_keys($locations);
 
     if($voc_no === '') {
@@ -333,6 +383,11 @@ class AdminOptionsController
       $errors['supplierID'] = 'Supplier name is required.';
     } else {
       $cleaned_params['supplierID'] = $supplier_id;
+    }
+    if($delete_reason === '') {
+      $errors['deleteReason'] = 'Delete reason is required.';
+    } else {
+      $cleaned_params['deleteReason'] = $delete_reason;
     }
     if(in_array($location_code, $location_keys)) {
       $cleaned_params['locationCode'] = $location_code;
@@ -352,10 +407,12 @@ class AdminOptionsController
     }
   }
 
+  // validation for invoice details.
   private function _validate_invoice_details($form_data=[], $locations=[]) {
     $cleaned_params = $errors = [];
 
     $voc_no = isset($form_data['vocNo']) ? Utilities::clean_string($form_data['vocNo']) : '';
+    $delete_reason = isset($form_data['deleteReason']) ? Utilities::clean_string($form_data['deleteReason']) : '';
     $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : '';
     $location_keys = array_keys($locations);
 
@@ -364,6 +421,48 @@ class AdminOptionsController
     } else {
       $cleaned_params['vocNo'] = $voc_no;
     }
+    if(in_array($location_code, $location_keys)) {
+      $cleaned_params['locationCode'] = $location_code;
+    } else {
+      $errors['locationCode'] = 'Invalid Store Name.';
+    }
+    if($delete_reason === '') {
+      $errors['deleteReason'] = 'Delete reason is required.';
+    } else {
+      $cleaned_params['deleteReason'] = $delete_reason;
+    }    
+    if(count($errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
+  }
+
+  // validation for sales return voucher.
+  private function _validate_sales_return_details($form_data=[], $locations=[]) {
+    $cleaned_params = $errors = [];
+
+    $voc_no = isset($form_data['vocNo']) ? Utilities::clean_string($form_data['vocNo']) : '';
+    $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : '';
+    $delete_reason = isset($form_data['deleteReason']) ? Utilities::clean_string($form_data['deleteReason']) : '';
+    $location_keys = array_keys($locations);
+
+    if($voc_no === '') {
+      $errors['vocNo'] = 'Voucher Number is required.';
+    } else {
+      $cleaned_params['vocNo'] = $voc_no;
+    }
+    if($delete_reason === '') {
+      $errors['deleteReason'] = 'Delete reason is required.';
+    } else {
+      $cleaned_params['deleteReason'] = $delete_reason;
+    }    
     if(in_array($location_code, $location_keys)) {
       $cleaned_params['locationCode'] = $location_code;
     } else {
@@ -380,7 +479,7 @@ class AdminOptionsController
         'cleaned_params' => $cleaned_params,
       ];
     }
-  }
+  }  
 }
 
 /*

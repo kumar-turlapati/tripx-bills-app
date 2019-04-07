@@ -1,5 +1,6 @@
 <?php
   $voc_no = isset($submitted_data['vocNo']) ? $submitted_data['vocNo'] : '';
+  $delete_reason = isset($submitted_data['deleteReason']) ? $submitted_data['deleteReason'] : '';
   $location_code = isset($submitted_data['locationCode']) ? $submitted_data['locationCode'] : '';
 ?>
 <div class="row">
@@ -7,7 +8,7 @@
     <section class="panel">
       <div class="panel-body">
         <?php echo $flash_obj->print_flash_message() ?>
-        <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="editPOAfterGRN">
+        <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="delInvoiceForm">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Invoice No. (Auto increment number)</label>
@@ -38,9 +39,16 @@
                 <span class="error"><?php echo $errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Reason for Deletion (100 characters maximum)</label>
+              <input type="text" class="form-control noEnterKey" name="deleteReason" id="deleteReason" maxlength="100" value="<?php echo $delete_reason ?>">
+              <?php if(isset($errors['deleteReason'])): ?>
+                <span class="error"><?php echo $errors['deleteReason'] ?></span>
+              <?php endif; ?>
+            </div>
           </div>
           <div class="text-center">
-            <button class="btn btn-warning" id="grnDelete"><i class="fa fa-share"></i> I know what i am doing. Continue</button>
+            <button class="btn btn-warning" id="invoiceDelete"><i class="fa fa-share"></i> I know what i am doing. Continue</button>
           </div>
         </form>
       </div>

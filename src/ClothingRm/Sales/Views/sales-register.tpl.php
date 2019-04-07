@@ -185,13 +185,19 @@
                   $payment_method = 'Invalid';
                 }
                 $customer_code = $sales_details['customerCode'];
+
+                $bill_amount = $sales_details['billAmount'];
+                $discount_amount = $sales_details['discountAmount'];
+                $taxable_amount = $bill_amount - $discount_amount;
                 
-                $tot_bill_amount += $sales_details['billAmount'];
-                $tot_disc_amount += $sales_details['discountAmount'];
-                $tot_amount += $sales_details['totalAmount'];
+                $tot_bill_amount += $bill_amount;
+                $tot_disc_amount += $discount_amount;
+                $tot_amount += $taxable_amount;
+
                 $tot_tax_amount += $sales_details['taxAmount'];
                 $tot_round_off += $sales_details['roundOff'];
                 $tot_net_pay += $sales_details['netPay'];
+
                 $tax_calc_option = $sales_details['taxCalcOption'] === 'e' ? 'E' : 'I';
             ?>
                 <tr class="text-uppercase text-right font11">
@@ -212,12 +218,12 @@
                       <?php echo $sales_details['billNo'].' / '.$invoice_date ?>
                     </a>
                   </td>
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['billAmount'],2) ?></td>
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['discountAmount'],2) ?></td>
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['totalAmount'],2) ?></td>                    
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['taxAmount'],2).' ['. $tax_calc_option.']' ?></td>
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['roundOff'],2) ?></td>
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['netPay'],2) ?></td>    
+                  <td class="text-right valign-middle"><?php echo number_format($bill_amount,2,'.','') ?></td>
+                  <td class="text-right valign-middle"><?php echo number_format($discount_amount,2,'.','') ?></td>
+                  <td class="text-right valign-middle"><?php echo number_format($taxable_amount,2,'.','') ?></td>                    
+                  <td class="text-right valign-middle"><?php echo number_format($sales_details['taxAmount'],2,'.','').' ['. $tax_calc_option.']' ?></td>
+                  <td class="text-right valign-middle"><?php echo number_format($sales_details['roundOff'],2,'.','') ?></td>
+                  <td class="text-right valign-middle"><?php echo number_format($sales_details['netPay'],2,'.','') ?></td>    
                   <td>
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>

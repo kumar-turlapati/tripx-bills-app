@@ -98,16 +98,19 @@
                   <th width="10%" class="text-center valign-middle">MRN No.</th>
                   <th width="10%" class="text-center valign-middle">Return date</th>
                   <th width="10%" class="text-center valign-middle">Store name</th>                
-                  <th width="15%" class="text-center valign-middle">Bill No.&Date</th>
-                  <th width="8%" class="text-center valign-middle">Sale value<br />(in Rs.)</th>
-                  <th width="8%" class="text-center valign-middle">Return value<br />(in Rs.)</th>
-                  <th width="8%" class="text-center valign-middle">Credit notes<br />raised (in Rs.)</th>
+                  <th width="15%" class="text-center valign-middle">Bill No.&amp;Date</th>
+                  <th width="8%"  class="text-center valign-middle">Bill value<br />(in Rs.)</th>
+                  <th width="8%"  class="text-center valign-middle">Return value<br />(in Rs.)</th>
+                  <th width="8%"  class="text-center valign-middle">Credit notes<br />raised (in Rs.)</th>
+                  <th width="8%"  class="text-center valign-middle">Credit notes<br />consumed (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Balance value<br />(in Rs.)</th>
                   <th width="13%" class="text-center valign-middle">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
                   $cntr = $sl_no;
+                  $tot_bill_value = $tot_return_value = $tot_cn_raised = $tot_cn_used = $tot_bal_value = 0;
                   foreach($sales_returns as $sales_return_details):
                     $return_date = date("d-m-Y", strtotime($sales_return_details['returnDate']));
                     $mrn_no = $sales_return_details['mrnNo'];
@@ -120,7 +123,16 @@
                     $return_code = $sales_return_details['returnCode'];
                     $location_id = $sales_return_details['locationID'];
                     $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
+
                     $cn_value = $sales_return_details['cnValue'];
+                    $consumed_value = $sales_return_details['consumedValue'];
+                    $bal_value = $cn_value - $consumed_value;
+
+                    $tot_bill_value += $sale_value;
+                    $tot_return_value += $return_value;
+                    $tot_cn_used += $cn_value;
+                    $tot_cn_raised += $consumed_value;
+                    $tot_bal_value += $bal_value;
                 ?>
                     <tr class="text-uppercase text-right font11">
                       <td class="text-center valign-middle"><?php echo $cntr ?></td>
@@ -128,24 +140,17 @@
                       <td class="text-left valign-middle"><?php echo $return_date ?></td>       
                       <td class="text-left valign-middle"><?php echo $location_name ?></td>                    
                       <td class="valign-middle"><?php echo $bill_no.' / '.$invoice_date ?></td>
-                      <td class="text-right valign-middle"><?php echo number_format($sale_value,2) ?></td>
-                      <td class="text-right valign-middle"><?php echo number_format($return_value,2) ?></td>
-                      <td class="text-right valign-middle"><?php echo number_format($cn_value,2) ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($sale_value,2,'.','') ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($return_value,2,'.','') ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($cn_value,2,'.','') ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($consumed_value,2,'.','') ?></td>
+                      <td class="text-right valign-middle"><?php echo number_format($bal_value,2,'.','') ?></td>
                       <td class="valign-middle">
                         <div class="btn-actions-group">
                           <?php if($return_code !== ''): ?>
                             <a class="btn btn-primary" href="/sales-return/view/<?php echo $sales_code.'/'.$return_code ?>" title="View Sales Return Transaction">
                               <i class="fa fa-eye"></i>
                             </a>
-                            <?php if(Utilities::is_admin()): ?>
-                              &nbsp;&nbsp;<a class="btn btn-danger" href="/sales-return/delete/<?php echo $sales_code.'/'.$return_code ?>" title="Delete Sales Return Transaction">
-                                <i class="fa fa-times"></i>
-                              </a>
-                            <?php endif; ?>
-                            <?php /*&nbsp;
-                            <a class="btn btn-primary" href="javascript: printSalesReturnBill('<?php echo $return_code ?>')" title="Print Sales Return Bill">
-                              <i class="fa fa-print"></i>
-                            </a> */?>
                           <?php endif; ?>
                         </div>
                       </td>
@@ -154,6 +159,15 @@
                 $cntr++;
                 endforeach; 
               ?>
+                <tr class="text-bold">
+                  <td colspan="5" class="valign-middle" style="font-weight:bold;text-align:right;">TOTALS</td>
+                  <td align="right" style="font-weight:bold;"><?php echo number_format($tot_bill_value, 2, '.', '') ?></td>
+                  <td align="right" style="font-weight:bold;"><?php echo number_format($tot_return_value, 2, '.', '') ?></td>
+                  <td align="right" style="font-weight:bold;"><?php echo number_format($tot_cn_raised, 2, '.', '') ?></td>
+                  <td align="right" style="font-weight:bold;"><?php echo number_format($tot_cn_used, 2, '.', '') ?></td>
+                  <td align="right" style="font-weight:bold;"><?php echo number_format($tot_bal_value, 2, '.', '') ?></td>
+                </tr>
+
               </tbody>
             </table>
             <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>

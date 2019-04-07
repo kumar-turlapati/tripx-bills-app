@@ -19,7 +19,7 @@ class SalesReturnsController {
     $this->views_path = __DIR__.'/../Views/';
   }
   
-  # sales return entry
+  // sales return entry
   public function salesReturnEntryAction(Request $request) {
 
     $errors = $sale_details = $sale_item_details = array();
@@ -169,7 +169,7 @@ class SalesReturnsController {
     return array($template->render_view('sales-return-entry', $template_vars), $controller_vars);
   }
   
-  # sales return view
+  // sales return view
   public function salesReturnViewAction(Request $request) {
     $errors = $sale_details = $sale_item_details = array();
     $submitted_data = $return_item_details = array();
@@ -269,7 +269,7 @@ class SalesReturnsController {
       return array($template->render_view('sales-return-view', $template_vars), $controller_vars);
   }
 
-  # sales return list
+  // sales return list
   public function salesReturnListAction(Request $request) {
 
     $search_params = $sales_returns_a = [];
@@ -366,13 +366,13 @@ class SalesReturnsController {
       'location_ids' => $location_ids,      
     );
 
-    # build variables
+    // build variables
     $controller_vars = array(
       'page_title' => 'Sales Returns Register',
       'icon_name' => 'fa fa-repeat',
     );
 
-    # render template
+    // render template
     $template = new Template($this->views_path);
     return array($template->render_view('sales-return-register', $template_vars), $controller_vars);
   }

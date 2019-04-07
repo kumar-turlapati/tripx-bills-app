@@ -132,16 +132,16 @@
                   $total += $voucher_amount;
                   $balance_total += $balance_value;
               ?>
-                <tr class="font12">
-                  <td align="right"><?php echo $cntr ?></td>
-                  <td align="center"><?php echo $invoice_date ?></td>
-                  <td align="center"><?php echo $bill_no ?></td>                
-                  <td align="right"><?php echo $voucher_no ?></td>
-                  <td><?php echo $voucher_date ?></td>
-                  <td align="right"><?php echo number_format($voucher_amount,2) ?></td>
-                  <td align="right"><?php echo number_format($balance_value,2) ?></td>                  
-                  <td><?php echo $location_name ?></td>
-                  <td>
+                <tr class="font11">
+                  <td align="right" class="valign-middle"><?php echo $cntr ?></td>
+                  <td align="center" class="valign-middle"><?php echo $invoice_date ?></td>
+                  <td align="center" class="valign-middle"><?php echo $bill_no ?></td>                
+                  <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
+                  <td class="valign-middle"><?php echo $voucher_date ?></td>
+                  <td align="right" class="valign-middle"><?php echo number_format($voucher_amount,2) ?></td>
+                  <td align="right" class="valign-middle"><?php echo number_format($balance_value,2) ?></td>                  
+                  <td class="valign-middle"><?php echo $location_name ?></td>
+                  <td class="valign-middle">
                     <div class="btn-actions-group" align="right">
                       <?php if($user_type === 3 || $user_type === 9): ?>
                         <?php /*
@@ -162,7 +162,6 @@
                           <i class="fa fa-times "></i>
                         </a>
                       <?php endif; ?>
-                      
                     </div>
                   </td>
                 </tr>
@@ -172,8 +171,8 @@
             ?>
               <tr class="text-bold">
                 <td colspan="5" align="right">TOTALS</td>
-                <td align="right"><?php echo number_format($total, 2) ?></td>
-                <td align="right"><?php echo number_format($balance_total, 2) ?></td>
+                <td align="right"><?php echo number_format($total, 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($balance_total, 2, '.', '') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>                
               </tr>

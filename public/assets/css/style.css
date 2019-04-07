@@ -4405,10 +4405,10 @@ span.customSelect.changed {
     min-height: 146px;
 }
 .loginPage .navbar-default{
-  min-height: 88px;
+  min-height: 85px;
 }
 .navbar-default .navbar-nav>li>a {
-    color: #fff;
+  color: #fff;
 }
 .navbar-default .navbar-nav>li>a:focus,
 .navbar-default .navbar-nav>li>a:hover {

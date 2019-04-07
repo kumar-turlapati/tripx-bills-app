@@ -1082,6 +1082,20 @@ function initializeJS() {
     });
   }
 
+  if( $('#delInvoiceForm').length>0 ) {
+    jQuery('#invoiceDelete').on('click', function(e){
+      e.preventDefault();
+      bootbox.confirm("Are you sure. You want to delete this Invoice?", function(result) {
+        if(result===true) {
+          $(this).attr('disabled', true);
+          $('#delInvoiceForm').submit();
+        } else {
+          return;
+        }
+      });
+    });
+  }  
+
   // inward entry form
   if( $('#inwardEntryForm').length>0 ) {
 
