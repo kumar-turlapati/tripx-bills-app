@@ -130,8 +130,8 @@
 
                     $tot_bill_value += $sale_value;
                     $tot_return_value += $return_value;
-                    $tot_cn_used += $cn_value;
-                    $tot_cn_raised += $consumed_value;
+                    $tot_cn_raised += $cn_value;
+                    $tot_cn_used += $consumed_value;
                     $tot_bal_value += $bal_value;
                 ?>
                     <tr class="text-uppercase text-right font11">
