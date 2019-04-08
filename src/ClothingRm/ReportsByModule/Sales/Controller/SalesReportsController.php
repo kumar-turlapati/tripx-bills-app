@@ -145,6 +145,7 @@ class SalesReportsController {
         $tot_taxable += $taxable;
         $tot_round_off += $round_off;
         $tot_net_pay += $net_pay;
+        $tot_gst += $gst;
         
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
@@ -1837,6 +1838,7 @@ class SalesReportsController {
       $tot_taxable += $taxable;
       $tot_round_off += $round_off;
       $tot_net_pay += $net_pay;
+      $tot_gst += $tot_gst;
 
       $cleaned_params[$key] = [
         'SNo.' => $slno,
