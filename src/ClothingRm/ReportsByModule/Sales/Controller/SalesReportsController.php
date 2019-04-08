@@ -112,16 +112,17 @@ class SalesReportsController {
       $pdf->Cell($item_widths[2],6,'Bill No. & Date','RTB',0,'C');
       $pdf->Cell($item_widths[3],6,'Gross Amt. (Rs.)','RTB',0,'C');
       $pdf->Cell($item_widths[4],6,'Discount (Rs.)','RTB',0,'C');
-      $pdf->Cell($item_widths[5],6,'Taxable (Rs.)','RTB',0,'C');
-      $pdf->Cell($item_widths[6],6,'GST (Rs.)','RTB',0,'C');
-      $pdf->Cell($item_widths[7],6,'RndOff (Rs.)','RTB',0,'C');
-      $pdf->Cell($item_widths[8],6,'NetPay (Rs.)','RTB',0,'C');  
+      $pdf->Cell($item_widths[5],6,'Billed (Rs.)','RTB',0,'C');
+      $pdf->Cell($item_widths[6],6,'Taxable (Rs.)','RTB',0,'C');
+      $pdf->Cell($item_widths[7],6,'GST (Rs.)','RTB',0,'C');
+      $pdf->Cell($item_widths[8],6,'RndOff (Rs.)','RTB',0,'C');  
       $pdf->Cell($item_widths[9],6,'CustomerName','RTB',0,'C');
       $pdf->SetFont('Arial','',9);
 
       $tot_gross_amount = $tot_discount = $tot_taxable = $tot_gst = $tot_round_off = $tot_net_pay = 0;
       foreach($total_records as $record_details) {
         $slno++;
+        $gross_amount = $discount = $taxable = $gst = $round_off = $net_pay = 0;
         $payment_method = Constants::$PAYMENT_METHODS_RC_SHORT[$record_details['paymentMethod']];
         $bill_info = $record_details['billNo'].' / '.date("d-m-y", strtotime($record_details['invoiceDate']));
         $tran_info = date("d-M-Y h:ia", strtotime($record_details['createdOn']));
@@ -153,10 +154,10 @@ class SalesReportsController {
         $pdf->Cell($item_widths[2],6,$bill_info,'RTB',0,'R');
         $pdf->Cell($item_widths[3],6,number_format($gross_amount,2,'.',''),'RTB',0,'R');
         $pdf->Cell($item_widths[4],6,number_format($discount,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[5],6,number_format($taxable,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[6],6,number_format($gst,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[7],6,number_format($round_off,2,'.',''),'RTB',0,'R');
-        $pdf->Cell($item_widths[8],6,number_format($net_pay,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[5],6,number_format($net_pay,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,number_format($taxable,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[7],6,number_format($gst,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,number_format($round_off,2,'.',''),'RTB',0,'R');
         $pdf->Cell($item_widths[9],6,substr($customer_name,0,20),'RTB',0,'L');  
       }
     
@@ -165,10 +166,10 @@ class SalesReportsController {
       $pdf->Cell($totals_width,6,'Totals','LRTB',0,'R');
       $pdf->Cell($item_widths[3],6,number_format($tot_gross_amount,2,'.',''),'LRTB',0,'R');
       $pdf->Cell($item_widths[4],6,number_format($tot_discount,2,'.',''),'LRTB',0,'R');    
-      $pdf->Cell($item_widths[5],6,number_format($tot_taxable,2,'.',''),'LRTB',0,'R');
-      $pdf->Cell($item_widths[6],6,number_format($tot_gst,2,'.',''),'LRTB',0,'R');
-      $pdf->Cell($item_widths[7],6,number_format($tot_round_off,2,'.',''),'LRTB',0,'R');
-      $pdf->Cell($item_widths[8],6,number_format($tot_net_pay,2,'.',''),'LRTB',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($tot_net_pay,2,'.',''),'LRTB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($tot_taxable,2,'.',''),'LRTB',0,'R');
+      $pdf->Cell($item_widths[7],6,number_format($tot_gst,2,'.',''),'LRTB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($tot_round_off,2,'.',''),'LRTB',0,'R');
 
       $pdf->Output();
     }
@@ -1846,10 +1847,10 @@ class SalesReportsController {
         'Bill No. & Date' => $bill_info,
         'Gross Amount (Rs.)' => number_format($gross_amount, 2, '.', ''),
         'Discount (Rs.)' => number_format($discount, 2, '.', ''),
-        'Taxable (Rs.)' => number_format($taxable, 2, '.', ''),
-        'GST (Rs.)' => number_format($gst, 2, '.', ''),
-        'RndOff (Rs.)' => number_format($round_off, 2, '.', ''),
-        'NetPay (Rs.)' => number_format($net_pay, 2, '.', ''),
+        'Taxable (Rs.)' => number_format($net_pay, 2, '.', ''),
+        'GST (Rs.)' => number_format($taxable, 2, '.', ''),
+        'RndOff (Rs.)' => number_format($gst, 2, '.', ''),
+        'NetPay (Rs.)' => number_format($round_off, 2, '.', ''),
         'CustomerName' => $customer_name,
       ];
     }
@@ -1859,10 +1860,10 @@ class SalesReportsController {
       'Bill No. & Date' => '',
       'Gross Amount (Rs.)' => number_format($tot_gross_amount, 2, '.', ''),
       'Discount (Rs.)' => number_format($tot_discount, 2, '.', ''),
-      'Taxable (Rs.)' => number_format($tot_taxable, 2, '.', ''),
-      'GST (Rs.)' => number_format($tot_gst, 2, '.', ''),
-      'RndOff (Rs.)' => number_format($tot_round_off, 2, '.', ''),
-      'NetPay (Rs.)' => number_format($tot_net_pay, 2, '.', ''),
+      'Taxable (Rs.)' => number_format($tot_net_pay, 2, '.', ''),
+      'GST (Rs.)' => number_format($tot_taxable, 2, '.', ''),
+      'RndOff (Rs.)' => number_format($tot_gst, 2, '.', ''),
+      'NetPay (Rs.)' => number_format($tot_round_off, 2, '.', ''),
       'CustomerName' => '',
     ];
 
