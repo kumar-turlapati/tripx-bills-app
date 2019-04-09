@@ -144,9 +144,9 @@ class SalesReportsController {
         $tot_gross_amount += $gross_amount;
         $tot_discount += $discount;
         $tot_taxable += $taxable;
+        $tot_gst += $gst;
         $tot_round_off += $round_off;
         $tot_net_pay += $net_pay;
-        $tot_gst += $gst;
         
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
@@ -1837,9 +1837,9 @@ class SalesReportsController {
       $tot_gross_amount += $gross_amount;
       $tot_discount += $discount;
       $tot_taxable += $taxable;
+      $tot_gst += $gst;
       $tot_round_off += $round_off;
       $tot_net_pay += $net_pay;
-      $tot_gst += $tot_gst;
 
       $cleaned_params[$key] = [
         'SNo.' => $slno,
@@ -1847,10 +1847,10 @@ class SalesReportsController {
         'Bill No. & Date' => $bill_info,
         'Gross Amount (Rs.)' => number_format($gross_amount, 2, '.', ''),
         'Discount (Rs.)' => number_format($discount, 2, '.', ''),
-        'Taxable (Rs.)' => number_format($net_pay, 2, '.', ''),
-        'GST (Rs.)' => number_format($taxable, 2, '.', ''),
-        'RndOff (Rs.)' => number_format($gst, 2, '.', ''),
-        'NetPay (Rs.)' => number_format($round_off, 2, '.', ''),
+        'Billed (Rs.)' => number_format($net_pay, 2, '.', ''),
+        'Taxable (Rs.)' => number_format($taxable, 2, '.', ''),
+        'GST (Rs.)' => number_format($gst, 2, '.', ''),
+        'Round Off (Rs.)' => number_format($round_off, 2, '.', ''),
         'CustomerName' => $customer_name,
       ];
     }
@@ -1860,10 +1860,10 @@ class SalesReportsController {
       'Bill No. & Date' => '',
       'Gross Amount (Rs.)' => number_format($tot_gross_amount, 2, '.', ''),
       'Discount (Rs.)' => number_format($tot_discount, 2, '.', ''),
-      'Taxable (Rs.)' => number_format($tot_net_pay, 2, '.', ''),
-      'GST (Rs.)' => number_format($tot_taxable, 2, '.', ''),
-      'RndOff (Rs.)' => number_format($tot_gst, 2, '.', ''),
-      'NetPay (Rs.)' => number_format($tot_round_off, 2, '.', ''),
+      'Billed (Rs.)' => number_format($tot_net_pay, 2, '.', ''),
+      'Taxable (Rs.)' => number_format($tot_taxable, 2, '.', ''),
+      'GST (Rs.)' => number_format($tot_gst, 2, '.', ''),
+      'Round Off (Rs.)' => number_format($tot_round_off, 2, '.', ''),
       'CustomerName' => '',
     ];
 

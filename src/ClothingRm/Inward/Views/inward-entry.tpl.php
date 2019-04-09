@@ -712,7 +712,7 @@
                       type="text"
                       name="brandName[]"
                       id="brandName_<?php echo $i ?>"
-                      class="form-control"
+                      class="form-control brandAc"
                       placeholder="Brand"
                       style="width:70px;font-size:12px;"
                       value="<?php echo $brand_name ?>"
