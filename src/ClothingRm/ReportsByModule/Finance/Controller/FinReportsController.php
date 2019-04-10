@@ -345,7 +345,7 @@ class FinReportsController {
   // receivables section
   public function receivablesAction(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 1;
+    $page_no = 1; $per_page = 300;
     $total_records = [];
     $aging_logic = false;
 
@@ -410,6 +410,10 @@ class FinReportsController {
 
       // format data for aging logic.
       $total_records = $this->_format_data_for_receivables_aging_logic($total_records, $aging_logic, $form_data['aging1'], $form_data['aging2'], $form_data['aging3'], $form_data['aging4']);
+      // dump($total_records);
+      // exit;
+
+
       $format = $form_data['format'];
       if($format === 'csv') {
         $total_records = $this->_format_data_for_receivables($total_records, $aging_logic, $form_data['aging1'], $form_data['aging2'], $form_data['aging3'], $form_data['aging4']);

@@ -24,6 +24,11 @@ class SalesReportsController {
     $this->flash = new Flash;    
   }
 
+  // print b2b sales invoice
+  public function printB2BSalesInvoice(Request $request) {
+    
+  }
+
   // prints sales register.
   public function printSalesRegister(Request $request) {
     $default_location = $_SESSION['lc'];

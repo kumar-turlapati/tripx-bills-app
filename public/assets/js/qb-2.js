@@ -1019,6 +1019,46 @@ function initializeJS() {
     });
   }
 
+  // categories autocomplete
+  if(jQuery('.catAc').length>0) {
+    $('.catAc').autocomplete("/async/catAc", {
+      width: 300,
+      cacheLength:0,
+      selectFirst:false,
+      minChars:1,
+      extraParams:{
+        locationCode: function() {
+         if($('#locationCode').length>0) {
+          return $('#locationCode').val()
+         } else {
+          return '';
+         }
+        }
+      },
+      'max': 0,
+    });
+  }
+
+  // UOMs autocomplete
+  if(jQuery('.uomAc').length>0) {
+    $('.uomAc').autocomplete("/async/uomAc", {
+      width: 300,
+      cacheLength:0,
+      selectFirst:false,
+      minChars:1,
+      extraParams:{
+        locationCode: function() {
+         if($('#locationCode').length>0) {
+          return $('#locationCode').val()
+         } else {
+          return '';
+         }
+        }
+      },
+      'max': 0,
+    });
+  }
+
   // customername auto complete
   if(jQuery('.cnameAc').length>0) {
     $('.cnameAc').autocomplete("/async/custAc", {

@@ -177,6 +177,20 @@ class AsyncController {
       if(is_array($response) && count($response)>0) {
         echo implode($response,"\n");
       }
+    } elseif($api_string === 'catAc' && !is_null($request->get('a'))) {
+      $params['q'] = Utilities::clean_string($request->get('a'));
+      $params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
+      $response = $api_caller->sendRequest('get','categories/ac/get-names',$params,false);
+      if(is_array($response) && count($response)>0) {
+        echo implode($response,"\n");
+      }
+    } elseif($api_string === 'uomAc' && !is_null($request->get('a'))) {
+      $params['q'] = Utilities::clean_string($request->get('a'));
+      $params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
+      $response = $api_caller->sendRequest('get','products/uoms/ac',$params,false);
+      if(is_array($response) && count($response)>0) {
+        echo implode($response,"\n");
+      }
     } elseif($api_string === 'getBillNos' && !is_null($request->get('custName'))) {
       $params['customerName'] = urlencode(Utilities::clean_string($request->get('custName')));
       $response = $api_caller->sendRequest('get','fin/receipts-get-billnos',$params,false);

@@ -549,9 +549,14 @@ $routes->add('adminOptions_deletePO', new Routing\Route('/admin-options/delete-p
 $routes->add('adminOptions_deleteInvoice', new Routing\Route('/admin-options/delete-invoice', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deleteInvoice',
 )));
+$routes->add('adminOptions_deleteSalesReturn', new Routing\Route('/admin-options/delete-sales-return', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deleteSalesReturn',
+)));
 $routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-summary', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::orgSummary',
 )));
+
+
 // file uploader
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\UploadInventoryController::uploadInventoryAction',
@@ -735,6 +740,10 @@ $routes->add('create_sindent_mobile_s2', new Routing\Route('/sales-indent/create
 // reports - sales
 $routes->add('report_sales_register', new Routing\Route('/reports/sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printSalesRegister',
+)));
+$routes->add('report_sales_b2b_invoice', new Routing\Route('/sales-invoice-b2b/{salesCode}', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printB2BSalesInvoice',
+  'salesCode' => null,
 )));
 $routes->add('report_sales_register_itemwise', new Routing\Route('/reports/itemwise-sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::itemwiseSalesRegister',

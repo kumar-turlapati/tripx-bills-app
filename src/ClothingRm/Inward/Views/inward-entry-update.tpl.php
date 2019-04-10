@@ -403,10 +403,9 @@
               </div>              
             </div>
           </div>
-          <h2 class="hdg-reports">Item Details</h2>
           <?php if(isset($form_errors['itemDetailsError'])): ?>
             <span class="error"><?php echo $form_errors['itemDetailsError'] ?></span>
-          <?php endif; ?>          
+          <?php endif; ?>
           <div class="table-responsive">
             <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable">
               <thead>

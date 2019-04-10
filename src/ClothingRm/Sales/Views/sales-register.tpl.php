@@ -147,15 +147,15 @@
               <th width="3%"  class="text-center">Sno.</th>
               <th width="10%" class="text-center">Customer<br />Name</th>
               <?php /*<th width="7%" class="text-center">Mobile<br />Number</th>*/ ?>
-              <th width="6%" class="text-center">Payment<br />Method</th>                
-              <th width="14%" class="text-center">Bill No. &amp; Date</th>
-              <th width="6%" class="text-center">Bill Amount<br />(in Rs.)</th>
+              <th width="5%" class="text-center">Payment<br />Method</th>                
+              <th width="11%" class="text-center">Bill No. &amp; Date</th>
+              <th width="7%" class="text-center">Bill Amount<br />(in Rs.)</th>
               <th width="6%" class="text-center">Discount<br />(in Rs.)</th>
-              <th width="6%" class="text-center">Taxable<br />(in Rs.)</th>
-              <th width="6%" class="text-center">GST<br />(in Rs.)</th>                
+              <th width="7%" class="text-center">Taxable<br />(in Rs.)</th>
+              <th width="7%" class="text-center">GST<br />(in Rs.)</th>                
               <th width="5%" class="text-center">R.off<br />(in Rs.)</th>
-              <th width="6%" class="text-center">Net Pay<br />(in Rs.)</th>
-              <th width="26%" class="text-center">Actions</th>
+              <th width="7%" class="text-center">Net Pay<br />(in Rs.)</th>
+              <th width="28%" class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -167,7 +167,7 @@
                 // dump($sales_details);
                 // exit;
                 $sales_code = $sales_details['invoiceCode'];
-                $invoice_date = date("d-M-Y", strtotime($sales_details['invoiceDate']));
+                $invoice_date = date("d-m-Y", strtotime($sales_details['invoiceDate']));
                 $mobile_number = $sales_details['mobileNo'];
                 $location_code = isset($location_codes[$sales_details['locationID']]) ? $location_codes[$sales_details['locationID']] : '';
                 if($sales_details['customerName'] !== '') {
@@ -227,37 +227,32 @@
                   <td>
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>
-                        <a class="btn btn-danger" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
-                          <i class="fa fa-print" aria-hidden="true"></i>
+                        <a class="btn btn-default" href="#" title="Send SMS">
+                          <i class="fa fa-phone-square" aria-hidden="true"></i>
+                        </a>                      
+                        <a class="btn btn-success" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
+                          <i class="fa fa-map-o" aria-hidden="true"></i>
                         </a>
                         <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
                           <i class="fa fa-print" aria-hidden="true"></i>
                         </a>                        
-                        <a class="btn btn-primary" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
+                        <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
+                          <i class="fa fa-bold" aria-hidden="true"></i>
+                        </a>
+                        <a class="btn btn-info" target="_blank" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
                           <i class="fa fa-undo" aria-hidden="true"></i>
                         </a>
-                        <a class="btn btn-danger" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
+                        <a class="btn btn-danger" target="_blank" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
                           <i class="fa fa-truck" aria-hidden="true"></i>
                         </a>                        
                         <?php if(Utilities::is_admin()): ?>
-                          <a class="btn btn-warning" href="/sales/update-with-barcode/<?php echo $sales_code ?>" title="Edit Invoice Using Barcode">
+                          <a class="btn btn-warning" target="_blank" href="/sales/update-with-barcode/<?php echo $sales_code ?>" title="Edit Invoice Using Barcode">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
                           </a>
-                          <a class="btn btn-info" href="/sales/update/<?php echo $sales_code ?>" title="Edit Invoice Without Barcode">
+                          <a class="btn btn-info" target="_blank" href="/sales/update/<?php echo $sales_code ?>" title="Edit Invoice Without Barcode">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
                           </a>
                         <?php endif; ?>
-                        <?php /*
-                        <a class="btn btn-default" href="/sales/view-invoice/<?php echo $sales_code ?>" title="View Sales Invoice">
-                          <i class="fa fa-eye"></i>
-                        </a>                        
-                        <a class="btn btn-primary" href="javascript: printSalesBill(<?php echo $sales_details['billNo'] ?>)" title="Print Sales Bill - Normal format">
-                          <i class="fa fa-print"></i>
-                        </a>               
-                        <a class="btn btn-primary" href="/sales/view/<?php echo $sales_code ?>" title="View Sales Transaction">
-                          <i class="fa fa-eye"></i>
-                        </a>
-                        */?>
                       <?php endif; ?>
                     </div>
                   </td>
@@ -266,7 +261,7 @@
             $cntr++;
             endforeach; 
           ?>
-          <tr class="text-uppercase">
+          <tr class="text-uppercase font11">
             <td colspan="4" align="right">PAGE TOTALS</td>
             <td class="text-bold text-right"><?php echo number_format($tot_bill_amount,2,'.','') ?></td>
             <td class="text-bold text-right"><?php echo number_format($tot_disc_amount,2,'.','') ?></td>
@@ -276,7 +271,7 @@
             <td class="text-bold text-right"><?php echo number_format($tot_net_pay,2,'.','') ?></td>
             <td>&nbsp;</td>
           </tr>
-          <tr class="text-uppercase font14">
+          <tr class="text-uppercase font11">
             <td colspan="4" align="right">TOTAL SALES</td>
             <td class="text-bold text-right"><?php echo isset($query_totals['billAmount']) ? number_format($query_totals['billAmount'],2,'.','') : "0.00" ?></td>
             <td class="text-bold text-right"><?php echo isset($query_totals['discountAmount']) ? number_format($query_totals['discountAmount'],2,'.','') : "0.00" ?></td>
@@ -294,3 +289,14 @@
     </section>
   </div>
 </div>
+<?php /*
+<a class="btn btn-default" href="/sales/view-invoice/<?php echo $sales_code ?>" title="View Sales Invoice">
+  <i class="fa fa-eye"></i>
+</a>                        
+<a class="btn btn-primary" href="javascript: printSalesBill(<?php echo $sales_details['billNo'] ?>)" title="Print Sales Bill - Normal format">
+  <i class="fa fa-print"></i>
+</a>               
+<a class="btn btn-primary" href="/sales/view/<?php echo $sales_code ?>" title="View Sales Transaction">
+  <i class="fa fa-eye"></i>
+</a>
+*/?>
