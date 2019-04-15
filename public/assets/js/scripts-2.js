@@ -251,7 +251,7 @@ function initializeJS() {
     $('#owBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
        var barcode = $(this).val();
-       if(barcode.length !== 13) {
+       if(barcode.length > 13) {
         alert('Invalid barcode');
         return false;
        }
@@ -1143,6 +1143,33 @@ function initializeJS() {
       var idArray = $(this).attr('id').split('_');
       var rowId = idArray[1];
       updateInwardItemRow(rowId);
+
+      // autofill brand, category, hsn, uom if exists against item.
+      var brandName = $('#brandName_'+rowId).val();
+      var categoryName = $('#categoryName_'+rowId).val();
+      var uom = $('#uom_'+rowId).val();
+      var barcode = $('#barcode_'+rowId).val();
+      var hsnSacCode = $('#hsnSacCode'+rowId).val();
+      if(brandName === '' || categoryName === '' || uom === '' || hsnSacCode === '') {
+        var itemName = $('#itemName_'+rowId).val();
+        jQuery.ajax("/async/itd?pn="+itemName+"&locationCode="+$('#locationCode').val(), {
+          method: "GET",
+          success: function(apiResponse) {
+            if(apiResponse.status === 'success') {
+              $('#brandName_'+rowId).val(apiResponse.response.mfgName);
+              $('#categoryName_'+rowId).val(apiResponse.response.catName);
+              $('#uom_'+rowId).val(apiResponse.response.uom);
+              $('#hsnSacCode_'+rowId).val(apiResponse.response.hsnSacCode);
+              $('#barcode_'+rowId).val(apiResponse.response.barcode);
+/*            } else {
+              alert('Brand, Category, UOM, HSN/SAC Code and Supplier Barcode not found in master.');*/
+            }
+          },
+          error: function(e) {
+            console.log('An error occurred while fetching Item Information.');
+          }
+        });
+      }
     });
 
     jQuery('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').on("blur", function(e){
@@ -1306,7 +1333,9 @@ function initializeJS() {
           }
         });
 
-        $("#taxAmount_"+taxCode).val(totalTax.toFixed(2));
+        // console.log('totalTax is...', typeof totalTax, totalTax);
+
+        $("#taxAmount_"+taxCode).val(parseFloat(totalTax).toFixed(2));
 
         if($('#supplyType').val() === 'inter') {
           $('#taxable_'+taxCode+'_igst_value').text(parseFloat(totalTax).toFixed(2));

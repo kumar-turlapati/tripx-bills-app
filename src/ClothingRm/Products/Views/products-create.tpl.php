@@ -1,29 +1,19 @@
-<?php 
+<?php
 
-  if(isset($submitted_data['itemStatus'])) {
-    $sel_status = (int)$submitted_data['itemStatus'];
-  } else {
-    $sel_status = 1;
-  }
-  if(isset($submitted_data['mrp'])) {
-    $sel_mrp = $submitted_data['mrp'];
-  } else {
-    $sel_mrp = '';
-  }
-  if(isset($submitted_data['catCode'])) {
-    $sel_cat = $submitted_data['catCode'];
-  } else {
-    $sel_cat = '';
-  }
   if(isset($submitted_data['itemType'])) {
     $item_type = $submitted_data['itemType'];
   } else {
     $item_type = 'i';
   }
-  if(isset($submitted_data['taxPercent'])) {
-    $tax_rate = $submitted_data['taxPercent'];
+  if(isset($submitted_data['locationID']) && (int)$submitted_data['locationID'] > 0) {
+    $location_code = $location_codes[$submitted_data['locationID']];
   } else {
-    $tax_rate = '';
+    $location_code = '';
+  }
+  if(isset($submitted_data['itemName']) && $submitted_data['itemName'] !== '') {
+    $item_name = $submitted_data['itemName'];
+  } else {
+    $item_name = '';
   }
   if(isset($submitted_data['hsnSacCode'])) {
     $hsn_sac_code = $submitted_data['hsnSacCode'];
@@ -35,23 +25,36 @@
   } else {
     $item_sku = '';
   }
+  if(isset($submitted_data['uom'])) {
+    $uom = $submitted_data['uom'];
+  } else {
+    $uom = '';
+  }
+  if(isset($submitted_data['itemStatus'])) {
+    $sel_status = (int)$submitted_data['itemStatus'];
+  } else {
+    $sel_status = 1;
+  }
+  if(isset($submitted_data['categoryID']) && $submitted_data['categoryID'] !== '') {
+    $cat_name = $submitted_data['categoryID'];
+  } elseif(isset($submitted_data['catName']) && $submitted_data['catName'] !== '') {
+    $cat_name = $submitted_data['catName'];
+  } else {
+    $cat_name = '';
+  }
   if(isset($submitted_data['rackNo']) && $submitted_data['rackNo'] !== '') {
     $rack_no = $submitted_data['rackNo'];
   } else {
     $rack_no = '';
   }
-  if(isset($submitted_data['mfgName']) && $submitted_data['mfgName'] !== '') {
+  if(isset($submitted_data['brandCode']) && $submitted_data['brandCode'] !== '') {
+    $brand_code = $submitted_data['brandCode'];
+  } elseif(isset($submitted_data['mfgName']) && $submitted_data['mfgName'] !== '') {
     $brand_code = $submitted_data['mfgName'];
   } else {
     $brand_code = '';
   }
-  if(isset($submitted_data['locationID']) && (int)$submitted_data['locationID'] > 0) {
-    $location_code = $location_codes[$submitted_data['locationID']];
-  } else {
-    $location_code = '';
-  }
-  $uom = isset($submitted_data['uom']) ? $submitted_data['uom'] : '';
-
+  // dump($errors);
   // dump($submitted_data, $location_ids, $location_codes);
 ?>
 <div class="row">
@@ -98,37 +101,43 @@
               </div>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Store name</label>
+              <?php if($update_flag === false): ?>
+                <div class="select-wrap">
+                  <select class="form-control" name="locationCode" id="locationCode">
+                    <?php 
+                      foreach($client_locations as $key=>$value): 
+                        $location_key_a = explode('`', $key);
+                        if($location_code === $location_key_a[0]) {
+                          $selected = 'selected="selected"';
+                        } else {
+                          $selected = '';
+                        }
+                    ?>
+                      <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <?php if(isset($errors['locationCode'])): ?>
+                  <span class="error"><?php echo $errors['locationCode'] ?></span>
+                <?php endif; ?>
+              <?php else: ?>
+                <p style="font-size:16px;font-weight:bold;color:#225992;"><?php echo isset($location_ids[$submitted_data['locationID']]) ? $location_ids[$submitted_data['locationID']] : 'Invalid Store'?> <span style="color:red;font-size:11px;">[ Not editable ]</span></p>
+                <input type="hidden" id="locationCode" name="locationCode" value="<?php echo $product_location ?>" />
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Product / Service name</label>
               <input 
                 type="text" 
                 class="form-control noEnterKey" 
                 name="itemName" 
                 id="itemName" 
-                value="<?php echo (isset($submitted_data['itemName'])?$submitted_data['itemName']:'') ?>"
+                value="<?php echo $item_name ?>"
               >
               <?php if(isset($errors['itemName'])): ?>
                 <span class="error"><?php echo $errors['itemName'] ?></span>
               <?php endif; ?>              
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Category name</label>
-              <div class="select-wrap">
-                <select class="form-control" name="categoryID" id="categoryID">
-                  <?php 
-                    foreach($categories as $key=>$value): 
-                      if($sel_cat == $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['categoryID'])): ?>
-                  <span class="error"><?php echo $errors['categoryID'] ?></span>
-                <?php endif; ?>
-              </div>
             </div>
           </div>
           <div class="form-group">
@@ -149,7 +158,10 @@
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">SKU</label>
               <input
-                type="text" class="form-control noEnterKey" name="itemSku" id="itemSku" 
+                type="text" 
+                class="form-control noEnterKey" 
+                name="itemSku" 
+                id="itemSku" 
                 value="<?php echo $item_sku ?>"
               >
               <?php if(isset($errors['itemSku'])): ?>
@@ -157,10 +169,10 @@
               <?php endif; ?>              
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Measurement units (Max. 5 characters)</label>
+              <label class="control-label">Measurement unit name (Max. 5 characters)</label>
               <input
                 type="text" 
-                class="form-control noEnterKey"
+                class="form-control noEnterKey uomAc"
                 name="uom"
                 id="uom"
                 value="<?php echo $uom ?>"
@@ -171,27 +183,6 @@
               <?php endif; ?>
             </div>
             <input type="hidden" name="taxPercent" id="taxPercent" value="" />
-            <?php /*
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Tax rate</label>
-              <div class="select-wrap">
-                <select class="form-control" name="taxPercent" id="taxPercent">
-                  <?php 
-                    foreach($tax_rates_a as $key=>$value):
-                      if($tax_rate == $value) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $value ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['taxRate'])): ?>
-                  <span class="error"><?php echo $errors['taxRate'] ?></span>
-                <?php endif; ?>
-              </div>              
-            </div> */ ?>
           </div>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
@@ -228,6 +219,21 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Category name</label>
+              <input 
+                type="text"
+                class="form-control noEnterKey catAc"
+                name="categoryID"
+                id="categoryID"
+                value="<?php echo $cat_name ?>"
+              >
+              <?php if(isset($errors['categoryID'])): ?>
+                <span class="error"><?php echo $errors['categoryID'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Rack no.</label>
               <input
                 type="text" 
@@ -241,34 +247,6 @@
               <?php endif; ?>
             </div>
           </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Store name</label>
-              <?php if($update_flag === false): ?>
-                <div class="select-wrap">
-                  <select class="form-control" name="locationCode" id="locationCode">
-                    <?php 
-                      foreach($client_locations as $key=>$value): 
-                        $location_key_a = explode('`', $key);
-                        if($location_code === $location_key_a[0]) {
-                          $selected = 'selected="selected"';
-                        } else {
-                          $selected = '';
-                        }
-                    ?>
-                      <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-                <?php if(isset($form_errors['locationCode'])): ?>
-                  <span class="error"><?php echo $form_errors['locationCode'] ?></span>
-                <?php endif; ?>
-              <?php else: ?>
-                <p style="font-size:16px;font-weight:bold;color:#225992;"><?php echo isset($location_ids[$submitted_data['locationID']]) ? $location_ids[$submitted_data['locationID']] : 'Invalid Store'?> <span style="color:red;font-size:11px;">[ Not editable ]</span></p>
-                <input type="hidden" id="locationCode" name="locationCode" value="<?php echo $product_location ?>" />
-              <?php endif; ?>
-            </div>
-          </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
@@ -279,3 +257,55 @@
     </section>
   </div>
 </div>
+
+
+            <?php /*
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Tax rate</label>
+              <div class="select-wrap">
+                <select class="form-control" name="taxPercent" id="taxPercent">
+                  <?php 
+                    foreach($tax_rates_a as $key=>$value):
+                      if($tax_rate == $value) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }                       
+                  ?>
+                    <option value="<?php echo $value ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+                <?php if(isset($errors['taxRate'])): ?>
+                  <span class="error"><?php echo $errors['taxRate'] ?></span>
+                <?php endif; ?>
+              </div>              
+            </div> 
+
+              <div class="select-wrap">
+                <select class="form-control" name="categoryID" id="categoryID">
+                  <?php 
+                    foreach($categories as $key=>$value): 
+                      if($sel_cat == $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }                       
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+                <?php if(isset($errors['categoryID'])): ?>
+                  <span class="error"><?php echo $errors['categoryID'] ?></span>
+                <?php endif; ?>
+              </div>
+/*if(isset($submitted_data['mrp'])) {
+    $sel_mrp = $submitted_data['mrp'];
+  } else {
+    $sel_mrp = '';
+  }
+  if(isset($submitted_data['taxPercent'])) {
+    $tax_rate = $submitted_data['taxPercent'];
+  } else {
+    $tax_rate = '';
+  }
+*/?>

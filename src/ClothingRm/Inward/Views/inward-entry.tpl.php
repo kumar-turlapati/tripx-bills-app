@@ -5,7 +5,6 @@
   // dump($form_data);
   // dump($taxes, $taxes_raw);
   // exit;
-
   if(isset($form_data['purchaseDate'])) {
     $purchase_date = date("d-m-Y", strtotime($form_data['purchaseDate']));
   } else {
@@ -41,7 +40,7 @@
   if(isset($form_data['locationCode'])) {
     $location_code = $form_data['locationCode'];
   } else {
-    $location_code = '';
+    $location_code = $_SESSION['lc'];
   }
   if(isset($form_data['supplyType'])) {
     $supply_type = $form_data['supplyType'];
@@ -87,7 +86,6 @@
             </a>
           </div>
         </div>
-
         <form class="form-validate form-horizontal" method="POST" id="inwardEntryForm" autocomplete="off">
           <div class="panel" style="margin-bottom:5px;">
             <div class="panel-body">
@@ -422,8 +420,9 @@
                   <th style="width:73px"   class="text-center">G.S.T<br />( in % )</th>
                   <th style="width:50px"   class="text-center">Brand</th>                  
                   <th style="width:50px"   class="text-center">Category</th>
-                  <th style="width:20px"   class="text-center">Container<br />No.</th>                  
-                  <th style="width:20px"   class="text-center">UOM<br />Name</th>                  
+                  <th style="width:20px"   class="text-center">Container<br />No.</th>
+                  <th style="width:20px"   class="text-center">UOM<br />Name</th>
+                  <th style="width:20px"   class="text-center">Barcode</th>
                 </tr>
               </thead>
               <tbody>
@@ -505,7 +504,12 @@
                     $uom_name = $form_data['uomName'][$i-1];
                   } else {
                     $uom_name = '';
-                  }                                               
+                  }
+                  if( isset($form_data['barcode'][$i-1]) && $form_data['barcode'][$i-1] !== '' ) {
+                    $barcode = $form_data['barcode'][$i-1];
+                  } else {
+                    $barcode = '';
+                  }                  
 
                   $billed_qty = $inward_qty-$free_qty;
                   if(is_numeric($packed_qty) && $packed_qty>0) {
@@ -541,6 +545,7 @@
                       style="font-size:12px;"
                       id="itemName_<?php echo $i ?>"
                       value="<?php echo $item_name ?>"
+                      title="HSN/SAC, Brand, Category, Supplier Barcode and UOM will be autofilled if exists in the Products master."
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['itemName']) ) :?>
                       <span class="error">Invalid</span>
@@ -551,7 +556,7 @@
                       type="text" 
                       name="hsnSacCode[]" 
                       class="form-control noEnterKey hsnSacCode"
-                      style="font-size:12px;"
+                      style="font-size:12px;width:50px;"
                       id="hsnSacCode_<?php echo $i ?>"
                       value="<?php echo $hsn_code ?>"
                     />
@@ -594,7 +599,7 @@
                       id="inwBillQty_<?php echo $i ?>"
                       class="form-control inwBillQty noEnterKey"
                       value="<?php echo $billed_qty ?>"
-                      style="font-size:12px;"
+                      style="font-size:12px;width:60px;"
                       disabled
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['inwBillQty']) ) :?>
@@ -681,30 +686,28 @@
                     />
                   </td>
                   <td style="width:160px;">
-                    <div class="select-wrap">                        
-                      <select 
-                        class="form-control inwItemTax" 
-                        id="inwItemTax_<?php echo $i ?>" 
-                        name="taxPercent[]"
-                        style="font-size:12px;"
-                      >
-                        <?php 
-                          foreach($taxes as $key=>$value):
-                            if((float)$value === (float)$tax_percent) {
-                              $selected = 'selected="selected"';
-                            } else {
-                              $selected = '';
-                            }
-                        ?>
-                          <option value="<?php echo number_format((float)$value,2) ?>" <?php echo $selected ?>>
-                            <?php echo $value ?>
-                          </option>
-                        <?php endforeach; ?>                            
-                      </select>
-                      <?php if( isset($form_errors['itemDetails'][$i-1]['taxPercent']) ) :?>
-                      <span class="error">Invalid</span>
-                      <?php endif; ?>                       
-                    </div>
+                    <select 
+                      class="form-control inwItemTax" 
+                      id="inwItemTax_<?php echo $i ?>" 
+                      name="taxPercent[]"
+                      style="font-size:12px;width:50px;"
+                    >
+                      <?php 
+                        foreach($taxes as $key=>$value):
+                          if((float)$value === (float)$tax_percent) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo number_format((float)$value,2) ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>                            
+                    </select>
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['taxPercent']) ) :?>
+                    <span class="error">Invalid</span>
+                    <?php endif; ?>                       
                   </td>
                   <td style="width:50px;">
                     <input
@@ -749,7 +752,22 @@
                       style="width:70px;font-size:12px;"
                       value="<?php echo $uom_name ?>"
                     />
-                  </td>                                                     
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="barcode[]"
+                      id="barcode_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Barcode"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $barcode ?>"
+                      title="Add Supplier Barcode/QR Code if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['barcode']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>                      
+                  </td>
                   <input 
                     type="hidden" 
                     id="inwItemTaxAmt_<?php echo $i ?>"
@@ -767,24 +785,24 @@
                 $net_pay = round($grand_total);
               ?>
                 <tr>
-                  <td colspan="15" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
+                  <td colspan="16" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
                   <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="15" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
+                  <td colspan="16" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
                   <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="15" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
+                  <td colspan="16" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
                   <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo number_format($round_off,2,'.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="15" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
+                  <td colspan="16" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
                   <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="15">
+                  <td style="vertical-align:middle;text-align:right;" colspan="16">
                     <textarea
                       class="form-control noEnterKey"
                       rows="3"
@@ -795,10 +813,10 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="16" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
+                  <td colspan="17" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
                 </tr>
                 <tr style="padding:0px;margin:0px;">
-                  <td colspan="16" style="padding:0px;margin:0px;">
+                  <td colspan="17" style="padding:0px;margin:0px;">
                     <table class="table table-striped table-hover font12 valign-middle">
                       <thead>
                         <th style="text-align:center;">GST Rate (in %)</th>

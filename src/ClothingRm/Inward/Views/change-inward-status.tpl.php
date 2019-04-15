@@ -157,8 +157,8 @@
                   } else {
                     $lot_no = '';
                   }
-                  if( isset($form_data['barcode'][$i-1]) && $form_data['barcode'][$i-1] !== '' ) {
-                    $barcode = $form_data['barcode'][$i-1];
+                  if( isset($form_data['barcodes'][$i-1]) && $form_data['barcodes'][$i-1] !== '' ) {
+                    $barcode = $form_data['barcodes'][$i-1];
                   } else {
                     $barcode = '-';
                   }                  

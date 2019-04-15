@@ -84,9 +84,9 @@
         <?php endif; ?>
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
-            <a href="/barcodes/list" class="btn btn-default">
-              <i class="fa fa-book"></i> Barcode Register
-            </a>
+            <a href="/barcodes/list" class="btn btn-default"><i class="fa fa-book"></i> Barcode Register</a>&nbsp;
+            <a href="/inward-entry/list" class="btn btn-default"><i class="fa fa-book"></i> Purchase Register</a>&nbsp;
+            <a href="/grn/list" class="btn btn-default"><i class="fa fa-book"></i> GRN Register</a>
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST">
@@ -210,7 +210,7 @@
                   $items_total_qty += $billed_qty;
                   $item_key = $item_code.'__'.$lot_no;
               ?>
-                <tr class="purchaseItemRow font12">
+                <tr class="purchaseItemRow font11">
                   <td align="center" class="valign-middle">
                     <input
                       type="checkbox"

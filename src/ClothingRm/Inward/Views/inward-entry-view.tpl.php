@@ -66,8 +66,10 @@
           <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="margin-bottom:0px;">
             <thead>
               <tr>
-                <th style="width:240px;" class="text-center purItem">Item name</th>
-                <th style="width:80px;"  class="text-center purItem">HSN / SAC Code</th>                  
+                <th style="width:220px;" class="text-center purItem">Item name</th>
+                <th style="width:80px;"  class="text-center purItem">HSN / SAC Code</th>
+                <th style="width:20px;"  class="text-center purItem">Case / <br />Box No.</th>
+                <th style="width:20px;"  class="text-center purItem">Lot No.</th>
                 <th style="width:50px;"  class="text-center">Received<br />qty.</th>
                 <th style="width:50px"   class="text-center">Free<br />qty.</th>
                 <th style="width:50px"   class="text-center">Billed<br />qty.</th>
@@ -136,7 +138,17 @@
                   $packed_qty = $form_data['packedQty'][$i-1];
                 } else {
                   $packed_qty = '';
-                }                  
+                }
+                if( isset($form_data['cnos'][$i-1]) && $form_data['cnos'][$i-1] !== '' ) {
+                  $cno = $form_data['cnos'][$i-1];
+                } else {
+                  $cno = '';
+                }                                
+                if( isset($form_data['lotNo'][$i-1]) && $form_data['lotNo'][$i-1] !== '' ) {
+                  $lot_no = $form_data['lotNo'][$i-1];
+                } else {
+                  $lot_no = '';
+                }                                
 
                 if(is_numeric($packed_qty) && $packed_qty>0) {
                   $gross_amount = $billed_qty*$item_rate*$packed_qty;
@@ -165,6 +177,8 @@
               <tr class="purchaseItemRow">
                 <td style="width:300px;"><?php echo $item_name ?></td>
                 <td style="width:80px;"><?php echo $hsn_code ?></td>                  
+                <td style="width:80px;"><?php echo $cno ?></td>                  
+                <td style="width:80px;"><?php echo $lot_no ?></td>                  
                 <td style="width:50px;" align="right"><?php echo number_format($inward_qty,2,'.','') ?></td>
                 <td style="width:50px;" align="right"><?php echo number_format($free_qty,2,'.','') ?></td>
                 <td style="width:55px;" align="right"><?php echo number_format($billed_qty,2,'.','') ?></td>

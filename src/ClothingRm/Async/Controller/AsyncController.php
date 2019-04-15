@@ -164,6 +164,16 @@ class AsyncController {
       if(count($response)>0 && is_array($response)) {
         echo implode($response,"\n");
       }
+    } elseif($api_string === 'itd' && !is_null($request->get('pn'))) {
+      $params['pn'] = Utilities::clean_string($request->get('pn'));
+      $params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
+      $response = $api_caller->sendRequest('get','products/details-with-name',$params,false);
+      header("Content-type: application/json");      
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     } elseif($api_string === 'suppAc' && !is_null($request->get('a'))) {
       $params['q'] = Utilities::clean_string($request->get('a'));
       $response = $api_caller->sendRequest('get','suppliers/ac/get-names',$params,false);

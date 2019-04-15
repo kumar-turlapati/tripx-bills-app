@@ -36,7 +36,6 @@ class InwardController
     $api_error = '';
     
     $total_item_rows = !is_null($request->get('tr')) && is_numeric($request->get('tr')) ? (int)$request->get('tr') : 50;
-
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
     }
@@ -47,6 +46,7 @@ class InwardController
     }
 
     $taxes_a = $this->taxes_model->list_taxes();
+
     if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
       $taxes_raw = $taxes_a['taxes'];
       foreach($taxes_a['taxes'] as $tax_details) {
@@ -54,11 +54,11 @@ class InwardController
       }
     }
 
-    # get client details
+    // get client details
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];
 
-    # get client locations
+    // get client locations
     $client_locations_resp = $this->user_model->get_client_locations();
     if($client_locations_resp['status']) {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
@@ -66,7 +66,7 @@ class InwardController
       }
     }
 
-    # check if form is submitted.
+    // check if form is submitted.
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
       $validation_status = $this->_validate_form_data($submitted_data,false);
@@ -87,7 +87,7 @@ class InwardController
         $form_data = $submitted_data;
       }
 
-    # check whether the redirection is from bulk upload form.
+    // check whether the redirection is from bulk upload form.
     } else {
       if(!is_null($request->get('bupToken')) && 
               $request->get('bupToken') !== '' &&
@@ -139,7 +139,8 @@ class InwardController
     $credit_days_a = $suppliers_a = $payment_methods = $client_locations = [];
     $taxes_a = $taxes = $taxes_raw = [];
     $form_errors = $form_data = [];
-    $api_error = '';
+    $api_error = $page_error = '';
+    $edit_after_grn = false;
     
     $total_item_rows = 50;
 
@@ -202,6 +203,9 @@ class InwardController
         $cnos = array_column($purchase_details['itemDetails'], 'cno');
         $category_names =  array_column($purchase_details['itemDetails'], 'categoryName');
         $brand_names =  array_column($purchase_details['itemDetails'], 'mfgName');
+        $uom_names = array_column($purchase_details['itemDetails'], 'uomName');
+        $barcodes =  array_column($purchase_details['itemDetails'], 'barcode');
+        $suppbarcodes = array_column($purchase_details['itemDetails'], 'suppBarcode');
 
         if(count($item_names)>50) {
           $total_item_rows = count($item_names);
@@ -229,8 +233,18 @@ class InwardController
         $form_data['cno'] = $cnos;
         $form_data['categoryName'] = $category_names;
         $form_data['brandName'] = $brand_names;
+        $form_data['uomName'] = $uom_names;
+        $form_data['barcode'] = $barcodes;
+        $form_data['suppBarcode'] = $suppbarcodes;
 
+        // use this variable to control in template.
         if($form_data['grnFlag'] === 'yes') {
+          $edit_after_grn = true;
+        } 
+        // dump($form_data);
+        // exit;
+
+        if($form_data['grnFlag'] === 'yes' && Utilities::is_admin() === false) {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";
           $this->flash->set_flash_message($page_error, 1);
           Utilities::redirect('/inward-entry/list');
@@ -263,9 +277,11 @@ class InwardController
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
       $validation_status = $this->_validate_form_data($submitted_data, $is_grn_generated);
-      if($validation_status['status']===true) {
+      // dump($validation_status);
+      // exit;
+      if($validation_status['status']) {
         $cleaned_params = $validation_status['cleaned_params'];
-        # hit api
+        // hit api
         $api_response = $this->inward_model->updateInward($cleaned_params, $purchase_code);
         if($api_response['status']===true) {
           $message = 'Inward entry updated successfully with code `'.$purchase_code.'`';
@@ -274,10 +290,16 @@ class InwardController
         } else {
           $page_error = $api_response['apierror'];
           $form_data = $submitted_data;
+          $form_data['supplierStateID'] = $purchase_details['supplierStateID'];
+          $form_data['supplierGSTNo'] = $purchase_details['supplierGSTNo'];
+          $form_data['supplyType'] = $purchase_details['supplyType'];
         }
       } else {
         $form_errors = $validation_status['form_errors'];
         $form_data = $submitted_data;
+        $form_data['supplierStateID'] = $purchase_details['supplierStateID'];
+        $form_data['supplierGSTNo'] = $purchase_details['supplierGSTNo'];
+        $form_data['supplyType'] = $purchase_details['supplyType'];
       }
     }
 
@@ -296,11 +318,12 @@ class InwardController
       'form_errors' => $form_errors,
       'form_data' => $form_data,
       'total_item_rows' => $total_item_rows,
-      'api_error' => $api_error,
+      'api_error' => $page_error,
       'states_a' => array(0=>'Choose') + Constants::$LOCATION_STATES,
       'supply_type_a' => array('' => 'Choose', 'inter' => 'Interstate', 'intra' => 'Intrastate'),
       'client_business_state' => $client_business_state,
-      'client_locations' => array(''=>'Choose') + $client_locations,      
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'edit_after_grn' => $edit_after_grn,
     );
 
     return array($this->template->render_view('inward-entry-update',$template_vars),$controller_vars);
@@ -315,7 +338,7 @@ class InwardController
     $form_errors = $form_data = [];
     $page_error = '';
 
-    $total_item_rows = 30;
+    $total_item_rows = 50;
 
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
@@ -882,6 +905,7 @@ class InwardController
       $category_names_a = $form_data['categoryName'];
       $brand_names_a = $form_data['brandName'];
       $uom_names_a = $form_data['uom'];
+      $barcodes_a = isset($form_data['barcode']) ? $form_data['barcode'] : [];
 
       foreach($item_names_a as $key=>$item_name) {
         if($item_name !== '') {
@@ -901,12 +925,21 @@ class InwardController
           $category_name = Utilities::clean_string($category_names_a[$key]);
           $brand_name = Utilities::clean_string($brand_names_a[$key]);
           $uom_name = Utilities::clean_string($uom_names_a[$key]);
+          $barcode = isset($barcodes_a[$key]) ? Utilities::clean_string($barcodes_a[$key]) : '';
 
           $cleaned_params['itemDetails']['itemName'][] = $item_name;
           $cleaned_params['itemDetails']['categoryName'][] = $category_name;
           $cleaned_params['itemDetails']['brandName'][] = $brand_name;
           $cleaned_params['itemDetails']['cno'][] = $cno;
           $cleaned_params['itemDetails']['uom'][] = $uom_name;
+
+          if($barcode !== '') {
+            if(is_numeric($barcode)) {
+              $cleaned_params['itemDetails']['barcode'][$key] = $barcode;
+            } else {
+              $form_errors['itemDetails'][$key]['barcode'] = 'Invalid Barcode';
+            }
+          }
 
           if( !is_numeric($inward_qty) ) {
             $form_errors['itemDetails'][$key]['inwardQty'] = 'Invalid item qty';
@@ -1075,6 +1108,7 @@ class InwardController
       $form_data['brandName'][$key] = $item_details['BrandName'];
       $form_data['cno'][$key] = $item_details['cno'];
       $form_data['uomName'][$key] = $item_details['uomName'];
+      $form_data['barcode'][$key] = $item_details['barcode'];
     }
     return $form_data;
   }

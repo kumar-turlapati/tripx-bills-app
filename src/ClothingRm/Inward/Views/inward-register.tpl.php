@@ -1,5 +1,6 @@
 <?php
   use Atawa\Utilities;
+
   $query_params = '';
   $current_date = date("d-m-Y");
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
@@ -119,8 +120,8 @@
                 <th width="8%" class="text-center">PO Date</th>
                 <th width="10%" class="text-center">Amount</th>
                 <th width="13%" class="text-center">GRN No. / Date</th>
-                <th width="10%" class="text-center">Status</th>                
-                <th width="18%" class="text-center">Actions</th>
+                <th width="8%" class="text-center">Status</th>                
+                <th width="20%" class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -159,10 +160,13 @@
                     <td class="text-right text-bold valign-middle"><?php echo $status_text ?></td>                    
                     <td class="valign-middle">
                       <div class="btn-actions-group">
-                        <?php /*
-                        <a class="btn btn-primary" href="/print-po/<?php echo $purchase_code ?>" title="Print PO" target="_blank">
-                          <i class="fa fa-print"></i>
-                        </a> */ ?>
+                        
+                        <?php if((int)$purchase_details['status'] === 0 || Utilities::is_admin()): ?>
+                          <a class="btn btn-primary" href="/inward-entry/update/<?php echo $purchase_code ?>" title="Edit this purchase order">
+                            <i class="fa fa-pencil"></i>
+                          </a>
+                        <?php endif; ?>
+
                         <?php if($grn_info === false): ?>
                           <?php if((int)$purchase_details['status'] === 1) : ?>                      
                             <a class="btn btn-warning" href="/grn/create?poNo=<?php echo $purchase_details['poNo'] ?>&poCode=<?php echo $purchase_code ?>" title="Create GRN for this PO">
@@ -170,9 +174,6 @@
                             </a>
                           <?php endif; ?>
                           <?php if((int)$purchase_details['status'] === 0): ?>
-                            <a class="btn btn-primary" href="/inward-entry/update/<?php echo $purchase_code ?>" title="Edit this purchase order">
-                              <i class="fa fa-pencil"></i>
-                            </a>
                             <a class="btn btn-danger" href="/inward-entry/update-status/<?php echo $purchase_code ?>" title="Approve / Reject PO">
                               <i class="fa fa-check"></i>
                             </a>

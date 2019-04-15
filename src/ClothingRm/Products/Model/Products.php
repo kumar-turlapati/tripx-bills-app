@@ -69,6 +69,29 @@ class Products
 		}		
 	}
 
+	public function get_product_details_with_name($product_name='', $location_code='') {
+		$api_caller = new ApiCaller();
+
+		$end_point = 'products/details-with-name';
+
+		$response = $api_caller->sendRequest('get',$end_point,['pn' => $product_name, 
+																													 'locationCode' => $location_code
+																													]
+																				);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,
+				'productDetails' => $response['response']
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}		
+	}	
+
 	private function _validateFormData($params = array()) {
 
 		$api_params = $this->_getApiParams();
@@ -84,7 +107,9 @@ class Products
 		if($params['itemName'] =='') {
 			$errors['itemName'] = $this->_errorDescriptions('itemName');
 		}
-
+		if($params['locationCode'] =='') {
+			$errors['locationCode'] = $this->_errorDescriptions('locationCode');
+		}
 		if($params['hsnSacCode'] !== '' && (!is_numeric($params['hsnSacCode']) || strlen($params['hsnSacCode']) > 8) ) {
 			$errors['hsnSacCode'] = 'Invalid HSN / SAC code.';
 		}
@@ -165,6 +190,7 @@ class Products
 		$descriptions = array(
 				'itemName' => 'Item name is required/Invalid Item name',
 				'unitsPerPack' => 'Units per pack is required',
+				'locationCode' => 'Store name is mandatory',
 		);
 
 		if($field_name != '') {

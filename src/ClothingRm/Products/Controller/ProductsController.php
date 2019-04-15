@@ -101,7 +101,7 @@ class ProductsController {
         $flash->set_flash_message($page_success);
         Utilities::redirect($create_url);
       } else {
-        $page_success   = 'Product/Service information updated successfully';
+        $page_success   = 'Product/Service `'.$submitted_data['itemName'].'` information updated successfully.';
         $flash->set_flash_message($page_success);
         Utilities::redirect($update_url.'/'.$item_code);
       }

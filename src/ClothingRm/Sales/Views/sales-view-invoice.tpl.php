@@ -1,6 +1,5 @@
 <?php
-
-  // dump($form_data);
+  //  dump($form_data);
   // dump($errors);
   // dump($offers_raw);
   // exit;
@@ -104,8 +103,9 @@
               <thead>
                 <tr>
                   <th width="5%"  class="text-center">Sno.</th>                  
-                  <th width="18%" class="text-center">Item name</th>
-                  <th width="12%" class="text-center">Lot no.</th>
+                  <th width="28%" class="text-center">Item name</th>
+                  <th width="10%" class="text-center">Lot no.</th>
+                  <th width="8%" class="text-center">Case / <br />Box No.</th>
                   <th width="5%"  class="text-center">Available<br />qty.</th>
                   <th width="11%"  class="text-center">Ordered<br />qty.</th>
                   <th width="8%" class="text-center">M.R.P<br />( in Rs. )</th>
@@ -129,6 +129,7 @@
                       $item_discount = isset($form_data['itemDetails']['itemDiscount'][$ex_index]) ? $form_data['itemDetails']['itemDiscount'][$ex_index] : '';
                       $tax_percent = isset($form_data['itemDetails']['itemTaxPercent'][$ex_index]) ? $form_data['itemDetails']['itemTaxPercent'][$ex_index] : '';
                       $lot_no = isset($form_data['itemDetails']['lotNo'][$ex_index]) ? $form_data['itemDetails']['lotNo'][$ex_index] : '';
+                      $cno = isset($form_data['itemDetails']['cnos'][$ex_index]) ? $form_data['itemDetails']['cnos'][$ex_index] : '';
                     } else {
                       $item_name = '';
                       $lot_no = '';
@@ -136,7 +137,8 @@
                       $item_qty = 0;
                       $item_rate = 0;
                       $item_discount = 0;
-                      $tax_percent = 0;      
+                      $tax_percent = 0;
+                      $cno = '';
                     }
 
                     if($item_qty > 0 && $item_rate > 0) {
@@ -157,10 +159,11 @@
                       $tax_amount = '';
                     }
                 ?>
-                  <tr>
+                  <tr class="font11">
                     <td align="right" style="vertical-align:middle;"><?php echo $i ?></td>
                     <td style="vertical-align:middle;"><?php echo $item_name ?></td>
-                    <td style="vertical-align:middle;"><?php echo $lot_no ?></td>                
+                    <td style="vertical-align:middle;"><?php echo $lot_no ?></td>              
+                    <td style="vertical-align:middle;"><?php echo $cno ?></td>
                     <td style="vertical-align:middle;text-align:right;"><?php echo number_format($item_qty_available,2,'.','') ?></td>
                     <td style="vertical-align:middle;text-align:right;"><?php echo number_format($item_qty,2,'.','') ?></td>
                     <td style="vertical-align:middle;text-align:right;"><?php echo number_format($item_rate,2,'.','') ?></td>
@@ -205,7 +208,7 @@
                   $net_pay = round($net_pay_actual,0);
                 ?>
                   <tr>
-                    <td colspan="4" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Total Bill Qty.</td>
+                    <td colspan="5" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Total Bill Qty.</td>
                     <td id="totalItems" name="totalItems" style="vertical-align:middle;font-weight:bold;font-size:18px;text-align:right;"><?php echo $tot_bill_qty > 0 ? $tot_bill_qty : ''  ?></td>
                     <td colspan="4" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
                     <td id="grossAmount" class="" style="font-size:16px;text-align:right;font-weight:bold;"><?php echo $tot_item_amount > 0 ? number_format($tot_item_amount, 2, '.', '') : '' ?></td>
@@ -215,17 +218,17 @@
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Taxable amount (in Rs.)</td>
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">GST (in Rs.)</td>
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Round off (in Rs.)</td>
-                    <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Net pay (in Rs.)</td>
+                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Net pay (in Rs.)</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="totDiscount"><?php echo $tot_discount > 0 ? number_format($tot_discount, 2, '.', '') : '' ?></td>
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="taxableAmount" class="taxableAmount"><?php echo $tot_taxable_amount > 0 ? number_format($tot_taxable_amount, 2, '.', '') : '' ?></td>
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="gstAmount" class="gstAmount"><?php echo $tot_tax_amount >0 ? number_format($tot_tax_amount, 2, '.', '') : '<span style="color:green;font-weight:bold;">Inclusive</span>' ?></td>
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="roundOff" class="roundOff"><?php echo $rounded_off !== '' ? number_format($rounded_off, 2, '.', '') : '' ?></td>
-                    <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="netPayBottom" class="netPay"><?php echo $net_pay > 0 ? number_format($net_pay, 2, '.', '') : '' ?></td>
+                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="netPayBottom" class="netPay"><?php echo $net_pay > 0 ? number_format($net_pay, 2, '.', '') : '' ?></td>
                   </tr>
                   <tr>
-                    <td colspan="10" align="right" style="vertical-align:middle;">
+                    <td colspan="11" align="right" style="vertical-align:middle;">
                       <span style="padding-right:5px;font-weight:bold;font-size:14px;">Credit Note No.</span>
                       <span style="padding-right:40px;">
                         <input

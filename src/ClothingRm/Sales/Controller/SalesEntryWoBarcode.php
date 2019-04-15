@@ -1414,6 +1414,7 @@ class SalesEntryWoBarcode {
       $cleaned_params['itemDetails']['lotNo'][$key] = $item_details['lotNo'];
       $cleaned_params['itemDetails']['barcode'][$key] = $item_details['barcode'];
       $cleaned_params['itemDetails']['itemDiscount'][$key] = $item_details['discountAmount'];
+      $cleaned_params['itemDetails']['cnos'][$key] = $item_details['cno'];
     }
     $cleaned_params = array_merge($invoice_details, $cleaned_params);
 

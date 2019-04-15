@@ -262,9 +262,11 @@ class InwardBulkUploadController
             $brand_name = Utilities::clean_string($item_details['BrandName']);
             $cno = Utilities::clean_string($item_details['ContainerOrCaseNo']);
             $uom_name = Utilities::clean_string($item_details['UomName']);
+            $barcode = Utilities::clean_string($item_details['Barcode']);
 
             $imported_records[$key]['cno'] = $cno;
             $imported_records[$key]['uomName'] = $uom_name;
+            $imported_records[$key]['barcode'] = $barcode;
 
             if($item_name === '') {
               $form_errors['itemDetails'][$key]['itemName'] = 'Matched item name is required.';
