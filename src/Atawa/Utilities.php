@@ -509,7 +509,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', 
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
-        '/async/finyDefault',
+        '/async/finyDefault', '/async/itd',
 
         '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
         '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', '/inward-entry/view',
@@ -537,7 +537,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
-        '/async/finyDefault',
+        '/async/finyDefault', '/async/itd',
 
         '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
         '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', '/inward-entry/view',
@@ -567,7 +567,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
-        '/async/finyDefault', '/async/getTrDetailsByCode',
+        '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
 
@@ -616,7 +616,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/get-supplier-details',
-        '/async/finyDefault',
+        '/async/finyDefault', '/async/itd',
 
         '/products/list', '/categories/list', '/mfgs/list', '/suppliers/list',
         '/taxes/list', '/fin/supp-opbal/list', '/inward-entry', '/inward-entry/bulk-upload',
