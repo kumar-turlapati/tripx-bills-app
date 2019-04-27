@@ -19,7 +19,7 @@
     $billing_address .= ' - '.$form_data['pincode'];
   }
 
-  // dump($form_data, $submitted_data);
+  // dump($form_data, $submitted_data, $errors);
 
   // prefill shipping details
   if(isset($submitted_data['transporterName'])) {
@@ -68,8 +68,8 @@
     $way_bill_no = '';
   }
 
-  if( isset($submitted_data['address']) && $submitted_data['address'] !== '' ) {
-    $shipping_address = $submitted_data['address'];
+  if( isset($submitted_data['address1']) && $submitted_data['address1'] !== '' ) {
+    $shipping_address = $submitted_data['address1'];
   } elseif(isset($form_data['shippingAddress']) && $form_data['shippingAddress'] !== '') {
     $shipping_address = $form_data['shippingAddress'];
   } else {
@@ -110,6 +110,8 @@
   } else {
     $shipping_phones = $form_data['phones'];
   }
+
+  // dump($shipping_city_name);
 ?>
 <div class="row">
   <div class="col-lg-12"> 

@@ -227,9 +227,10 @@
                   <td>
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>
+                        <?php /*
                         <a class="btn btn-default" href="#" title="Send SMS">
                           <i class="fa fa-phone-square" aria-hidden="true"></i>
-                        </a>                      
+                        </a> */ ?>                  
                         <a class="btn btn-success" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
                           <i class="fa fa-map-o" aria-hidden="true"></i>
                         </a>

@@ -734,6 +734,8 @@ class SalesEntryWoBarcode {
     if($request->get('salesCode') && $request->get('salesCode') !== '') {
       $sales_code = Utilities::clean_string($request->get('salesCode'));
       $sales_response = $this->sales->get_sales_details($sales_code);
+      // dump($sales_response);
+      // exit;
       if($sales_response['status']) {
         $form_data = $sales_response['saleDetails'];
       } else {
@@ -876,13 +878,15 @@ class SalesEntryWoBarcode {
     } else {
       $form_errors['sendSMS'] = 'Invalid message choice.';
     }
+    /*
     if($challan_no === '') {
-      $form_errors['challanNo'] = $challan_no;
+      $form_errors['challanNo'] = 'Invalid Challan No.';
     } else {
       $cleaned_params['challanNo'] = $challan_no;
-    }
+    }*/
     $cleaned_params['wayBillNo'] = $way_bill_no;
     $cleaned_params['phones'] = $phones;
+    $cleaned_params['pincode'] = $pincode;
 
     if(count($form_errors) > 0) {
       return [

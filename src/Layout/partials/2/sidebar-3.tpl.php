@@ -239,6 +239,7 @@
               <li><a href="/admin-options/delete-grn"><i class="fa fa-gavel"></i> Delete GRN</a></li>          
               <li><a href="/admin-options/delete-po"><i class="fa fa-laptop"></i> Delete PO</a></li>
               <li><a href="/admin-options/delete-invoice"><i class="fa fa-inr"></i> Delete Invoice</a></li> 
+              <li><a href="/admin-options/delete-sales-return"><i class="fa fa-undo"></i> Delete Sales Return</a></li> 
             </ul>
           </li>
           <li>

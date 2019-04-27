@@ -1071,4 +1071,9 @@ class Utilities
       @setcookie('qbdid', $enc_device_id, time()+60*60*24*30);
     }
   }
+
+  public static function get_country_name($country_id = 99) {
+    return 'India';
+  }
+
  }

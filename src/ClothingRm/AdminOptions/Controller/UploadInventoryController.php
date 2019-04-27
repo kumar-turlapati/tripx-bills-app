@@ -242,7 +242,8 @@ class UploadInventoryController
         $rack_no = Utilities::clean_string($imported_record_details['RackNo']);
         $item_sku = Utilities::clean_string($imported_record_details['ItemSku']);
         $cno = Utilities::clean_string($imported_record_details['ContainerOrCaseNo']);
-        $uom_name = Utilities::clean_string($imported_record_details['UomName']);        
+        $uom_name = Utilities::clean_string($imported_record_details['UomName']);
+        $barcode =  Utilities::clean_string($imported_record_details['Barcode']);
 
         if(!is_numeric($closing_qty)) {
           $error_flag = true;
@@ -288,6 +289,7 @@ class UploadInventoryController
           $cleaned_array[$key]['ItemSku'] = $item_sku;
           $cleaned_array[$key]['ContainerOrCaseNo'] = $cno;
           $cleaned_array[$key]['UomName'] = $uom_name;
+          $cleaned_array[$key]['Barcode'] = $barcode;
         }
       }
     }

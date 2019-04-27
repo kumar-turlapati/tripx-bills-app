@@ -34,7 +34,7 @@ class BanksController
         $result = $fin_model->create_bank($form_data);
         // dump($result);
         // exit;
-        if($result['status']===true) {
+        if($result['status']) {
           $message = 'Bank name added successfully with code ` '.$result['bankCode'].' `';
           $flash->set_flash_message($message);
         } else {

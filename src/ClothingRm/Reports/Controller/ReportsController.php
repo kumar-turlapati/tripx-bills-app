@@ -70,14 +70,14 @@ class ReportsController
 
   public function printSalesBill(Request $request) {
 
-    # inititate Sales Model
+    // inititate Sales Model
     $sales = new \ClothingRm\Sales\Model\Sales;
     $user_model = new \User\Model\User;
 
   	$billNo = Utilities::clean_string($request->get('billNo'));
     $slno = 0;
 
-    # get user details
+    // get user details
     if(isset($_SESSION['uname']) && $_SESSION['uname'] !== '') {
       $operator_name = substr($_SESSION['uname'],0,12);
     } else {
