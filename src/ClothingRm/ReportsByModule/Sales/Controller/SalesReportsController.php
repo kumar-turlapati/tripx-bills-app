@@ -254,7 +254,7 @@ class SalesReportsController {
     }
 
     // GST total
-    $round_off = ($tot_taxable + $tot_tax_amount) - $net_pay;
+    $round_off = $net_pay - ($tot_taxable + $tot_tax_amount);
 
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell($gst_width,  6,'Total Taxable Amount (Rs.)','L',0,'R');
