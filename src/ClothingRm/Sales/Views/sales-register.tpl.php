@@ -231,21 +231,25 @@
                         <a class="btn btn-default" href="#" title="Send SMS">
                           <i class="fa fa-phone-square" aria-hidden="true"></i>
                         </a> */ ?>                  
-                        <a class="btn btn-success" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
-                          <i class="fa fa-map-o" aria-hidden="true"></i>
-                        </a>
-                        <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
-                          <i class="fa fa-print" aria-hidden="true"></i>
-                        </a>                        
-                        <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
-                          <i class="fa fa-bold" aria-hidden="true"></i>
-                        </a>
+                        <?php if($tax_calc_option === 'I'): ?>
+                          <a class="btn btn-success" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
+                            <i class="fa fa-map-o" aria-hidden="true"></i>
+                          </a>
+                          <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
+                            <i class="fa fa-print" aria-hidden="true"></i>
+                          </a>
+                        <?php endif; ?>
+                        <?php if($tax_calc_option === 'E'): ?>
+                          <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
+                            <i class="fa fa-bold" aria-hidden="true"></i>
+                          </a>
+                          <a class="btn btn-danger" target="_blank" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
+                            <i class="fa fa-truck" aria-hidden="true"></i>
+                          </a>                        
+                        <?php endif; ?>
                         <a class="btn btn-info" target="_blank" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
                           <i class="fa fa-undo" aria-hidden="true"></i>
                         </a>
-                        <a class="btn btn-danger" target="_blank" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
-                          <i class="fa fa-truck" aria-hidden="true"></i>
-                        </a>                        
                         <?php if(Utilities::is_admin()): ?>
                           <a class="btn btn-warning" target="_blank" href="/sales/update-with-barcode/<?php echo $sales_code ?>" title="Edit Invoice Using Barcode">
                             <i class="fa fa-pencil" aria-hidden="true"></i>

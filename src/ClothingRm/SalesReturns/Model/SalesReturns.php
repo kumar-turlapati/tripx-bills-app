@@ -8,6 +8,7 @@ use Atawa\Utilities;
 class SalesReturns 
 {
 
+	// create sales return
 	public function createSalesReturn($params=array(),$sales_code='',$sale_item_details=array()) {
 		$request_params = array();
 		$valid_result = $this->_validateFormData($params,$sale_item_details);

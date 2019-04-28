@@ -114,8 +114,12 @@ class Utilities
 	}
 
   # removes tags, carriage returns and new lines from string.
-  public static function clean_string($string = '') {
-  	return trim(str_replace("\r\n",'',strip_tags($string)));
+  public static function clean_string($string = '', $breaks_needed=false) {
+    if($breaks_needed) {
+      return trim(strip_tags($string));
+    } else {
+    	return trim(str_replace("\r\n",'',strip_tags($string)));
+    }
   }
 
   public static function get_current_client_id() {

@@ -80,7 +80,22 @@
     $allow_mrp_editing = (int)$submitted_data['allowMrpEditing'];
   } else {
     $allow_mrp_editing = 0; 
-  }  
+  }
+  if(isset($submitted_data['bankCode']) && $submitted_data['bankCode'] !== '' ) {
+    $bank_code = $submitted_data['bankCode'];
+  } else {
+    $bank_code = ''; 
+  }
+  if(isset($submitted_data['tacB2B']) && $submitted_data['tacB2B'] !== '' ) {
+    $tac_b2b = $submitted_data['tacB2B'];
+  } else {
+    $tac_b2b = ''; 
+  }
+  if(isset($submitted_data['tacB2C']) && $submitted_data['tacB2C'] !== '' ) {
+    $tac_b2c = $submitted_data['tacB2C'];
+  } else {
+    $tac_b2c = ''; 
+  }
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -299,6 +314,40 @@
                 <span class="error"><?php echo $errors['mrpEditing'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Choose a Bank to print details on B2B Invoice</span>
+              </label>
+              <select class="form-control" name="bankCode" id="bankCode">
+                <?php 
+                  foreach($banks as $bank_key => $bank_name):
+                    if($bank_code === $bank_key) {
+                      $selected = 'selected = "selected"';
+                    } else {
+                      $selected = '';
+                    }
+                ?>
+                  <option value="<?php echo $bank_key ?>" <?php echo $selected ?>><?php echo $bank_name ?></option>
+                <?php endforeach; ?>
+              </select>
+              <?php if(isset($errors['mrpEditing'])): ?>
+                <span class="error"><?php echo $errors['mrpEditing'] ?></span>
+              <?php endif; ?>
+            </div>            
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-6 col-lg-6 m-bot15">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Terms &amp; Conditions on B2B Invoice (one per line)</span>
+              </label>
+              <textarea id="tacB2B" name="tacB2B" rows="5" cols="60"><?php echo $tac_b2b ?></textarea>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6 m-bot15">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Terms &amp; Conditions on B2C Invoice (one per line)</span>
+              </label>
+              <textarea id="tacB2C" name="tacB2C" rows="5" cols="60"><?php echo $tac_b2c ?></textarea>
+            </div>            
           </div>          
           <input type="hidden" value="<?php echo $sel_location_code ?>" id="locationCode" name="locationCode" />
           <div class="text-center">

@@ -60,11 +60,6 @@ class SalesReportsController {
       $customer_name = $tmp_cust_name;
     }
 
-    $result = $this->fin_model->banks_list();
-    if($result['status']) {
-      $banks = $result['banks'];
-    }
-
     // dump($banks);
     // exit;
 
@@ -89,8 +84,19 @@ class SalesReportsController {
 
     $cn_no          =   $sale_details['cnNo'];
     $referral_no    =   $sale_details['refCardNo'];
-    $round_off      =   $sale_details['roundOff'];
     $net_pay        =   $sale_details['netPay'];
+    $bank_id        =   $sale_details['bankID'];
+    $remarks_invoice=   $sale_details['remarksInvoice'];
+    if($bank_id > 0) {
+      // get all banks from back-end.
+      $result = $this->fin_model->banks_list();
+      if($result['status']) {
+        $banks = $result['banks'];
+        $bank_key = array_search($bank_id, array_column($banks, 'bankID'));
+      }
+    }
+
+
 
     $loc_address = [
       'address1' => $business_add1,
@@ -171,6 +177,7 @@ class SalesReportsController {
     $taxable_values = $tax_amounts = $taxable_gst_value = [];
     $tot_bill_value = $tot_discount = $tot_taxable = $tot_items_qty = 0;
     $tot_tax_amount = 0;
+    $cnos_a = [];
     foreach($sale_item_details as $item_details) {
       $item_qty = $amount = $discount = $taxable = $tax_value = 0;
       $sno++;
@@ -181,6 +188,9 @@ class SalesReportsController {
       $discount = $item_details['discountAmount'];
       $tax_percent = $item_details['taxPercent'];
       $mrp = $item_details['mrp'];
+      if($item_details['cno'] !== '') {
+        $cnos_a[] = $item_details['cno'];
+      }
 
       // $item_rate = $item_details['mrp'];
       // $tax_amount = $item_details['cgstAmount'] + $item_details['sgstAmount'];
@@ -235,11 +245,17 @@ class SalesReportsController {
     $pdf->Cell($totals_width,    6,'Total Qty.','L',0,'R');
     $pdf->Cell($item_widths[5],  6,number_format($tot_items_qty,2,'.',''),'',0,'R');
     $pdf->Cell($item_widths[6]+$item_widths[7]+$item_widths[8],  6,'','R',0,'R');
-    // $pdf->Cell($item_widths[7],  6,$tot_discount > 0 ? number_format($tot_discount,2,'.','') : '','RB',0,'R');
-    // $pdf->Cell($item_widths[8],  6,'','RB',0,'R');
     $pdf->Ln();
 
-    // GST total    
+    // print case nos if exists
+    if(count($cnos_a)>0) {
+      $pdf->SetFont('Arial','',9);
+      $pdf->MultiCell(190,4,'Case/Container/Box Nos: '.implode(',', $cnos_a),'LRB','L');
+    }
+
+    // GST total
+    $round_off = $net_pay - ($tot_taxable+$tot_tax_amount);
+
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell($gst_width,  6,'Total Taxable Amount (Rs.)','L',0,'R');
     $pdf->Cell($item_widths[8],  6,number_format($tot_taxable,2,'.',''),'R',0,'R');
@@ -307,7 +323,15 @@ class SalesReportsController {
       }
     }
 
+    // $remarks_invoice = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged';
+
     $pdf->Ln();
+    $pdf->SetFont('Arial','BU',8);
+    $pdf->Cell(190,5,'Invoice Remarks','LR',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Multicell(190,4,$remarks_invoice,'LRB','L');
+
     $pdf->Ln();
     $pdf->SetFont('Arial','BU',9);
     $pdf->Cell(130,6,'Invoice Terms & Conditions','',0,'C');
@@ -316,31 +340,73 @@ class SalesReportsController {
     $pdf->SetFont('Arial','',9);
 
     // $tandc = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.';
-    $tandc = '';
+    // $tandc = implode("\n", $tandc_a);
 
+    $tandc_a = preg_split('/\r\n|[\r\n]/', $sale_details['tacB2B']);
+    // dump($tandc_a);
+    // exit;
+
+    // $tandc_a = [];
+
+    if(is_array($tandc_a) && count($tandc_a)>0) {
+      $x = $pdf->getX();
+      $y = $pdf->getY();
+      foreach($tandc_a as $tandc) {
+        $pdf->Multicell(130,5,$tandc,'','L');
+      }
+      $tac_x = $pdf->getX();
+      $tac_y = $pdf->getY();
+
+      $pdf->setXY($x+130, $y);
+    } else {
+      $tac_x = $x = $pdf->getX();
+      $tac_y = $y = $pdf->getY();      
+
+      $pdf->setXY($x+130, $y);
+    }
+
+    if(count($banks)>0 && isset($banks[$bank_key]) && $bank_key !== false) {
+      $bank_account_no = 'Account No.: '.$banks[$bank_key]['accountNo'];
+      $bank_name = 'Bank Name: '.$banks[$bank_key]['bankName'];
+      $ifsc_code = 'IFSC Code: '.$banks[$bank_key]['ifscCode'];
+      $bank_address = 'Bank Address: '.$banks[$bank_key]['bankAddress'];
+      $pdf->Multicell(60,5,$bank_account_no,'','C');
+      $x = $pdf->getX();
+      $y = $pdf->getY();
+      $pdf->setXY($x+130, $y);
+      $pdf->Multicell(60,5,$bank_name,'','C');
+      $x = $pdf->getX();
+      $y = $pdf->getY();
+      $pdf->setXY($x+130, $y);
+      $pdf->Multicell(60,5,$ifsc_code,'','C');
+/*      $x = $pdf->getX();
+      $y = $pdf->getY();
+      $pdf->setXY($x+130, $y);
+      $pdf->Multicell(60,4,$bank_address,'','C');*/
+    }
+
+    // add signature headers
     $x = $pdf->getX();
     $y = $pdf->getY();
-    $pdf->Multicell(130,4,$tandc,'','L');
-    $pdf->setXY($x+130, $y);
-    if(count($banks)>0 && isset($banks[0]) ) {
-      $bank_account_no = 'Account No.: '.$banks[0]['accountNo'];
-      $bank_name = 'Bank Name: '.$banks[0]['bankName'];
-      $ifsc_code = 'IFSC Code: '.$banks[0]['ifscCode'];
-      $bank_address = 'Bank Address: '.$banks[0]['bankAddress'];
-      $pdf->Multicell(60,5,$bank_account_no,'','L');
-      $x = $pdf->getX();
-      $y = $pdf->getY();
-      $pdf->setXY($x+130, $y);
-      $pdf->Multicell(60,5,$bank_name,'','L');
-      $x = $pdf->getX();
-      $y = $pdf->getY();
-      $pdf->setXY($x+130, $y);
-      $pdf->Multicell(60,5,$ifsc_code,'','L');
-      $x = $pdf->getX();
-      $y = $pdf->getY();
-      $pdf->setXY($x+130, $y);
-      $pdf->Multicell(60,4,$bank_address,'','L');
+
+    if($tac_x > $x) {
+      $final_x = $tac_x;
+    } else {
+      $final_x = $x;
     }
+    if($tac_y > $y) {
+      $final_y = $tac_y;
+    } else {
+      $final_y = $y;
+    }
+    
+    $pdf->setXY($final_x, $final_y);
+
+    $pdf->Ln(30);
+    $pdf->SetFont('Arial','BU',9);
+    $pdf->Cell(63.33,6,'Prepared by','',0,'C');
+    $pdf->Cell(63.33,6,'Verified by','',0,'C');
+    $pdf->Cell(63.33,6,'Authorized by','',0,'C');
 
     // dump($taxable_values, $taxable_gst_value);
     // exit;
@@ -2834,7 +2900,7 @@ class SalesReportsController {
     $pdf->SetTextColor(255,255,255);
     $pdf->Cell(70,6,'GST Invoice No.','LBT',0,'C',true);
     $pdf->Cell(25,6,'Invoice Date','BT',0,'C',true);
-    $pdf->Cell(95,6,'Ref. No.','RBT',0,'C',true);
+    $pdf->Cell(95,6,'Internal Tracking Number','RBT',0,'C',true);
     $pdf->SetFillColor(976,245,458);
     $pdf->Ln();
     $pdf->SetTextColor(0,0,0);
@@ -2924,24 +2990,24 @@ class SalesReportsController {
     $pdf->Ln();
 
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(80,5,'Transporter Name','LRB',0,'C');
-    $pdf->Cell(30,5,'L.R. No.','R',0,'C');
-    $pdf->Cell(20,5,'L.R. Date','R',0,'C');
-    $pdf->Cell(30,5,'Challan No.','R',0,'C');
+    $pdf->Cell(80,5,'Transporter Name','LB',0,'C');
+    $pdf->Cell(30,5,'L.R. No.','',0,'C');
+    $pdf->Cell(20,5,'L.R. Date','',0,'C');
+    $pdf->Cell(30,5,'Challan No.','',0,'C');
     $pdf->Cell(30,5,'eWay Bill No.','R',0,'C');
     $pdf->Ln();
     $pdf->SetFont('Arial','',8);
 
-    $pdf->Cell(80,5,$customer_info['transport_details']['transporter_name'],'LRB',0,'C');
-    $pdf->Cell(30,5,$customer_info['transport_details']['lr_no'],'TRB',0,'C');
+    $pdf->Cell(80,5,$customer_info['transport_details']['transporter_name'],'LB',0,'C');
+    $pdf->Cell(30,5,$customer_info['transport_details']['lr_no'],'TB',0,'C');
 
     if($customer_info['transport_details']['lr_date'] !== '') {
-      $pdf->Cell(20,5,date("d-M-Y",strtotime($customer_info['transport_details']['lr_date'])),'TRB',0,'C');
+      $pdf->Cell(20,5,date("d-M-Y",strtotime($customer_info['transport_details']['lr_date'])),'TB',0,'C');
     } else {
-      $pdf->Cell(20,5,'','TRB',0,'C');
+      $pdf->Cell(20,5,'','TB',0,'C');
     }
 
-    $pdf->Cell(30,5,$customer_info['transport_details']['challan_no'],'TRB',0,'C');
+    $pdf->Cell(30,5,$customer_info['transport_details']['challan_no'],'TB',0,'C');
     $pdf->Cell(30,5,$customer_info['transport_details']['way_bill_no'],'TRB',0,'C');
     $pdf->Ln();
 

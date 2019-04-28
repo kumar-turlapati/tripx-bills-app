@@ -11,6 +11,7 @@ use Atawa\Flash;
 use Atawa\Constants;
 
 use ClothingRm\Location\Model\Location;
+use ClothingRm\Finance\Model\Finance;
 
 class LocationController
 {
@@ -18,8 +19,9 @@ class LocationController
 
 	public function __construct() {
     $this->template = new Template(__DIR__.'/../Views/');
-    $this->flash = new Flash();
-    $this->location_model = new Location();
+    $this->flash = new Flash;
+    $this->location_model = new Location;
+    $this->fin_model = new Finance;
 	}
 
   public function addLocation(Request $request) {
@@ -32,6 +34,7 @@ class LocationController
     $countries_a = Constants::$LOCATION_COUNTRIES;    
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];
+    $banks_a = $this->_get_banks_list();
 
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();
@@ -59,6 +62,7 @@ class LocationController
       'countries' => [0=>'Choose'] + $countries_a,
       'client_business_state' => $client_business_state,
       'mrp_editing_a' => $mrp_editing_a,
+      'banks' => [''=>'Choose'] + $banks_a,
     );
 
     // build variables
@@ -76,6 +80,7 @@ class LocationController
     $submitted_data = $form_errors = [];
     $sel_location_code = '';
     $mrp_editing_a = [0=>'No', 1=>'Yes'];
+    $banks_a = $this->_get_banks_list();
 
     $states_a = Constants::$LOCATION_STATES;
     asort($states_a);
@@ -116,6 +121,8 @@ class LocationController
         Utilities::redirect('/locations/list');
       } else {
         $submitted_data = $location_details['locationDetails'];
+        // get bank code based on bank id.
+        $bank_id = $submitted_data['bankID'];
       }
     } else {
       $this->flash->set_flash_message('Invalid member code',1);         
@@ -131,6 +138,7 @@ class LocationController
       'client_business_state' => $client_business_state,  
       'sel_location_code' => $sel_location_code,
       'mrp_editing_a' => $mrp_editing_a,
+      'banks' => [''=>'Choose'] + $banks_a,
     );
 
     // build variables
@@ -187,19 +195,22 @@ class LocationController
     $sms_sender_id = Utilities::clean_string($form_data['smsSenderID']);
     $sms_company_name = Utilities::clean_string($form_data['smsCompanyShortName']);
     $allow_mrp_editing = (int)Utilities::clean_string($form_data['mrpEditing']);
+    $bank_code = Utilities::clean_string($form_data['bankCode']);
+    $tac_b2b = Utilities::clean_string($form_data['tacB2B'], true);
+    $tac_b2c = Utilities::clean_string($form_data['tacB2C'], true);
 
     if($sms_sender_id !== '') {
       if(strlen($sms_sender_id) === 6 && ctype_alpha($sms_sender_id)) {
         $cleaned_params['smsSenderID'] = $sms_sender_id;
       } else {
-        $errors['smsSenderID'] = 'Invalid Sender ID.';
+        $errors['smsSenderID'] = 'Invalid Sender ID. Should be 6 chars.';
       }
     }
     
     if(strlen($sms_company_name) <= 20) {
       $cleaned_params['smsCompanyShortName'] = $sms_company_name;
     } else {
-      $errors['smsCompanyShortName'] = 'Invalid Company Short Name.';
+      $errors['smsCompanyShortName'] = 'Invalid Company Short Name. Not more than 20 chars.';
     }
 
     if(ctype_alnum(str_replace([' ', "'"], ['', ''], $location_name))) {
@@ -261,10 +272,29 @@ class LocationController
     } else {
       $errors['allowMrpEditing'] = 'Invalid MRP Editing.';
     }
+
+    $cleaned_params['bankCode'] = $bank_code;
+    $cleaned_params['tacB2B'] = $tac_b2b;
+    $cleaned_params['tacB2C'] = $tac_b2c;
+
     if(count($errors)>0) {
       return array('status' => false, 'errors' => $errors);
     } else {
       return array('status' => true,'cleaned_params' => $cleaned_params);
     }
+  }
+
+  private function _get_banks_list() {
+    $result = $this->fin_model->banks_list();
+    $banks = [];
+    if($result['status']) {
+      $banks_response = $result['banks'];
+      foreach($banks_response as $bank_details) {
+        if((int)$bank_details['status'] === 1) {
+          $banks[$bank_details['bankCode']] = $bank_details['bankName'];
+        }
+      }
+    }
+    return $banks;
   }
 }
