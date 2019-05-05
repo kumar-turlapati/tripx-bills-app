@@ -328,7 +328,7 @@ class MastersReportsController {
 
   public function customerMasterReport(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 10;
+    $page_no = 1; $per_page = 200;
     $total_records = $categories_a = [];
     $customer_types = ['' => 'All Customers'] + Constants::$CUSTOMER_TYPES; 
 

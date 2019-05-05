@@ -133,6 +133,9 @@ class ReportsController
 
     $cn_no          =   $sale_details['cnNo'];
     $referral_no    =   $sale_details['refCardNo'];
+    $tandc_a        =   preg_split('/\r\n|[\r\n]/', $sale_details['tacB2C']);
+    // dump($tandc_a);
+    // exit;
 
     $loc_address = [
       'address1' => $business_add1,
@@ -435,10 +438,23 @@ class ReportsController
       $pdf->Cell(95,6,'','R',1,'C');
     }
 
-    $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(190,6,'Terms & Conditions','LRBT',1,'C');
-    $pdf->SetFont('Arial','',9);
-    $pdf->Cell(190,6,'1) NO EXCHANGE. NO RETURN.','LRB',0,'L');
+    if(count($tandc_a) > 0) {
+      $pdf->SetFont('Arial','B',9);
+      $pdf->Cell(190,5,'Terms & Conditions','LRT',1,'L');
+      $pdf->SetFont('Arial','',9);
+      $total_count = count($tandc_a);
+      foreach($tandc_a as $key => $tandc) {
+        if($total_count === $key+1) {
+          $pdf->Cell(190,5,$tandc,'LRB',1,'L');
+        } else {
+          $pdf->Cell(190,5,$tandc,'LR',1,'L');
+        }
+      }
+    }
+
+    // print qwikbills copyright.
+    $pdf->SetFont('Arial','',7);      
+    $pdf->Cell(190,5,'Powered by QwikBills.com - Cloud based Billing & Inventory Solution.','',1,'R');
 
     $pdf->Output();
   }

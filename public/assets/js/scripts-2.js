@@ -754,6 +754,8 @@ function initializeJS() {
       window.location.href = '/sales/list';      
     } else if(buttonId === 'stransfer') {
       window.location.href = '/stock-transfer/register';      
+    } else if(buttonId === 'comboCancel') {
+      window.location.href = '/sales-combo/add';      
     }
 
   });

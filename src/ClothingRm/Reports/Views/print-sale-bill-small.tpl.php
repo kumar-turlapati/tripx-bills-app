@@ -44,6 +44,7 @@
   if($customer_name === '') {
     $customer_name = $tmp_cust_name;
   }
+  $tandc_a        =   preg_split('/\r\n|[\r\n]/', $sale_details['tacB2C']);
 ?>
 <html>
 	<head>
@@ -281,15 +282,26 @@
               <?php endif; ?>   
             </tr>            
           <?php endif; ?>
-          <tr><td colspan="3" style="font-size:14px;font-weight:bold;padding-top:10px;text-decoration: underline;">Terms &amp; Conditions</td></tr>          
-          <tr><td colspan="3" style="font-size:12px;font-weight:bold;padding-top:5px;">1) NO EXCHANGE. NO RETURN.</td></tr>
+          <?php if(count($tandc_a) > 0) { ?>
+            <tr>
+              <td colspan="3" style="font-size:14px;font-weight:bold;padding-top:10px;text-decoration: underline;">Terms &amp; Conditions</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="font-size:12px;font-weight:bold;padding-top:5px;">
+                <?php
+                  foreach($tandc_a as $key => $tandc) {
+                    echo '<span>'.$tandc.'</span><br />';
+                  }
+                ?>
+              </td>
+            </tr>
+          <?php } ?>
           <tr><td colspan="3">&nbsp;</td></tr>  
          </tbody>
         </table>
 	  	<div>
 	  </div>
-	  <h6 style="margin:0;text-align:center;padding:0;font-size:11px;">Register your mobile number with us for personalized offers and new stock updates.</h6>
-	  <h6 style="margin-top:5px;text-align:center;padding:0;font-size:10px;">--- powered by qwikbills.com ---</h6>
+	  <h6 style="margin-top:5px;text-align:center;padding:0;font-size:9px;border-top:1px solid #000">Powered by QwikBills.com - Cloud based Billing &amp; Inventory Solution.</h6>
 	  <br />
 	  <a href="javascript: window.print();window.close();">Print</a>
 	  <a href="javascript: window.close();" style="padding-left:150px;">(x) Close</a>	  

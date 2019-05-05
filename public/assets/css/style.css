@@ -4906,3 +4906,8 @@ input[name^="itemDetails"] {
   font-size: 14px;
   text-decoration: underline;
 }
+.labelStyle {
+  font-size:14px;
+  color:#2E1114;
+  font-weight:bold;  
+}

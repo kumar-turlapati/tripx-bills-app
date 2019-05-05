@@ -38,6 +38,18 @@ $routes->add('dashboard', new Routing\Route('/dashboard', array(
   '_controller' => 'User\\Controller\\DashBoardController::indexAction',
 )));
 
+// sales combo
+$routes->add('sales_combo_add', new Routing\Route('/sales-combo/add', array(
+  '_controller' => 'ClothingRm\\SalesCombos\\Controller\\SalesCombosController::createSalesCombo',
+)));
+$routes->add('sales_combo_update', new Routing\Route('/sales-combo/update/{comboCode}', array(
+  '_controller' => 'ClothingRm\\SalesCombos\\Controller\\SalesCombosController::updateSalesCombo',
+  'comboCode' => null,
+)));
+$routes->add('sales_combo_list', new Routing\Route('/sales-combo/list', array(
+  '_controller' => 'ClothingRm\\SalesCombos\\Controller\\SalesCombosController::salesComboRegister'
+)));
+
 // stock audit controller
 $routes->add('stock_audit_add', new Routing\Route('/stock-audit/create', array(
   '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::createStockAudit',
