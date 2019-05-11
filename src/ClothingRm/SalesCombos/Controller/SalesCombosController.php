@@ -33,7 +33,7 @@ class SalesCombosController
     $location_ids = $location_codes = [];
     $api_error = '';
 
-    $status_a = [1=>'Active', 0 => 'Inactive'];
+    $status_a = [ 99 => 'Select',  1 => 'Active', 0 => 'Inactive'];
 
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
@@ -98,7 +98,7 @@ class SalesCombosController
     $combo_details = [];
     $api_error = '';
 
-    $status_a = [1=>'Active', 0 => 'Inactive'];
+    $status_a = [ 99 => 'Select',  1 => 'Active', 0 => 'Inactive'];
 
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
@@ -134,11 +134,11 @@ class SalesCombosController
       $validation_status = $this->_validate_form_data($submitted_data,false);
       if($validation_status['status']) {
         $cleaned_params = $validation_status['cleaned_params'];
-        $api_response = $this->sc_model->create_sales_combo($cleaned_params);
+        $api_response = $this->sc_model->update_sales_combo($cleaned_params, $combo_code);
         if($api_response['status']) {
-          $message = '<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Comobo updated successfully with code ` '.$api_response['comboCode'].' `';
+          $message = '<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Comobo updated successfully.';
           $this->flash->set_flash_message($message);
-          Utilities::redirect('/sales-combo/add');
+          Utilities::redirect('/sales-combo/list');
         } else {
           $api_error = $api_response['apierror'];
           $this->flash->set_flash_message($api_error, 1);
@@ -171,101 +171,13 @@ class SalesCombosController
     return array($this->template->render_view('sales-combos-update',$template_vars),$controller_vars);
   }
 
-
-  /*
-  // update promo offer
-  public function updateSalesCombo(Request $request) {
-    #-------------------------------------------------------------------------------
-    # Initialize variables
-
-    $offer_types_a = $form_errors = $form_data = $offer_details = [];
-    $location_ids = $location_codes = [];
-    $api_error = '';
-
-    $offer_types_a = Constants::$PROMO_OFFER_CATEGORIES;
-    $status_a = [1=>'Active', 0 => 'Inactive'];
-
-    $client_locations = Utilities::get_client_locations(true);
-    foreach($client_locations as $location_key => $location_value) {
-      $location_key_a = explode('`', $location_key);
-      $location_ids[$location_key_a[1]] = $location_value;
-      $location_codes[$location_key_a[1]] = $location_key_a[0];      
-    }
-
-    # end of initializing variables
-    #-------------------------------------------------------------------------------
-
-    # check if form is submitted.
-    if(count($request->request->all()) > 0) {
-      $submitted_data = $request->request->all();
-      $offer_code = isset($submitted_data['pO']) && $submitted_data['pO'] !== '' ?
-                    Utilities::clean_string($submitted_data['pO']) :
-                    '';
-
-      $location_code = !is_null($request->get('lc')) ? Utilities::clean_string($request->get('lc')) : '';
-
-      # check submitted offer code. there is a chance of malformed codes.
-      # if not matched redirects to offers list page.
-      $this->_validate_promo_offer_code($submitted_data['pO'], $location_code);
-      $validation_status = $this->_validate_form_data($submitted_data,false);
-      if($validation_status['status']) {
-        $cleaned_params = $validation_status['cleaned_params'];
-        # hit api
-        $api_response = $this->offers_model->updatePromoOffer($cleaned_params, $offer_code, $location_code);
-        if($api_response['status']) {
-          $message = 'Promotional Offer updated successfully for offer code ` '.$offer_code.' `';
-          $this->flash->set_flash_message($message);
-          Utilities::redirect('/promo-offers/list');
-        } else {
-          $api_error = $api_response['apierror'];
-          $this->flash->set_flash_message($api_error, 1);
-          $form_data = $submitted_data;          
-        }
-      } else {
-        $form_errors = $validation_status['form_errors'];
-        $form_data = $submitted_data;
-      }
-
-    } elseif( !is_null($request->get('offerCode')) && !is_null($request->get('lc')) ) {
-      $offer_code = Utilities::clean_string($request->get('offerCode'));
-      $location_code = Utilities::clean_string($request->get('lc'));
-      $form_data = $this->_map_api_variables_with_form($this->_validate_promo_offer_code($offer_code, $location_code), $location_codes);
-    } else {
-      $this->flash->set_flash_message('Invalid promo code.', 1);
-      Utilities::redirect('/promo-offers/list');
-    }
-
-    # theme variables.
-    $controller_vars = array(
-      'page_title' => 'Promo Offers',
-      'icon_name' => 'fa fa-lemon-o',
-    );
-    $template_vars = array(
-      'offer_types' => array(''=>'Choose') + $offer_types_a,
-      'form_errors' => $form_errors,
-      'form_data' => $form_data,
-      'api_error' => $api_error,
-      'status_a' => $status_a,
-      'offerCode' => $offer_code,
-      'client_locations' => array(''=>'Choose') + $client_locations,
-      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
-      'location_ids' => $location_ids,
-      'location_codes' => $location_codes,
-    );
-
-    return array($this->template->render_view('promo-offer-update',$template_vars),$controller_vars);
-  }  
-
   // promo offers list action
-  public function promoOffersListAction(Request $request) {
+  public function listSalesCombo(Request $request) {
 
-    $search_params = $offer_types_a = $offers_a = [];
+    $search_params = $combos_a = [];
     $page_error = $offer_type = '';
-    $total_pages = $total_records = $record_count = $page_no = 0 ;
-    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
-    $offer_types_a = array(''=>'Choose') + Constants::$PROMO_OFFER_CATEGORIES_DIGITS;
-
     $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+    $location_code = '';
 
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
@@ -275,124 +187,81 @@ class SalesCombosController
     }    
 
     // parse request parameters.
-    $start_date = $request->get('startDate')!== null ? Utilities::clean_string($request->get('startDate')) : date("01-m-Y");
-    $end_date = $request->get('endDate')!== null ? Utilities::clean_string($request->get('endDate')) : date("d-m-Y");
-    $offer_type = $request->get('offerType') !== null ? Utilities::clean_string($request->get('offerType')) : '';
-    $page_no = $request->get('pageNo')!==null ? Utilities::clean_string($request->get('pageNo')) : 1;
-    $location_code = $request->get('locationCode')!==null ? Utilities::clean_string($request->get('locationCode')) : $default_location;
-    $per_page = 100;
+    $location_code = $request->get('locationCode')!==null ? Utilities::clean_string($request->get('locationCode')) : '';
 
     $search_params = array(
-      'startDate' => $start_date,
-      'endDate' => $end_date,
-      'offerType' => $offer_type,
-      'pageNo' => $page_no,
-      'perPage' => $per_page,
       'locationCode' => $location_code,
     );
 
     // dump($search_params);
     // exit;
 
-    # hit api for offers data.
-    $api_response =  $this->offers_model->getAllPromoOffers($search_params);
-    if($api_response['status']===true) {
-      if(count($api_response['response']['offers'])>0) {
-          $slno = Utilities::get_slno_start(count($api_response['response']['offers']),$per_page,$page_no);
-          $to_sl_no = $slno+$per_page;
-          $slno++;
-          if($page_no<=3) {
-            $page_links_to_start = 1;
-            $page_links_to_end = 10;
-          } else {
-            $page_links_to_start = $page_no-3;
-            $page_links_to_end = $page_links_to_start+10;            
-          }
-          if($api_response['response']['total_pages']<$page_links_to_end) {
-            $page_links_to_end = $api_response['response']['total_pages'];
-          }
-          if($api_response['response']['this_page'] < $per_page) {
-            $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
-          }
-
-          $offers_a = $api_response['response']['offers'];
-          $total_pages = $api_response['response']['total_pages'];
-          $total_records = $api_response['response']['total_records'];
-          $record_count = $api_response['response']['this_page'];
-      } else {
-        $page_error = $api_response['apierror'];
-      }
+    // hit api for combos.
+    $api_response =  $this->sc_model->get_all_sales_combos($search_params);
+    // dump($api_response);
+    // exit;
+    if($api_response['status']) {
+      $combos_a = $api_response['response'];
     } else {
       $page_error = $api_response['apierror'];
     }
 
      // prepare form variables.
     $template_vars = array(
-      'offer_types' => $offer_types_a,
-      'offer_type' => $offer_type,
       'page_error' => $page_error,
-      'offers' => $offers_a,
-      'total_pages' => $total_pages ,
-      'total_records' => $total_records,
-      'record_count' => $record_count,
-      'sl_no' => $slno,
-      'to_sl_no' => $to_sl_no,
-      'page_links_to_start' => $page_links_to_start,
-      'page_links_to_end' => $page_links_to_end,
-      'current_page' => $page_no,
+      'combos' => $combos_a,
       'search_params' => $search_params,
       'location_codes' => $location_codes,
-      'client_locations' => $client_locations,
+      'location_ids' => $location_ids,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
       'default_location' => $default_location,
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Promo Offers Management',
-      'icon_name' => 'fa fa-lemon-o',
+      'page_title' => 'Sales Combos - List',
+      'icon_name' => 'fa fa-object-ungroup',
     );
 
     // render template
-    return array($this->template->render_view('promo-offers-list',$template_vars),$controller_vars);
+    return array($this->template->render_view('sales-combos-list',$template_vars),$controller_vars);
   }
 
-  private function _validate_promo_offer_code($offer_code='', $location_code='') {
-    if($offer_code !== null || $offer_code !== '') {
-      $offer_details = $this->offers_model->getPromoOfferDetails($offer_code, $location_code);
-      $status = $offer_details['status'];
-      if($status) {
-        return $offer_details['offerDetails'];
-      }
-    }
-
-    $this->flash->set_flash_message('Invalid Promo Offer code', 1);
-    Utilities::redirect('/promo-offers/list');
-  }*/
-
   private function _validate_form_data($form_data=[]) {
-
     $form_errors = $cleaned_params = [];
+    $rate_found = 0;
 
-    $combo_name = Utilities::clean_string($form_data['comboName']);
-    $combo_price = Utilities::clean_string($form_data['comboPrice']);
     $location_code = Utilities::clean_string($form_data['locationCode']);
+    $combo_name = Utilities::clean_string($form_data['comboName']);
+    $combo_number = Utilities::clean_string($form_data['comboNumber']);
     $status = Utilities::clean_string($form_data['status']);
+    $combo_rate2 = Utilities::clean_string($form_data['comboPrice2']);
+    $combo_rate3 = Utilities::clean_string($form_data['comboPrice3']);
+    $combo_rate4 = Utilities::clean_string($form_data['comboPrice4']);
+    $combo_rate5 = Utilities::clean_string($form_data['comboPrice5']);
+    $combo_rate6 = Utilities::clean_string($form_data['comboPrice6']);
+    $combo_rate7 = Utilities::clean_string($form_data['comboPrice7']);
+    $combo_rate8 = Utilities::clean_string($form_data['comboPrice8']);
+    $combo_rate9 = Utilities::clean_string($form_data['comboPrice9']);
+    $combo_rate10 = Utilities::clean_string($form_data['comboPrice10']);
+    $combo_rate11 = Utilities::clean_string($form_data['comboPrice11']);
+    $combo_rate12 = Utilities::clean_string($form_data['comboPrice12']);
     $products = $form_data['itemDetails'];
 
     // validate combo name
     if($combo_name === '') {
       $form_errors['comboName'] = '<i class="fa fa-times" aria-hidden="true"></i> Comobo name is mandatory and must be unique.';
-    } elseif(strlen($combo_name) <= 20 && ctype_alnum($combo_name)) {
+    } elseif(strlen($combo_name) <= 50) {
       $cleaned_params['comboName'] = $combo_name;
     } else {
-      $form_errors['comboName'] = '<i class="fa fa-times" aria-hidden="true"></i> Must be below 20 chars. with alphabets and digits.';      
+      $form_errors['comboName'] = '<i class="fa fa-times" aria-hidden="true"></i> Must be below 50 chars.';      
     }
 
-    // validate combo price
-    if(!is_numeric($combo_price)) {
-      $form_errors['comboPrice'] = '<i class="fa fa-times" aria-hidden="true"></i> Comobo price is mandatory.';
+    // validate combo numeric code
+    if(is_numeric($combo_number) && $combo_number > 0 && $combo_number <= 99 && strlen($combo_number)===2) {
+      $cleaned_params['comboNumber'] = $combo_number;
     } else {
-      $cleaned_params['comboPrice'] = $combo_price;
+      $form_errors['comboNumber'] = '<i class="fa fa-times" aria-hidden="true"></i> Comobo numeric code is mandatory and it must be between 01-99';
     }
 
     // validate location code
@@ -412,7 +281,7 @@ class SalesCombosController
         }
       }
       if(count($products_final) >= 2) {
-        $cleaned_params['itemDetails'] = $products;
+        $cleaned_params['itemDetails'] = $products_final;
       } else {
         $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> Minimum two Products are required for a combo.'; 
       }
@@ -420,9 +289,87 @@ class SalesCombosController
       $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> Invalid products. Minimum two products are required for a Combo'; 
     }
 
+    // rates loop
+    if(is_numeric($combo_rate2) && $combo_rate2>0) {
+      $cleaned_params['comboPrice2'] = $combo_rate2;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice2'] = 0;
+    }
+    if(is_numeric($combo_rate3) && $combo_rate3>0) {
+      $cleaned_params['comboPrice3'] = $combo_rate3;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice3'] = 0;
+    }
+    if(is_numeric($combo_rate4) && $combo_rate4>0) {
+      $cleaned_params['comboPrice4'] = $combo_rate4;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice4'] = 0;
+    }
+    if(is_numeric($combo_rate5) && $combo_rate5>0) {
+      $cleaned_params['comboPrice5'] = $combo_rate5;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice5'] = 0;
+    }    
+    if(is_numeric($combo_rate6) && $combo_rate6>0) {
+      $cleaned_params['comboPrice6'] = $combo_rate6;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice6'] = 0;
+    }
+    if(is_numeric($combo_rate7) && $combo_rate7>0) {
+      $cleaned_params['comboPrice7'] = $combo_rate7;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice7'] = 0;
+    }
+    if(is_numeric($combo_rate8) && $combo_rate8>0) {
+      $cleaned_params['comboPrice8'] = $combo_rate8;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice8'] = 0;
+    }
+    if(is_numeric($combo_rate9) && $combo_rate9>0) {
+      $cleaned_params['comboPrice9'] = $combo_rate9;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice9'] = 0;
+    }
+    if(is_numeric($combo_rate10) && $combo_rate10>0) {
+      $cleaned_params['comboPrice10'] = $combo_rate10;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice10'] = 0;
+    }
+    if(is_numeric($combo_rate11) && $combo_rate11>0) {
+      $cleaned_params['comboPrice11'] = $combo_rate11;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice11'] = 0;
+    }
+    if(is_numeric($combo_rate12) && $combo_rate12>0) {
+      $cleaned_params['comboPrice12'] = $combo_rate12;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice12'] = 0;
+    }
+
+    if(count($products_final) > 0) {
+      if($rate_found === 0) {
+        $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> Combo rates must be given for the various units.';
+      } elseif($rate_found < count($products_final)-1) {
+        $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> The entered rates are less than the products in Combo.';
+      } elseif($rate_found > count($products_final)-1) {
+        $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> The entered rates are more than the products in Combo.';
+      }
+    }
+
     // validate status.
     if( !in_array($status,array(0,1)) ) {
-      $form_errors['status'] = 'Invalid status.';
+      $form_errors['status'] = 'Status should be Active or Inactive.';
     } else {
       $cleaned_params['status'] = $status;
     }

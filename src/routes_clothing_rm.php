@@ -47,7 +47,7 @@ $routes->add('sales_combo_update', new Routing\Route('/sales-combo/update/{combo
   'comboCode' => null,
 )));
 $routes->add('sales_combo_list', new Routing\Route('/sales-combo/list', array(
-  '_controller' => 'ClothingRm\\SalesCombos\\Controller\\SalesCombosController::salesComboRegister'
+  '_controller' => 'ClothingRm\\SalesCombos\\Controller\\SalesCombosController::listSalesCombo'
 )));
 
 // stock audit controller

@@ -106,7 +106,7 @@ class ProductsController {
         Utilities::redirect($update_url.'/'.$item_code);
       }
     } else {
-      $submitted_data = $product_details;            
+      $submitted_data = $product_details;
     }
 
     // prepare form variables.

@@ -1,4 +1,6 @@
 <?php
+  
+  // dump($location_ids, $location_codes);
 
   if(isset($submitted_data['itemType'])) {
     $item_type = $submitted_data['itemType'];
@@ -7,6 +9,8 @@
   }
   if(isset($submitted_data['locationID']) && (int)$submitted_data['locationID'] > 0) {
     $location_code = $location_codes[$submitted_data['locationID']];
+  } elseif(isset($submitted_data['locationCode']) && $submitted_data['locationCode'] !== '') {
+    $location_code = $submitted_data['locationCode'];
   } else {
     $location_code = '';
   }
@@ -54,6 +58,11 @@
   } else {
     $brand_code = '';
   }
+  if(isset($submitted_data['comboCode']) && $submitted_data['comboCode'] !== '') {
+    $combo_code = $submitted_data['comboCode'];
+  } else {
+    $combo_code = '';
+  }  
   // dump($errors);
   // dump($submitted_data, $location_ids, $location_codes);
 ?>
@@ -122,7 +131,21 @@
                   <span class="error"><?php echo $errors['locationCode'] ?></span>
                 <?php endif; ?>
               <?php else: ?>
-                <p style="font-size:16px;font-weight:bold;color:#225992;"><?php echo isset($location_ids[$submitted_data['locationID']]) ? $location_ids[$submitted_data['locationID']] : 'Invalid Store'?> <span style="color:red;font-size:11px;">[ Not editable ]</span></p>
+                <p style="font-size:16px;font-weight:bold;color:#225992;">
+                  <?php 
+                    if( isset($submitted_data['locationID']) && 
+                        isset($location_ids[$submitted_data['locationID']]) 
+                      ) {
+                      $location_name = $location_ids[$submitted_data['locationID']];
+                    } elseif( isset($submitted_data['locationCode']) ) {
+                      $location_code = $submitted_data['locationCode'];
+                      $location_id = array_search($location_code, $location_codes);
+                      $location_name = $location_ids[$location_id];
+                    } else {
+                      $location_name = 'Invalid Store';
+                    }
+                  ?><?php echo $location_name ?> <span style="color:red;font-size:11px;">[ Not editable ]</span>
+                </p>
                 <input type="hidden" id="locationCode" name="locationCode" value="<?php echo $product_location ?>" />
               <?php endif; ?>
             </div>
@@ -244,6 +267,21 @@
               >
               <?php if(isset($errors['rack_no'])): ?>
                 <span class="error"><?php echo $errors['rack_no'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Combo code</label>
+              <input
+                type="text" 
+                class="form-control noEnterKey"
+                name="comboCode"
+                id="comboCode"
+                value="<?php echo $combo_code ?>"
+                maxlength="2"
+                title="This code is used in Combo Billing"
+              >
+              <?php if(isset($errors['comboCode'])): ?>
+                <span class="error"><?php echo $errors['comboCode'] ?></span>
               <?php endif; ?>
             </div>
           </div>

@@ -30,7 +30,7 @@ $(window).load(function() {
       global.location.hash = _hash;
     }
   };
-  global.onload = function () {            
+/*  global.onload = function () {            
     noBackPlease();
     document.body.onkeydown = function (e) {
       var elm = e.target.nodeName.toLowerCase();
@@ -39,7 +39,7 @@ $(window).load(function() {
       }
       e.stopPropagation();
     };          
-  }
+  }*/
 })(window);
 
 function initializeJS() {
@@ -1948,10 +1948,12 @@ jQuery(document).ready(function(){
   if( $('#dbContainer').length>0 && ($('#monthwiseSales').length>0 || $('#salesDayGraph').length>0)) {
     monthWiseSales();
   }
+  /*
   $(document).bind("contextmenu",function(e){
     alert('We are sorry. Right click is disabled!');
     return false;
-  });  
+  });
+  */
 });
 
 function printSalesBill(bill_no) {

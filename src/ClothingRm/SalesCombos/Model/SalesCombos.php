@@ -39,26 +39,25 @@ class SalesCombos
 	}	
 
 	/** update promo offer in the system **/
-	public function updatePromoOffer($params = [], $offer_code='', $location_code='') {
+	public function update_sales_combo($params=[], $combo_code='') {
 		$client_id = Utilities::get_current_client_id();
-		$request_uri = 'promo-offers/update/'.$offer_code.'/'.$client_id.'?lc='.$location_code;
-		
-		# call api.
+		$request_uri = 'sales-combo/update/'.$combo_code;
+
+		// call api.
 		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('put',$request_uri,$params);
+		$response = $api_caller->sendRequest('post',$request_uri,$params);
 		$status = $response['status'];
 		if ($status === 'success') {
-			return array('status'=>true,'updatedRows' => $response['response']['updated']);
+			return array('status' => true);
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);
-		}		
+		}
 	}
 
-	/** list promo offers in the system **/
-	public function getAllPromoOffers($params=[]) {
+	/** list sales combos in the system **/
+	public function get_all_sales_combos($params=[]) {
 		$client_id = Utilities::get_current_client_id();
-		$request_uri = 'promo-offers/list/'.$client_id;
-
+		$request_uri = '/sales-combo/list';
 		// call api.
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get',$request_uri,$params);
@@ -69,24 +68,4 @@ class SalesCombos
 			return array('status' => false, 'apierror' => $response['reason']);
 		}
 	}
-
-	/** get live promo offers from the portal **/
-	public function getLivePromoOffers($params = []) {
-		$client_id = Utilities::get_current_client_id();
-		$request_uri = 'promo-offers/live/'.$client_id;
-
-		$params['locationCode'] = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
-
-		# call api.
-		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get',$request_uri,$params);
-
-		$status = $response['status'];
-		if ($status === 'success') {
-			return array('status'=>true,'response' => $response['response']);
-		} elseif($status === 'failed') {
-			return array('status' => false, 'apierror' => $response['reason']);
-		}
-	}
-
 }
