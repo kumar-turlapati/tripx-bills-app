@@ -253,6 +253,19 @@ class AsyncController {
       } else {
         echo $response;
       }
+    } elseif($api_string === 'getComboItemDetails') {
+      $form_data = $_POST;
+      if(is_array($form_data) && count($form_data)>0) {
+        /* hit api */
+        $api_url  = 'sales-combo/process-sales-form';
+        $response = $api_caller->sendRequest('post',$api_url,$form_data,false);
+        header("Content-type: application/json");
+        if(is_array($response)) {
+          echo json_encode($response);
+        } else {
+          echo $response;
+        }
+      }
     } elseif($api_string === 'getTrDetailsByCode') {
       $location_code =  Utilities::clean_string($request->get('locationCode'));
       $barcode = Utilities::clean_string($request->get('barcode'));

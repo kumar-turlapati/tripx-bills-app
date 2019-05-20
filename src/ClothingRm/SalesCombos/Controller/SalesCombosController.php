@@ -34,6 +34,7 @@ class SalesCombosController
     $api_error = '';
 
     $status_a = [ 99 => 'Select',  1 => 'Active', 0 => 'Inactive'];
+    $wallets_a = Constants::$WALLETS;
 
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
@@ -82,7 +83,8 @@ class SalesCombosController
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'location_ids' => $location_ids,
-      'location_codes' => $location_codes,      
+      'location_codes' => $location_codes,
+      'wallets' => $wallets_a,
     );
 
     return array($this->template->render_view('sales-combos-create',$template_vars),$controller_vars);

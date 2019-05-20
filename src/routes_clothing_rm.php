@@ -49,6 +49,9 @@ $routes->add('sales_combo_update', new Routing\Route('/sales-combo/update/{combo
 $routes->add('sales_combo_list', new Routing\Route('/sales-combo/list', array(
   '_controller' => 'ClothingRm\\SalesCombos\\Controller\\SalesCombosController::listSalesCombo'
 )));
+$routes->add('sales_entry_combos', new Routing\Route('/sales-entry/combos', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryComboController::salesEntryAction',
+)));
 
 // stock audit controller
 $routes->add('stock_audit_add', new Routing\Route('/stock-audit/create', array(
@@ -269,10 +272,6 @@ $routes->add('sales_return_view', new Routing\Route('/sales-return/view/{salesCo
 )));
 $routes->add('sales_return_list', new Routing\Route('/sales-return/list', array(
   '_controller' => 'ClothingRm\\SalesReturns\\Controller\\SalesReturnsController::salesReturnListAction',
-)));
-$routes->add('sales_return_delete', new Routing\Route('/sales-return/delete/{salesReturnCode}', array(
-  '_controller' => 'ClothingRm\\SalesReturns\\Controller\\SalesReturnsController::salesReturnDeleteAction',
-  'salesReturnCode' => null,
 )));
 $routes->add('report_printSalesReturnBill', new Routing\Route('/print-sales-return-bill', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesReturnController::printSalesReturnBill',

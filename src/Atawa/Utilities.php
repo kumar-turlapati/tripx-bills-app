@@ -571,9 +571,10 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
-        '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd',
+        '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd', '/async/getComboItemDetails',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
+        '/sales-entry/combos',
 
         '/print-sales-bill-small', '/print-sales-bill', 
 

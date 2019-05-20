@@ -72,17 +72,37 @@ class Constants
 
   public static $PAYMENT_METHODS_RC = array(
     0 => 'Cash',
+    1 => 'Card',
+    2 => 'Split',
+    3 => 'Credit',
+    4 => 'UPI/EMI',
+  );
+
+  public static $PAYMENT_METHODS_WALLETS = array(
+    0 => 'Cash',
     1 => 'Credit / Debit Card',
     2 => 'Split Payment (Card / Cash / Cnote)',
-    3 => 'Credit',      
+    4 => 'eWallet/UPI/EMI Cards',
+  );  
+
+  public static $WALLETS = array(
+    4 => 'Bajaj Card',
+    7 => 'Google TeZ',
+    1 => 'Paytm',
+    2 => 'PayUMoney',
+    3 => 'Mobikwik',
+    5 => 'PhonePe',
+    6 => 'UPI',
+    8 => 'Amazon Pay'
   );
 
   public static $PAYMENT_METHODS_RC_SHORT = array(
     0 => 'Cash',
     1 => 'Card',
     2 => 'Split',
-    3 => 'Credit',            
-  );    
+    3 => 'Credit',
+    4 => 'EMI/eW',
+  );
 
   public static $PROMO_OFFER_CATEGORIES = array(
     // 'a' => 'Discount on an Item (Ex: 10% discount on Shirt)',

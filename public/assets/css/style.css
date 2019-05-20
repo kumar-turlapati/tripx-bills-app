@@ -4001,12 +4001,13 @@ table.sliders tr td {
 }
 .date > input {
     width: calc(100% - 30px);
+    height: 34px;
 }
 .add-on {
     border: 1px solid #E2E2E4;
     border-radius: 0px 4px 4px 0px;
     -webkit-border-radius: 0px 4px 4px 0px;
-    padding: 6px;
+    padding: 8px;
     text-align: center;
     background: #EEEEEE;
     position: absolute;

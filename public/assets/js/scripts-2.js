@@ -44,6 +44,11 @@ $(window).load(function() {
 
 function initializeJS() {
 	jQuery('.date').datepicker();
+  jQuery('.date').datepicker({
+    format: 'dd/mm/yyyy',
+  }).on('changeDate', function(e){
+    jQuery(this).datepicker('hide');
+  });
 	jQuery('#timepicker1').timepicker();
   jQuery('.tooltips').tooltip();
   jQuery('.popovers').popover();
@@ -116,6 +121,203 @@ function initializeJS() {
      return false;
    }
   });
+
+  // Combo Bills entry.
+  if( $('#comboBillEntry').length>0 ) {
+
+    $('#SaveCombo').on('click', function(e){
+      e.preventDefault();
+      $(this).attr('disabled', true);
+      $('.cancelButton').attr('disabled', true);
+      $('#comboBillEntry').submit();
+    });
+    
+    function comboCall(itemId, fromSource) {
+     var citemCode = $('#cicode_'+itemId).val();
+     jQuery.ajax("/async/getComboItemDetails", {
+        type: "POST",
+        data: $('#comboBillEntry').serialize(),
+        beforeSend: function() {
+          if(citemCode !== '') {
+            $('#inameTd_'+itemId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('#qtyavaTd_'+itemId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('#mrpTd_'+itemId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('#grossAmountTd_'+itemId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('.grossAmount').html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('.roundOff').html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('.netPay').html('<img src="/assets/img/wait.gif" alt="Wait.." />');          
+          }
+        }, 
+        success: function(itemDetails) {
+          if(itemDetails.status === 'success') {
+            var grossAmount = roundOff = netPay = roundedNetPay = 0;
+            var avaQtys = itemDetails.response.comboItemAvaQtys;
+            var itemMrps = itemDetails.response.comboItemMrps;
+            var itemDiscounts = itemDetails.response.comboItemDiscounts;
+            var itemNames = itemDetails.response.comboItemNames;
+            var itemAmounts = itemDetails.response.comboItemAmounts;
+            for(i=0; i<6; i++) {
+              if(i in itemNames && itemNames[i] !== '') {
+                $('#iname_'+i).val(itemNames[i]);
+                $('#inameTd_'+i).text(itemNames[i]);
+
+                $('#qtyava_'+i).val(avaQtys[i]);
+                $('#qtyavaTd_'+i).html('<i class="fa fa-cubes" aria-hidden="true"></i> '+avaQtys[i]);
+                
+                $('#mrp_'+i).val(itemMrps[i]);
+                $('#mrpTd_'+i).html('<i class="fa fa-inr" aria-hidden="true"></i> '+parseFloat(itemMrps[i]).toFixed(2));
+
+                $('#discount_'+i).val(itemDiscounts[i]);
+                $('#grossAmountTd_'+i).html('<i class="fa fa-inr" aria-hidden="true"></i> '+parseFloat(itemAmounts[i]).toFixed(2));
+
+                netPay += parseFloat(itemAmounts[i]);
+                roundedNetPay = Math.round(netPay);
+                roundOff = parseFloat(roundedNetPay)-netPay;
+
+                $('.grossAmount').text(netPay.toFixed(2));
+                $('.roundOff').text(roundOff.toFixed(2));
+                $('.netPay').text(roundedNetPay.toFixed(2));
+
+                if(fromSource === 'fromQty') {
+                  var nextItemId = parseInt(itemId) + 1;
+                  $('#cicode_'+nextItemId).focus();
+                } else {
+                  $('#qty_'+itemId).focus();
+                }
+
+              } else {
+                emptyComboValues(i);
+              }
+            }
+          }
+        },
+        error: function(e) {
+          $('#inameTd_'+itemId).html('');
+          $('#qtyavaTd_'+itemId).html('');
+          $('#mrpTd_'+itemId).html('');
+          $('#grossAmountTd_'+itemId).html('');
+          alert('Item code not found in the Selected store.');
+        }
+     });
+    }
+    function emptyComboValues(itemId) {
+      $('#inameTd_'+itemId).text('');
+      $('#qtyavaTd_'+itemId).text('');
+      $('#mrpTd_'+itemId).text('');
+      $('#grossAmountTd_'+itemId).text('');
+
+      $('#iname_'+itemId).val('');
+      $('#qtyava_'+itemId).val('');
+      $('#mrp_'+itemId).val('');
+      $('#discount_'+itemId).val('');
+      $('#qty_'+itemId).val('');
+    }
+    
+    /*
+    $('.comboBarcode').on('keypress', function (e) {
+     if (e.keyCode == 13) {
+       var barcode = $(this).val();
+       var locationCode = $('#locationCode').val();
+       jQuery.ajax("/async/getComboItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+          success: function(itemDetails) {
+            if(itemDetails.status === 'success') {
+            }
+          },
+          error: function(e) {
+            alert('Barcode not found in the Selected store.');
+          }
+       });
+       comboCall();
+       e.preventDefault();
+     }
+    });
+    */
+    $('#comPaymentMethod').on('change', function(){
+      var paymentMethod = parseInt(returnNumber($(this).val()));
+      if(paymentMethod === 1) {
+        $('#comboCardDetails').show();
+        $('#comboWalletDetails, #comboSplitPaymentMethods').hide();
+        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentWallet, #splitPaymentCn, #cnNo, #walletID, #walletRefNo').val('');
+      } else if(paymentMethod === 2) {
+        $('#comboSplitPaymentMethods').show();
+        $('#comboWalletDetails, #comboCardDetails').hide();
+        $('#cardNo, #authCode, #walletID, #walletRefNo').val('');
+      } else if(paymentMethod === 4) {
+        $('#comboWalletDetails').show();
+        $('#comboCardDetails, #comboSplitPaymentMethods').hide();
+        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentWallet, #splitPaymentCn, #cnNo, #cardNo, #authCode').val('');
+      } else {
+        $('#comboCardDetails, #comboSplitPaymentMethods, #comboWalletDetails').hide();
+        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentWallet, #splitPaymentCn, #cnNo, #walletID, #walletRefNo, #cardNo, #authCode').val('')
+      }
+    });
+    $('.comboItemCode').on('keypress', function (e) {
+     if (e.keyCode == 13) {
+       var itemId = $(this).attr('id').split('_')[1];
+       var ic = $(this).val();
+       if(ic === '') {
+        return false;
+       }
+       if(ic.length > 0) {
+         $('#cbarcode_'+itemId).attr('disabled', true);
+         if(ic.length<2) {
+          ic = '0'+ic;
+          $(this).val(ic);
+         } else {
+          emptyComboValues(itemId);
+         }
+         $('#rowError_'+itemId).hide();
+          var locationCode = $('#locationCode').val();
+          var itemId = $(this).attr('id').split('_')[1];
+          var saleQty = returnNumber($('#qty_'+itemId).val());
+          if(saleQty <= 0) {
+            // $('#qty_'+itemId).val(1);
+            /* check if item code already exists and add 1 qty. to that row. */
+            $('.comboItemCode').each(function(i, obj) {
+              var existingItemCode = $(this).val();
+              var existingItemId = $(this).attr('id').split('_')[1];
+              // console.log(existingItemCode, ic, existingItemId, itemId);
+              if(existingItemCode == ic && existingItemId !== itemId) {
+                var existingQty = parseInt(returnNumber($('#qty_'+existingItemId).val()));
+                var newQty = parseInt(existingQty)+1;
+                $('#qty_'+existingItemId).val(newQty);
+                $('#cicode_'+itemId).val('');
+                // $('#cbarcode_'+itemId).attr('disabled', false);
+                itemId = existingItemId;
+                return false;
+              }
+            });
+         }
+         comboCall(itemId); 
+         e.preventDefault();
+       }
+     }
+    });
+    $('.comboItemCode').on('keyup', function (e) {
+     if (e.keyCode == 8) {
+      var stringLength = $(this).val().length;
+      if(stringLength <= 0 ) {
+        var itemId = $(this).attr('id').split('_')[1];
+        // $('#cbarcode_'+itemId).attr('disabled', false);
+        emptyComboValues(itemId);
+        comboCall(itemId);
+      }      
+     }
+    });
+    $('.comboItemQty').on('keypress', function (e) {
+     var itemId = $(this).attr('id').split('_')[1];
+     if (e.keyCode == 13) {
+      var itemQty = parseFloat(returnNumber($(this).val()));
+      var nextItemId = parseInt(itemId) + 1;
+      if(itemQty > 0) {
+        comboCall(itemId, 'fromQty');
+        e.preventDefault();
+      } else {
+        return false;
+      }
+     }
+    });
+  }
 
   if( $('#dfyDashboard').length > 0 ) {
     $.post('/async/finyDefault', $('#dfyDashboard').serialize());

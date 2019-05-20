@@ -52,12 +52,9 @@
         <?php echo Utilities::print_flash_message() ?>
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
-            <a href="/sales-return/list" class="btn btn-default">
-              <i class="fa fa-repeat"></i> Sales Return Register 
-            </a>&nbsp;&nbsp;
-            <a href="/sales/entry-with-barcode" class="btn btn-default">
-              <i class="fa fa-inr"></i> New Sale 
-            </a>            
+            <a href="/sales-return/list" class="btn btn-default"><i class="fa fa-repeat"></i> Sales Return Register</a>&nbsp;
+            <a href="/sales/entry-with-barcode" class="btn btn-default"><i class="fa fa-inr"></i> New Sale</a>
+            <a href="/sales-entry/combos" class="btn btn-default"><i class="fa fa-shopping-basket" aria-hidden="true"></i> New Combo Sale</a>
           </div>
         </div>
 		

@@ -1079,13 +1079,6 @@ class SalesEntryWoBarcode {
         $tot_discount_amount += $item_discount;
         $tot_tax_value += $item_tax_amount;
 
-        # validate item name.
-/*        if(ctype_alnum(str_replace([' ', '-', '_'], ['','',''], $item_name)) === false) {
-          $form_errors['itemDetails']['itemName'][$item_key] = 'Invalid item name.';
-        } else {
-          $cleaned_params['itemDetails']['itemName'][$item_key] = $item_name;
-        }*/
-        
         $cleaned_params['itemDetails']['itemName'][$item_key] = $item_name;
 
         # validate item avaiable qty.

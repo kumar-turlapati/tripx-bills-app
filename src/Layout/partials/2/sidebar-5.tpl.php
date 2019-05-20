@@ -23,6 +23,7 @@
         <ul class="sub">
           <li><a href="/sales/entry"><i class="fa fa-keyboard-o"></i> Sales Entry - Manual</a></li>
           <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>
+          <li><a href="/sales-entry/combos"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Sales Entry - Combos</a></li>
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
           <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Petty Cash Voucher</a></li>
           <li><a href="/stock-audit/create"><i class="fa fa-check"></i> Phy. Stock Audit</a></li>          
