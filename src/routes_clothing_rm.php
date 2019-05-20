@@ -902,6 +902,25 @@ $routes->add('list_sale_categories', new Routing\Route('/sales-category/list', a
   '_controller' => 'SalesCategory\\Controller\\SalesCategoryController::listSalesCategories',
 )));
 
+$routes->add('report_indentItemAvail', new Routing\Route('/indent-item-avail', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemAvailability',
+)));
+$routes->add('report_indentItemwise', new Routing\Route('/indent-itemwise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemwiseBooked',
+)));
+$routes->add('report_indentAgentwise', new Routing\Route('/indent-agentwise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentAgentwiseBooked',
+)));
+$routes->add('report_indentStatewise', new Routing\Route('/indent-statewise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentStatewiseBooked',
+)));
+$routes->add('report_indentRegister', new Routing\Route('/indent-register', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentRegister',
+)));
+$routes->add('report_dispatchSummary', new Routing\Route('/indent-dispatch-summary', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentDispatchSummary',
+)));
+
 return $routes;
 
 /*
