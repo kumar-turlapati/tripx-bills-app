@@ -26,7 +26,8 @@
           <li><a href="/fin/cust-opbal/list"><i class="fa fa-line-chart"></i> OpBal - Customers</a></li>
           <li><a href="/fin/supp-opbal/list"><i class="fa fa-user-circle-o"></i> OpBal - Suppliers</a></li>
           <li><a href="/stock-adj-reasons/list"><i class="fa fa-adjust"></i> Stock Adj. Reasons</a></li>          
-          <li><a href="/sales-category/list"><i class="fa fa-inr"></i> Sales Categories</a></li>          
+          <li><a href="/sales-category/list"><i class="fa fa-inr"></i> Sales Categories</a></li>
+          <li><a href="/sales-combo/list"><i class="fa fa-shopping-basket"></i> Sales Combos</a></li>          
         </ul>
       </li>
       <li class="sub-menu">
