@@ -33,12 +33,18 @@
     $saExecutiveCode = $search_params['saExecutiveCode'];
   } else {
     $saExecutiveCode = '';
+  }
+  if(isset($search_params['walletID']) && $search_params['walletID'] !== '' ) {
+    $wallet_id = $search_params['walletID'];
+  } else {
+    $wallet_id = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
   $page_url = '/sales/list';
 
+  // dump($search_params);
   // dump($sales);
   // exit;
 ?>
@@ -131,7 +137,26 @@
                  </div>
               </div>
     				</div>
-            <div class="form-group text-center">
+            <div class="form-group">
+              <div class="col-sm-12 col-md-1 col-lg-1">&nbsp;</div>
+              <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="select-wrap">
+                  <select class="form-control" name="walletID" id="walletID">
+                    <?php 
+                      foreach($wallets as $key => $value):
+                        if((int)$wallet_id == (int)$key) {
+                          $selected = 'selected="selected"';
+                        } else {
+                          $selected = '';
+                        }  
+                    ?>
+                     <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                        <?php echo $value ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                 </div>
+              </div>
               <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
             </div>
   			  </form>

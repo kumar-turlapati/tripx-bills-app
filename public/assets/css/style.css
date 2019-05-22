@@ -4814,7 +4814,7 @@ input[name^="itemDetails"] {
 .priceTable tr td{
   border:none!important;
   font-weight: bold;
-  font-size: 22px;
+  font-size: 19px;
   color: #337ab7;
 }
 .priceTable tr td:nth-child(2){

@@ -55,6 +55,10 @@
                         <td align="right"><div id="ds-cardsale"></div></td>
                       </tr>
                       <tr>
+                        <td>eWallet/ UPI / EMI Cards</td>
+                        <td align="right"><div id="ds-walletsale"></div></td>
+                      </tr>                      
+                      <tr>
                         <td>Split Sale</td>
                         <td align="right"><div id="ds-splitsale"></div></td>
                       </tr>
@@ -100,6 +104,10 @@
                           <td>Card Sale</td>
                           <td align="right"><div id="cs-cardsale"></div></td>
                         </tr>
+                        <tr>
+                          <td>eWallet/ UPI / EMI Cards</td>
+                          <td align="right"><div id="cs-walletsale"></div></td>
+                        </tr>                        
                         <tr>
                           <td>Split Sale</td>
                           <td align="right"><div id="cs-splitsale"></div></td>

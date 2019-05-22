@@ -585,6 +585,8 @@ class SalesEntryWoBarcode {
       $search_params['saExecutiveCode'] = $request->get('saExecutiveCode');
     }
 
+    $search_params['walletID'] = !is_null($request->get('walletID')) ? Utilities::clean_string($request->get('walletID')) : '';
+
     # ---------- get sales executive names from api -----------------------
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
@@ -597,13 +599,13 @@ class SalesEntryWoBarcode {
       }
     } else {
       $sa_executives = [];
-    }    
+    }
 
-    # hit API.
+    // hit API.
     $sales_api_call = $this->sales->get_sales($page_no,$per_page,$search_params);
     $api_status = $sales_api_call['status'];
 
-    # check api status
+    // check api status
     if($api_status) {
       if(count($sales_api_call['sales'])>0) {
         $slno = Utilities::get_slno_start(count($sales_api_call['sales']), $per_page, $page_no);
@@ -652,6 +654,7 @@ class SalesEntryWoBarcode {
       'sa_executives' =>  array('' => 'All executives') + $sa_executives,
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
+      'wallets' => ['99' => 'All UPI/EMI Cards'] + Constants::$WALLETS,
     );
 
     # build variables

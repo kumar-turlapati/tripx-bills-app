@@ -1937,12 +1937,14 @@ function initializeJS() {
             var cashSales = parseFloat(daySales.cashSales);
             var cardSales = parseFloat(daySales.cardSales);
             var splitSales = parseFloat(daySales.splitSales);
+            var walletSales = parseFloat(daySales.walletSales);
             var creditSales = parseFloat(daySales.creditSales);
             var salesReturn = parseFloat(daySales.returnAmount);
-            var totalSales = parseFloat(cashSales+cardSales+splitSales+creditSales) - salesReturn;
+            var totalSales = parseFloat(cashSales+cardSales+splitSales+creditSales+walletSales) - salesReturn;
             var cashInHand = parseFloat(daySales.cashInHand);
             $('#ds-cashsale').text(cashSales.toFixed(2));
             $('#ds-cardsale').text(cardSales.toFixed(2));
+            $('#ds-walletsale').text(walletSales.toFixed(2));
             $('#ds-splitsale').text(splitSales.toFixed(2));
             $('#ds-creditsale').text(creditSales.toFixed(2));
             $('#ds-returns').text(salesReturn.toFixed(2));            
@@ -2195,7 +2197,7 @@ function monthWiseSales() {
   var saleDate = [];
   var saleAmounts = [];
   var totCashSales = totSplitSales = totCardSales = totSales = totSalesReturns = totNetSales = 0;
-  var totCreditSales = 0;
+  var totWalletSales = totCreditSales = 0;
   jQuery.ajax("/async/monthly-sales?saleMonth="+sgfMonth+'&saleYear='+sgfYear, {
     method:"GET",
     success: function(apiResponse) {
@@ -2206,7 +2208,8 @@ function monthWiseSales() {
                           parseInt(returnNumber(saleDetails.cardSales))+
                           parseInt(returnNumber(saleDetails.cashSales))+
                           parseInt(returnNumber(saleDetails.splitSales)) + 
-                          parseInt(returnNumber(saleDetails.creditSales))
+                          parseInt(returnNumber(saleDetails.creditSales)) + 
+                          parseInt(returnNumber(saleDetails.walletSales))
                         );
 
           saleDate.push(dateFormat.getDate());
@@ -2216,15 +2219,17 @@ function monthWiseSales() {
           totCardSales += parseFloat(returnNumber(saleDetails.cardSales));
           totSplitSales += parseFloat(returnNumber(saleDetails.splitSales));
           totCreditSales += parseFloat(returnNumber(saleDetails.creditSales));
+          totWalletSales += parseFloat(returnNumber(saleDetails.walletSales));
           totSalesReturns += parseFloat(returnNumber(saleDetails.returnAmount));
 
-          totSales += ( parseFloat(returnNumber(saleDetails.cashSales)) + returnNumber(parseFloat(saleDetails.cardSales)) + returnNumber(parseFloat(saleDetails.splitSales)) + returnNumber(parseFloat(saleDetails.creditSales)) );
+          totSales += ( parseFloat(returnNumber(saleDetails.cashSales)) + returnNumber(parseFloat(saleDetails.cardSales)) + returnNumber(parseFloat(saleDetails.splitSales)) + returnNumber(parseFloat(saleDetails.creditSales)) + returnNumber(parseFloat(saleDetails.walletSales)) );
         });
 
         totNetSales = parseFloat(returnNumber(totSales)) - parseFloat(returnNumber(totSalesReturns));
 
         $('#cs-cashsale').text(totCashSales.toFixed(2));
         $('#cs-cardsale').text(totCardSales.toFixed(2));
+        $('#cs-walletsale').text(totWalletSales.toFixed(2));
         $('#cs-splitsale').text(totSplitSales.toFixed(2));
         $('#cs-creditsale').text(totCreditSales.toFixed(2));
 

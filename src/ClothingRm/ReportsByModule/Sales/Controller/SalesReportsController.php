@@ -96,8 +96,6 @@ class SalesReportsController {
       }
     }
 
-
-
     $loc_address = [
       'address1' => $business_add1,
       'address2' => $business_add2,
@@ -1359,6 +1357,7 @@ class SalesReportsController {
     return [$this->template->render_view('day-sales-report', $template_vars), $controller_vars];    
   }
 
+  // sales summary by month.
   public function salesSummaryByMonth(Request $request) {
 
     $default_location = $_SESSION['lc'];
@@ -1380,6 +1379,7 @@ class SalesReportsController {
       $sales_api_response = $this->sales_model->get_sales_summary_bymon($form_data);
       // dump($sales_api_response);
       // exit;
+
       if($sales_api_response['status'] === false) {
         $error_message = Constants::$REPORTS_ERROR_MESSAGE;
         $this->flash->set_flash_message($error_message, 1);
@@ -1407,14 +1407,14 @@ class SalesReportsController {
       }
 
       // start PDF printing.
-      $item_widths = array(18,19,19,19,21,21,21,21,24,24,24,26);
+      $item_widths = array(18,19,19,19,21,21,21,21,21,24,24,24,26);
       $totals_width = $item_widths[0]+$item_widths[1];
       $slno = 0;
 
       $discount_label  = '**Discount amount is shown for information purpose only. It was already included in Cash/Card/Cnote Sale';
-      $net_sales_text  = '##Net Sales: (Cash Sales + Card Sales + Split Sales + Credit Sales) - Sales Return';
-      $net_sales_text1 = '##Net Sales: (Paid By Cash + Paid By Card + Credit Notes + Credit Sales) - Sales Return';
-
+      $net_sales_text  = '##Net Sales: (Cash Sales + Card Sales + Split Sales + UPI/EMIC Sales + Credit Sales) - Sales Return';
+      $net_sales_text1 = '##Net Sales: (Paid By Cash + Paid By Card + Credit Notes + Credit Sales + UPI/EMIC Sales) - Sales Return';
+ 
       $pdf = PDF::getInstance();
       $pdf->AliasNbPages();
       $pdf->AddPage('L','A4');
@@ -1427,20 +1427,22 @@ class SalesReportsController {
       $pdf->Cell($item_widths[1],6,'Cash Sales','RTB',0,'C');
       $pdf->Cell($item_widths[2],6,'Card Sales','RTB',0,'C');
       $pdf->Cell($item_widths[3],6,'Split Sales','RTB',0,'C');
-      $pdf->Cell($item_widths[4],6,'Credit Sales','RTB',0,'C');   
+      $pdf->Cell($item_widths[4],6,'Credit Sales','RTB',0,'C');
+      $pdf->Cell($item_widths[4],6,'UPI/EMIC Sales','RTB',0,'C');      
       $pdf->Cell($item_widths[5],6,'Gross Sales','RT',0,'C');
       $pdf->Cell($item_widths[6],6,'Sales Return','RT',0,'C');
       $pdf->Cell($item_widths[7],6,'Net Sales ##','RT',0,'C');
       $pdf->Cell($item_widths[8],6,'Paid By Cash','RTB',0,'C');
       $pdf->Cell($item_widths[9],6,'Paid By Card','RTB',0,'C');
       $pdf->Cell($item_widths[10],6,'Credit Notes','RTB',0,'C');
-      $pdf->Cell($item_widths[11],6,'Discount / Bills **','RTB',0,'C');
+      $pdf->Cell($item_widths[11],6,'By UPI/EMIC','RTB',0,'C');
+      // $pdf->Cell($item_widths[11],6,'Discount / Bills **','RTB',0,'C');
       $pdf->SetFont('Arial','',8);
 
       $tot_cash_sales = $tot_split_sales = $tot_card_sales = $tot_credit_sales = $tot_sales = 0;
       $tot_discounts = $tot_discount_bills = $tot_returns = 0;
       $tot_cash_payments = $tot_card_payments = $tot_cnote_payments = 0;
-
+      $tot_wallet_sales = 0;
       foreach($month_summary as $day_details) {
         $date = date("d-m-Y", strtotime($day_details['tranDate']));
         $week = date("l", strtotime($day_details['tranDate']));
@@ -1450,6 +1452,7 @@ class SalesReportsController {
         $tot_card_sales += $day_details['cardSales'];
         $tot_split_sales += $day_details['splitSales'];
         $tot_credit_sales += $day_details['creditSales'];
+        $tot_wallet_sales += $day_details['walletSales'];
         $tot_returns += $day_details['returnAmount'];
 
         $tot_cash_payments += $day_details['cashPayments'];
@@ -1463,14 +1466,17 @@ class SalesReportsController {
         $card_sales = $day_details['cardSales'] > 0 ? number_format($day_details['cardSales'],2,'.','') : '';
         $split_sales = $day_details['splitSales'] > 0 ? number_format($day_details['splitSales'],2,'.','') : '';
         $credit_sales = $day_details['creditSales'] > 0 ? number_format($day_details['creditSales'],2,'.','') : '';
+        $wallet_sales = $day_details['walletSales'] > 0 ? number_format($day_details['walletSales'],2,'.','') : '';
+
         $sales_return = $day_details['returnAmount'] > 0 ?  number_format($day_details['returnAmount'],2,'.','') : '';
         $net_sales = ($day_sales-$day_details['returnAmount']) > 0 ? number_format($day_sales-$day_details['returnAmount'],2,'.','') : '';
 
         $cash_payments = $day_details['cashPayments'] > 0 ? number_format($day_details['cashPayments'],2,'.','') : '' ;
         $card_payments = $day_details['cardPayments'] > 0 ? number_format($day_details['cardPayments'],2,'.','') : '' ;
         $cnote_payments = $day_details['cnotePayments'] > 0 || $day_details['cnotePayments'] < 0  ? number_format($day_details['cnotePayments'],2,'.','') : '' ;
+        $wallet_payments = $day_details['walletPayments'] > 0 ? number_format($day_details['walletPayments'],2,'.','') : '' ;
 
-        $total_sales = number_format($day_details['cashSales']+$day_details['cardSales']+$day_details['splitSales']+$day_details['creditSales'],2,'.','');
+        $total_sales = number_format($day_details['cashSales']+$day_details['cardSales']+$day_details['splitSales']+$day_details['creditSales']+$day_details['walletSales'],2,'.','');
         $discount_string = number_format($day_details['discountGiven'],2,'.','').' / '.$day_details['totalDiscountBills'];
 
         $pdf->Ln();
@@ -1479,6 +1485,7 @@ class SalesReportsController {
         $pdf->Cell($item_widths[2],6,$card_sales,'RTB',0,'R');
         $pdf->Cell($item_widths[3],6,$split_sales,'RTB',0,'R');
         $pdf->Cell($item_widths[4],6,$credit_sales,'RTB',0,'R');
+        $pdf->Cell($item_widths[4],6,$wallet_sales,'RTB',0,'R');
         $pdf->Cell($item_widths[5],6,$total_sales,'RTB',0,'R');
         $pdf->Cell($item_widths[6],6,$sales_return,'RTB',0,'R');
         $pdf->SetFont('Arial','B',8);
@@ -1487,30 +1494,32 @@ class SalesReportsController {
         $pdf->Cell($item_widths[8],6,$cash_payments,'RTB',0,'R');
         $pdf->Cell($item_widths[9],6,$card_payments,'RTB',0,'R');
         $pdf->Cell($item_widths[10],6,$cnote_payments,'RTB',0,'R');
-        $pdf->Cell($item_widths[11],6,$discount_string,'RTB',0,'R');
+        // $pdf->Cell($item_widths[11],6,$discount_string,'RTB',0,'R');
+        $pdf->Cell($item_widths[11],6,$wallet_payments,'RTB',0,'R');
       }
 
-      $tot_sales = $tot_cash_sales + $tot_credit_sales + $tot_split_sales + $tot_card_sales;
+      $tot_sales = $tot_cash_sales + $tot_credit_sales + $tot_split_sales + $tot_card_sales + $tot_wallet_sales;
       $tot_net_sales = $tot_sales - $tot_returns;
 
       $pdf->SetFont('Arial','B',8);      
       $pdf->Ln();
-      $pdf->Cell($item_widths[0],6,'TOTALS','LTB',0,'R');
-      $pdf->Cell($item_widths[1],6,number_format($tot_cash_sales,2,'.',''),'LRTB',0,'R');
-      $pdf->Cell($item_widths[2],6,number_format($tot_card_sales,2,'.',''),'RTB',0,'R');        
-      $pdf->Cell($item_widths[3],6,number_format($tot_split_sales,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[4],6,number_format($tot_credit_sales,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[5],6,number_format($tot_sales,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[6],6,number_format($tot_returns,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[7],6,number_format($tot_net_sales,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[8],6,number_format($tot_cash_payments,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[9],6,number_format($tot_card_payments,2,'.',''),'RTB',0,'R');        
-      $pdf->Cell($item_widths[10],6,number_format($tot_cnote_payments,2,'.',''),'RTB',0,'R');
-      $pdf->Cell($item_widths[11],6,'*****','RTB',1,'R');
+      $pdf->Cell($item_widths[0],6,'TOTALS','LB',0,'R');
+      $pdf->Cell($item_widths[1],6,number_format($tot_cash_sales,2,'.',''),'LRB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($tot_card_sales,2,'.',''),'RB',0,'R');        
+      $pdf->Cell($item_widths[3],6,number_format($tot_split_sales,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[4],6,number_format($tot_credit_sales,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[4],6,number_format($tot_wallet_sales,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($tot_sales,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[6],6,number_format($tot_returns,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[7],6,number_format($tot_net_sales,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($tot_cash_payments,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[9],6,number_format($tot_card_payments,2,'.',''),'RB',0,'R');        
+      $pdf->Cell($item_widths[10],6,number_format($tot_cnote_payments,2,'.',''),'RB',0,'R');
+      $pdf->Cell($item_widths[11],6,'*****','RB',1,'R');
       $pdf->SetFont('Arial','',8);
       $pdf->Ln(5);
-      $pdf->Cell(array_sum($item_widths),6,$discount_label,'',0,'R');
-      $pdf->Ln(4);
+      // $pdf->Cell(array_sum($item_widths),6,$discount_label,'',0,'R');
+      // $pdf->Ln(4);
       $pdf->Cell(array_sum($item_widths),6,$net_sales_text,'',0,'R');
       $pdf->Ln(4);
       $pdf->Cell(array_sum($item_widths),6,$net_sales_text1,'',0,'R');

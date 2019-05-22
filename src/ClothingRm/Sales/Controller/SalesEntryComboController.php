@@ -67,6 +67,8 @@ class SalesEntryComboController
         unset($sales_array['itemDetails']['comboItemCode']);
         unset($sales_array['itemDetails']['comboItemSoldQty']);
         $sales_api_response = $this->sales->create_sale($sales_array);
+        // dump($sales_api_response, $sales_array);
+        // exit;
         if($sales_api_response['status']) {
           $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i> Sales transaction with Bill No. <b>`'.$sales_api_response['billNo'].'`</b> created successfully.');
           Utilities::redirect('/sales-entry/combos?lastBill='.$sales_api_response['invoiceCode'].'&format=combo');
