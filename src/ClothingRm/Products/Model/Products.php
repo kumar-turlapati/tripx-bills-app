@@ -113,8 +113,10 @@ class Products
 		if($params['hsnSacCode'] !== '' && (!is_numeric($params['hsnSacCode']) || strlen($params['hsnSacCode']) > 8) ) {
 			$errors['hsnSacCode'] = 'Invalid HSN / SAC code.';
 		}
-		if($params['comboCode'] !== '' && ( !is_numeric($params['comboCode'])) || strlen($params['comboCode'])!== 2) {
-			$errors['comboCode'] = 'Invalid Combo Code. Must be 00-99';
+		if($params['comboCode'] !== '') {
+			if( !is_numeric($params['comboCode']) || strlen($params['comboCode']) !== 2) {
+				$errors['comboCode'] = 'Invalid Combo Code. Must be 00-99';
+			}
 		}
 
 		if(count($errors)>0) {
