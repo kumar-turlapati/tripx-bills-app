@@ -383,12 +383,17 @@ class Utilities
       } elseif($cookie_validation) {
         $this_device_id = $_SESSION['__bq_fp'];
         $allowed_devices = $_SESSION['__allowed_devices'];
+        if(isset($_SESSION['uidn']) && is_numeric($_SESSION['uidn'])) {
+          $cookie_name = 'qbdid'.$_SESSION['uidn'];
+        } else {
+          Utilities::redirect('/error');
+        }        
 
         // before validating in devices array from server 
         // validate whether we have a cookie or not.
-        if(isset($_COOKIE['qbdid']) && $_COOKIE['qbdid'] !== '') {
+        if(isset($_COOKIE[$cookie_name]) && $_COOKIE[$cookie_name] !== '') {
           // set dec device id in this device id.
-          $this_device_id = Utilities::enc_dec_string('decrypt', $_COOKIE['qbdid']);
+          $this_device_id = Utilities::enc_dec_string('decrypt', $_COOKIE[$cookie_name]);
           // var_dump($this_device_id);
           // exit;
         }
@@ -845,6 +850,9 @@ class Utilities
       return;
     }
 
+    // dump($_SESSION);
+    // exit;
+
     if( !isset($_SESSION['utype']) || 
         !isset($_SESSION['__bq_fp']) || 
         !isset($_SESSION['__allowed_devices']) 
@@ -873,6 +881,9 @@ class Utilities
     } else {
       $this_device_id = $_SESSION['__bq_fp'];
     }
+
+    // dump($this_device_id);
+    // exit;
 
     switch ($user_type) {
       case 3:
