@@ -31,7 +31,7 @@
 <div class="row">
   <div class="col-lg-12">
     <section class="panelBox">
-      <h2 class="hdg-reports text-center">Receipt Vouchers List</h2>
+      <?php /*<h2 class="hdg-reports text-center">Receipt Vouchers List</h2> */ ?>
       <div class="panelBody">
         <?php echo Utilities::print_flash_message() ?>
         <?php if($page_error !== ''): ?>
@@ -101,7 +101,7 @@
                   $party_name = $voucher_details['partyName'];
                   $bill_no = $voucher_details['billNo'];
               ?>
-                <tr class="font12">
+                <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
                   <td class="valign-middle"><?php echo $voucher_date ?></td>

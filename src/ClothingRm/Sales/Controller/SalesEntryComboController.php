@@ -307,7 +307,8 @@ class SalesEntryComboController
     }
 
     $cleaned_params['cardNo'] = $card_no;
-    $cleaned_params['authCode'] = $auth_code;    
+    $cleaned_params['authCode'] = $auth_code;
+    $cleaned_params['isComboBill'] = 1;
 
     if($payment_method === 2 && ( (float)$split_payment_card + $split_payment_cash + $split_payment_cn + $split_payment_wallet !== (float)$net_pay) ) {
       $form_errors['paymentMethod'] = 'Cash / Card / Cnote value must be equal to bill value.';      

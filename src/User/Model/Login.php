@@ -98,7 +98,8 @@ class Login
 			$cookie_string = $response['access_token'].'##'.$response['refresh_token'].'##'.$expires_in.
 											 '##'.$response['cname'].'##'.$response['ccode'].'##'.$response['uid'].
 											 '##'.$response['uname'].'##'.$response['utype'].'##'.$response['bc'].
-											 '##'.$response['lc'].'##'.$response['lname'].'##'.$response['mrpEditable'];
+											 '##'.$response['lc'].'##'.$response['lname'].'##'.$response['mrpEditable'].
+											 '##'.$response['uidn'];
 
 			if(isset($_SESSION['__allowed_devices'])) {
 				unset($_SESSION['__allowed_devices']);

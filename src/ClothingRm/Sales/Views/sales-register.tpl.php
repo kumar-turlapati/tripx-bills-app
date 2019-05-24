@@ -53,7 +53,7 @@
   <div class="col-lg-12">
     
     <section class="panelBox">
-      <h2 class="hdg-reports text-center">Daywise Sales List</h2>
+      <?php /*<h2 class="hdg-reports text-center">Daywise Sales List</h2> */ ?>
       <div class="panelBody">
         <?php echo Utilities::print_flash_message() ?>
         <div class="global-links actionButtons clearfix">

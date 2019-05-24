@@ -60,7 +60,7 @@
                   $pincode = $location_details['pincode'];
                   $gst_no = $location_details['gstNo'];
               ?>
-                <tr class="font12">
+                <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td class="valign-middle"><?php echo $location_name ?></td>
                   <td class="valign-middle"><?php echo $address1 ?></td>

@@ -237,6 +237,7 @@ class SalesCombosController
     $combo_name = Utilities::clean_string($form_data['comboName']);
     $combo_number = Utilities::clean_string($form_data['comboNumber']);
     $status = Utilities::clean_string($form_data['status']);
+    $combo_rate1 = Utilities::clean_string($form_data['comboPrice1']);
     $combo_rate2 = Utilities::clean_string($form_data['comboPrice2']);
     $combo_rate3 = Utilities::clean_string($form_data['comboPrice3']);
     $combo_rate4 = Utilities::clean_string($form_data['comboPrice4']);
@@ -248,6 +249,9 @@ class SalesCombosController
     $combo_rate10 = Utilities::clean_string($form_data['comboPrice10']);
     $combo_rate11 = Utilities::clean_string($form_data['comboPrice11']);
     $combo_rate12 = Utilities::clean_string($form_data['comboPrice12']);
+    $combo_rate13 = Utilities::clean_string($form_data['comboPrice13']);
+    $combo_rate14 = Utilities::clean_string($form_data['comboPrice14']);
+    $combo_rate15 = Utilities::clean_string($form_data['comboPrice15']);
     $products = $form_data['itemDetails'];
 
     // validate combo name
@@ -292,6 +296,12 @@ class SalesCombosController
     }
 
     // rates loop
+    if(is_numeric($combo_rate1) && $combo_rate1>0) {
+      $cleaned_params['comboPrice1'] = $combo_rate1;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice1'] = 0;
+    }    
     if(is_numeric($combo_rate2) && $combo_rate2>0) {
       $cleaned_params['comboPrice2'] = $combo_rate2;
       $rate_found++;
@@ -358,14 +368,32 @@ class SalesCombosController
     } else {
       $cleaned_params['comboPrice12'] = 0;
     }
+    if(is_numeric($combo_rate13) && $combo_rate13>0) {
+      $cleaned_params['comboPrice13'] = $combo_rate13;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice13'] = 0;
+    }
+    if(is_numeric($combo_rate14) && $combo_rate14>0) {
+      $cleaned_params['comboPrice14'] = $combo_rate14;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice14'] = 0;
+    }
+    if(is_numeric($combo_rate15) && $combo_rate15>0) {
+      $cleaned_params['comboPrice15'] = $combo_rate15;
+      $rate_found++;
+    } else {
+      $cleaned_params['comboPrice15'] = 0;
+    }
 
     if(count($products_final) > 0) {
       if($rate_found === 0) {
         $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> Combo rates must be given for the various units.';
-      } elseif($rate_found < count($products_final)-1) {
+/*      } elseif($rate_found < count($products_final)-1) {
         $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> The entered rates are less than the products in Combo.';
       } elseif($rate_found > count($products_final)-1) {
-        $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> The entered rates are more than the products in Combo.';
+        $form_errors['itemDetails'] = '<i class="fa fa-times" aria-hidden="true"></i> The entered rates are more than the products in Combo.';*/
       }
     }
 

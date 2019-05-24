@@ -120,7 +120,8 @@ class SalesCategoryController
 
   public function listSalesCategories(Request $request) {
 
-    $adj_reasons = []; $page_error = '';
+    $sales_categories = []; 
+    $page_error = '';
 
     $api_response = $this->sc_model->list_sales_categories();
     // dump($api_response);

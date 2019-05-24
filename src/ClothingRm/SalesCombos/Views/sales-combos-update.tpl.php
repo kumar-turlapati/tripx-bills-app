@@ -12,6 +12,7 @@
   $combo_number = isset($form_data['comboNumber']) ? $form_data['comboNumber'] : '';  
   $status = isset($form_data['status']) ? $form_data['status'] : 99;
 
+  $combo_price1   =   isset($form_data['comboPrice1']) ? $form_data['comboPrice1']: '';
   $combo_price2   =   isset($form_data['comboPrice2']) ? $form_data['comboPrice2']: '';
   $combo_price3   =   isset($form_data['comboPrice3']) ? $form_data['comboPrice3']: '';
   $combo_price4   =   isset($form_data['comboPrice4']) ? $form_data['comboPrice4']: '';
@@ -23,6 +24,9 @@
   $combo_price10  =   isset($form_data['comboPrice10']) ? $form_data['comboPrice10']: '';
   $combo_price11  =   isset($form_data['comboPrice11']) ? $form_data['comboPrice11']: '';
   $combo_price12  =   isset($form_data['comboPrice12']) ? $form_data['comboPrice12']: '';
+  $combo_price13  =   isset($form_data['comboPrice13']) ? $form_data['comboPrice13']: '';  
+  $combo_price14  =   isset($form_data['comboPrice14']) ? $form_data['comboPrice14']: '';  
+  $combo_price15  =   isset($form_data['comboPrice15']) ? $form_data['comboPrice15']: '';  
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -150,8 +154,7 @@
                 name="comboPrice1"
                 id="comboPrice1"
                 maxlength="20"
-                readonly
-                placeholder="M.R.P (by default)"
+                value="<?php echo $combo_price1 ?>"
               >
               <?php if(isset($form_errors['comboPrice1'])): ?>
                 <span class="error"><?php echo $form_errors['comboPrice1'] ?></span>
@@ -241,7 +244,7 @@
                 value="<?php echo $combo_price7 ?>"
                 maxlength="20"
               >
-              <?php if(isset($form_errors['comboPrice4'])): ?>
+              <?php if(isset($form_errors['comboPrice7'])): ?>
                 <span class="error"><?php echo $form_errors['comboPrice7'] ?></span>
               <?php endif; ?>
             </div>
@@ -275,7 +278,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
              <label class="control-label  labelStyle">Combo price for 10 units</label>
               <input 
                 type="text"
@@ -285,11 +288,11 @@
                 value="<?php echo $combo_price10 ?>"
                 maxlength="20"
               >
-              <?php if(isset($form_errors['comboPrice4'])): ?>
-                <span class="error"><?php echo $form_errors['comboPrice7'] ?></span>
+              <?php if(isset($form_errors['comboPrice4=10'])): ?>
+                <span class="error"><?php echo $form_errors['comboPrice10'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
              <label class="control-label  labelStyle">Combo price for 11 units</label>
               <input 
                 type="text"
@@ -303,8 +306,8 @@
                 <span class="error"><?php echo $form_errors['comboPrice11'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-             <label class="control-label labelStyle">Combo price  12 units</label>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+             <label class="control-label labelStyle">Combo price 12 units</label>
               <input
                 type="text"
                 class="form-control noEnterKey"
@@ -315,6 +318,50 @@
               >
               <?php if(isset($form_errors['comboPrice12'])): ?>
                 <span class="error"><?php echo $form_errors['comboPrice12'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+             <label class="control-label  labelStyle">Combo price for 13 units</label>
+              <input 
+                type="text"
+                class="form-control noEnterKey"
+                name="comboPrice13"
+                id="comboPrice13"
+                value="<?php echo $combo_price13 ?>"
+                maxlength="20"
+              >
+              <?php if(isset($form_errors['comboPrice13'])): ?>
+                <span class="error"><?php echo $form_errors['comboPrice13'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+             <label class="control-label  labelStyle">Combo price for 14 units</label>
+              <input 
+                type="text"
+                class="form-control noEnterKey"
+                name="comboPrice14"
+                id="comboPrice14"
+                value="<?php echo $combo_price14 ?>"
+                maxlength="20"
+              >
+              <?php if(isset($form_errors['comboPrice14'])): ?>
+                <span class="error"><?php echo $form_errors['comboPrice14'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+             <label class="control-label labelStyle">Combo price 15 units</label>
+              <input
+                type="text"
+                class="form-control noEnterKey"
+                name="comboPrice15"
+                id="comboPrice15"
+                value="<?php echo $combo_price15 ?>"
+                maxlength="20"
+              >
+              <?php if(isset($form_errors['comboPrice15'])): ?>
+                <span class="error"><?php echo $form_errors['comboPrice15'] ?></span>
               <?php endif; ?>
             </div>
           </div>

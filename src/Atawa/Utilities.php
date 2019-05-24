@@ -424,6 +424,7 @@ class Utilities
       $_SESSION['lc'] = $cookie_string_a[9]; 
       $_SESSION['lname'] = $cookie_string_a[10];
       $_SESSION['editable_mrps'] = $cookie_string_a[11];
+      $_SESSION['uidn'] = $cookie_string_a[12];
       $_SESSION['token_valid'] = true;
       $_SESSION['last_access_time'] = $current_time;
       return true;
@@ -854,11 +855,21 @@ class Utilities
     $user_type = (int)$_SESSION['utype'];
     $allowed_devices = $_SESSION['__allowed_devices'];
 
+    // dump('in check device name....', $_SESSION);
+    if(isset($_SESSION['uidn']) && is_numeric($_SESSION['uidn'])) {
+      $cookie_name = 'qbdid'.$_SESSION['uidn'];
+    } else {
+      Utilities::redirect('/error');
+    }
+
+    // dump($cookie_name);
+    // exit;
+
     // before validating in devices array from server 
     // validate whether we have a cookie or not.
-    if(isset($_COOKIE['qbdid']) && $_COOKIE['qbdid'] !== '') {
+    if(isset($_COOKIE[$cookie_name]) && $_COOKIE[$cookie_name] !== '') {
       // set dec device id in this device id.
-      $this_device_id = Utilities::enc_dec_string('decrypt', $_COOKIE['qbdid']);
+      $this_device_id = Utilities::enc_dec_string('decrypt', $_COOKIE[$cookie_name]);
     } else {
       $this_device_id = $_SESSION['__bq_fp'];
     }
@@ -873,7 +884,7 @@ class Utilities
           setcookie('__ata__','',time()-200400);
 
           // set device cookie.
-          Utilities::set_device_cookie($this_device_id);
+          Utilities::set_device_cookie($this_device_id, $cookie_name);
 
           unset($_SESSION['ccode'], $_SESSION['uid'], $_SESSION['uname'], 
                 $_SESSION['bc'], $_SESSION['lc'], 
@@ -1070,10 +1081,10 @@ class Utilities
       : false;
   }
 
-  public static function set_device_cookie($device_id = '') {
+  public static function set_device_cookie($device_id = '', $cookie_name='') {
     $enc_device_id = Utilities::enc_dec_string('encrypt', $device_id);
-    if(!isset($_COOKIE['qbdid'])) {
-      @setcookie('qbdid', $enc_device_id, time()+60*60*24*30);
+    if(!isset($_COOKIE[$cookie_name])) {
+      @setcookie($cookie_name, $enc_device_id, time()+60*60*24*30);
     }
   }
 
@@ -1081,4 +1092,4 @@ class Utilities
     return 'India';
   }
 
- }
+}
