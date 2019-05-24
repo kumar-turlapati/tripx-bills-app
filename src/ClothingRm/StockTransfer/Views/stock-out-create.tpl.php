@@ -175,7 +175,7 @@
                         name="itemDetails[barcode][]" 
                         id="barcode_<?php echo $i-1 ?>" 
                         size="13"
-                        class="noEnterKey transBarcode" 
+                        class="transBarcode" 
                         index="<?php echo $i-1 ?>"
                         style="border:1px dashed #00AEFF;font-weight:bold;color:#AA3E39;"
                       />
