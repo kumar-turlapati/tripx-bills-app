@@ -19,7 +19,7 @@
               '#tPurchases' => ['Purchases', 'tPurchases'], 
               // '#tInventory' => ['Inventory', 'tInventory'], 
             ];
-  } elseif($user_type === 5) {
+  } elseif($user_type === 5 || $user_type === 14) {
     $tabs = [
               '#tSales' => ['Sales', 'tSales'], 
             ];
@@ -37,7 +37,7 @@
     </ul>
 
     <div class="tab-content">
-      <?php if($user_type === 3 || $user_type === 9 || $user_type === 5 || $user_type === 12): ?>
+      <?php if($user_type === 3 || $user_type === 9 || $user_type === 5 || $user_type === 12 || $user_type === 14): ?>
         <div role="tabpanel" class="tab-pane active" id="tSales">
           <div class="row">
             <div class="col-md-6" id="daySales">

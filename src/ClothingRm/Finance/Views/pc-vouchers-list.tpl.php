@@ -32,7 +32,6 @@
 <div class="row">
   <div class="col-lg-12">
     <section class="panelBox">
-      <h2 class="hdg-reports text-center">Payment Vouchers List</h2>
       <div class="panelBody">
 
         <?php echo Utilities::print_flash_message() ?>
