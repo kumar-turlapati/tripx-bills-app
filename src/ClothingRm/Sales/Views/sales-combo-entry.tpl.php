@@ -12,6 +12,7 @@
   $current_date = isset($form_data['invoiceDate']) && $form_data['invoiceDate'] !== '' ? $form_data['invoiceDate'] : date("d-m-Y");
   $payment_method = isset($form_data['paymentMethod']) && $form_data['paymentMethod'] !== '' ? $form_data['paymentMethod'] : '';
   $mobile_no =  isset($form_data['mobileNo']) && $form_data['mobileNo'] !== '' ? $form_data['mobileNo'] : '';
+  $name = isset($form_data['name']) && $form_data['name'] !== '' ? $form_data['name'] : '';
 
   $split_payment_cash = isset($form_data['splitPaymentCash']) ? $form_data['splitPaymentCash'] : '';
   $split_payment_card = isset($form_data['splitPaymentCard']) ? $form_data['splitPaymentCard'] : '';
@@ -97,7 +98,7 @@
                     <span class="error"><?php echo $errors['locationCode'] ?></span>
                   <?php endif; ?>
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <label class="control-label labelStyle">Payment method</label>
                   <div class="select-wrap">
                     <select class="form-control" name="paymentMethod" id="comPaymentMethod">
@@ -117,13 +118,20 @@
                     <span class="error"><?php echo $errors['paymentMethod'] ?></span>
                   <?php endif; ?>
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <label class="control-label labelStyle">Customer mobile number</label>
                   <input type="text" class="form-control noEnterKey" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
                   <?php if(isset($errors['mobileNo'])): ?>
                     <span class="error"><?php echo $errors['mobileNo'] ?></span>
                   <?php endif; ?>
-                </div>                
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Customer name</label>
+                  <input type="text" class="form-control noEnterKey" name="name" id="name" maxlength="20" value="<?php echo $name ?>">
+                  <?php if(isset($errors['name'])): ?>
+                    <span class="error"><?php echo $errors['name'] ?></span>
+                  <?php endif; ?>
+                </div>                               
               </div>
               <div class="form-group" id="comboSplitPaymentMethods" <?php echo $split_payment_input_style ?>>
                 <div class="col-sm-12 col-md-2 col-lg-2">
@@ -383,7 +391,7 @@
 <?php if($bill_to_print !== '' && $print_format === 'combo'): ?>
   <script>
     (function() {
-      var printUrl = '/print-sales-bill?billNo=<?php echo $bill_to_print ?>';
+      var printUrl = '/print-sales-bill-combo?billNo=<?php echo $bill_to_print ?>';
       var printWindow = window.open(printUrl, "_blank", "left=0,top=0,width=300,height=300,toolbar=0,scrollbars=0,status=0");
       printWindow.print();
     })();

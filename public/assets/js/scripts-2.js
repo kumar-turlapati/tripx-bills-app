@@ -935,7 +935,6 @@ function initializeJS() {
     $(this).attr('disabled', true);
     $('.cancelOp').attr('disabled', true);
     var buttonId = $(this).attr('id');
-    console.log('hello');
     if(buttonId === 'stoCancel') {
       window.location.href = '/stock-transfer/choose-location';
     } else if(buttonId === 'inwBulkUploadCancel') {
@@ -943,7 +942,9 @@ function initializeJS() {
     } else if(buttonId === 'seWithBarcode') {
       window.location.href = '/sales/entry-with-barcode';
     } else if(buttonId === 'seWoBarcode') {
-      window.location.href = '/sales/entry';      
+      window.location.href = '/sales/entry';
+    } else if(buttonId === 'scombos') {
+      window.location.href = '/sales-entry/combos';      
     } else if(buttonId === 'ieWithBarcode') {
       window.location.href = '/sales-indent/create';
     } else if(buttonId === 'uploadCustomers') {
@@ -2162,17 +2163,26 @@ jQuery(document).ready(function(){
 
 function printSalesBill(bill_no) {
   var printUrl = '/print-sales-bill?billNo='+bill_no;
-  window.open(printUrl, "_blank", "scrollbars=yes,titlebar=yes,resizable=yes,width=400,height=400");
+  var openWindow = window.open(printUrl, "_blank", "scrollbars=yes,titlebar=yes,resizable=yes,width=400,height=400");
+  openWindow.print();  
+}
+
+function printSalesBillCombo(bill_no) {
+  var printUrl = '/print-sales-bill-combo?billNo='+bill_no;
+  var openWindow = window.open(printUrl, "_blank", "scrollbars=yes,titlebar=yes,resizable=yes,width=400,height=400");
+  openWindow.print();
 }
 
 function printSalesBillSmall(bill_no) {
   var printUrl = '/print-sales-bill-small?billNo='+bill_no;
-  window.open(printUrl, "_blank", "scrollbars=yes,titlebar=yes,resizable=yes,width=400,height=400");
+  var openWindow = window.open(printUrl, "_blank", "scrollbars=yes,titlebar=yes,resizable=yes,width=400,height=400");
+  openWindow.print();  
 }
 
 function printSalesBillGST(bill_no) {
   var printUrl = '/print-sales-bill-gst?billNo='+bill_no;
-  window.open(printUrl, "_blank", "scrollbars=yes,titlebar=yes,resizable=yes,width=400,height=400");
+  var openWindow = window.open(printUrl, "_blank", "scrollbars=yes,titlebar=yes,resizable=yes,width=400,height=400");
+  openWindow.print();
 }
 
 function printGrn(grnCode) {

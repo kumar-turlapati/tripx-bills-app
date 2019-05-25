@@ -143,10 +143,12 @@ class SalesEntryComboController
 
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
+    $name = isset($form_data['name']) ? Utilities::clean_string($form_data['name']) : ''; 
 
     $item_details = $form_data['itemDetails'];
 
     $cleaned_params['saleDate'] = $sale_date;
+    $cleaned_params['name'] = $name;      
 
     // validate location code.
     if($location_code !== '') {

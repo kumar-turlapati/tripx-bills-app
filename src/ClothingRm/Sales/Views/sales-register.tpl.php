@@ -191,6 +191,7 @@
                 $sales_code = $sales_details['invoiceCode'];
                 $invoice_date = date("d-m-Y", strtotime($sales_details['invoiceDate']));
                 $mobile_number = $sales_details['mobileNo'];
+                $is_combo_bill = $sales_details['isComboBill'];
                 $location_code = isset($location_codes[$sales_details['locationID']]) ? $location_codes[$sales_details['locationID']] : '';
                 if($sales_details['customerName'] !== '') {
                   $customer_name = $sales_details['customerName'];
@@ -254,12 +255,18 @@
                           <i class="fa fa-phone-square" aria-hidden="true"></i>
                         </a> */ ?>                  
                         <?php if($tax_calc_option === 'I'): ?>
-                          <a class="btn btn-success" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
-                            <i class="fa fa-map-o" aria-hidden="true"></i>
-                          </a>
-                          <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
-                            <i class="fa fa-print" aria-hidden="true"></i>
-                          </a>
+                          <?php if($is_combo_bill): ?>
+                            <a class="btn btn-success" href="javascript: printSalesBillCombo('<?php echo $sales_code ?>')" title="Print Combo Bill on Laser/InkJet Printer - A4 Size">
+                              <i class="fa fa-print" aria-hidden="true"></i>
+                            </a>
+                          <?php else: ?>
+                            <a class="btn btn-success" href="javascript: printSalesBillSmall('<?php echo $sales_code ?>')" title="Print Invoice on Thermal Printer - Paper Roll">
+                              <i class="fa fa-map-o" aria-hidden="true"></i>
+                            </a>
+                            <a class="btn btn-success" href="javascript: printSalesBill('<?php echo $sales_code ?>')" title="Print Invoice on Laser/InkJet Printer - A4 Size">
+                              <i class="fa fa-print" aria-hidden="true"></i>
+                            </a>
+                          <?php endif; ?>
                         <?php endif; ?>
                         <?php if($tax_calc_option === 'E'): ?>
                           <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">

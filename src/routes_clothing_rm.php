@@ -853,6 +853,9 @@ $routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-
 $routes->add('report_printSalesBill', new Routing\Route('/print-sales-bill', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBill',
 )));
+$routes->add('report_printSalesBillCombo', new Routing\Route('/print-sales-bill-combo', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillCombo',
+)));
 $routes->add('report_inventoryProfitability', new Routing\Route('/inventory-profitability', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::inventoryProfitability',
 )));
