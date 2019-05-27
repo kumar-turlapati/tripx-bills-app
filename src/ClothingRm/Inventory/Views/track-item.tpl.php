@@ -78,6 +78,7 @@
                   <th width="5%" class="text-center">Sno.</th>
                   <th width="9%" class="text-center">Transaction<br />Date</th>
                   <th width="8%" class="text-center">Lot No.</th>
+                  <th width="6%" class="text-center">CASE/<br />BOX No.</th>
                   <th width="7%" class="text-center">Opening<br />Qty.</th>
                   <th width="7%" class="text-center">Purchased<br />Qty.</th>
                   <th width="8%" class="text-center">Sales Return<br />Qty.</th>
@@ -104,9 +105,10 @@
                     $clos_qty += $op_qty;
                     $all_op_qty += $op_qty;
                 ?>
-                  <tr class="text-right font12">
+                  <tr class="text-right font11">
                     <td colspan="3">Balance C/F</td>
                     <td class="text-right"><?php echo number_format($balance_forwarded_qty, 2, '.', '') ?></td>
+                    <td class="text-right">&nbsp;</td>
                     <td class="text-right">&nbsp;</td>
                     <td class="text-right">&nbsp;</td>
                     <td class="text-right">&nbsp;</td>
@@ -178,14 +180,16 @@
 
                     $item_rate = $tran_details['itemRate'];
                     $lot_no = $tran_details['lotNo'];
+                    $cno = $tran_details['cno'];
                     $ref_no = $tran_details['refNumber'];
                     $amount = round($item_rate*$tran_details['itemQty'],2);
                     $total_amount += $amount;
                   ?>
-                    <tr class="text-right font12">
+                    <tr class="text-right font11">
                       <td><?php echo $slno_page ?></td>
                       <td class="text-left"><?php echo $tran_date ?></td>
                       <td class="text-left"><?php echo $lot_no ?></td>                      
+                      <td class="text-right"><?php echo $cno ?></td>                      
                       <td class="text-right"><?php echo $op_qty > 0 ? number_format($op_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right"><?php echo $pur_qty > 0 ? number_format($pur_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right"><?php echo $sr_qty > 0 ? number_format($sr_qty, 2, '.', '') : '' ?></td>
@@ -210,7 +214,7 @@
                   $_SESSION['trackItemClosing'] = $clos_qty;
                 ?>
                   <tr class="text-right font14">
-                    <td colspan="3" class="text-bold">T O T A L S</td>
+                    <td colspan="4" class="text-bold">T O T A L S</td>
                     <td class="text-right text-bold"><?php echo $all_op_qty > 0 ? number_format($all_op_qty, 2, '.', '') : '' ?></td>
                     <td class="text-right text-bold"><?php echo $all_pur_qty > 0 ? number_format($all_pur_qty, 2, '.', '') : '' ?></td>
                     <td class="text-right text-bold"><?php echo $all_sr_qty > 0 ? number_format($all_sr_qty, 2, '.', '') : '' ?></td>
