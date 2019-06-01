@@ -106,16 +106,15 @@
             </a>
             <a href="/inward-entry/list" class="btn btn-default">
               <i class="fa fa-book"></i> Purchase Register
-            </a>            
+            </a>
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="grnEntryForm">
-          <div class="panel">
-            <div class="panel-body">
-              <h2 class="hdg-reports borderBottom">Transaction Details</h2>
+          <div class="panel" style="margin-bottom:5px;">
+            <div class="panel-body" style="padding: 5px 20px 5px 20px;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">GRN Date (dd-mm-yyyy)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">GRN Date (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <div class="col-lg-12">
                       <div class="input-append date" data-date="<?php echo $grn_date ?>" data-date-format="dd-mm-yyyy">
@@ -128,8 +127,21 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Supplier name</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Supplier bill number</label>
+                  <input 
+                    type="text" 
+                    class="form-control noEnterKey" 
+                    name="billNo" 
+                    id="billNo" 
+                    value="<?php echo $bill_no ?>"
+                  >
+                  <?php if(isset($form_errors['billNo'])): ?>
+                    <span class="error"><?php echo $form_errors['billNo'] ?></span>
+                  <?php endif; ?>
+                </div>           
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Supplier name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="supplierID" id="supplierID" disabled>
                       <?php 
@@ -150,23 +162,8 @@
                     <span class="error"><?php echo $form_errors['supplierID'] ?></span>
                   <?php endif; ?>              
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Supplier bill number</label>
-                  <input 
-                    type="text" 
-                    class="form-control noEnterKey" 
-                    name="billNo" 
-                    id="billNo" 
-                    value="<?php echo $bill_no ?>"
-                  >
-                  <?php if(isset($form_errors['billNo'])): ?>
-                    <span class="error"><?php echo $form_errors['billNo'] ?></span>
-                  <?php endif; ?>
-                </div>           
-              </div>
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                  <label class="control-label">Purchaser order (PO) No.</label>
+                <div class="col-sm-12 col-md-4 col-lg-3">
+                  <label class="control-label labelStyle">PO No.</label>
                   <input 
                     type="text" 
                     class="form-control noEnterKey" 
@@ -179,8 +176,10 @@
                       <span class="error"><?php echo $form_errors['poNo'] ?></span>
                   <?php endif; ?>              
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                  <label class="control-label">Payment method</label>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label labelStyle">Payment method</label>
                   <div class="select-wrap">
                     <select class="form-control" name="paymentMethod" id="paymentMethod" disabled>
                       <?php 
@@ -201,8 +200,8 @@
                     <?php endif; ?>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                  <label class="control-label">Credit period (in days)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                  <label class="control-label labelStyle">Credit period (in days)</label>
                   <div class="select-wrap">
                     <select class="form-control" name="creditDays" id="creditDays" disabled>
                       <?php 
@@ -226,7 +225,6 @@
               </div>
             </div>
           </div>
-          <h2 class="hdg-reports">Item Details</h2>
           <?php if(isset($form_errors['itemDetailsError'])): ?>
             <span class="error"><?php echo $form_errors['itemDetailsError'] ?></span>
           <?php endif; ?>          

@@ -53,6 +53,18 @@ $routes->add('sales_entry_combos', new Routing\Route('/sales-entry/combos', arra
   '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryComboController::salesEntryAction',
 )));
 
+// discount manager
+$routes->add('discount_manager', new Routing\Route('/discount-manager/{pageNo}', array(
+  '_controller' => 'ClothingRm\\DiscountManager\\Controller\\DiscountManagerController::discountManager',
+  'pageNo' => null,
+)));
+$routes->add('discount_entry_upsert', new Routing\Route('/discount-manager/upsert', array(
+  '_controller' => 'ClothingRm\\DiscountManager\\Controller\\DiscountManagerController::upsertDiscountEntry',
+)));
+$routes->add('discount_entry_delete', new Routing\Route('/discount-manager-delete', array(
+  '_controller' => 'ClothingRm\\DiscountManager\\Controller\\DiscountManagerController::deleteDiscountEntry',
+)));
+
 // stock audit controller
 $routes->add('stock_audit_add', new Routing\Route('/stock-audit/create', array(
   '_controller' => 'ClothingRm\\StockAudit\\Controller\\StockAuditController::createStockAudit',

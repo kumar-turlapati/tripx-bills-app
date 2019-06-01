@@ -71,7 +71,21 @@
     $split_payment_cn = $form_data['netPayCn'];
   } else {
     $split_payment_cn = '';
-  }  
+  }
+  if(isset($form_data['splitPaymentCn']) && $form_data['splitPaymentCn']>0) {
+    $split_payment_cn =  $form_data['splitPaymentCn'];
+  } elseif(isset($form_data['netPayCn']) && $form_data['netPayCn']>0) {
+    $split_payment_cn = $form_data['netPayCn'];
+  } else {
+    $split_payment_cn = '';
+  }
+  if(isset($form_data['splitPaymentWallet']) && $form_data['splitPaymentWallet']>0) {
+    $split_payment_wallet =  $form_data['splitPaymentWallet'];
+  } elseif(isset($form_data['netPayWallet']) && $form_data['netPayWallet']>0) {
+    $split_payment_wallet = $form_data['netPayWallet'];
+  } else {
+    $split_payment_wallet = '';
+  }
 
   $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
   $shipping_charges = isset($form_data['shippingCharges']) ? $form_data['shippingCharges'] : '';
@@ -83,12 +97,16 @@
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
   $sales_category = isset($form_data['saleCategory']) ? $form_data['saleCategory'] : '';  
 
-  $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
+  $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 || (int)$payment_method === 4 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
   $credit_days_input_style = (int)$payment_method === 3 ? '' : 'style="display:none;"';
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
+  $wallet_style = (int)$payment_method === 4 || (int)$payment_method === 2 ? '' : 'style="display:none;"';
 
-  $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';  
+  $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';
+
+  $wallet_id = isset($form_data['walletID']) ? $form_data['walletID'] : '';
+  $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';  
 
   $form_submit_url = '/sales/update/'.$ic;
 ?>
@@ -388,6 +406,7 @@
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="roundOff" class="roundOff"><?php echo $rounded_off !== '' ? number_format($rounded_off, 2, '.', '') : '' ?></td>
                     <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;" id="netPayBottom" class="netPay"><?php echo $net_pay > 0 ? number_format($net_pay, 2, '.', '') : '' ?></td>
                   </tr>
+                  <?php /*
                   <tr>
                     <td colspan="10" align="right" style="vertical-align:middle;">
                       <span style="padding-right:5px;font-weight:bold;font-size:14px;">Credit Note No.</span>
@@ -453,6 +472,84 @@
                       </span>
                     </td>
                   </tr>
+                  */ ?>
+                  <tr>
+                    <td colspan="10" align="right" style="vertical-align:middle;">
+                      <span style="padding-right:5px;font-weight:bold;font-size:14px;">Credit Note No.</span>
+                      <span style="padding-right:20px;">
+                        <input
+                          type="text"
+                          size="10"
+                          id="cnNo"
+                          name="cnNo"
+                          maxlength="8"
+                          style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                          <?php echo $split_payment_input_style ?>
+                          value="<?php echo $cn_no ?>"
+                        />
+                      </span>            
+                      <span style="padding-right:5px;font-weight:bold;font-size:14px;">Credit Note Value</span>
+                      <span style="padding-right:20px;">
+                        <input
+                          type="text"
+                          size="10"
+                          id="splitPaymentCn"
+                          name="splitPaymentCn"
+                          style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                          <?php echo $split_payment_input_style ?>
+                          value="<?php echo $split_payment_cn ?>"
+                        />
+                      </span>
+                      <span style="padding-right:5px;font-weight:bold;font-size:14px;">Cash Value</span>
+                      <span style="padding-right:20px;">
+                        <input
+                          type="text"
+                          size="10"
+                          id="splitPaymentCash"
+                          name="splitPaymentCash"
+                          style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                          <?php echo $split_payment_input_style ?>
+                          value="<?php echo $split_payment_cash ?>"
+                        />
+                      </span>
+                      <span style="padding-right:5px;font-weight:bold;font-size:14px;">Card Value</span>
+                      <span style="padding-right:20px;">
+                        <input 
+                          type="text"
+                          size="10"
+                          id="splitPaymentCard"
+                          name="splitPaymentCard"
+                          style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                          <?php echo $split_payment_input_style ?>
+                          value="<?php echo $split_payment_card ?>"
+                        />
+                      </span>
+                      <span style="padding-right:5px;font-weight:bold;font-size:14px;">UPI/EMI Cards</span>
+                      <span style="padding-right:20px;">
+                        <input 
+                          type="text"
+                          size="10"
+                          id="splitPaymentWallet"
+                          name="splitPaymentWallet"
+                          style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                          <?php echo $split_payment_input_style ?>
+                          value="<?php echo $split_payment_wallet ?>"
+                        />
+                      </span>
+                      <span style="padding-right:5px;font-weight:bold;font-size:14px;display:none;">Net Pay</span>
+                      <span>
+                        <input
+                          type="hidden"
+                          size="20"
+                          id="netPayTop"
+                          name="netPayTop"
+                          class="netPay"
+                          disabled
+                          style="font-weight:bold;font-size:14px;padding-left:5px;background-color:#f1f442;border:1px dashed;"
+                        />
+                      </span>
+                    </td>
+                  </tr>                  
               </tbody>
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
@@ -642,6 +739,40 @@
                   <input type="text" class="form-control noEnterKey" name="authCode" id="authCode" value="<?php echo $card_auth_code ?>" />
                   <?php if(isset($errors['authCode'])): ?>
                     <span class="error"><?php echo $errors['authCode'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4" id="containerWalletName" <?php echo $wallet_style ?>>
+                  <label class="control-label">Choose eWallet/UPI/EMI Card Type</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="walletID" id="walletID">
+                      <?php 
+                        foreach($wallets as $key=>$value):
+                          if((int)$wallet_id === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($errors['walletID'])): ?>
+                    <span class="error"><?php echo $errors['walletID'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4" id="containerWalletRef" <?php echo $wallet_style ?>>
+                  <label class="control-label">eWallet/UPI/EMI Cards Ref.No.</label>
+                  <input
+                    type="text"
+                    id="walletRefNo"
+                    name="walletRefNo"
+                    maxlength="8"
+                    value="<?php echo $wallet_ref_no ?>"
+                    class="form-control noEnter"
+                  />
+                  <?php if(isset($errors['walletRefNo'])): ?>
+                    <span class="error"><?php echo $errors['walletRefNo'] ?></span>
                   <?php endif; ?>
                 </div>                
               </div>              

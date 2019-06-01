@@ -266,6 +266,42 @@ class AsyncController {
           echo $response;
         }
       }
+    } elseif($api_string === 'sdiscount') {
+      $params = [];
+      $in_lotno = isset($_POST['inLotNo']) ? Utilities::clean_string($_POST['inLotNo']) : '';
+      $dp = isset($_POST['discountPercent']) && is_numeric($_POST['discountPercent']) ? Utilities::clean_string($_POST['discountPercent']) : 0; 
+      $da = isset($_POST['discountAmount']) && is_numeric($_POST['discountAmount']) ? Utilities::clean_string($_POST['discountAmount']) : 0;
+      $end_date = isset($_POST['endDate']) ? Utilities::clean_string($_POST['endDate']) : '';
+      $location_code = isset($_POST['locationCode']) ? Utilities::clean_string($_POST['locationCode']) : '';
+      if($in_lotno !== '' && $location_code !== '') {
+        $in_lotno_a = explode('____', $in_lotno);
+        if(is_array($in_lotno_a) && count($in_lotno_a) === 3) {
+          $params['itemName'] = $in_lotno_a[0];
+          $params['lotNo'] = $in_lotno_a[1];
+          $params['mrp'] = $in_lotno_a[2];
+          $params['locationCode'] = $location_code;
+          if($dp > 0) {
+            $params['discountAmount'] = round($params['mrp']*$dp/100, 2);
+            $params['discountPercent'] = round($dp, 2);
+          } elseif($da > 0) {
+            $params['discountPercent'] = round($da/$params['mrp']*100, 2);
+            $params['discountAmount'] = round($da, 2);
+          }
+          if($end_date !== '' && Utilities::validate_date($end_date)) {
+            $params['endDate'] = $end_date;
+          }
+          // hit api
+          $api_url = 'discount-rules';
+          $response = $api_caller->sendRequest('post',$api_url,$params,false);
+          header("Content-type: application/json");
+          if(is_array($response)) {
+            echo json_encode($response);
+          } else {
+            echo $response;
+          }
+        }
+      }
+
     } elseif($api_string === 'getTrDetailsByCode') {
       $location_code =  Utilities::clean_string($request->get('locationCode'));
       $barcode = Utilities::clean_string($request->get('barcode'));

@@ -63,7 +63,7 @@
           </table>
         </div>   
         <div class="table-responsive">
-          <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="margin-bottom:0px;">
+          <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="margin-bottom:0px;width:1600px;">
             <thead>
               <tr>
                 <th style="width:220px;" class="text-center purItem">Item name</th>
@@ -80,15 +80,23 @@
                 <th style="width:55px"   class="text-center">Discount<br />( in Rs. )</th>                  
                 <th style="width:70px"   class="text-center">Taxable Amt.<br />( in Rs. )</th>
                 <th style="width:70px"   class="text-center">G.S.T<br />( in % )</th>
+                <th style="width:50px"   class="text-center">Brand</th>
+                <th style="width:50px"   class="text-center">Category</th>
+                <th style="width:20px"   class="text-center">Container<br />No.</th>
+                <th style="width:20px"   class="text-center">UOM<br />Name</th>
+                <th style="width:20px"   class="text-center">Barcode</th>
+                <th style="width:20px"   class="text-center">Item<br />SKU</th>
+                <th style="width:20px"   class="text-center">Style<br />Code</th>
+                <th style="width:20px"   class="text-center">Size</th>
+                <th style="width:20px"   class="text-center">Color</th>
+                <th style="width:20px"   class="text-center">Sleeve<br />Type</th>
               </tr>
             </thead>
             <tbody>
             <?php
               $items_total =  $total_tax_amount = $items_tot_after_discount = $total_disc_amount = 0;
               $taxable_values = $taxable_gst_value = [];
-
               for($i=1;$i<=$total_item_rows;$i++):
-
                 if( isset($form_data['itemName'][$i-1]) && $form_data['itemName'][$i-1] !== '' ) {
                   $item_name = $form_data['itemName'][$i-1];
                 } else {
@@ -143,13 +151,49 @@
                   $cno = $form_data['cnos'][$i-1];
                 } else {
                   $cno = '';
-                }                                
+                }
+                if( isset($form_data['uomName'][$i-1]) && $form_data['uomName'][$i-1] !== '' ) {
+                  $uom_name = $form_data['uomName'][$i-1];
+                } else {
+                  $uom_name = '';
+                }
                 if( isset($form_data['lotNo'][$i-1]) && $form_data['lotNo'][$i-1] !== '' ) {
                   $lot_no = $form_data['lotNo'][$i-1];
                 } else {
                   $lot_no = '';
-                }                                
-
+                }
+                if( isset($form_data['itemSku'][$i-1]) && $form_data['itemSku'][$i-1] !== '' ) {
+                  $item_sku = $form_data['itemSku'][$i-1];
+                } else {
+                  $item_sku = '';
+                }
+                if( isset($form_data['itemStyleCode'][$i-1]) && $form_data['itemStyleCode'][$i-1] !== '' ) {
+                  $item_style_code = $form_data['itemStyleCode'][$i-1];
+                } else {
+                  $item_style_code = '';
+                }
+                if( isset($form_data['itemSize'][$i-1]) && $form_data['itemSize'][$i-1] !== '' ) {
+                  $item_size = $form_data['itemSize'][$i-1];
+                } else {
+                  $item_size = '';
+                }
+                if( isset($form_data['itemColor'][$i-1]) && $form_data['itemColor'][$i-1] !== '' ) {
+                  $item_color = $form_data['itemColor'][$i-1];
+                } else {
+                  $item_color = '';
+                }
+                if( isset($form_data['itemSleeve'][$i-1]) && $form_data['itemSleeve'][$i-1] !== '' ) {
+                  $item_sleeve = $form_data['itemSleeve'][$i-1];
+                } else {
+                  $item_sleeve = '';
+                }
+                if( isset($form_data['suppBarcode'][$i-1]) && $form_data['suppBarcode'][$i-1] !== '') {
+                  $barcode = $form_data['suppBarcode'][$i-1];
+                } elseif(isset($form_data['barcode'][$i-1]) && $form_data['barcode'][$i-1] !== '') {
+                  $barcode = $form_data['barcode'][$i-1];
+                } else {
+                  $barcode = '';
+                }
                 if(is_numeric($packed_qty) && $packed_qty>0) {
                   $gross_amount = $billed_qty*$item_rate*$packed_qty;
                 } else {
@@ -189,6 +233,16 @@
                 <td style="width:80px;" align="right"><?php echo number_format($item_discount,2,'.','') ?></td>
                 <td style="width:70px;" align="right"><?php echo number_format(round($item_amount,2),2,'.','') ?></td>
                 <td style="width:80px;" align="right"><?php echo number_format($tax_percent, 2, '.', '') ?></td>
+                <td style="width:50px"  class="text-center"><?php echo '' ?></td>
+                <td style="width:50px"  class="text-center"><?php echo '' ?></td>
+                <td style="width:20px"  class="text-center"><?php echo $cno ?></td>
+                <td style="width:20px"  class="text-center"><?php echo $uom_name ?></td>
+                <td style="width:20px"  class="text-center"><?php echo $barcode ?></td>
+                <td style="width:20px"  class="text-center"><?php echo $item_sku ?></th>
+                <td style="width:20px"  class="text-center"><?php echo $item_style_code ?></td>
+                <td style="width:20px"  class="text-center"><?php echo $item_size ?></td>
+                <td style="width:20px"  class="text-center"><?php echo $item_color ?></td>
+                <td style="width:20px"  class="text-center"><?php echo $item_sleeve ?></td>                
               </tr>
             <?php 
               endfor;
@@ -252,7 +306,7 @@
                 <td style="vertical-align:middle;text-align:right;"><?php echo $challan_no ?></td>
               </tr>
           </table>
-        </div>        
+        </div>
       </div>
     </section>
   </div>

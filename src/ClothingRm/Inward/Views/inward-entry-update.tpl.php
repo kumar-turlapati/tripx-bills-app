@@ -95,11 +95,10 @@
 
         <form class="form-validate form-horizontal" method="POST" id="inwardEntryForm" autocomplete="off">
           <div class="panel" style="margin-bottom:0px;">
-            <div class="panel-body">
-              <h2 class="hdg-reports borderBottom">Transaction Details</h2>
+            <div class="panel-body" style="padding: 5px 20px 5px 20px;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Date of inward (dd-mm-yyyy)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Purchase date</label>
                   <div class="form-group">
                     <div class="col-lg-12">
                       <div class="input-append date" data-date="<?php echo $purchase_date ?>" data-date-format="dd-mm-yyyy">
@@ -112,30 +111,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Supplier name</label>
-                  <div class="select-wrap">
-                    <select class="form-control" name="supplierID" id="supplierID">
-                      <?php 
-                        foreach($suppliers as $key=>$value): 
-                            if($supplierCode === $key) {
-                              $selected = 'selected="selected"';
-                            } else {
-                              $selected = '';
-                            }                      
-                      ?>
-                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                  </div>
-                  <?php if(isset($form_errors['supplierID'])): ?>
-                    <span class="error"><?php echo $form_errors['supplierID'] ?></span>
-                  <?php endif; ?>              
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Store name (against which store this entry effects)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Store name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
@@ -156,25 +133,30 @@
                     <span class="error"><?php echo $form_errors['locationCode'] ?></span>
                   <?php endif; ?>
                 </div>
-              </div>
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Purchaser order (PO) No.</label>
-                  <input 
-                    type="text" 
-                    class="form-control noEnterKey" 
-                    name="poNo" 
-                    id="poNo" 
-                    value="<?php echo $po_no ?>"
-                    placeholder="{{ Will be generated automatically }}"
-                    readonly                    
-                  >
-                  <?php if(isset($form_errors['poNo'])): ?>
-                      <span class="error"><?php echo $form_errors['poNo'] ?></span>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Supplier name</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="supplierID" id="supplierID">
+                      <?php 
+                        foreach($suppliers as $key=>$value): 
+                            if($supplierCode === $key) {
+                              $selected = 'selected="selected"';
+                            } else {
+                              $selected = '';
+                            }                      
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($form_errors['supplierID'])): ?>
+                    <span class="error"><?php echo $form_errors['supplierID'] ?></span>
                   <?php endif; ?>              
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Payment method</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Payment method</label>
                   <div class="select-wrap">
                     <select class="form-control" name="paymentMethod" id="paymentMethod">
                       <?php 
@@ -195,32 +177,33 @@
                     <?php endif; ?>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                    <label class="control-label">Credit period (in days)</label>
-                    <div class="select-wrap">
-                      <select class="form-control" name="creditDays" id="creditDays">
-                        <?php 
-                          foreach($credit_days_a as $key=>$value):
-                            if((int)$creditDays === $key) {
-                              $selected = 'selected="selected"';
-                            } else {
-                              $selected = '';
-                            }
-                        ?>
-                          <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                            <?php echo $value ?>
-                          </option>
-                        <?php endforeach; ?>
-                      </select>
-                      <?php if(isset($form_errors['creditDays'])): ?>
-                        <span class="error"><?php echo $form_errors['creditDays'] ?></span>
-                      <?php endif; ?>
-                    </div>
-                </div>
               </div>
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Supplier location</label>
+                <input type="hidden" name="poNo" id="poNo" value="<?php echo $po_no ?>" />
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Credit period (in days)</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="creditDays" id="creditDays">
+                      <?php 
+                        foreach($credit_days_a as $key=>$value):
+                          if((int)$creditDays === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                    <?php if(isset($form_errors['creditDays'])): ?>
+                      <span class="error"><?php echo $form_errors['creditDays'] ?></span>
+                    <?php endif; ?>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Supplier location</label>
                   <div class="select-wrap">
                     <select class="form-control" name="supplierState" id="supplierState" disabled>
                       <?php 
@@ -241,46 +224,45 @@
                     <?php endif; ?>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Supplier GST No.</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Supplier GST No.</label>
                   <input
                     type="text" 
                     class="form-control noEnterKey" 
                     name="supplierGSTNo"
                     id="supplierGSTNo" 
-                    value="<?php echo $supplier_gst_no ?>"
                     disabled
                   >
                   <?php if(isset($form_errors['supplierGSTNo'])): ?>
                     <span class="error"><?php echo $form_errors['supplierGSTNo'] ?></span>
                   <?php endif; ?>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                    <label class="control-label">Supply type</label>
-                    <div class="select-wrap">
-                      <select class="form-control" name="supplyType" id="supplyType" disabled>
-                        <?php 
-                          foreach($supply_type_a as $key=>$value):
-                            if($supply_type === $key) {
-                              $selected = 'selected="selected"';
-                            } else {
-                               $selected = '';
-                            }
-                        ?>
-                          <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                            <?php echo $value ?>
-                          </option>
-                        <?php endforeach; ?>
-                      </select>
-                      <?php if(isset($form_errors['supplyType'])): ?>
-                        <span class="error"><?php echo $form_errors['supplyType'] ?></span>
-                      <?php endif; ?>
-                    </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Supply type</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="supplyType" id="supplyType" disabled>
+                      <?php 
+                        foreach($supply_type_a as $key=>$value):
+                          if($supply_type === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                             $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                    <?php if(isset($form_errors['supplyType'])): ?>
+                      <span class="error"><?php echo $form_errors['supplyType'] ?></span>
+                    <?php endif; ?>
+                  </div>
                 </div>
               </div>
               <div class="form-group">
-                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Packing charges (in Rs.)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Packing charges (in Rs.)</label>
                   <input
                     type="text"
                     size="10"
@@ -295,8 +277,8 @@
                     <span class="error"><?php echo $errors['packingCharges'] ?></span>
                   <?php endif; ?>                  
                 </div>                
-                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Shipping charges (in Rs.)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Shipping charges (in Rs.)</label>
                   <input
                     type="text"
                     size="10"
@@ -311,8 +293,8 @@
                     <span class="error"><?php echo $errors['shippingCharges'] ?></span>
                   <?php endif; ?>                  
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Insurance charges (in Rs.)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Insurance charges (in Rs.)</label>
                   <input
                     type="text"
                     size="15"
@@ -326,8 +308,8 @@
                     <span class="error"><?php echo $errors['insuranceCharges'] ?></span>
                   <?php endif; ?>                   
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Other charges (in Rs.)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Other charges (in Rs.)</label>
                   <input
                     type="text"
                     size="15"
@@ -344,7 +326,7 @@
               </div>
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Transporter name</label>
+                  <label class="control-label labelStyle">Transporter name</label>
                   <input 
                     type="text"
                     size="15"
@@ -359,7 +341,7 @@
                   <?php endif; ?>                  
                 </div>                
                 <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">L.R. No(s)</label>
+                  <label class="control-label labelStyle">L.R. No(s)</label>
                   <input
                     type="text"
                     size="10"
@@ -374,7 +356,7 @@
                   <?php endif; ?>                  
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">L.R. Date</label>
+                  <label class="control-label labelStyle">L.R. Date</label>
                   <input
                     type="text"
                     size="15"
@@ -389,7 +371,7 @@
                   <?php endif; ?>                   
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">Challan no.</label>
+                  <label class="control-label labelStyle">Challan no.</label>
                   <input
                     type="text"
                     size="15"
@@ -403,14 +385,14 @@
                     <span class="error"><?php echo $errors['challanNo'] ?></span>
                   <?php endif; ?>                   
                 </div>
-              </div>              
+              </div>
             </div>
           </div>
           <?php if(isset($form_errors['itemDetailsError'])): ?>
             <span class="error"><?php echo $form_errors['itemDetailsError'] ?></span>
           <?php endif; ?>
           <div class="table-responsive" style="margin-bottom:15px;">
-            <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="width:1300px;">
+            <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="width:1350px;">
               <thead>
                 <tr>
                   <th style="width:220px;" class="text-center purItem">Item name</th>
@@ -424,19 +406,23 @@
                   <th style="width:55px"   class="text-center">Gross Amt.<br />( in Rs. )</th>
                   <th style="width:55px"   class="text-center">Discount<br />( in Rs. )</th>                  
                   <th style="width:70px"   class="text-center">Taxable Amt.<br />( in Rs. )</th>
-                  <th style="width:73px"   class="text-center">G.S.T<br />( in % )</th>
+                  <th style="width:73px"   class="text-center">GST<br />(%)</th>
                   <th style="width:50px"   class="text-center">Brand</th>                  
                   <th style="width:50px"   class="text-center">Category</th>
                   <th style="width:20px"   class="text-center">Container<br />No.</th>
                   <th style="width:20px"   class="text-center">UOM<br />Name</th>
                   <th style="width:20px"   class="text-center">Barcode</th>
+                  <th style="width:20px"   class="text-center">Item<br />SKU</th>
+                  <th style="width:20px"   class="text-center">Style<br />Code</th>
+                  <th style="width:20px"   class="text-center">Size</th>
+                  <th style="width:20px"   class="text-center">Color</th>
+                  <th style="width:20px"   class="text-center">Sleeve<br />Type</th>                  
                 </tr>
               </thead>
               <tbody>
               <?php
                 $items_total =  $total_tax_amount = $items_tot_after_discount = $total_disc_amount = 0;
                 $taxable_values = $taxable_gst_value = [];
-
                 for($i=1;$i<=$total_item_rows;$i++):
                   if( isset($form_data['packedQty'][$i-1]) && $form_data['packedQty'][$i-1] !== '' ) {
                     $packed_qty = $form_data['packedQty'][$i-1];
@@ -520,6 +506,17 @@
                   } else {
                     $uom_name = '';
                   }
+                  if( isset($form_data['suppBarcode'][$i-1]) && $form_data['suppBarcode'][$i-1] !== '') {
+                    $barcode = $form_data['suppBarcode'][$i-1];
+                    $is_barcode_editable = true;
+                  } elseif(isset($form_data['barcode'][$i-1]) && $form_data['barcode'][$i-1] !== '') {
+                    $is_barcode_editable = false;
+                    $barcode = $form_data['barcode'][$i-1];
+                  } else {
+                    $barcode = '';
+                    $is_barcode_editable = true;
+                  }
+                  /*
                   if(isset($form_data['suppBarcode'][$i-1]) && $form_data['suppBarcode'][$i-1] !== '') {
                     $barcode = $form_data['suppBarcode'][$i-1];
                     $is_barcode_editable = true;
@@ -528,6 +525,33 @@
                     $is_barcode_editable = false;
                   } else {
                     $barcode = '';
+                    $is_barcode_editable = true;
+                  }*/
+
+                  if( isset($form_data['itemSku'][$i-1]) && $form_data['itemSku'][$i-1] !== '' ) {
+                    $item_sku = $form_data['itemSku'][$i-1];
+                  } else {
+                    $item_sku = '';
+                  }
+                  if( isset($form_data['itemStyleCode'][$i-1]) && $form_data['itemStyleCode'][$i-1] !== '' ) {
+                    $item_style_code = $form_data['itemStyleCode'][$i-1];
+                  } else {
+                    $item_style_code = '';
+                  }
+                  if( isset($form_data['itemSize'][$i-1]) && $form_data['itemSize'][$i-1] !== '' ) {
+                    $item_size = $form_data['itemSize'][$i-1];
+                  } else {
+                    $item_size = '';
+                  }
+                  if( isset($form_data['itemColor'][$i-1]) && $form_data['itemColor'][$i-1] !== '' ) {
+                    $item_color = $form_data['itemColor'][$i-1];
+                  } else {
+                    $item_color = '';
+                  }
+                  if( isset($form_data['itemSleeve'][$i-1]) && $form_data['itemSleeve'][$i-1] !== '' ) {
+                    $item_sleeve = $form_data['itemSleeve'][$i-1];
+                  } else {
+                    $item_sleeve = '';
                   }
                   if(is_numeric($packed_qty) && $packed_qty>0) {
                     $gross_amount = $billed_qty*$item_rate;
@@ -718,7 +742,7 @@
                       class="form-control inwItemTax" 
                       id="inwItemTax_<?php echo $i ?>" 
                       name="taxPercent[]"
-                      style="font-size:12px;"
+                      style="font-size:12px;width:50px;"
                     >
                       <?php 
                         foreach($taxes as $key=>$value):
@@ -808,7 +832,82 @@
                         <span class="error">Invalid</span>
                       <?php endif; ?>
                     <?php endif; ?>
-                  </td>    
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="itemSku[]"
+                      id="itemSku_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="SKU"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $item_sku ?>"
+                      title="Add SKU if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['itemSku']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="itemStyleCode[]"
+                      id="itemStyleCode_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Style Code"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $item_style_code ?>"
+                      title="Add Style Code if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['itemStyleCode']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="itemSize[]"
+                      id="itemSize_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Size"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $item_size ?>"
+                      title="Add Item Size if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['itemSize']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="itemColor[]"
+                      id="itemColor_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Color"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $item_color ?>"
+                      title="Add Item Color if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['itemColor']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="itemSleeve[]"
+                      id="itemSleeve_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Sleeve Type"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $item_sleeve ?>"
+                      title="Add Item Sleeve type if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['itemSleeve']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
                   <input 
                     type="hidden" 
                     id="inwItemTaxAmt_<?php echo $i ?>"
@@ -827,24 +926,24 @@
                 $net_pay = round($grand_total);
               ?>
                 <tr>
-                  <td colspan="16" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
+                  <td colspan="21" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
                   <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="16" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
+                  <td colspan="21" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
                   <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="16" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
+                  <td colspan="21" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
                   <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo number_format($round_off,2,'.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="16" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
+                  <td colspan="21" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
                   <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td colspan="16" style="vertical-align:middle;text-align:right;">
+                  <td colspan="21" style="vertical-align:middle;text-align:right;">
                     <textarea
                       class="form-control noEnterKey"
                       rows="3"
@@ -855,10 +954,10 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="15" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
+                  <td colspan="22" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
                 </tr>
                 <tr style="padding:0px;margin:0px;">
-                  <td colspan="17" style="padding:0px;margin:0px;">
+                  <td colspan="22" style="padding:0px;margin:0px;">
                     <table class="table table-striped table-hover font12 valign-middle">
                       <thead>
                         <th style="text-align:center;">GST Rate (in %)</th>

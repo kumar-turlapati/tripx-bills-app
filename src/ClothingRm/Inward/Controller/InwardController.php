@@ -206,6 +206,11 @@ class InwardController
         $uom_names = array_column($purchase_details['itemDetails'], 'uomName');
         $barcodes =  array_column($purchase_details['itemDetails'], 'barcode');
         $suppbarcodes = array_column($purchase_details['itemDetails'], 'suppBarcode');
+        $itemSkus = array_column($purchase_details['itemDetails'], 'itemSku');
+        $itemStyleCodes = array_column($purchase_details['itemDetails'], 'itemStyleCode');
+        $itemSizes = array_column($purchase_details['itemDetails'], 'itemSize');
+        $itemColors = array_column($purchase_details['itemDetails'], 'itemColor');
+        $itemSleeves = array_column($purchase_details['itemDetails'], 'itemSleeve');
 
         if(count($item_names)>50) {
           $total_item_rows = count($item_names);
@@ -236,6 +241,11 @@ class InwardController
         $form_data['uomName'] = $uom_names;
         $form_data['barcode'] = $barcodes;
         $form_data['suppBarcode'] = $suppbarcodes;
+        $form_data['itemSku'] = $itemSkus;
+        $form_data['itemStyleCode'] = $itemStyleCodes;
+        $form_data['itemSize'] = $itemSizes;
+        $form_data['itemColor'] = $itemColors;
+        $form_data['itemSleeve'] = $itemSleeves;
 
         // use this variable to control in template.
         if($form_data['grnFlag'] === 'yes') {
@@ -382,6 +392,16 @@ class InwardController
         $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
         $billed_qtys = array_column($purchase_details['itemDetails'],'billedQty');        
         $cnos = array_column($purchase_details['itemDetails'], 'cno');
+        $category_names = array_column($purchase_details['itemDetails'], 'categoryName');
+        $brand_names = array_column($purchase_details['itemDetails'], 'mfgName');
+        $uom_names = array_column($purchase_details['itemDetails'], 'uomName');
+        $barcodes = array_column($purchase_details['itemDetails'], 'barcode');
+        $suppbarcodes = array_column($purchase_details['itemDetails'], 'suppBarcode');
+        $itemSkus = array_column($purchase_details['itemDetails'], 'itemSku');
+        $itemStyleCodes = array_column($purchase_details['itemDetails'], 'itemStyleCode');
+        $itemSizes = array_column($purchase_details['itemDetails'], 'itemSize');
+        $itemColors = array_column($purchase_details['itemDetails'], 'itemColor');
+        $itemSleeves = array_column($purchase_details['itemDetails'], 'itemSleeve');
 
         # unser item details from api data.
         unset($purchase_details['itemDetails']);
@@ -407,7 +427,17 @@ class InwardController
         $form_data['hsnCodes'] = $hsn_codes;
         $form_data['packedQty'] = $packed_qtys;
         $form_data['cnos'] = $cnos;
-
+        $form_data['categoryName'] = $category_names;
+        $form_data['brandName'] = $brand_names;
+        $form_data['uomName'] = $uom_names;
+        $form_data['barcode'] = $barcodes;
+        $form_data['suppBarcode'] = $suppbarcodes;
+        $form_data['itemSku'] = $itemSkus;
+        $form_data['itemStyleCode'] = $itemStyleCodes;
+        $form_data['itemSize'] = $itemSizes;
+        $form_data['itemColor'] = $itemColors;
+        $form_data['itemSleeve'] = $itemSleeves;
+        
         if($form_data['grnFlag'] === 'yes') {
           $is_grn_generated = true;
         } else {
@@ -907,6 +937,12 @@ class InwardController
       $uom_names_a = $form_data['uom'];
       $barcodes_a = isset($form_data['barcode']) ? $form_data['barcode'] : [];
 
+      $item_sku_a = isset($form_data['itemSku']) ? $form_data['itemSku'] : [];
+      $item_style_code_a = isset($form_data['itemStyleCode']) ? $form_data['itemStyleCode'] : [];
+      $item_size_a = isset($form_data['itemSize']) ? $form_data['itemSize'] : [];
+      $item_color_a = isset($form_data['itemColor']) ? $form_data['itemColor'] : [];
+      $item_sleeve_a = isset($form_data['itemSleeve']) ? $form_data['itemSleeve'] : [];
+
       foreach($item_names_a as $key=>$item_name) {
         if($item_name !== '') {
 
@@ -926,12 +962,22 @@ class InwardController
           $brand_name = Utilities::clean_string($brand_names_a[$key]);
           $uom_name = Utilities::clean_string($uom_names_a[$key]);
           $barcode = isset($barcodes_a[$key]) ? Utilities::clean_string($barcodes_a[$key]) : '';
+          $item_sku = isset($item_sku_a[$key]) ? Utilities::clean_string($item_sku_a[$key]) : '';
+          $item_style_code = isset($item_style_code_a[$key]) ? Utilities::clean_string($item_style_code_a[$key]) : '';
+          $item_size = isset($item_size_a[$key]) ? Utilities::clean_string($item_size_a[$key]) : '';
+          $item_color = isset($item_color_a[$key]) ? Utilities::clean_string($item_color_a[$key]) : '';
+          $item_sleeve = isset($item_sleeve_a[$key]) ? Utilities::clean_string($item_sleeve_a[$key]) : '';
 
           $cleaned_params['itemDetails']['itemName'][] = $item_name;
           $cleaned_params['itemDetails']['categoryName'][] = $category_name;
           $cleaned_params['itemDetails']['brandName'][] = $brand_name;
           $cleaned_params['itemDetails']['cno'][] = $cno;
           $cleaned_params['itemDetails']['uom'][] = $uom_name;
+          $cleaned_params['itemDetails']['itemSku'][] = $item_sku;
+          $cleaned_params['itemDetails']['itemStyleCode'][] = $item_style_code;
+          $cleaned_params['itemDetails']['itemSize'][] = $item_size;
+          $cleaned_params['itemDetails']['itemColor'][] = $item_color;
+          $cleaned_params['itemDetails']['itemSleeve'][] = $item_sleeve;
 
           if($barcode !== '') {
             if(is_numeric($barcode)) {
@@ -998,6 +1044,9 @@ class InwardController
         $form_errors['itemDetailsError'] = 'At least one item is required in PO.';
       }
     }
+
+    // dump($cleaned_params);
+    // exit;
 
     if(count($form_errors)>0) {
       return [
@@ -1109,6 +1158,11 @@ class InwardController
       $form_data['cno'][$key] = $item_details['cno'];
       $form_data['uomName'][$key] = $item_details['uomName'];
       $form_data['barcode'][$key] = $item_details['barcode'];
+      $form_data['itemSku'][$key] = isset($item_details['itemSku']) ? $item_details['itemSku'] : '';
+      $form_data['itemStyleCode'][$key] = isset($item_details['ItemStyleCode']) ? $item_details['ItemStyleCode'] : '';
+      $form_data['itemSize'][$key] = isset($item_details['ItemSize']) ? $item_details['ItemSize'] : '';
+      $form_data['itemColor'][$key] = isset($item_details['ItemColor']) ? $item_details['ItemColor'] : '';
+      $form_data['itemSleeve'][$key] = isset($item_details['ItemSleeve']) ? $item_details['ItemSleeve'] : '';
     }
     return $form_data;
   }

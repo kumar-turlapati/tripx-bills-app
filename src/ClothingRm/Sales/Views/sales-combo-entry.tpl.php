@@ -54,8 +54,8 @@
           <div class="panel" style="margin-bottom:0px;">
             <div class="panel-body" style="padding-top:10px;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label labelStyle">Date of sale (dd-mm-yyyy)</label>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Date (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <?php if(Utilities::is_admin()): ?>
                       <div class="col-lg-12">
@@ -75,7 +75,7 @@
                     <?php endif; ?>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <label class="control-label labelStyle">Store name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
@@ -131,7 +131,14 @@
                   <?php if(isset($errors['name'])): ?>
                     <span class="error"><?php echo $errors['name'] ?></span>
                   <?php endif; ?>
-                </div>                               
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Discount (in Rs.)</label>
+                  <input type="text" class="form-control" name="comboDiscount" id="comboDiscount" value="<?php //echo $split_payment_cash ?>" style="border:1px dotted;color:red;">
+                  <?php if(isset($errors['comboDiscount'])): ?>
+                    <span class="error"><?php echo $errors['comboDiscount'] ?></span>
+                  <?php endif; ?>
+                </div>
               </div>
               <div class="form-group" id="comboSplitPaymentMethods" <?php echo $split_payment_input_style ?>>
                 <div class="col-sm-12 col-md-2 col-lg-2">
@@ -191,7 +198,6 @@
                           } else {
                             $selected = '';
                           }
-                          $selected = '';
                       ?>
                         <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                       <?php endforeach; ?>

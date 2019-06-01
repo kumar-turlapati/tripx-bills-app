@@ -206,6 +206,7 @@ class SalesEntryWoBarcode {
       'customer_types' => $customer_types,
       'no_of_rows' => $no_of_rows,
       'sa_categories' => $sa_categories,
+      'wallets' => array(''=>'Choose') + Constants::$WALLETS,
     );
 
     return array($this->template->render_view('sales-entry-wo-barcode', $template_vars),$controller_vars);
@@ -410,7 +411,8 @@ class SalesEntryWoBarcode {
       'customer_types' => $customer_types,
       'no_of_rows' => $no_of_rows,
       'ic' => $sales_code,
-      'sa_categories' => $sa_categories,      
+      'sa_categories' => $sa_categories,
+      'wallets' => array(''=>'Choose') + Constants::$WALLETS,      
     );
 
     return array($this->template->render_view('sales-update-wo-barcode', $template_vars),$controller_vars);
@@ -932,6 +934,7 @@ class SalesEntryWoBarcode {
     $split_payment_cash = isset($form_data['splitPaymentCash']) ? Utilities::clean_string($form_data['splitPaymentCash']) : 0;
     $split_payment_card = isset($form_data['splitPaymentCard']) ? Utilities::clean_string($form_data['splitPaymentCard']) : 0;
     $split_payment_cn = isset($form_data['splitPaymentCn']) ? Utilities::clean_string($form_data['splitPaymentCn']) : 0;
+    $split_payment_wallet = isset($form_data['splitPaymentWallet']) ? Utilities::clean_string($form_data['splitPaymentWallet']) : 0;
     $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
     $item_details = $form_data['itemDetails'];
     $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
@@ -951,6 +954,9 @@ class SalesEntryWoBarcode {
     $lr_no = Utilities::clean_string($form_data['lrNos']);
     $lr_date = Utilities::clean_string($form_data['lrDate']);
     $chalan_no = Utilities::clean_string($form_data['challanNo']);
+
+    $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
+    $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
 
     // validate customer type
     if( in_array($customer_type, $customer_types) ) {
@@ -1035,6 +1041,9 @@ class SalesEntryWoBarcode {
       if($split_payment_card > 0) {
         $split_payment_found += 1;
       }
+      if($split_payment_wallet > 0) {
+        $split_payment_found += 1;
+      }      
       if($split_payment_cn > 0) {
         $split_payment_found += 1;
         if($cn_no <= 0) {
@@ -1147,20 +1156,33 @@ class SalesEntryWoBarcode {
     }
 
     // validate payment method.
-    if($payment_method === 2 && ($split_payment_card <= 0 && $split_payment_cash <= 0 && $split_payment_cn <= 0) ) {
-      $form_errors['paymentMethod'] = 'Cash, Card or Cnote payment value is required.';
+    if($payment_method === 2 && ($split_payment_card <= 0 && $split_payment_cash <= 0 && $split_payment_cn <= 0 && $split_payment_wallet <= 0) ) {
+      $form_errors['paymentMethod'] = 'Cash, Card, Wallet or Cnote payment value is required.';
     } elseif($payment_method === 1 || $payment_method === 0) {
       $cleaned_params['splitPaymentCard'] = 0;
       $cleaned_params['splitPaymentCash'] = 0;
-      $cleaned_params['splitPaymentCn']   = 0;
+      $cleaned_params['splitPaymentCn'] = 0;
+      $cleaned_params['splitPaymentWallet'] = 0;
+    } elseif($payment_method === 4) {
+      if($wallet_id >=1 && $wallet_id <=8 ) {
+        $cleaned_params['walletID'] = $wallet_id;
+        $cleaned_params['walletRefNo'] = $wallet_ref_no;
+      } else {
+        $form_errors['walletID'] = 'Invalid Wallet name';
+      }
     } else {
       $cleaned_params['splitPaymentCard'] = $split_payment_card;
       $cleaned_params['splitPaymentCash'] = $split_payment_cash;
       $cleaned_params['splitPaymentCn'] = $split_payment_cn;
+      $cleaned_params['splitPaymentWallet'] = $split_payment_wallet;
+      if($wallet_id >=1 && $wallet_id <=8 ) {
+        $cleaned_params['walletID'] = $wallet_id;
+        $cleaned_params['walletRefNo'] = $wallet_ref_no;
+      }
     }
 
-    if($payment_method === 2 && ( (float)$split_payment_card + $split_payment_cash + $split_payment_cn !== (float)$net_pay) ) {
-      $form_errors['paymentMethod'] = 'Cash / Card / Cnote value must be equal to bill value.';      
+    if($payment_method === 2 && ( (float)$split_payment_card + $split_payment_cash + $split_payment_cn + $split_payment_wallet !== (float)$net_pay) ) {
+      $form_errors['paymentMethod'] = 'Cash / Card / Cnote / Wallet value must be equal to bill value.';      
     }
 
     if($promo_code !== '' && !ctype_alnum($promo_code)) {
@@ -1186,7 +1208,7 @@ class SalesEntryWoBarcode {
     $cleaned_params['challanNo'] = $chalan_no;
     $cleaned_params['fromIndent'] = $from_indent;
     $cleaned_params['remarksInvoice'] = $remarks_invoice;  
-    $cleaned_params['salesCategory'] = $sales_category;  
+    $cleaned_params['salesCategory'] = $sales_category;
 
     # return response.
     if(count($form_errors)>0) {

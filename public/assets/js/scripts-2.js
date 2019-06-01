@@ -131,6 +131,13 @@ function initializeJS() {
       $('.cancelButton').attr('disabled', true);
       $('#comboBillEntry').submit();
     });
+
+    $('#comboDiscount').on('keypress', function(e){
+       if (e.keyCode == 13) {
+        comboCall(0); 
+        e.preventDefault();
+       }
+    });
     
     function comboCall(itemId, fromSource) {
      var citemCode = $('#cicode_'+itemId).val();
@@ -384,6 +391,72 @@ function initializeJS() {
       }
     });
   }
+
+  if( $('#discountForm').length > 0 && $('.itemdiscounts').length>0) {
+    $('.itemdiscounts').Tabledit({
+      url: '/async/sdiscount',      
+      deleteButton: false,
+      hideIdentifier: false,
+      columns: {
+        identifier: [1,'inLotNo'],
+        editable: [
+          [5, 'discountPercent'],
+          [7, 'endDate']
+        ]
+      },
+      onDraw: function() {
+      },
+      onAjax: function(action, serialize) {
+        var urlParams = new URLSearchParams(serialize);
+        var inLotNo = urlParams.get('inLotNo');
+        var lotNo = inLotNo.split('____')[1];
+        var dp = returnNumber(parseFloat(urlParams.get('discountPercent')));
+        var da = returnNumber(parseFloat(urlParams.get('discountAmount')));
+        var endDate = urlParams.get('endDate');
+        var mrp = returnNumber(parseFloat($('#mrp_'+lotNo).text()));
+        if(dp > 0 && dp <= 100 ) {
+          var discountAmount = (mrp*dp/100).toFixed(2);
+          if(discountAmount > 0) {
+            $('#da_'+lotNo).text(discountAmount);
+          } else {
+            bootbox.alert({
+              message: "Invalid Discount Percent. Must be between 1 - 100 !"
+            });            
+            return false;
+          }
+        /*
+        } else if(da > 0) {
+          var discountPercent = (da/mrp*100).toFixed(2);
+          if(discountPercent > 0) {
+            $('#dp_'+lotNo).text(discountPercent);
+          } else {
+            bootbox.alert({
+              message: "Invalid Discount Amount !"
+            });
+            return false;
+          } */
+        } else {
+          bootbox.alert({
+            message: "Please add a valid discount percent."
+          });          
+          return false;
+        }
+        return;
+      },
+      onSuccess: function(axResponse, textStatus, jqXHR) {
+        if(axResponse.status === 'success') {
+          var responseMessage = 'Discount added successfully.';
+        } else if(axResponse.status === 'failed') {
+          var responseMessage = 'Error: ' + axResponse.errorcode + ', ' + axResponse.errortext;
+        } else {
+          var responseMessage = 'Unknown Error.';
+        }
+        bootbox.alert({
+          message: responseMessage
+        });
+      }
+    });
+  }  
 
   if($('#stockAuditItems').length > 0) {
     $('#itemnames').Tabledit({
@@ -1005,6 +1078,21 @@ function initializeJS() {
     });
   }
 
+  // delete discount configuration.
+  if( $('.delDiscount').length>0 ) {
+    jQuery('.delDiscount').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to remove this Discount entry?", function(result) {
+        if(result===true) {
+          window.location.href = delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }
+
   if($('#searchPurchaseBills').length > 0) {
     $('#searchBy').on('change', function(e){
       var searchBy = $(this).val();
@@ -1427,26 +1515,30 @@ function initializeJS() {
 
     jQuery('#supplierID').on('change', function(e){
       var supplierCode = $(this).val();
-      jQuery.ajax("/async/get-supplier-details?c="+supplierCode, {
-        method:"GET",
-        success: function(apiResponse) {
-          if(apiResponse['status'] === 'success') {
-            var supplierDetails = apiResponse.response.supplierDetails;
-            var companyState = $('#cs').val();
-            $('#supplierState').val(supplierDetails.stateCode);
-            $('#supplierGSTNo').val(supplierDetails.tinNo);
-            if(companyState == supplierDetails.stateCode) {
-              $('#supplyType').val('intra');
-            } else {
-              $('#supplyType').val('inter');
+      if(supplierCode === '') {
+        $('#supplierState, #supplierGSTNo, #supplyType').val('');
+      } else {
+        jQuery.ajax("/async/get-supplier-details?c="+supplierCode, {
+          method:"GET",
+          success: function(apiResponse) {
+            if(apiResponse['status'] === 'success') {
+              var supplierDetails = apiResponse.response.supplierDetails;
+              var companyState = $('#cs').val();
+              $('#supplierState').val(supplierDetails.stateCode);
+              $('#supplierGSTNo').val(supplierDetails.tinNo);
+              if(companyState == supplierDetails.stateCode) {
+                $('#supplyType').val('intra');
+              } else {
+                $('#supplyType').val('inter');
+              }
             }
+          },
+          error: function(e) {
+            alert('An error occurred while fetching Supplier Information.');
           }
-        },
-        error: function(e) {
-          alert('An error occurred while fetching Supplier Information.');
-        }
-      });  
-    });
+        });
+      }
+     });
 
     jQuery('#inwCancel').on('click', function(e){
       if(confirm("Are you sure. You want to close this page?") == true) {
@@ -1587,22 +1679,27 @@ function initializeJS() {
     // show Card No and authcode if Payment mode is credit. Show Split Payment inputs as well
     $('#saPaymentMethod').on('change', function(){
       var paymentMethod = parseInt($(this).val());
-      if(paymentMethod === 1 || paymentMethod === 2) {
+      if(paymentMethod === 1) {
         $('#containerCardNo, #containerAuthCode').show();
+        $('#containerWalletName, #containerWalletRef').hide();
       } else if(paymentMethod === 3) {
         $('#containerCrDays').show();
-        $('#containerCardNo, #containerAuthCode').hide();
+        $('#containerCardNo, #containerAuthCode, #containerWalletName, #containerWalletRef').hide();
+      } else if(paymentMethod === 4) {
+        $('#containerWalletName, #containerWalletRef').show();
+        $('#containerCardNo, #containerAuthCode, #containerCrDays').hide();        
       } else {
-        $('#containerCardNo, #containerAuthCode, #containerCrDays').hide();
+        $('#containerCardNo, #containerAuthCode, #containerCrDays, #containerWalletName, #containerWalletRef').hide();
       }
       /* enable multiple pay options if it is split payment */
       if(paymentMethod === 2) {
         $('#splitPaymentWindow').show();
-        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo').attr('disabled', false);
-        $('#containerCrDays').hide();        
+        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo, #splitPaymentWallet').attr('disabled', false);
+        $('#containerCardNo, #containerAuthCode, #containerWalletName, #containerWalletRef').show();
+        $('#containerCrDays').hide();
       } else {
-        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo').val('');
-        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo').attr('disabled', true);
+        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo, #splitPaymentWallet').val('');
+        $('#splitPaymentCash, #splitPaymentCard, #splitPaymentCn, #cnNo, #splitPaymentWallet').attr('disabled', true);
         $('#splitPaymentWindow').hide();
       }
     });

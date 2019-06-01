@@ -31,6 +31,7 @@
   $tax_calc_option = isset($form_data['taxCalcOption']) ? $form_data['taxCalcOption'] : 'i';
   $split_payment_cash = isset($form_data['splitPaymentCash']) ? $form_data['splitPaymentCash'] : '';
   $split_payment_card = isset($form_data['splitPaymentCard']) ? $form_data['splitPaymentCard'] : '';
+  $split_payment_wallet = isset($form_data['splitPaymentWallet']) ? $form_data['splitPaymentWallet'] : '';
   $cn_no = isset($form_data['cnNo']) ? $form_data['cnNo'] : '';
   $split_payment_cn = isset($form_data['splitPaymentCn']) ? $form_data['splitPaymentCn'] : '';
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
@@ -48,12 +49,15 @@
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
   $sales_category = isset($form_data['saleCategory']) ? $form_data['saleCategory'] : '';
 
-  $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
+  $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 || (int)$payment_method === 4 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
   $credit_days_input_style = (int)$payment_method === 3 ? '' : 'style="display:none;"';
   $coupon_code_input_style = (int)$discount_method === 1 ? '' : 'disabled';
+  $wallet_style = (int)$payment_method === 4 || (int)$payment_method === 2 ? '' : 'style="display:none;"';
 
   $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';
+  $wallet_id = isset($form_data['walletID']) ? $form_data['walletID'] : '';
+  $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';  
 
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
 
@@ -349,7 +353,7 @@
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Packing charges (in Rs.)</label>
+                  <label class="control-label labelStyle">Packing charges (in Rs.)</label>
                   <input
                     type="text"
                     size="10"
@@ -365,7 +369,7 @@
                   <?php endif; ?>                  
                 </div>                
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Shipping charges (in Rs.)</label>
+                  <label class="control-label labelStyle">Shipping charges (in Rs.)</label>
                   <input
                     type="text"
                     size="10"
@@ -381,7 +385,7 @@
                   <?php endif; ?>                  
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Insurance charges (in Rs.)</label>
+                  <label class="control-label labelStyle">Insurance charges (in Rs.)</label>
                   <input
                     type="text"
                     size="15"
@@ -396,7 +400,7 @@
                   <?php endif; ?>                   
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Other charges (in Rs.)</label>
+                  <label class="control-label labelStyle">Other charges (in Rs.)</label>
                   <input
                     type="text"
                     size="15"
@@ -413,7 +417,7 @@
               </div>
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-                  <label class="control-label">Transporter name</label>
+                  <label class="control-label labelStyle">Transporter name</label>
                   <input 
                     type="text"
                     size="15"
@@ -428,7 +432,7 @@
                   <?php endif; ?>                  
                 </div>                
                 <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">L.R. No(s)</label>
+                  <label class="control-label labelStyle">L.R. No(s)</label>
                   <input
                     type="text"
                     size="10"
@@ -443,7 +447,7 @@
                   <?php endif; ?>                  
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">L.R. Date</label>
+                  <label class="control-label labelStyle">L.R. Date</label>
                   <input
                     type="text"
                     size="15"
@@ -458,7 +462,7 @@
                   <?php endif; ?>                   
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">Challan no.</label>
+                  <label class="control-label labelStyle">Challan no.</label>
                   <input
                     type="text"
                     size="15"
@@ -479,7 +483,7 @@
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Payment method</label>
+                  <label class="control-label labelStyle">Payment method</label>
                   <div class="select-wrap">
                     <select class="form-control" name="paymentMethod" id="saPaymentMethod" style="border:2px solid; color: #FFA902;">
                       <?php 
@@ -499,7 +503,7 @@
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4" id="containerCrDays" <?php echo $credit_days_input_style ?>>
-                  <label class="control-label">Credit days</label>
+                  <label class="control-label labelStyle">Credit days</label>
                   <div class="select-wrap">
                     <select class="form-control" name="saCreditDays" id="saCreditDays">
                       <?php 
@@ -519,30 +523,64 @@
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4" id="containerCardNo" <?php echo $card_and_auth_style ?>>
-                  <label class="control-label">Card No.</label>
+                  <label class="control-label labelStyle">Card No.</label>
                   <input type="text" class="form-control noEnterKey" name="cardNo" id="cardNo" value="<?php echo $card_number ?>" />
                   <?php if(isset($errors['cardNo'])): ?>
                     <span class="error"><?php echo $errors['cardNo'] ?></span>
                   <?php endif; ?>                   
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4" id="containerAuthCode" <?php echo $card_and_auth_style ?>>
-                  <label class="control-label">Auth Code</label>
+                  <label class="control-label labelStyle">Auth Code</label>
                   <input type="text" class="form-control noEnterKey" name="authCode" id="authCode" value="<?php echo $card_auth_code ?>" />
                   <?php if(isset($errors['authCode'])): ?>
                     <span class="error"><?php echo $errors['authCode'] ?></span>
                   <?php endif; ?>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4" id="containerWalletName" <?php echo $wallet_style ?>>
+                  <label class="control-label labelStyle">Choose eWallet/UPI/EMI Card Type</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="walletID" id="walletID">
+                      <?php 
+                        foreach($wallets as $key=>$value):
+                          if((int)$wallet_id === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($errors['walletID'])): ?>
+                    <span class="error"><?php echo $errors['walletID'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4" id="containerWalletRef" <?php echo $wallet_style ?>>
+                  <label class="control-label labelStyle">eWallet/UPI/EMI Cards Ref.No.</label>
+                  <input
+                    type="text"
+                    id="walletRefNo"
+                    name="walletRefNo"
+                    maxlength="8"
+                    value="<?php echo $wallet_ref_no ?>"
+                    class="form-control noEnter"
+                  />
+                  <?php if(isset($errors['walletRefNo'])): ?>
+                    <span class="error"><?php echo $errors['walletRefNo'] ?></span>
+                  <?php endif; ?>
+                </div>                
               </div>              
             </div>
           </div>        
           <div class="panel" style="margin-bottom:10px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="customerWindow">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Date of sale (dd-mm-yyyy)</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Date of sale (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <?php if(Utilities::is_admin()): ?>
-                      <div class="col-lg-12">
+                      <div class="col-lg-12" style="padding-left:0px;">
                         <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                           <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
                           <span class="add-on"><i class="fa fa-calendar"></i></span>
@@ -552,15 +590,15 @@
                         <?php endif; ?>
                       </div>
                     <?php else: ?>
-                      <div class="col-sm-12 col-md-4 col-lg-4">
+                      <div class="col-sm-12 col-md-3 col-lg-3">
                         <p style="font-size:16px;font-weight:bold;color:#225992;"><?php echo $current_date ?></p>
                         <input type="hidden" id="saleDate" name="saleDate" value="<?php echo $current_date ?>" />
                       </div>
                     <?php endif; ?>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Sales executive name</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Sales executive name</label>
                   <div class="select-wrap">                        
                     <select 
                       class="form-control"
@@ -583,8 +621,8 @@
                     </select>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Tax calculation method</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Tax calculation method</label>
                   <div class="select-wrap">                        
                     <select 
                       class="form-control taxCalcOption"
@@ -607,24 +645,8 @@
                     </select>
                   </div>
                 </div>
-              </div>              
-              <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Customer mobile number</label>
-                  <input type="text" class="form-control noEnterKey" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
-                  <?php if(isset($errors['mobileNo'])): ?>
-                    <span class="error"><?php echo $errors['mobileNo'] ?></span>
-                  <?php endif; ?>
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Customer name</label>
-                  <input type="text" class="form-control noEnterKey cnameAc" name="name" id="name" value="<?php echo $customer_name ?>" />
-                  <?php if(isset($errors['name'])): ?>
-                    <span class="error"><?php echo $errors['name'] ?></span>
-                  <?php endif; ?>                  
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Promo code</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Promo code</label>
                   <div class="select-wrap">                  
                     <select class="form-control" name="promoCode" id="saPromoCode" style="border:2px dashed; color: #FFA902;">
                       <?php 
@@ -643,19 +665,33 @@
                     <span class="error"><?php echo $errors['promoCode'] ?></span>
                   <?php endif; ?>
                 </div>                
-              </div>
+              </div>              
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Referral code</label>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Customer mobile number</label>
+                  <input type="text" class="form-control noEnterKey" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
+                  <?php if(isset($errors['mobileNo'])): ?>
+                    <span class="error"><?php echo $errors['mobileNo'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Customer name</label>
+                  <input type="text" class="form-control noEnterKey cnameAc" name="name" id="name" value="<?php echo $customer_name ?>" />
+                  <?php if(isset($errors['name'])): ?>
+                    <span class="error"><?php echo $errors['name'] ?></span>
+                  <?php endif; ?>                  
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Referral code</label>
                   <input type="text" class="form-control noEnterKey" name="refCode" id="refCode" value="<?php echo $referral_code ?>" />
                   <span class="error" id="refCodeStatus" style="display: none;"></span>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Referral name</label>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Referral name</label>
                   <input type="text" class="form-control noEnterKey" name="refMemberName" id="refMemberName" disabled />
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Referral mobile</label>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Referral mobile</label>
                   <input type="text" class="form-control noEnterKey" name="refMemberMobile" id="refMemberMobile" disabled />
                 </div>                
               </div>
@@ -664,8 +700,8 @@
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0 && (int)$payment_method === 2 ? '' : 'display:none;' ?>" id="splitPaymentWindow">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">Credit Note No.</label>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Credit Note No.</label>
                   <input
                     type="text"
                     size="10"
@@ -681,8 +717,8 @@
                     <span class="error"><?php echo $errors['cnNo'] ?></span>
                   <?php endif; ?>                  
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">Credit Note Value</label>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Credit Note Value</label>
                   <input
                     type="text"
                     size="15"
@@ -697,8 +733,8 @@
                     <span class="error"><?php echo $errors['splitPaymentCn'] ?></span>
                   <?php endif; ?>                   
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">Cash Value</label>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Cash Value</label>
                   <input
                     type="text"
                     size="15"
@@ -713,8 +749,8 @@
                     <span class="error"><?php echo $errors['splitPaymentCash'] ?></span>
                   <?php endif; ?>                   
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
-                  <label class="control-label">Card Value</label>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">Card Value</label>
                   <input 
                     type="text"
                     size="15"
@@ -729,22 +765,34 @@
                     <span class="error"><?php echo $errors['splitPaymentCard'] ?></span>
                   <?php endif; ?>                  
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <label class="control-label labelStyle">UPI/EMI Cards</label>
+                  <input 
+                    type="text"
+                    size="15"
+                    id="splitPaymentWallet"
+                    name="splitPaymentWallet"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+                    <?php echo $split_payment_input_style ?>
+                    value="<?php echo $split_payment_wallet ?>"
+                    class="form-control"
+                  />
+                </div>
               </div>
             </div>
           </div>
-
           <div class="panel" style="margin-bottom:10px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="remarksWindow">
             <div class="panel-body" style="border: 2px dashed;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-8 col-lg-8">
-                  <label class="control-label">Remarks / Notes (200 characters maximum)</label>
+                  <label class="control-label labelStyle">Remarks / Notes (200 characters maximum)</label>
                   <input type="text" class="form-control noEnterKey" name="remarksInvoice" id="remarksInvoice" maxlength="200" value="<?php echo $remarks_invoice ?>">
                   <?php if(isset($errors['remarksInvoice'])): ?>
                     <span class="error"><?php echo $errors['remarksInvoice'] ?></span>
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Sales category</label>
+                  <label class="control-label labelStyle">Sales category</label>
                   <div class="select-wrap">                
                     <select class="form-control" name="salesCategory" id="salesCategory">
                       <?php 
@@ -765,7 +813,6 @@
               </div>
             </div>
           </div>
-
           <div class="text-center" id="saveWindow" style="<?php echo $tot_products > 0 ? '' : 'display:none;' ?>">
             <?php 
               if($promo_key !== '') {

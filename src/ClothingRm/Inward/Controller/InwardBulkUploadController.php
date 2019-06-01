@@ -263,10 +263,20 @@ class InwardBulkUploadController
             $cno = Utilities::clean_string($item_details['ContainerOrCaseNo']);
             $uom_name = Utilities::clean_string($item_details['UomName']);
             $barcode = Utilities::clean_string($item_details['Barcode']);
+            $item_sku = isset($imported_record_details['ItemSku']) ? Utilities::clean_string($imported_record_details['ItemSku']) : '';
+            $item_style_code = isset($imported_record_details['ItemStyleCode']) ? Utilities::clean_string($imported_record_details['ItemStyleCode']) : '';
+            $item_size = isset($imported_record_details['ItemSize']) ? Utilities::clean_string($imported_record_details['ItemSize']) : '';
+            $item_color = isset($imported_record_details['ItemColor']) ? Utilities::clean_string($imported_record_details['ItemColor']) : '';
+            $item_sleeve = isset($imported_record_details['ItemSleeve']) ? Utilities::clean_string($imported_record_details['ItemSleeve']) : '';
 
             $imported_records[$key]['cno'] = $cno;
             $imported_records[$key]['uomName'] = $uom_name;
             $imported_records[$key]['barcode'] = $barcode;
+            $imported_records[$key]['itemSku'] = $item_sku;
+            $imported_records[$key]['itemStyleCode'] = $item_style_code;
+            $imported_records[$key]['itemSize'] = $item_size;
+            $imported_records[$key]['itemColor'] = $item_color;
+            $imported_records[$key]['ItemSleeve'] = $item_sleeve;
 
             if($item_name === '') {
               $form_errors['itemDetails'][$key]['itemName'] = 'Matched item name is required.';
@@ -351,8 +361,7 @@ class InwardBulkUploadController
       return [
         'status' => true,
         'cleaned_params' => $cleaned_params,
-      ];      
+      ];
     }
   }
-
 }

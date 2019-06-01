@@ -230,20 +230,27 @@ class UploadInventoryController
         break;
       }
       if($item_name !== '') {
+
+        // core properties.
         $closing_qty = Utilities::clean_string($imported_record_details['ClosingQty']);
         $purchase_price = Utilities::clean_string($imported_record_details['PurchasePrice']);
         $sale_price = Utilities::clean_string($imported_record_details['SalePrice']);
-        // $units_per_pack = Utilities::clean_string($imported_record_details['UnitsPerPack']);
         $category_name = Utilities::clean_string($imported_record_details['CategoryName']);
         $gst = Utilities::clean_string($imported_record_details['GST']);
         $hsn_sac_code = Utilities::clean_string($imported_record_details['HsnSacCode']);
         $packed_qty = Utilities::clean_string($imported_record_details['PackedQty']);
         $brand_name = Utilities::clean_string($imported_record_details['BrandName']);
-        $rack_no = Utilities::clean_string($imported_record_details['RackNo']);
-        $item_sku = Utilities::clean_string($imported_record_details['ItemSku']);
-        $cno = Utilities::clean_string($imported_record_details['ContainerOrCaseNo']);
-        $uom_name = Utilities::clean_string($imported_record_details['UomName']);
-        $barcode =  Utilities::clean_string($imported_record_details['Barcode']);
+        
+        // additional properties.
+        $rack_no = isset($imported_record_details['RackNo']) ? Utilities::clean_string($imported_record_details['RackNo']) : '';
+        $cno = isset($imported_record_details['ContainerOrCaseNo']) ? Utilities::clean_string($imported_record_details['ContainerOrCaseNo']) : '';
+        $uom_name = isset($imported_record_details['UomName']) ? Utilities::clean_string($imported_record_details['UomName']) : '';
+        $barcode =  isset($imported_record_details['Barcode']) ? Utilities::clean_string($imported_record_details['Barcode']) : '';
+        $item_sku = isset($imported_record_details['ItemSku']) ? Utilities::clean_string($imported_record_details['ItemSku']) : '';
+        $item_style_code = isset($imported_record_details['ItemStyleCode']) ? Utilities::clean_string($imported_record_details['ItemStyleCode']) : '';
+        $item_size = isset($imported_record_details['ItemSize']) ? Utilities::clean_string($imported_record_details['ItemSize']) : '';
+        $item_color = isset($imported_record_details['ItemColor']) ? Utilities::clean_string($imported_record_details['ItemColor']) : '';
+        $item_sleeve = isset($imported_record_details['ItemSleeve']) ? Utilities::clean_string($imported_record_details['ItemSleeve']) : '';
 
         if(!is_numeric($closing_qty)) {
           $error_flag = true;
@@ -279,17 +286,20 @@ class UploadInventoryController
           $cleaned_array[$key]['ClosingQty'] = $closing_qty;
           $cleaned_array[$key]['PurchasePrice'] = $purchase_price;
           $cleaned_array[$key]['SalePrice'] = $sale_price;
-          // $cleaned_array[$key]['UnitsPerPack'] = $units_per_pack;
           $cleaned_array[$key]['CategoryName'] = $category_name;
           $cleaned_array[$key]['GST'] = $gst;
           $cleaned_array[$key]['HsnSacCode'] = $hsn_sac_code;
           $cleaned_array[$key]['PackedQty'] = round($packed_qty,2);
           $cleaned_array[$key]['BrandName'] = $brand_name;
           $cleaned_array[$key]['RackNo'] = $rack_no;
-          $cleaned_array[$key]['ItemSku'] = $item_sku;
           $cleaned_array[$key]['ContainerOrCaseNo'] = $cno;
           $cleaned_array[$key]['UomName'] = $uom_name;
           $cleaned_array[$key]['Barcode'] = $barcode;
+          $cleaned_array[$key]['ItemSku'] = $item_sku;
+          $cleaned_array[$key]['ItemStyleCode'] = $item_style_code;
+          $cleaned_array[$key]['ItemSize'] = $item_size;
+          $cleaned_array[$key]['ItemColor'] = $item_color;
+          $cleaned_array[$key]['ItemSleeve'] = $item_sleeve;
         }
       }
     }

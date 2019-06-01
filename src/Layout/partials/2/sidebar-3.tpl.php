@@ -27,7 +27,9 @@
           <li><a href="/fin/supp-opbal/list"><i class="fa fa-user-circle-o"></i> OpBal - Suppliers</a></li>
           <li><a href="/stock-adj-reasons/list"><i class="fa fa-adjust"></i> Stock Adj. Reasons</a></li>          
           <li><a href="/sales-category/list"><i class="fa fa-inr"></i> Sales Categories</a></li>
-          <li><a href="/sales-combo/list"><i class="fa fa-shopping-basket"></i> Sales Combos</a></li>          
+          <li><a href="/sales-combo/list"><i class="fa fa-shopping-basket"></i> Sales Combos</a></li>
+          <li><a href="/promo-offers/list"><i class="fa fa-lemon-o"></i> Promo Offers</a></li>
+          <li><a href="/campaigns/list"><i class="fa fa-magic"></i> Marketing Campaigns</a></li>
         </ul>
       </li>
       <li class="sub-menu">
@@ -84,7 +86,7 @@
             </ul>
           </li>
         </ul>
-      </li>      
+      </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
           <i class="fa fa-book"></i> Registers <span class="menu-arrow arrow_carrot-right"></span> 
@@ -130,7 +132,7 @@
               <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Tran. Register</a></li>          
               <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock Adj. Register</a></li>
               <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>
-              <li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li>
+              <?php /*<li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li> */ ?>
               <li><a href="/inventory/changed-mrp-register"><i class="fa fa-edit"></i> Changed MRP Register</a></li>          
             </ul>            
           </li>
@@ -165,23 +167,6 @@
         <ul class="sub">
           <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Invoices</a></li>
           <li><a href="/purchases/search-bills"><i class="fa fa-laptop"></i> Purchase Bills</a></li>          
-        </ul>
-      </li>
-      <li class="sub-menu">
-        <a href="javascript:void(0)">
-          <i class="fa fa-lemon-o"></i> Promo Offers <span class="menu-arrow arrow_carrot-right"></span> 
-        </a>
-        <ul class="sub">
-          <li><a href="/promo-offers/entry"><i class="fa fa-plus-circle"></i> Create Promo Offer</a></li>
-          <li><a href="/promo-offers/list"><i class="fa fa-list"></i> Promo Offers List</a></li>          
-        </ul>
-      </li>
-      <li class="sub-menu">
-        <a href="javascript:void(0)">
-          <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
-        </a>
-        <ul class="sub">
-          <li><a href="/campaigns/list"><i class="fa fa-random"></i> Campaigns</a></li>
         </ul>
       </li>      
       <li class="sub-menu">

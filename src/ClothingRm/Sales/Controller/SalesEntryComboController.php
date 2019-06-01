@@ -143,7 +143,9 @@ class SalesEntryComboController
 
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
-    $name = isset($form_data['name']) ? Utilities::clean_string($form_data['name']) : ''; 
+    $name = isset($form_data['name']) ? Utilities::clean_string($form_data['name']) : '';
+
+    $combo_discount = isset($form_data['comboDiscount']) ? Utilities::clean_string($form_data['comboDiscount']) : 0;
 
     $item_details = $form_data['itemDetails'];
 
@@ -298,6 +300,7 @@ class SalesEntryComboController
     } elseif( $payment_method === 4) {
       if($wallet_id >=1 && $wallet_id <=8 ) {
         $cleaned_params['walletID'] = $wallet_id;
+        $cleaned_params['walletRefNo'] = $wallet_ref_no;
       } else {
         $form_errors['walletID'] = 'Invalid Wallet name';
       }
@@ -311,9 +314,10 @@ class SalesEntryComboController
     $cleaned_params['cardNo'] = $card_no;
     $cleaned_params['authCode'] = $auth_code;
     $cleaned_params['isComboBill'] = 1;
+    $cleaned_params['comboDiscount'] = $combo_discount;
 
     if($payment_method === 2 && ( (float)$split_payment_card + $split_payment_cash + $split_payment_cn + $split_payment_wallet !== (float)$net_pay) ) {
-      $form_errors['paymentMethod'] = 'Cash / Card / Cnote value must be equal to bill value.';      
+      $form_errors['paymentMethod'] = 'Cash / Card / Cnote / Wallet value must be equal to bill value.';      
     }
 
     // dump($form_data, $form_errors);

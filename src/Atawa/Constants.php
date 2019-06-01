@@ -75,7 +75,7 @@ class Constants
     1 => 'Card',
     2 => 'Split',
     3 => 'Credit',
-    4 => 'UPI/EMI',
+    4 => 'eWallet/UPI/EMI',
   );
 
   public static $PAYMENT_METHODS_WALLETS = array(
