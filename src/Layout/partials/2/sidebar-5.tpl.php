@@ -41,6 +41,7 @@
           <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
           <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>          
+          <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li>          
           <?php /*<li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li> */ ?>
         </ul>
       </li>

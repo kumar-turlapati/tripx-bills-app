@@ -4,6 +4,7 @@
   // dump($form_data);
   // dump($errors);
   // dump($offers_raw);
+  // dump($_SESSION);
 
   if(isset($form_data['locationCode'])) {
     $location_code = $form_data['locationCode'];
@@ -68,6 +69,7 @@
   }
   // dump($_SESSION);
   $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
+  $editable_disc = isset($_SESSION['allow_man_discount']) ? $_SESSION['allow_man_discount'] : 1;
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -348,6 +350,7 @@
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
             <input type="hidden" name="editKey" id="editKey" value="<?php echo $editable_mrps ?>" />
+            <input type="hidden" name="dKey" id="dKey" value="<?php echo $editable_disc ?>" />
           </div>
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0  && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">

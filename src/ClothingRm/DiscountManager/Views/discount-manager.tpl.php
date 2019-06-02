@@ -94,8 +94,11 @@
 			    </div>
         </div>
         <div class="table-responsive">
-          <?php if(count($products)>0): ?>
-            <table class="table table-striped table-hover itemdiscounts">
+          <?php 
+            if(count($products)>0):
+              $is_editable = Utilities::is_admin() ? true: false;
+          ?>
+            <table class="table table-striped table-hover <?php echo $is_editable ? 'itemdiscounts' : '' ?>">
               <thead>
                 <tr class="font12">
                   <th width="5%" class="text-center valign-middle">Sno</th>
@@ -106,7 +109,9 @@
                   <th width="8%" class="text-center valign-middle">Discount<br />(in %)</span></th>                
                   <th width="8%" class="text-center valign-middle">Discount<br />(in Rs.)</th>
                   <th width="12%" class="text-center valign-middle">End Date</th>
-                  <th width="7%" class="text-center valign-middle">Options</th>
+                  <?php if($is_editable): ?>
+                    <th width="7%" class="text-center valign-middle">Options</th>
+                  <?php endif; ?>
                 </tr>
               </thead>
               <tbody>
@@ -137,15 +142,17 @@
                     <td align="right" class="valign-middle" id="dp_<?php echo $lot_no ?>"><?php echo $discount_percent > 0 ? number_format($discount_percent,2,'.','') : '' ?></td>
                     <td align="right" class="valign-middle" id="da_<?php echo $lot_no ?>"><?php echo $discount_amount > 0 ? number_format($discount_amount,2,'.','') : '' ?></td>
                     <td align="right" class="valign-middle" style=""><?php echo $end_date ?></td>
-                    <td align="center" class="valign-middle">
-                      <?php if($discount_percent > 0 || $discount_amount > 0): ?>
-                        <div class="btn-actions-group" align="right">
-                          <a class="btn btn-danger delDiscount" href="/discount-manager-delete?in=<?php echo $item_name ?>&lotNo=<?php echo $lot_no ?>&locationCode=<?php echo $locationCode ?>" title="Delete">
-                            <i class="fa fa-times"></i>
-                          </a>
-                        </div>
-                      <?php endif; ?>
-                    </td>
+                    <?php if($is_editable): ?>
+                      <td align="center" class="valign-middle">
+                        <?php if( Utilities::is_admin() && $discount_percent > 0): ?>
+                          <div class="btn-actions-group" align="right">
+                            <a class="btn btn-danger delDiscount" href="/discount-manager-delete?in=<?php echo $item_name ?>&lotNo=<?php echo $lot_no ?>&locationCode=<?php echo $locationCode ?>" title="Delete">
+                              <i class="fa fa-times"></i>
+                            </a>
+                          </div>
+                        <?php endif; ?>
+                      </td>
+                    <?php endif; ?>
                   </tr>
               <?php
                 $cntr++;

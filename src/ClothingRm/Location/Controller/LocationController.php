@@ -195,6 +195,7 @@ class LocationController
     $sms_sender_id = Utilities::clean_string($form_data['smsSenderID']);
     $sms_company_name = Utilities::clean_string($form_data['smsCompanyShortName']);
     $allow_mrp_editing = (int)Utilities::clean_string($form_data['mrpEditing']);
+    $allow_man_discount = (int)Utilities::clean_string($form_data['allowManualDiscount']);
     $bank_code = Utilities::clean_string($form_data['bankCode']);
     $tac_b2b = Utilities::clean_string($form_data['tacB2B'], true);
     $tac_b2c = Utilities::clean_string($form_data['tacB2C'], true);
@@ -270,8 +271,13 @@ class LocationController
     if($allow_mrp_editing === 0 || $allow_mrp_editing === 1) {
       $cleaned_params['allowMrpEditing'] = $allow_mrp_editing;
     } else {
-      $errors['allowMrpEditing'] = 'Invalid MRP Editing.';
+      $errors['allowMrpEditing'] = 'Invalid choice.';
     }
+    if($allow_man_discount === 0 || $allow_man_discount === 1) {
+      $cleaned_params['allowManualDiscount'] = $allow_man_discount;
+    } else {
+      $errors['allowManualDiscount'] = 'Invalid choice.';
+    }    
 
     $cleaned_params['bankCode'] = $bank_code;
     $cleaned_params['tacB2B'] = $tac_b2b;

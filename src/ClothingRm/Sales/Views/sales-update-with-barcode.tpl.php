@@ -97,13 +97,15 @@
   $wallet_style = (int)$payment_method === 4 || (int)$payment_method === 2 ? '' : 'style="display:none;"';
 
   $wallet_id = isset($form_data['walletID']) ? $form_data['walletID'] : '';
-  $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';  
+  $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';
+  $is_combo_bill = isset($form_data['isComboBill']) ? $form_data['isComboBill'] : 0; 
 
   $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
   $form_submit_url = '/sales/update-with-barcode/'.$ic;
 
   $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
+  $editable_disc = isset($_SESSION['allow_man_discount']) ? $_SESSION['allow_man_discount'] : 1;
 ?>
 
 <div class="row">
@@ -385,6 +387,8 @@
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
             <input type="hidden" name="editKey" id="editKey" value="<?php echo $editable_mrps ?>" />
+            <input type="hidden" name="dKey" id="dKey" value="<?php echo $editable_disc ?>" />
+            <input type="hidden" name="isComboBill" id="isComboBill" value="<?php echo $is_combo_bill ?>" />
           </div>
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0  && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">

@@ -245,7 +245,7 @@ class SalesEntryWoBarcode {
         $flash->set_flash_message($page_error,1);
         Utilities::redirect('/sales/list');
       }
-      // dump($sales_response);
+      // dump($sales_response, $form_data);
       // exit;
     } else {
       $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
@@ -412,7 +412,7 @@ class SalesEntryWoBarcode {
       'no_of_rows' => $no_of_rows,
       'ic' => $sales_code,
       'sa_categories' => $sa_categories,
-      'wallets' => array(''=>'Choose') + Constants::$WALLETS,      
+      'wallets' => array(''=>'Choose') + Constants::$WALLETS,
     );
 
     return array($this->template->render_view('sales-update-wo-barcode', $template_vars),$controller_vars);
@@ -957,6 +957,7 @@ class SalesEntryWoBarcode {
 
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
+    $is_combo_bill = isset($form_data['isComboBill']) ? Utilities::clean_string($form_data['isComboBill']) : 0;
 
     // validate customer type
     if( in_array($customer_type, $customer_types) ) {
@@ -1209,6 +1210,7 @@ class SalesEntryWoBarcode {
     $cleaned_params['fromIndent'] = $from_indent;
     $cleaned_params['remarksInvoice'] = $remarks_invoice;  
     $cleaned_params['salesCategory'] = $sales_category;
+    $cleaned_params['isComboBill'] = $is_combo_bill;
 
     # return response.
     if(count($form_errors)>0) {

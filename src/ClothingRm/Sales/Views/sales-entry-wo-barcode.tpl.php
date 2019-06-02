@@ -284,14 +284,15 @@
                     ><?php echo $item_amount ?></td>
                     <td align="center" style="vertical-align:middle;">
                       <input
-                        type="text" 
-                        name="itemDetails[itemDiscount][]" 
-                        id="discount_<?php echo $i-1 ?>" 
-                        size="10" 
-                        class="saDiscount noEnterKey" 
-                        index="<?php echo $i-1 ?>" 
+                        <?php echo Utilities::is_manual_discount_allowed() ? "" : "readonly" ?>
+                        type="text"
+                        name="itemDetails[itemDiscount][]"
+                        id="discount_<?php echo $i-1 ?>"
+                        size="10"
+                        class="saDiscount noEnterKey"
+                        index="<?php echo $i-1 ?>"
                         value="<?php echo $item_discount ?>"
-                      />                      
+                      />
                     </td>
                     <td
                       class="taxableAmt text-right"

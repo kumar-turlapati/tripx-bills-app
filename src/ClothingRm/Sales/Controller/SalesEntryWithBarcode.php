@@ -478,6 +478,7 @@ class salesEntryWithBarcode {
 
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
+    $is_combo_bill = isset($form_data['isComboBill']) ? Utilities::clean_string($form_data['isComboBill']) : 0;
 
     // validate customer type
     if( in_array($customer_type, $customer_types) ) {
@@ -730,6 +731,7 @@ class salesEntryWithBarcode {
     $cleaned_params['fromIndent'] = $from_indent;
     $cleaned_params['remarksInvoice'] = $remarks_invoice;  
     $cleaned_params['salesCategory'] = $sales_category;
+    $cleaned_params['isComboBill'] = $is_combo_bill;
 
     # return response.
     if(count($form_errors)>0) {

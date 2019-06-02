@@ -430,6 +430,7 @@ class Utilities
       $_SESSION['lname'] = $cookie_string_a[10];
       $_SESSION['editable_mrps'] = $cookie_string_a[11];
       $_SESSION['uidn'] = $cookie_string_a[12];
+      $_SESSION['allow_man_discount'] = $cookie_string_a[13];
       $_SESSION['token_valid'] = true;
       $_SESSION['last_access_time'] = $current_time;
       return true;
@@ -519,7 +520,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', 
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
-        '/async/finyDefault', '/async/itd',
+        '/async/finyDefault', '/async/itd', '/async/sdiscount',
 
         '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
         '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', '/inward-entry/view',
@@ -538,7 +539,7 @@ class Utilities
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
         '/reports/po-return-register',
 
-        '/finy/switch',
+        '/finy/switch', '/discount-manager',
       ],
 
       // for Business head
@@ -547,7 +548,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
-        '/async/finyDefault', '/async/itd',
+        '/async/finyDefault', '/async/itd', '/async/sdiscount',
 
         '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
         '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', '/inward-entry/view',
@@ -568,7 +569,7 @@ class Utilities
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
         '/reports/po-return-register',
 
-        '/finy/switch',
+        '/finy/switch', '/discount-manager',
       ],      
 
       // for Sales Operator
@@ -616,7 +617,7 @@ class Utilities
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
 
-        '/finy/switch',
+        '/finy/switch', '/discount-manager',
       ],
 
       6  => [
@@ -1091,6 +1092,14 @@ class Utilities
       ? true 
       : false;
   }
+
+  public static function is_manual_discount_allowed() {
+    return 
+      (isset($_SESSION['man_discount']) && (int)$_SESSION['man_discount'] === 1) ||
+      (isset($_SESSION['__utype']) && (int)$_SESSION['__utype'] === 3)
+      ? true 
+      : false;
+  }  
 
   public static function set_device_cookie($device_id = '', $cookie_name='') {
     $enc_device_id = Utilities::enc_dec_string('encrypt', $device_id);

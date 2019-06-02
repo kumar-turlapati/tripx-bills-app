@@ -96,6 +96,11 @@
   } else {
     $tac_b2c = ''; 
   }
+  if(isset($submitted_data['allowManualDiscount']) && $submitted_data['allowManualDiscount'] !== '' ) {
+    $allow_man_discount = (int)$submitted_data['allowManualDiscount'];
+  } else {
+    $allow_man_discount = 1; 
+  }  
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -314,6 +319,26 @@
                 <span class="error"><?php echo $errors['mrpEditing'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-inr" aria-hidden="true"></i>&nbsp;Allow Manual Sales Discount?</span>
+              </label>
+              <select class="form-control" name="allowManualDiscount" id="allowManualDiscount">
+                <?php 
+                  foreach($mrp_editing_a as $key=>$value):
+                    if($allow_man_discount === (int)$key) {
+                      $selected = 'selected = "selected"';
+                    } else {
+                      $selected = '';
+                    }
+                ?>
+                  <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                <?php endforeach; ?>
+              </select>
+              <?php if(isset($errors['allowManualDiscount'])): ?>
+                <span class="error"><?php echo $errors['allowManualDiscount'] ?></span>
+              <?php endif; ?>
+            </div>             
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">
                 <span style="font-size:14px;color:#2E1114;font-weight:bold;">Choose a Bank to print details on B2B Invoice</span>

@@ -536,6 +536,9 @@ function initializeJS() {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
               if(objLength > 0) {
+                jQuery.each(itemDetails.response, function (index, lotNoDetails) {
+                  lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                });
                 __injectOutwardItemRow(itemDetails.response.bcDetails, barcode);
                 $('#owBarcode').val('');
               } else {
@@ -589,6 +592,7 @@ function initializeJS() {
       var upp = itemDetails.upp;
       var moq = itemDetails.mOq;
       var cno = itemDetails.cno;
+      var discountAmount = itemDetails.discountAmount;
       var orderQty = (parseFloat(moq)*1).toFixed(2);
       var customerType = $('#customerType').val();
       if( $('#editKey').length>0 ) {
@@ -596,6 +600,11 @@ function initializeJS() {
       } else {
         var editableMrps = 0;
       }
+      if( $('#dKey').length>0 ) {
+        var manDisc = $('#dKey').val();
+      } else {
+        var manDisc = 1;
+      }      
       $('#paymentMethodWindow, #customerWindow, #owItemsTable, #saveWindow, #tFootowItems, #remarksWindow').show();
       if(customerType === 'b2c') {
         $('#siOtherInfoWindow').hide();
@@ -635,7 +644,11 @@ function initializeJS() {
         }
         mrpInput += ' /></td>';
         var grossAmount = '<td class="grossAmount" id="grossAmount_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+grossAmount+'</td>';
-        var discounInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemDiscount][]" id="discount_' + nextIndex + '" size="10" class="saDiscount noEnterKey"  index="'+ nextIndex +'"  /></td>';
+        var discounInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemDiscount][]" id="discount_' + nextIndex + '" size="10" class="saDiscount noEnterKey" index="'+nextIndex+'" value="'+discountAmount+'"';
+        if(parseInt(manDisc) === 0) {
+          discounInput += ' readonly';
+        }
+        discounInput += ' /></td>';
         var taxableInput = '<td class="taxableAmt text-right" id="taxableAmt_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+taxableAmount+'</td>';
         var gstInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemTaxPercent][]" id="saItemTax_' + nextIndex + '" size="10" class="form-control saItemTax noEnterKey"  index="'+ nextIndex +'" value="'+taxPercent+'"  />'+'</td>';
         var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'"><i class="fa fa-times"></i></a></div></td>'; 
@@ -1781,6 +1794,12 @@ function initializeJS() {
           jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].mrp);
           jQuery('#itemType_'+itemIndex).val(lotNosResponse[lotNo].itemType);
           jQuery('#saItemTax_'+itemIndex+' option[value="'+lotNosResponse[lotNo].taxPercent+'"]').attr('selected', 'selected');
+          if(returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) > 0) {
+            var discountAmount = returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) * returnNumber(parseFloat(lotNosResponse[lotNo].mOq));
+          } else {
+            var discountAmount = 0;
+          }
+          $('#discount_'+itemIndex).val(discountAmount.toFixed(2));
           updateSaleItemRow(itemIndex);
         }
       }
@@ -1796,7 +1815,15 @@ function initializeJS() {
     });
 
     $('#outwardEntryForm').on('change', '.saleItemQty', function(){
-      var itemIndex = jQuery(this).attr('index');      
+      var itemIndex = jQuery(this).attr('index');
+      var itemQty = $(this).val();
+      var lotNo = $('#lotNo_'+itemIndex).val();
+      if(returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) > 0) {
+        var discountAmount = returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) * returnNumber(parseFloat(itemQty));
+      } else {
+        var discountAmount = 0;
+      }
+      $('#discount_'+itemIndex).val(discountAmount.toFixed(2));
       updateSaleItemRow(itemIndex);
     });
 
