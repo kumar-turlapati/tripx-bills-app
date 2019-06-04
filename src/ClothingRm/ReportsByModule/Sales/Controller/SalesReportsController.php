@@ -1208,6 +1208,7 @@ class SalesReportsController {
         $cash_sales = $day_summary[0]['cashSales'];
         $card_sales = $day_summary[0]['cardSales'];
         $split_sales = $day_summary[0]['splitSales'];
+        $wallet_sales = $day_summary[0]['walletSales'];
         $credit_sales = $day_summary[0]['creditSales'];
         $cash_in_hand = $day_summary[0]['cashInHand'];
         $sales_return = $day_summary[0]['returnAmount'];
@@ -1221,12 +1222,12 @@ class SalesReportsController {
         return;
       }
 
-      // dump($total_records);
+      // dump($sales_api_response);
       // exit;
 
       // start PDF printing.
 
-      $item_widths = array(10,45,35);
+      $item_widths = array(10,55,35);
       $totals_width = $item_widths[0]+$item_widths[1];
 
       $pdf = PDF::getInstance();
@@ -1257,6 +1258,11 @@ class SalesReportsController {
       $pdf->Cell($item_widths[2],6,number_format($split_sales,2,'.',''),'RTB',0,'R');      
 
       $pdf->Ln();                
+      $pdf->Cell($item_widths[0],6,'c)','LRTB',0,'C');
+      $pdf->Cell($item_widths[1],6,'eWallet/UPI/EMI','RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,number_format($wallet_sales,2,'.',''),'RTB',0,'R');      
+
+      $pdf->Ln();                
       $pdf->Cell($item_widths[0],6,'d)','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'Credit Sale','RTB',0,'L');
       $pdf->Cell($item_widths[2],6,number_format($credit_sales,2,'.',''),'RTB',0,'R');
@@ -1264,7 +1270,7 @@ class SalesReportsController {
       $pdf->Ln();
       $pdf->SetFont('Arial','B');          
       $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');
-      $pdf->Cell($item_widths[1],6,'(a) + (b) + (c) + (d)','RTB',0,'R');
+      $pdf->Cell($item_widths[1],6,'(a) + (b) + (c) + (d) + (e)','RTB',0,'R');
       $pdf->Cell($item_widths[2],6,number_format($day_sales,2,'.',''),'RTB',0,'R');
 
       $pdf->Ln();

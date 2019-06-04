@@ -1095,7 +1095,7 @@ class Utilities
 
   public static function is_manual_discount_allowed() {
     return 
-      (isset($_SESSION['man_discount']) && (int)$_SESSION['man_discount'] === 1) ||
+      (isset($_SESSION['allow_man_discount']) && (int)$_SESSION['allow_man_discount'] === 1) ||
       (isset($_SESSION['__utype']) && (int)$_SESSION['__utype'] === 3)
       ? true 
       : false;
