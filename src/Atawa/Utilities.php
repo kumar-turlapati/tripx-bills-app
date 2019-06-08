@@ -657,12 +657,17 @@ class Utilities
 
       // for Marketing user
       10 => [
-        "/dashboard", "/finy/switch", "/customers/list", "/sales-indents/list", "/barcodes/list",
-        "/sales-indent/create", "/sales-indent/create/mobile", "/fin/receipt-voucher/create",
-        "/campaigns/list", "/report-options/indent-item-avail", "/report-options/indent-itemwise",
-        "/report-options/indent-agentwise", "/report-options/indent-statewise", 
-        "/report-options/print-indents-agentwise", "/report-options/indent-register",
-        "/report-options/indent-dispatch-summary",
+
+        '/async/finyDefault',
+
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',        
+
+        '/finy/switch', '/customers/list', '/sales-indents/list', '/barcodes/list',
+        '/sales-indent/create', '/sales-indent/create/mobile', '/fin/receipt-voucher/create',
+        '/campaigns/list', '/report-options/indent-item-avail', '/report-options/indent-itemwise',
+        '/report-options/indent-agentwise', '/report-options/indent-statewise', 
+        '/report-options/print-indents-agentwise', '/report-options/indent-register',
+        '/report-options/indent-dispatch-summary',
       ],
 
       13 => [
