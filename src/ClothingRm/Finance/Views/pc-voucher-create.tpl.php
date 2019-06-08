@@ -42,16 +42,16 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Create Petty Cash Voucher</h2>
+      <h2 class="hdg-reports text-center">Create Cash Voucher</h2>
       <div class="panel-body">
         <?php echo Utilities::print_flash_message() ?>
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
-            <a href="/fin/pc-vouchers" class="btn btn-default">
-              <i class="fa fa-book"></i> Petty Cash Vouchers List
+            <a href="/fin/cash-vouchers" class="btn btn-default">
+              <i class="fa fa-book"></i> Cash Vouchers List
             </a>
-            <a href="/fin/petty-cash-book" class="btn btn-default">
-              <i class="fa fa-inr"></i> Petty Cash Book
+            <a href="/fin/cash-book" class="btn btn-default">
+              <i class="fa fa-inr"></i> Cash Book
             </a>
           </div>
         </div>

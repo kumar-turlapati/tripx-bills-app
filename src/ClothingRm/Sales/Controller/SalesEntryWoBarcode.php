@@ -1425,6 +1425,11 @@ class SalesEntryWoBarcode {
     $sale_items = $invoice_details['itemDetails'];
     unset($invoice_details['itemDetails']);
 
+    if(isset($invoice_details['customerType'])) {
+      $customer_type = $invoice_details['customerType'] === 'b' ? 'b2b' : 'b2c';
+      $invoice_details['customerType'] = $customer_type;
+    }
+
     foreach($sale_items as $key => $item_details) {
 
       // we need to add ordered qty to closing qty while editing invoice.

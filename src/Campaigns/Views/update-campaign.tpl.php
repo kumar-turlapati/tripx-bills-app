@@ -51,7 +51,7 @@
         </div>
         <form class="form-validate form-horizontal" method="POST">
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Campaign name</label>
               <input
                 type="text" 
@@ -64,7 +64,7 @@
                 <span class="error"><?php echo $form_errors['campaignName'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Start date</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -78,7 +78,7 @@
                 </div>
               </div>             
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">End date</label>
               <div class="form-group">
                 <div class="col-lg-12">

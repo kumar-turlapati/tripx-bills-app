@@ -63,7 +63,7 @@
             <ul class="sub">
               <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
               <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
-              <li><a href="/fin/pc-voucher/create"><i class="fa fa-sticky-note-o"></i> Petty Cash</a></li>
+              <li><a href="/fin/cash-voucher/create"><i class="fa fa-sticky-note-o"></i> Cash</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -120,8 +120,8 @@
               <li><a href="/fin/receipt-vouchers"><i class="fa fa-check"></i> Receipts Register</a></li>
               <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
               <li><a href="/fin/debit-notes"><i class="fa fa-minus-square"></i> Debit Notes Register</a></li>
-              <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
-              <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
+              <li><a href="/fin/cash-vouchers"><i class="fa fa-money"></i> Cash Register</a></li>
+              <li><a href="/fin/cash-book"><i class="fa fa-inr"></i> Cash Book</a></li>
             </ul>
           </li>
           <li class="sub-menu">

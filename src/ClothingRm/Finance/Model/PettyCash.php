@@ -78,4 +78,26 @@ class PettyCash {
 			return array('status' => false, 'apierror' => $response['reason']);
 		}
 	}
+
+	public function get_sales_cash_postings($req_params = []) {
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get', 'fin/sales-cash-post-list', $req_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status'=>true,'response' => $response['response']);
+		} elseif($status === 'failed') {
+			return array('status'=>false, 'apierror' => $response['reason']);
+		}
+	}
+
+	public function post_sc_to_cb($req_params = []) {
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post', 'fin/post-sc-to-cb', $req_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status'=>true,'response' => $response['response']);
+		} elseif($status === 'failed') {
+			return array('status'=>false, 'apierror' => $response['reason']);
+		}
+	}	
 }

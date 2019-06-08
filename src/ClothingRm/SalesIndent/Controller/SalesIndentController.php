@@ -151,7 +151,7 @@ class SalesIndentController {
     $form_errors = $agents_a = $campaigns_a = $form_data = [];
     $executives_a = [];
     $list_url = '/sales-indents/list';
-    $indent_no = '';
+    $indent_number = '';
 
     # ---------- get location codes from api ------------------
     $client_locations = Utilities::get_client_locations(true);
@@ -238,7 +238,7 @@ class SalesIndentController {
       } else {
         $api_response = $this->sindent_model->update_sindent($form_data, $url_indent_code);
         if($api_response['status']) {
-          $this->flash->set_flash_message('Sales Indent No. `' .$submitted_indent_no.'` updated successfully. [ '.$submitted_indent_code.' ]');
+          $this->flash->set_flash_message('Sales Indent No. `' .$submitted_indent_no.'` updated successfully with code [ '.$submitted_indent_code.' ]');
           Utilities::redirect($list_url);
         } else {
           $page_error = $api_response['apierror'];
@@ -284,7 +284,7 @@ class SalesIndentController {
       'last_indent_no' => $last_indent_no,
       'indent_print_option' => $indent_print_option,
       'indent_code' => $indent_code,
-      'indent_number' => $indent_no
+      'indent_number' => $indent_number
     );
 
     return array($this->template->render_view('indent-update', $template_vars),$controller_vars);
@@ -364,7 +364,7 @@ class SalesIndentController {
     $locations = $vouchers = $search_params = $indents_a = $agents_a = [];
     $campaigns_a = [];
     $campaign_code = $page_error = $agent_code = '';
-    $status_a = [99 => 'All Indents', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
+    $status_a = [99 => 'Status', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
 
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;

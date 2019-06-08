@@ -27,13 +27,13 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
-  $page_url = $pagination_url = '/fin/petty-cash-book';
+  $page_url = $pagination_url = '/fin/cash-book';
 ?>
 
 <div class="row">
   <div class="col-lg-12">
     <section class="panelBox">
-      <h2 class="hdg-reports text-center">Petty Cash Book <?php echo $locationName ?></h2>
+      <h2 class="hdg-reports text-center">Cash Book <?php echo $locationName ?></h2>
       <div class="panelBody">
 
         <?php echo Utilities::print_flash_message() ?>
@@ -46,11 +46,11 @@
 
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
-            <a href="/fin/pc-voucher/create" class="btn btn-default">
-              <i class="fa fa-file-text-o"></i> New Petty Cash Voucher 
+            <a href="/fin/cash-voucher/create" class="btn btn-default">
+              <i class="fa fa-file-text-o"></i> New Cash Voucher 
             </a>
-            <a href="/fin/pc-vouchers" class="btn btn-default">
-              <i class="fa fa-inr"></i> Petty Cash Register
+            <a href="/fin/cash-vouchers" class="btn btn-default">
+              <i class="fa fa-inr"></i> Cash Register
             </a>            
           </div>
         </div>
@@ -218,7 +218,7 @@
                 <td>&nbsp;</td>
               </tr>
               <tr class="text-bold">
-                <td colspan="4" align="right">PETTY CASH BOOK TOTALS</td>
+                <td colspan="4" align="right">BOOK TOTALS</td>
                 <td align="right" style="color:green;font-weight:bold;font-size:16px;"><?php echo number_format($book_receipts,2, '.','') ?></td>
                 <td align="right" style="color:red;font-weight:bold;font-size:16px;"><?php echo number_format($book_payments,2,'.','') ?></td>
                 <td align="right" style="color:#225992;font-weight:bold;font-size:18px;"><?php echo number_format($book_balance,2,'.','') ?></td>

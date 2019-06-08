@@ -284,7 +284,7 @@
                     ><?php echo $item_amount ?></td>
                     <td align="center" style="vertical-align:middle;">
                       <input
-                        <?php echo Utilities::is_manual_discount_allowed() ? "" : "readonly" ?>
+                        <?php echo Utilities::is_manual_discount_allowed() ? "" : 'readonly' ?>
                         type="text"
                         name="itemDetails[itemDiscount][]"
                         id="discount_<?php echo $i-1 ?>"

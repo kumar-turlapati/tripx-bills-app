@@ -515,22 +515,28 @@ $routes->add('dn_list', new Routing\Route('/fin/debit-notes/{pageNo}', array(
 )));
 
 // Petty cash vouchers
-$routes->add('pc_voc_create', new Routing\Route('/fin/pc-voucher/create', array(
+$routes->add('pc_voc_create', new Routing\Route('/fin/cash-voucher/create', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::pettyCashVoucherCreateAction',
 )));
-$routes->add('pc_voc_update', new Routing\Route('/fin/pc-voucher/update/{vocNo}', array(
+$routes->add('sales_to_cb_register', new Routing\Route('/fin/sales2cb/register', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::salesCashToCashBookRegister',
+)));
+$routes->add('post_sales_data_in_cb', new Routing\Route('/fin/post-sales2cb', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::postSalesCashToCashBook',
+)));
+$routes->add('pc_voc_update', new Routing\Route('/fin/cash-voucher/update/{vocNo}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::pettyCashVoucherUpdateAction',
   'vocNo' => null,
 )));
-$routes->add('pc_voc_list', new Routing\Route('/fin/pc-vouchers/{pageNo}', array(
+$routes->add('pc_voc_list', new Routing\Route('/fin/cash-vouchers/{pageNo}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::pettyCashVoucherListAction',
   'pageNo' => null,
 )));
-$routes->add('pc_voc_delete', new Routing\Route('/fin/pc-voucher/delete/{vocNo}', array(
+$routes->add('pc_voc_delete', new Routing\Route('/fin/cash-voucher/delete/{vocNo}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::pettyCashVoucherDeleteAction',
   'vocNo' => null,
 )));
-$routes->add('petty_cash_book', new Routing\Route('/fin/petty-cash-book/{pageNo}', array(
+$routes->add('petty_cash_book', new Routing\Route('/fin/cash-book/{pageNo}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\PettyCashController::pettyCashBookAction',
   'pageNo' => null,
 )));

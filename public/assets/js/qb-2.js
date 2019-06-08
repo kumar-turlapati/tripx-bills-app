@@ -122,6 +122,62 @@ function initializeJS() {
    }
   });
 
+  if($('.postSc2CB').length > 0) {
+    $('.postSc2CB').on('click', function(e){
+      var buttonObjId = $(this).attr('id');
+      var objId = buttonObjId.split('_')[1];
+      if($('#dt_'+objId).length>0 && $('#amt_'+objId).length>0) {
+        var tranDate = $('#dt_'+objId).val();
+        var tranAmount = $('#amt_'+objId).val();
+        var locationCode = $('#locationCode').val();
+        var params = 'dt='+tranDate+'&amt='+tranAmount+'&locationCode='+locationCode;
+        if(locationCode === '') {
+          bootbox.alert({
+            message: "Invalid location code."
+          });
+          return false;
+        }
+        jQuery.ajax("/fin/post-sales2cb", {
+          type: "POST",
+          data: params,
+          beforeSend: function() {
+            $('#ps_'+objId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('#vn_'+objId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('#vd_'+objId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            $('.postSc2CB').attr('disabled', true);
+          },
+          success: function(apiResponse) {
+            $('.postSc2CB').attr('disabled', false);
+            var apiStatus = apiResponse.status;
+            if(apiStatus) {
+              bootbox.alert({
+                message: 'Transaction posted successfully with Voucher No. `' + apiResponse.vocNo + '`'
+              });
+              $('#ps_'+objId).html('<span style="color:green;font-weight:bold;font-size:14px;">Posted</span>');
+              $('#vn_'+objId).html('<span style="color:green;font-weight:bold;font-size:14px;">'+apiResponse.vocNo+'</span>');
+              $('#vd_'+objId).html('');
+              $('#btn_'+objId).remove();
+            } else {
+              bootbox.alert({
+                message: apiResponse.errorMessage
+              });
+              $('#ps_'+objId).html('');
+              $('#vn_'+objId).html('');
+              $('#vd_'+objId).html('');
+            }
+          },
+          error: function(e) {
+            $('.postSc2CB').attr('disabled', false);
+            bootbox.alert({
+              message: "Unable to process your request."
+            });            
+          }
+        });
+      }
+      e.preventDefault();
+    });
+  }
+
   // Combo Bills entry.
   if( $('#comboBillEntry').length>0 ) {
 
@@ -845,12 +901,31 @@ function initializeJS() {
   }  
 
   if( $('#indentBarcode').length>0 ) {
+
+    function updateIndentFormTotals() {
+      var totalQty = totalAmount = 0;
+      $(".saleItemQty").each(function(index, obj) {
+        totalQty += returnNumber(parseFloat($(this).val()));
+      });
+      $(".grossAmount").each(function(index, obj) {
+        totalAmount += returnNumber(parseFloat($(this).text()));
+      });
+      totalQty = totalQty.toFixed(2);
+      totalAmount = totalAmount.toFixed(2);
+      $('#totalItems').text(totalQty);
+      $('#grossAmount').text(totalAmount);
+    }
+
     if( $('.messageContainer').length>0 ) {
       $('.messageContainer').fadeOut(5000);
     }
     $('#indentBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
-       var barcode = $(this).val();
+       var barcode = parseInt($(this).val());
+       if(isNaN(barcode)) {
+        alert('Invalid Barcode format...');
+        return false;
+       }
        var locationCode = $('#locationCode').val();
        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&sl=true&ind=true', {
           success: function(itemDetails) {
@@ -868,9 +943,15 @@ function initializeJS() {
               } else {
                 alert('Barcode not found');
               }
+            } else {
+              var errorText = itemDetails.reason;
+              alert("[ "+ barcode + ' ] ' + errorText);
+              $('#indentBarcode').focus();
+              $('#indentBarcode').val('');              
             }
           },
           error: function(e) {
+            alert('An error occurred while fetching Barcode');
           }
        });
        e.preventDefault();
@@ -891,7 +972,7 @@ function initializeJS() {
                   $(this).text(newSlno);
                   newSlno++;
                 });
-                $('.saleItemQty').trigger('change');
+                updateIndentFormTotals();
               } else {
                 $('#totalItems, #grossAmount, #totDiscount, #taxableAmount, #gstAmount, #roundOff, #netPayBottom').text('');
                 $('#paymentMethodWindow, #customerWindow, #splitPaymentWindow, #saveWindow, #owItemsTable').hide();
@@ -904,6 +985,7 @@ function initializeJS() {
         }
       });
     });
+
     function __injectIndentItemRow(itemDetails, barcode) {
       var itemName = itemDetails.itemName;
       var nextIndex = 0;
@@ -925,22 +1007,25 @@ function initializeJS() {
       $('#customerWindow, #owItemsTable, #saveWindow, #tFootowItems').show();
       
       if( $('#tr_'+barcode).length > 0) {
+        var trIndex = $('#tr_'+barcode).attr('index');
         var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
         var trAddedQty = parseFloat(trExistingQty) + parseFloat(orderQty);
-        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty.toFixed(2));
+        var grossAmount = parseFloat(parseFloat(trAddedQty)*parseFloat(mrp)).toFixed(2);
+        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty); 
+        $('#grossAmount_'+trIndex).text(grossAmount);
       } else {
         if(totalRows == 0) {
           nextIndex = 1;
         } else {
           nextIndex = totalRows + 1;
         }
-        var grossAmount = taxableAmount = parseFloat(mrp*1).toFixed(2);
+        var grossAmount = taxableAmount = parseFloat(mrp*moq).toFixed(2);
         var tableRowBegin = '<tr id="tr_'+barcode+'" class="bcRow" index="' + nextIndex + '">';
         var itemSlno = '<td align="right" style="vertical-align:middle;" class="itemSlno">' + nextIndex + '</td>';
-        var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
+        var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" size="30" readonly/></td>';
         var lotNoInput = '<td style="vertical-align:middle;"><input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly /></td>';
         var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="'+orderQty+'" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" readonly="readonly" /></td>';
-        var mrpInput = '<td style="vertical-align:middle;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10" /></td>';
+        var mrpInput = '<td style="vertical-align:middle;text-align:center;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10" /></td>';
         var grossAmount = '<td class="grossAmount" id="grossAmount_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+grossAmount+'</td>';
         var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'"><i class="fa fa-times"></i></a></div></td>';
         var barcodeInput = '<input type="hidden" class="noEnterKey" name="itemDetails[barcode][]" id="barcode_' + nextIndex + '" index="' + nextIndex + '" value="'+barcode+'" size="13" />';        
@@ -948,11 +1033,8 @@ function initializeJS() {
         var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyOrderedInput + mrpInput + grossAmount + deleteRow + barcodeInput + tableRowEnd;
         $('#tBodyowItems').append(tableRow);
       }
-
       $('#locationCode').val(locationCode);
-
-      // trigger change
-      $('.saleItemQty').trigger('change');
+      updateIndentFormTotals();
     }
   }
 

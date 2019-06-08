@@ -45,7 +45,7 @@
             </a> 
           </div>
         </div>        
-        <form id="outwardEntryForm" method="POST">
+        <form id="salesIndentForm" method="POST">
           <div class="table-responsive">
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
               <thead>

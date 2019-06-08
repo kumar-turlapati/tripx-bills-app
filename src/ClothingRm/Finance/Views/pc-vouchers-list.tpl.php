@@ -26,7 +26,7 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
-  $page_url = $pagination_url = '/fin/pc-vouchers';
+  $page_url = $pagination_url = '/fin/cash-vouchers';
 ?>
 
 <div class="row">
@@ -44,11 +44,11 @@
 
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
-            <a href="/fin/pc-voucher/create" class="btn btn-default">
-              <i class="fa fa-file-text-o"></i> New Petty Cash Voucher 
+            <a href="/fin/cash-voucher/create" class="btn btn-default">
+              <i class="fa fa-file-text-o"></i> New Cash Voucher 
             </a>
-            <a href="/fin/petty-cash-book" class="btn btn-default">
-              <i class="fa fa-inr"></i> Petty Cash Book
+            <a href="/fin/cash-book" class="btn btn-default">
+              <i class="fa fa-inr"></i> Cash Book
             </a>            
           </div>
         </div>
@@ -128,26 +128,27 @@
                   }
                   $narration = $voucher_details['narration'];
                   $location_code = $location_codes[$voucher_details['locationID']];
+                  $is_auto_post = $voucher_details['isAutoPost'];
                   $total += $amount;
               ?>
-                <tr class="font12">
+                <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
                   <td class="valign-middle"><?php echo $voucher_date ?></td>
-                  <td align="right" class="valign-middle"><?php echo number_format($amount,2) ?></td>
-                  <td align="left" class="valign-middle"><?php echo $action ?></td>                
+                  <td class="valign-middle" align="right"><?php echo number_format($amount,2,'.','') ?></td>
+                  <td class="valign-middle" align="center" ><?php echo $action ?></td>                
                   <td class="valign-middle"><?php echo $ref_no ?></td>
                   <td class="valign-middle"><?php echo $ref_date ?></td>
                   <td class="valign-middle"><?php echo $narration ?></td>
                   <td class="valign-middle">
-                  <?php if($voucher_no>0): ?>
-                    <div class="btn-actions-group" align="right">                    
-                      <a class="btn btn-primary" href="/fin/pc-voucher/update/<?php echo $voucher_no ?>?l=<?php echo $location_code ?>" title="Edit Voucher">
+                  <?php if($voucher_no>0 && !$is_auto_post): ?>
+                    <div class="btn-actions-group" align="right">
+                      <a class="btn btn-primary" href="/fin/cash-voucher/update/<?php echo $voucher_no ?>?l=<?php echo $location_code ?>" title="Edit Voucher">
                         <i class="fa fa-pencil"></i>
                       </a>&nbsp;
-                      <a class="btn btn-danger delPcVoucher" href="/fin/pc-voucher/delete/<?php echo $voucher_no ?>?l=<?php echo $location_code ?>" title="Remove Voucher" id="<?php echo $voucher_no ?>">
+                      <a class="btn btn-danger delPcVoucher" href="/fin/cash-voucher/delete/<?php echo $voucher_no ?>?l=<?php echo $location_code ?>" title="Remove Voucher" id="<?php echo $voucher_no ?>">
                         <i class="fa fa-times"></i>
-                      </a>     
+                      </a>
                     </div>
                   <?php endif; ?>
                   </td>
@@ -158,7 +159,7 @@
               ?>
               <tr class="text-bold">
                 <td colspan="3" align="right">TOTALS</td>
-                <td align="right"><?php echo number_format($total, 2) ?></td>
+                <td align="right"><?php echo number_format($total,2,'.','') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>

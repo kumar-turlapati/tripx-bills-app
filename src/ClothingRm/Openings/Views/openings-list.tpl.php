@@ -19,6 +19,8 @@
   } else {
     $query_params = '';
   }
+
+  $page_url = $pagination_url = '/opbal/list';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -40,7 +42,7 @@
 		    <div class="panel" style="margin-bottom:0px;">
           <div class="panel-body">
 			     <div id="filters-form">
-      			  <form class="form-validate form-horizontal" method="POST">
+      			  <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
         				<div class="form-group">
                   <div class="col-sm-12 col-md-2 col-lg-1">Filter by</div>
         				  <div class="col-sm-12 col-md-2 col-lg-2">
@@ -73,113 +75,89 @@
 			     </div>
           </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-striped table-hover font12">
-            <thead>
-              <tr>
-                <th width="5%" class="text-center valign-middle">Sno.</th>
-                <th width="20%" class="text-center valign-middle">Item name</th>
-                <th width="10%" class="text-center valign-middle">Category</th>
-                <th width="10%" class="text-center valign-middle">Brand name</th>
-                <th width="10%" class="text-center valign-middle">Case/Box<br />No.</th>
-                <th width="10%" class="text-center valign-middle">Lot No.</th>                                                
-                <th width="5%" class="text-center valign-middle">Opening<br />qty.</th>
-                <th width="5%" class="text-center valign-middle">Packed/<br />qty.</th>
-                <th width="5%" class="text-center valign-middle">Total qty.</th>                
-                <th width="8%" class="text-center valign-middle">Opening rate<br />(in Rs.)</th>
-                <th width="8%" class="text-center valign-middle">Opening value<br />(in Rs.)</th>
-                <th width="8%" class="text-center valign-middle">Purchase rate<br />(in Rs.)</th>                
-                <th width="5%" class="text-center valign-middle">Tax<br />(%)</th>
-                <th width="10%" class="text-center valign-middle">Options</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php 
-                $cntr = $sl_no;
-                $tot_opening_stock_value = 0;
-                foreach($openings as $opening_details):
-                  $item_name = $opening_details['itemName'];
-                  $category_name = $opening_details['categoryName'];
-                  $opening_rate = $opening_details['openingRate']; 
-                  $opening_qty = $opening_details['openingQty'];
-                  $purchase_rate = $opening_details['purchaseRate'];
-                  $tax_percent = $opening_details['taxPercent'];
-                  $opening_code = $opening_details['openingCode'];
-                  $packed_qty = $opening_details['packedQty'];
-                  $total_qty = round($opening_qty * $packed_qty, 2);
-                  $brand_name = $opening_details['mfgName'];
-                  $container_no = $opening_details['cno'];
-                  $lot_no = $opening_details['lotNo'];
-                  $opening_value = round($opening_qty*$opening_rate*$packed_qty,2);
+        <?php if(count($openings)>0): ?>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font12">
+              <thead>
+                <tr>
+                  <th width="5%" class="text-center valign-middle">Sno.</th>
+                  <th width="20%" class="text-center valign-middle">Item name</th>
+                  <th width="10%" class="text-center valign-middle">Category</th>
+                  <th width="10%" class="text-center valign-middle">Brand name</th>
+                  <th width="10%" class="text-center valign-middle">Case/Box<br />No.</th>
+                  <th width="10%" class="text-center valign-middle">Lot No.</th>                                                
+                  <th width="5%" class="text-center valign-middle">Opening<br />qty.</th>
+                  <th width="5%" class="text-center valign-middle">Packed/<br />qty.</th>
+                  <th width="5%" class="text-center valign-middle">Total qty.</th>                
+                  <th width="8%" class="text-center valign-middle">Opening rate<br />(in Rs.)</th>
+                  <th width="8%" class="text-center valign-middle">Opening value<br />(in Rs.)</th>
+                  <th width="8%" class="text-center valign-middle">Purchase rate<br />(in Rs.)</th>                
+                  <th width="5%" class="text-center valign-middle">Tax<br />(%)</th>
+                  <th width="10%" class="text-center valign-middle">Options</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php 
+                  $cntr = $sl_no;
+                  $tot_opening_stock_value = 0;
+                  foreach($openings as $opening_details):
+                    $item_name = $opening_details['itemName'];
+                    $category_name = $opening_details['categoryName'];
+                    $opening_rate = $opening_details['openingRate']; 
+                    $opening_qty = $opening_details['openingQty'];
+                    $purchase_rate = $opening_details['purchaseRate'];
+                    $tax_percent = $opening_details['taxPercent'];
+                    $opening_code = $opening_details['openingCode'];
+                    $packed_qty = $opening_details['packedQty'];
+                    $total_qty = round($opening_qty * $packed_qty, 2);
+                    $brand_name = $opening_details['mfgName'];
+                    $container_no = $opening_details['cno'];
+                    $lot_no = $opening_details['lotNo'];
+                    $opening_value = round($opening_qty*$opening_rate*$packed_qty,2);
 
-                  $tot_opening_stock_value += round($opening_qty*$purchase_rate*$packed_qty, 2);
-              ?>
-                  <tr class="text-right font11">
-                    <td class="valign-middle"><?php echo $cntr ?></td>
-                    <td class="text-left med-name valign-middle"><?php echo $item_name ?></td>
-                    <td class="text-left med-name valign-middle"><?php echo $category_name ?></td>                    
-                    <td class="text-left valign-middle"><?php echo $brand_name ?></td>                    
-                    <td class="text-left valign-middle"><?php echo $container_no ?></td>                    
-                    <td class="text-left valign-middle"><?php echo $lot_no ?></td>                    
-                    <td class="valign-middle"><?php echo number_format($opening_qty,2,'.','') ?></td>
-                    <td class="valign-middle"><?php echo number_format($packed_qty,2,'.','') ?></td>
-                    <td class="valign-middle"><?php echo number_format($total_qty,2,'.','') ?></td>
-                    <td class="valign-middle"><?php echo number_format($opening_rate,2,'.','') ?></td>
-                    <td class="text-bold valign-middle"><?php echo number_format($opening_value,2,'.','') ?></td>
-                    <td class="text-bold valign-middle"><?php echo number_format($purchase_rate,2,'.','') ?></td>                    
-                    <td class="text-right valign-middle"><?php echo number_format($tax_percent,2,'.','') ?></td>
-                    <td>
-                      <?php if($opening_code !== ''): ?>
-                        <div class="btn-actions-group">
+                    $tot_opening_stock_value += round($opening_qty*$purchase_rate*$packed_qty, 2);
+                ?>
+                    <tr class="text-right font11">
+                      <td class="valign-middle"><?php echo $cntr ?></td>
+                      <td class="text-left med-name valign-middle"><?php echo $item_name ?></td>
+                      <td class="text-left med-name valign-middle"><?php echo $category_name ?></td>                    
+                      <td class="text-left valign-middle"><?php echo $brand_name ?></td>                    
+                      <td class="text-left valign-middle"><?php echo $container_no ?></td>                    
+                      <td class="text-left valign-middle"><?php echo $lot_no ?></td>                    
+                      <td class="valign-middle"><?php echo number_format($opening_qty,2,'.','') ?></td>
+                      <td class="valign-middle"><?php echo number_format($packed_qty,2,'.','') ?></td>
+                      <td class="valign-middle"><?php echo number_format($total_qty,2,'.','') ?></td>
+                      <td class="valign-middle"><?php echo number_format($opening_rate,2,'.','') ?></td>
+                      <td class="text-bold valign-middle"><?php echo number_format($opening_value,2,'.','') ?></td>
+                      <td class="text-bold valign-middle"><?php echo number_format($purchase_rate,2,'.','') ?></td>                    
+                      <td class="text-right valign-middle"><?php echo number_format($tax_percent,2,'.','') ?></td>
+                      <td>
+                        <?php if($opening_code !== ''): ?>
+                          <div class="btn-actions-group">
                             <a class="btn btn-primary" href="/opbal/update/<?php echo $opening_code ?>" title="Edit Opening Balance">
                               <i class="fa fa-pencil"></i>
-                            </a>
-                            <?php /*
-                            <a class="btn btn-danger" href="javascrip:void(0)" title="Remove Opening Balance" opcode="<?php echo $opening_code ?>">
-                              <i class="fa fa-times"></i>
-                            </a>*/ ?>      
-                        </div>
-                      <?php endif; ?>
-                    </td>
-                  </tr>
-            <?php
-              $cntr++;
-              endforeach; 
-            ?>
-              <tr>
-                <td colspan="10" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
-                <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_stock_value,2,'.','') ?></td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>                                
-              </tr>
-            </tbody>
-          </table>
-
-          <?php if(count($openings)>0): ?>
-            <ul class="pagination">
-              <div class="display-count">
-                Displaying <?php echo ($sl_no>0?$sl_no:1).' - '.$to_sl_no.' of '.$total_records ?>
-              </div>
+                            </a>    
+                          </div>
+                        <?php endif; ?>
+                      </td>
+                    </tr>
               <?php
-                for($i=$page_links_to_start;$i<=$page_links_to_end;$i++):
-                  if((int)$i===(int)$current_page) {
-                    $class_name = 'active';
-                  } else {
-                    $class_name = '';
-                  }
+                $cntr++;
+                endforeach; 
               ?>
-                <li class="<?php echo $class_name ?>">
-                  <a href="/opbal/list/<?php echo $i.$query_params ?>"><?php echo $i ?></a>
-                </li>
-              <?php endfor; ?>
-            </ul>
-          <?php endif; ?>
-
-        </div>
+                <tr>
+                  <td colspan="10" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
+                  <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_stock_value,2,'.','') ?></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>                                
+                </tr>
+              </tbody>
+            </table>
+            <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>
+          </div>
+        <?php endif; ?>
       </div>
     </section>
-    <!-- Panel ends --> 
   </div>
 </div>
-<!-- Basic Forms ends -->

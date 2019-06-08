@@ -67,7 +67,7 @@
     		  <div id="filters-form">
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
-                <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
+                <div class="col-sm-12 col-md-1 col-lg-1 labelStyle" style="padding-top:9px;padding-left:36px;">Filter by</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
@@ -223,7 +223,7 @@
               ?>
               <tr class="text-bold">
                 <td colspan="3" align="right">TOTALS</td>
-                <td align="right"><?php echo number_format($total, 2) ?></td>
+                <td align="right"><?php echo number_format($total, 2, '.', '') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>

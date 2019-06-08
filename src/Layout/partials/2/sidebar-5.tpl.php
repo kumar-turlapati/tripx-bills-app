@@ -25,7 +25,7 @@
           <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>
           <li><a href="/sales-entry/combos"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Sales Entry - Combos</a></li>
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
-          <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Petty Cash Voucher</a></li>
+          <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Cash Voucher</a></li>
           <li><a href="/stock-audit/create"><i class="fa fa-check"></i> Phy. Stock Audit</a></li>          
         </ul>
       </li>
@@ -38,8 +38,8 @@
           <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales Return Register</a></li>
           <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Transfer Register</a></li>
-          <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
-          <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
+          <li><a href="/fin/cash-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
+          <li><a href="/fin/cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>          
           <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li>          
           <?php /*<li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li> */ ?>

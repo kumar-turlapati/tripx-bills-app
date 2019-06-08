@@ -137,6 +137,8 @@ class OpeningsController {
       if($request->get('locationCode') !== '') {
         $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
       }
+    } elseif(!is_null($request->get('locationCode'))) {
+      $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
     } else {
       $search_params = [
         'locationCode' => $default_location,
@@ -145,6 +147,9 @@ class OpeningsController {
 
     $search_params['pageNo'] = $page_no;
     $search_params['perPage'] = $per_page;
+
+    // dump($search_params);
+    // exit;
 
     $openings = $this->openings_model->opbal_list($search_params);
     $api_status = $openings['status'];
