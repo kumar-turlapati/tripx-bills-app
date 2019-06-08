@@ -17,7 +17,10 @@
         <a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a>
       </li>
       <li>
-        <a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Petty Cash Voucher</a>
+        <a href="/fin/cash-voucher/create"><i class="fa fa-inr"></i> Expense</a>
+      </li>
+      <li>
+        <a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Cash Posting</a>
       </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
@@ -28,8 +31,8 @@
           <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales Return Register</a></li>
           <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Transfer Register</a></li>
-          <li><a href="/fin/pc-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
-          <li><a href="/fin/petty-cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
+          <li><a href="/fin/cash-vouchers"><i class="fa fa-money"></i> Cash Register</a></li>
+          <li><a href="/fin/cash-book"><i class="fa fa-inr"></i> Cash Book</a></li>
         </ul>
       </li>
       <li class="sub-menu">

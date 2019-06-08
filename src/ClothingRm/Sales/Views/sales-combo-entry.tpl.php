@@ -177,7 +177,7 @@
                     id="cnNo"
                     name="cnNo"
                     maxlength="8"
-                    style="font-weight:bold;font-size:14px;padding-left:5px;"
+                    style="font-weight:bold;font-size:14px;padding-left:5px;border:2px dashed red"
                     value="<?php echo $cn_no ?>"
                     class="form-control"
                   />

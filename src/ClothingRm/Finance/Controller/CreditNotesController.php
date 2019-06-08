@@ -110,26 +110,27 @@ class CreditNotesController
     Utilities::redirect('/fin/credit-notes'); 
   }
 
-  # credit notes list action
+  // credit notes list action
   public function cnListAction(Request $request) {
 
     $cnotes_a = $search_params = [];
     $page_error = '';
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
     
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
-    # ---------- get location codes from api -----------------------
+    // ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
     }
 
-    # parse request parameters.
+    // parse request parameters.
     $from_date = $request->get('fromDate')!==null ? Utilities::clean_string($request->get('fromDate')) : '01-'.date('m').'-'.date("Y");
     $to_date = $request->get('toDate')!==null ? Utilities::clean_string($request->get('toDate')) : date("d-m-Y");
-    $location_code = $request->get('locationCode')!==null ? Utilities::clean_string($request->get('locationCode')) : '';
+    $location_code = $request->get('locationCode')!==null ? Utilities::clean_string($request->get('locationCode')) : $default_location;
     $page_no = $request->get('pageNo')!==null ? Utilities::clean_string($request->get('pageNo')) : 1;
     $per_page = 100;
 

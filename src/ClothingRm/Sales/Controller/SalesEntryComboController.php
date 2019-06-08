@@ -195,7 +195,7 @@ class SalesEntryComboController
           } else {
             $balance_value = $cn_details['data']['vocDetails']['balanceValue'];
             if($balance_value < $split_payment_cn) {
-              $form_errors['paymentMethod'] = 'Credit note value exceeds than actual.';
+              $form_errors['paymentMethod'] = 'Credit note value exceeds than credit note balance of Rs. '.number_format($balance_value,2,'.','');
             }
           }
         }
@@ -315,12 +315,16 @@ class SalesEntryComboController
     $cleaned_params['authCode'] = $auth_code;
     $cleaned_params['isComboBill'] = 1;
     $cleaned_params['comboDiscount'] = $combo_discount;
+    $cleaned_params['cnNo'] = $form_data['cnNo'];
+
+    // dump((float)$split_payment_card + $split_payment_cash + $split_payment_cn + $split_payment_wallet);
+    // dump((float)$net_pay);
 
     if($payment_method === 2 && ( (float)$split_payment_card + $split_payment_cash + $split_payment_cn + $split_payment_wallet !== (float)$net_pay) ) {
       $form_errors['paymentMethod'] = 'Cash / Card / Cnote / Wallet value must be equal to bill value.';      
     }
 
-    // dump($form_data, $form_errors);
+    // dump($form_data, $form_errors, $cleaned_params);
     // exit;
 
     // return response.

@@ -109,6 +109,7 @@
             <ul class="sub">
               <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales Register</a></li>
               <li><a href="/sales-return/list"><i class="fa fa-repeat"></i> Sales Return Register</a></li>
+              <li><a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Sales2CB Register</a></li>
             </ul>
           </li>
           <li class="sub-menu">

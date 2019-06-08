@@ -38,10 +38,11 @@
           <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales Return Register</a></li>
           <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Transfer Register</a></li>
-          <li><a href="/fin/cash-vouchers"><i class="fa fa-money"></i> Petty Cash Register</a></li>
-          <li><a href="/fin/cash-book"><i class="fa fa-inr"></i> Petty Cash Book</a></li>
+          <li><a href="/fin/cash-vouchers"><i class="fa fa-money"></i> Cash Register</a></li>
+          <li><a href="/fin/cash-book"><i class="fa fa-inr"></i> Cash Book</a></li>
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>          
-          <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li>          
+          <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li>
+          <li><a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Sales2CB Register</a></li>
           <?php /*<li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li> */ ?>
         </ul>
       </li>
