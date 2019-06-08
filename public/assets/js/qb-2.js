@@ -673,7 +673,9 @@ function initializeJS() {
       if( $('#tr_'+barcode).length > 0) {
         var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
         var trAddedQty = parseFloat(trExistingQty)+parseFloat(orderQty);
+        var thisId = $('#tr_'+barcode).attr('index');
         $('#tr_'+barcode+' .saleItemQty').val(trAddedQty.toFixed(2));
+        updateSaleItemRow(thisId);
       } else {
         if(totalRows == 0) {
           nextIndex = 1;
@@ -715,7 +717,8 @@ function initializeJS() {
         $('#tBodyowItems').append(tableRow);
       }
       // trigger change
-      $('.saleItemQty').trigger('change');
+      // $('.saleItemQty').trigger('change');
+      updateSaleItemRow(nextIndex);
     }
   }
 
@@ -1554,7 +1557,7 @@ function initializeJS() {
             }
           },
           error: function(e) {
-            console.log('An error occurred while fetching Item Information.');
+            alert('An error occurred while fetching Item Information.');
           }
         });
       }
@@ -1896,16 +1899,18 @@ function initializeJS() {
       updateSaleItemTotal();
     });
 
-    $('#outwardEntryForm').on('change', '.saleItemQty', function(){
-      var itemIndex = jQuery(this).attr('index');
-      var itemQty = $(this).val();
-      var lotNo = $('#lotNo_'+itemIndex).val();
-      if(returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) > 0) {
-        var discountAmount = returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) * returnNumber(parseFloat(itemQty));
-      } else {
-        var discountAmount = 0;
+    $('#outwardEntryForm').on('change', '.saleItemQty', function() {
+      if(typeof lotNosResponse !== 'undefined' && lotNosResponse.length > 0) {
+        var itemIndex = jQuery(this).attr('index');
+        var itemQty = $(this).val();
+        var lotNo = $('#lotNo_'+itemIndex).val();
+        if(returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) > 0) {
+          var discountAmount = returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) * returnNumber(parseFloat(itemQty));
+        } else {
+          var discountAmount = 0;
+        }
+        $('#discount_'+itemIndex).val(discountAmount.toFixed(2));
       }
-      $('#discount_'+itemIndex).val(discountAmount.toFixed(2));
       updateSaleItemRow(itemIndex);
     });
 

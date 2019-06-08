@@ -271,18 +271,26 @@ class ReportsIndentController {
       $slno++;
       $amount = round($item_details['itemQty']*$item_details['itemRate'], 2);
 
+      $moq = $item_details['mOq'];
+      if($moq > 0 && $item_details['itemQty'] > 0) {
+        $order_qty = round($item_details['itemQty']/$moq,0);
+      } else {
+        $order_qty = $item_details['itemQty'];
+      }
+
       $tot_bill_value += $amount;
-      $tot_items_qty += $item_details['itemQty'];
+      $tot_items_qty += $order_qty;
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,25),'RTB',0,'L');
       $pdf->Cell($item_widths[2],6,substr($item_details['brandName'],0,25),'RTB',0,'L');      
       $pdf->Cell($item_widths[3],6,'','RTB',0,'L');
-      $pdf->Cell($item_widths[4],6,$item_details['itemQty'],'RTB',0,'R');
+      $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
       $pdf->Cell($item_widths[5],6,$item_details['itemRate'],'RTB',0,'R');
       $pdf->Ln();
     }
-
+    
+    $pdf->SetFont('Arial','B',11);
     $pdf->Cell(140,6,'TOTALS','LRTB',0,'R');
     $pdf->Cell(25,6,number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
     $pdf->Cell(25,6,'','LRTB',0,'R');    
@@ -383,14 +391,20 @@ class ReportsIndentController {
     foreach($indent_item_details as $item_details) {
       $slno++;
       $amount = round($item_details['itemQty']*$item_details['itemRate'], 2);
+      $moq = $item_details['mOq'];
+      if($moq > 0 && $item_details['itemQty'] > 0) {
+        $order_qty = round($item_details['itemQty']/$moq,0);
+      } else {
+        $order_qty = $item_details['itemQty'];
+      }
 
       $tot_bill_value += $amount;
-      $tot_items_qty += $item_details['itemQty'];
+      $tot_items_qty += $order_qty;
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,20),'RTB',0,'L');
       $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
-      $pdf->Cell($item_widths[3],6,$item_details['itemQty'],'RTB',0,'R');
+      $pdf->Cell($item_widths[3],6,$order_qty,'RTB',0,'R');
       $pdf->Cell($item_widths[4],6,$item_details['brandName'],'RTB',0,'L');
       $pdf->Ln();
     }
