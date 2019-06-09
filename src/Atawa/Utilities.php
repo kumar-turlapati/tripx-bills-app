@@ -665,7 +665,7 @@ class Utilities
         
         '/finy/switch', '/customers/list', '/sales-indents/list', '/barcodes/list',
         '/sales-indent/create', '/sales-indent/create/mobile', '/fin/receipt-voucher/create',
-        '/campaigns/list', '/sales-indent/update',
+        '/campaigns/list', '/sales-indent/update', '/finy/list',
 
         '/print-indent', '/print-indent-wor', 
 
