@@ -33,14 +33,14 @@ class User {
 		}
 	}	
 
-	public function get_user_details($uuid='',$search_params=array()) {
+	public function get_user_details($uuid='',$search_params=[]) {
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'users/'.$uuid.'/'.$client_id;
 		// call api.
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get',$request_uri,$search_params);
 		$status = $response['status'];
-		if ($status === 'success') {
+		if($status === 'success') {
 			return array('status'=>true,'userDetails'=>$response['response']['userDetails']);
 		} elseif($status === 'failed') {
 			return array('status'=>false, 'apierror'=>$response['reason']);

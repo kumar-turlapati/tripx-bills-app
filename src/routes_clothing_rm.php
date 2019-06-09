@@ -935,6 +935,9 @@ $routes->add('report_indentAgentwise', new Routing\Route('/indent-agentwise', ar
 $routes->add('report_indentStatewise', new Routing\Route('/indent-statewise', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentStatewiseBooked',
 )));
+$routes->add('report_print_indents_of_agent', new Routing\Route('/print-indents-agentwise', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentsAgentwise',
+)));
 $routes->add('report_indentRegister', new Routing\Route('/indent-register', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentRegister',
 )));
@@ -1024,12 +1027,6 @@ $routes->add('report_sreturnsItemwise', new Routing\Route('/itemwise-sales-retur
 )));
 $routes->add('report_salesReturnRegister', new Routing\Route('/sales-return-register', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesReturnController::salesReturnRegister',
-)));
-$routes->add('report_printDaywiseSalesSummary', new Routing\Route('/sales-summary-by-month', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::printSalesSummaryByMonth',
-)));
-$routes->add('report_printIndentsAgentwise', new Routing\Route('/print-indents-agentwise', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentsAgentwise',
 )));
 
 /*

@@ -517,7 +517,7 @@ class Utilities
       // for Manager
       9 => [
 
-        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', 
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
         '/async/finyDefault', '/async/itd', '/async/sdiscount',
@@ -545,7 +545,7 @@ class Utilities
       // for Business head
       12 => [
 
-        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
         '/async/finyDefault', '/async/itd', '/async/sdiscount',
@@ -575,7 +575,7 @@ class Utilities
       // for Sales Operator
       5 => [
 
-        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
         '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd', '/async/getComboItemDetails',
@@ -625,7 +625,8 @@ class Utilities
 
       // for Purchase Operator
       7  => [
-        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
+
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/get-supplier-details',
         '/async/finyDefault', '/async/itd',
@@ -658,20 +659,27 @@ class Utilities
       // for Marketing user
       10 => [
 
-        '/async/finyDefault',
+        '/async/finyDefault', '/async/getItemDetailsByCode', '/async/itemsAc', '/async/brandAc', '/async/custAc', 
 
-        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',        
-
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
+        
         '/finy/switch', '/customers/list', '/sales-indents/list', '/barcodes/list',
         '/sales-indent/create', '/sales-indent/create/mobile', '/fin/receipt-voucher/create',
-        '/campaigns/list', '/report-options/indent-item-avail', '/report-options/indent-itemwise',
+        '/campaigns/list', '/sales-indent/update',
+
+        '/print-indent', '/print-indent-wor', 
+
+        '/report-options/indent-item-avail', '/report-options/indent-itemwise',
         '/report-options/indent-agentwise', '/report-options/indent-statewise', 
         '/report-options/print-indents-agentwise', '/report-options/indent-register',
         '/report-options/indent-dispatch-summary',
+
+        '/indent-item-avail', '/indent-itemwise', '/indent-agentwise', '/indent-statewise',
+        '/print-indents-agentwise', '/indent-register', '/indent-dispatch-summary',
       ],
 
       13 => [
-        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me',
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/getTrDetailsByCode',
 

@@ -251,6 +251,8 @@ class UserController {
     } else {
       $uuid = $_SESSION['uid'];
       $user_details = $user_model->get_user_details($uuid);
+      // dump($user_details);
+      // exit;
       if($user_details['status']) {
         $submitted_data = $user_details['userDetails'];
       } else {

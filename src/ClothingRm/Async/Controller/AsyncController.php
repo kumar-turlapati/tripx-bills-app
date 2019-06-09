@@ -220,13 +220,13 @@ class AsyncController {
         echo $response;
       }
     } elseif($api_string === 'finyDefault') {
-      // if(!isset($_SESSION['fy_s_date']) && !isset($_SESSION['fy_e_date'])) {
-        $response = $api_caller->sendRequest('get','finy/default',[],false);
-        if(!is_array($response)) {
-          $response = json_decode($response, true);
-        }
+      $response = $api_caller->sendRequest('get','finy/default',[],false);
+      // var_dump($response);
+      // exit;
+      if(!is_array($response)) {
+        $response = json_decode($response, true);
         Utilities::_set_fin_start_end_dates($response['response']);
-      // }
+      }
       echo 'QwikBills V.1.0';
     } elseif($api_string === 'auditQty') {
       $params = [];

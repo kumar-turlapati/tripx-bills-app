@@ -1049,6 +1049,7 @@ class ReportsController
           break;
         case 'indent-register':
           $template_name = 'template-indent-2';
+          $agents_a = [];
           # ---------- get business users ----------------------------
           $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
           if($agents_response['status']) {
