@@ -1900,8 +1900,16 @@ function initializeJS() {
     });
 
     $('#outwardEntryForm').on('change', '.saleItemQty', function() {
+      var itemIndex = jQuery(this).attr('index');
+      var avaQty = returnNumber(parseFloat($('#qtyava_'+itemIndex).val()));
+      var itemQty = returnNumber(parseFloat($(this).val()));
+      if(itemQty > avaQty) {
+        alert('Qty. not available');
+        $(this).val('');
+        $(this).focus();
+        return false;
+      }
       if(typeof lotNosResponse !== 'undefined' && lotNosResponse.length > 0) {
-        var itemIndex = jQuery(this).attr('index');
         var itemQty = $(this).val();
         var lotNo = $('#lotNo_'+itemIndex).val();
         if(returnNumber(parseFloat(lotNosResponse[lotNo].discountAmount)) > 0) {
