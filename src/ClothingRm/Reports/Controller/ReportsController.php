@@ -577,9 +577,9 @@ class ReportsController
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell($item_widths[0],6,'Sno.','LRB',0,'C');
     $pdf->Cell($item_widths[1],6,'Product Name','RB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Qty.','RB',0,'C');  
     $pdf->Cell($item_widths[2],6,'HSN/SAC','RB',0,'C');
     $pdf->Cell($item_widths[3],6,'M.R.P (Rs.)','RB',0,'C');
-    $pdf->Cell($item_widths[4],6,'Qty.','RB',0,'C');  
     $pdf->Cell($item_widths[5],6,'Amount (Rs.)','RB',0,'C');
     $pdf->SetFont('Arial','',9);
 
@@ -610,9 +610,9 @@ class ReportsController
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,$item_details['itemName'],'RB',0,'L');
+      $pdf->Cell($item_widths[4],6,number_format($item_details['itemQty'],2,'.',''),'RB',0,'R');
       $pdf->Cell($item_widths[2],6,$item_details['hsnSacCode'],'RB',0,'L');
       $pdf->Cell($item_widths[3],6,number_format($item_details['mrp'],2,'.',''),'RB',0,'R');
-      $pdf->Cell($item_widths[4],6,number_format($item_details['itemQty'],2,'.',''),'RB',0,'R');
       $pdf->Cell($item_widths[5],6,number_format($amount,2,'.',''),'RB',1,'R');
 
       if(isset($taxable_values[$tax_percent])) {
@@ -627,16 +627,25 @@ class ReportsController
       }
     }
 
-    $pdf->SetFont('Arial','B',9);
-    $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3]+$item_widths[4],6,'Total Amount:','L',0,'R');
-    $pdf->Cell($item_widths[5],4,number_format($tot_bill_value,2,'.',''),'R',1,'R');
-    $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3]+$item_widths[4],6,'(-)Discount:','L',0,'R');
-    $pdf->Cell($item_widths[5],4,number_format($tot_discount,2,'.',''),'R',1,'R');
-    $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3]+$item_widths[4],6,'(+/-)R.off:','L',0,'R');
-    $pdf->Cell($item_widths[5],4,number_format($sale_details['roundOff'],2,'.',''),'R',1,'R');
-    $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3]+$item_widths[4],6,'Amount Payable:','L',0,'R');
-    $pdf->SetFont('Arial','B',14);
-    $pdf->Cell($item_widths[5],6,number_format($sale_details['netPay'],2,'.',''),'TBR',1,'R');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(25,6,'Tot.Qty.','L',0,'C');
+    $pdf->Cell(30,6,'Tot.Amount (Rs.)','',0,'C');
+    $pdf->Cell(25,6,'Disc. (Rs.)','',0,'C');
+    $pdf->Cell(20,6,'ROff (+/-)','',0,'C');
+    $pdf->Cell(38,6,'Payable (Rs.)','',0,'C');
+    $pdf->Cell(52,6,'Payment Mode','R',0,'C');
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Cell(25,6,$tot_items_qty,'L',0,'C');
+    $pdf->Cell(30,6,number_format($tot_bill_value,2,'.',''),'',0,'C');
+    $pdf->Cell(25,6,number_format($tot_discount,2,'.',''),'',0,'C');
+    $pdf->Cell(20,6,number_format($sale_details['roundOff'],2,'.',''),'',0,'C');
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Cell(38,6,number_format($sale_details['netPay'],2,'.',''),'',0,'C');
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Cell(52,6,$payment_method,'R',0,'C');
+    $pdf->Ln();
 
     $pdf->SetFont('Arial','',9);
     $pdf->Cell(190,6,'[ In words: '.Utilities::get_indian_currency($sale_details['netPay']).' ]','LRB',1,'C');

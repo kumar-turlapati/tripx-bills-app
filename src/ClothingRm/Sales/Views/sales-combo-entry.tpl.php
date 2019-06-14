@@ -51,8 +51,148 @@
         </div>
         
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="comboBillEntry">
-          <div class="panel" style="margin-bottom:0px;">
-            <div class="panel-body" style="padding-top:10px;">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover font12" style="margin-bottom:0px;">
+              <thead>
+                <tr>
+                  <th width="4%"  class="text-center">Sno.</th>
+                  <th width="5%"  class="text-center">Barcode</th>                                    
+                  <th width="5%"  class="text-center">Combo Item Code</th>                                    
+                  <th width="5%"  class="text-center">Sale qty.</th>
+                  <th width="18%" class="text-center">Item name</th>
+                  <th width="5%"  class="text-center">Available<br />qty.</th>
+                  <th width="8%"  class="text-center">Rate</th>
+                  <th width="10%" class="text-center">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                  $tot_gross_amount = $tot_round_off = $tot_netpay = 0;
+                  for($i=1;$i<=7;$i++):
+                    $bill_amount = $taxable_amount = $item_total = 0;
+                    $ex_index = $i-1;
+                    if(isset($form_data['itemDetails']['comboItemCode'][$ex_index])) {
+                      $item_code = $form_data['itemDetails']['comboItemCode'][$ex_index];
+                      $item_name = $form_data['itemDetails']['itemName'][$ex_index];
+                      $item_qty_available = $form_data['itemDetails']['itemAvailQty'][$ex_index];
+                      $item_qty = $form_data['itemDetails']['comboItemSoldQty'][$ex_index];
+                      $item_rate = $form_data['itemDetails']['itemRate'][$ex_index];
+                      $item_discount = $form_data['itemDetails']['itemDiscount'][$ex_index];
+                    } else {
+                      $item_code = '';
+                      $item_name = '';
+                      $item_qty_available = '';
+                      $item_qty = '';
+                      $item_rate = '';
+                      $item_discount = '';
+                    }
+
+                    if($item_qty && $item_rate>0) {
+                      $bill_amount = $item_qty*$item_rate;
+                      $taxable_amount = $bill_amount - $item_discount;
+                      $tot_gross_amount += $taxable_amount;
+                    }
+                ?>
+                  <tr>
+                    <td align="right" style="vertical-align:middle;"><?php echo $i ?></td>
+                    <td align="center" style="vertical-align:middle;" title="Info: Remove the barcode to type Combo code">
+                      <input 
+                        type="text" 
+                        name="itemDetails[barcode][]" 
+                        id="cbarcode_<?php echo $i-1 ?>" 
+                        size="13"
+                        class="comboBarcode" 
+                        style="border:1px dashed #00AEFF;font-weight:bold;color:#AA3E39;"
+                        disabled
+                      />
+                    </td>
+                    <td style="vertical-align:middle;" align="center">
+                      <input 
+                        type="text" 
+                        name="itemDetails[comboItemCode][]" 
+                        id="cicode_<?php echo $i-1 ?>" 
+                        size="20" 
+                        class="comboItemCode" 
+                        value="<?php echo $item_code ?>"
+                        style="width:100px;border:1px dashed #E8473A;font-weight:bold;color:#000;"
+                      />
+                    </td>
+                    <td style="vertical-align:middle;">
+                      <input
+                        type="text"
+                        id="qty_<?php echo $i-1 ?>"
+                        name="itemDetails[comboItemSoldQty][]"
+                        size="10"
+                        value="<?php echo $item_qty ?>"
+                        class="form-control comboItemQty"
+                        index="<?php echo $i-1 ?>"
+                        style="border:1px solid #000;color:#000;font-weight:bold;"
+                        title="Enter Qty. and press enter to calculate item amount"                     
+                      />
+                    </td>
+                    <td id="inameTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:left;font-size:16px;color:#225992;font-weight:bold;">
+                      <?php echo $item_name ?>
+                    </td>
+                    <td id="qtyavaTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;font-size:16px;color:green;font-weight:bold;">
+                      <?php echo $item_qty_available > 0 ? number_format($item_qty_available, 2, '.', '') : '' ?>
+                    </td>
+                    <td id="mrpTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;font-size:16px;color:#225992;font-weight:bold;">
+                      <?php echo $item_rate > 0 ? number_format($item_rate, 2, '.', '') : '' ?>
+                    </td>
+                    <td id="grossAmountTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;font-size:16px;color:#2E1114;font-weight:bold;">
+                      <?php echo $bill_amount > 0 ? number_format($bill_amount, 2, '.', '') : '' ?>
+                    </td>
+                    <input type="hidden" id = "iname_<?php echo $i-1 ?>" name = "itemDetails[itemName][]" value="<?php echo $item_name ?>" />
+                    <input type="hidden" id = "qtyava_<?php echo $i-1 ?>" name = "itemDetails[itemAvailQty][]" value="<?php echo $item_qty_available ?>" />
+                    <input type="hidden" id = "mrp_<?php echo $i-1 ?>" name = "itemDetails[itemRate][]" value="<?php echo $item_rate ?>" />
+                    <input type="hidden" id = "discount_<?php echo $i-1 ?>" name = "itemDetails[itemDiscount][]" value="<?php echo $item_discount ?>" />
+                  </tr>
+                  <?php 
+                    /* Show error tr if there are any errors in the line item */
+                    if( 
+                        isset($errors['itemDetails']['itemName'][$i-1]) ||
+                        isset($errors['itemDetails']['comboItemCode'][$i-1]) ||
+                        isset($errors['itemDetails']['comboItemSoldQty'][$i-1]) ||
+                        isset($errors['itemDetails']['itemAvailQty'][$i-1]) ||
+                        isset($errors['itemDetails']['itemRate'][$i-1])
+                      ) {
+                  ?>
+                      <tr class="rowErrors" id="rowError_<?php echo $i-1 ?>">
+                        <td style="border:none;">&nbsp;</td>
+                        <td style="border:none;">&nbsp;</td>
+                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['comboItemCode'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
+                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['comboItemSoldQty'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
+                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['itemName'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
+                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['itemAvailQty'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
+                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['itemRate'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
+                      </tr>
+                  <?php } ?>
+                <?php 
+                  endfor;
+                  $item_total_round = round($tot_gross_amount, 0);
+                  $round_off = $item_total_round - $tot_gross_amount;
+                ?>
+                  <tr>
+                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Gross Amount (in Rs.)</td>
+                    <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Round Off (in Rs.)</td>
+                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">NetPay (in Rs.)</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;" class="grossAmount">
+                      <?php echo $tot_gross_amount > 0 ? number_format($tot_gross_amount, 2, '.', '') : '' ?>
+                    </td>
+                    <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;" class="roundOff">
+                      <?php echo $round_off !== '' ? number_format($round_off, 2, '.', '') : '' ?>
+                    </td>
+                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;" class="netPay">
+                      <?php echo $item_total_round > 0 ? number_format($item_total_round, 2, '.', '') : '' ?>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel" style="margin-top:5px;">
+            <div class="panel-body" style="padding-top:10px;border:2px dotted #000">
               <div class="form-group">
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <label class="control-label labelStyle">Date (dd-mm-yyyy)</label>
@@ -239,147 +379,7 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover font12">
-              <thead>
-                <tr>
-                  <th width="4%"  class="text-center">Sno.</th>
-                  <th width="5%"  class="text-center">Barcode</th>                                    
-                  <th width="5%"  class="text-center">Combo Item Code</th>                                    
-                  <th width="5%"  class="text-center">Sale qty.</th>
-                  <th width="18%" class="text-center">Item name</th>
-                  <th width="5%"  class="text-center">Available<br />qty.</th>
-                  <th width="8%"  class="text-center">Rate</th>
-                  <th width="10%" class="text-center">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php
-                  $tot_gross_amount = $tot_round_off = $tot_netpay = 0;
-                  for($i=1;$i<=7;$i++):
-                    $bill_amount = $taxable_amount = $item_total = 0;
-                    $ex_index = $i-1;
-                    if(isset($form_data['itemDetails']['comboItemCode'][$ex_index])) {
-                      $item_code = $form_data['itemDetails']['comboItemCode'][$ex_index];
-                      $item_name = $form_data['itemDetails']['itemName'][$ex_index];
-                      $item_qty_available = $form_data['itemDetails']['itemAvailQty'][$ex_index];
-                      $item_qty = $form_data['itemDetails']['comboItemSoldQty'][$ex_index];
-                      $item_rate = $form_data['itemDetails']['itemRate'][$ex_index];
-                      $item_discount = $form_data['itemDetails']['itemDiscount'][$ex_index];
-                    } else {
-                      $item_code = '';
-                      $item_name = '';
-                      $item_qty_available = '';
-                      $item_qty = '';
-                      $item_rate = '';
-                      $item_discount = '';
-                    }
-
-                    if($item_qty && $item_rate>0) {
-                      $bill_amount = $item_qty*$item_rate;
-                      $taxable_amount = $bill_amount - $item_discount;
-                      $tot_gross_amount += $taxable_amount;
-                    }
-                ?>
-                  <tr>
-                    <td align="right" style="vertical-align:middle;"><?php echo $i ?></td>
-                    <td align="center" style="vertical-align:middle;" title="Info: Remove the barcode to type Combo code">
-                      <input 
-                        type="text" 
-                        name="itemDetails[barcode][]" 
-                        id="cbarcode_<?php echo $i-1 ?>" 
-                        size="13"
-                        class="comboBarcode" 
-                        style="border:1px dashed #00AEFF;font-weight:bold;color:#AA3E39;"
-                        disabled
-                      />
-                    </td>
-                    <td style="vertical-align:middle;" align="center">
-                      <input 
-                        type="text" 
-                        name="itemDetails[comboItemCode][]" 
-                        id="cicode_<?php echo $i-1 ?>" 
-                        size="20" 
-                        class="comboItemCode" 
-                        value="<?php echo $item_code ?>"
-                        style="width:100px;border:1px dashed #E8473A;font-weight:bold;color:#000;"
-                      />
-                    </td>
-                    <td style="vertical-align:middle;">
-                      <input
-                        type="text"
-                        id="qty_<?php echo $i-1 ?>"
-                        name="itemDetails[comboItemSoldQty][]"
-                        size="10"
-                        value="<?php echo $item_qty ?>"
-                        class="form-control comboItemQty"
-                        index="<?php echo $i-1 ?>"
-                        style="border:1px solid #000;color:#000;font-weight:bold;"
-                        title="Enter Qty. and press enter to calculate item amount"                     
-                      />
-                    </td>
-                    <td id="inameTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:left;font-size:16px;color:#225992;font-weight:bold;">
-                      <?php echo $item_name ?>
-                    </td>
-                    <td id="qtyavaTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;font-size:16px;color:green;font-weight:bold;">
-                      <?php echo $item_qty_available > 0 ? number_format($item_qty_available, 2, '.', '') : '' ?>
-                    </td>
-                    <td id="mrpTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;font-size:16px;color:#225992;font-weight:bold;">
-                      <?php echo $item_rate > 0 ? number_format($item_rate, 2, '.', '') : '' ?>
-                    </td>
-                    <td id="grossAmountTd_<?php echo $i-1 ?>" style="vertical-align:middle;text-align:right;font-size:16px;color:#2E1114;font-weight:bold;">
-                      <?php echo $bill_amount > 0 ? number_format($bill_amount, 2, '.', '') : '' ?>
-                    </td>
-                    <input type="hidden" id = "iname_<?php echo $i-1 ?>" name = "itemDetails[itemName][]" value="<?php echo $item_name ?>" />
-                    <input type="hidden" id = "qtyava_<?php echo $i-1 ?>" name = "itemDetails[itemAvailQty][]" value="<?php echo $item_qty_available ?>" />
-                    <input type="hidden" id = "mrp_<?php echo $i-1 ?>" name = "itemDetails[itemRate][]" value="<?php echo $item_rate ?>" />
-                    <input type="hidden" id = "discount_<?php echo $i-1 ?>" name = "itemDetails[itemDiscount][]" value="<?php echo $item_discount ?>" />
-                  </tr>
-                  <?php 
-                    /* Show error tr if there are any errors in the line item */
-                    if( 
-                        isset($errors['itemDetails']['itemName'][$i-1]) ||
-                        isset($errors['itemDetails']['comboItemCode'][$i-1]) ||
-                        isset($errors['itemDetails']['comboItemSoldQty'][$i-1]) ||
-                        isset($errors['itemDetails']['itemAvailQty'][$i-1]) ||
-                        isset($errors['itemDetails']['itemRate'][$i-1])
-                      ) {
-                  ?>
-                      <tr class="rowErrors" id="rowError_<?php echo $i-1 ?>">
-                        <td style="border:none;">&nbsp;</td>
-                        <td style="border:none;">&nbsp;</td>
-                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['comboItemCode'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
-                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['comboItemSoldQty'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
-                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['itemName'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
-                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['itemAvailQty'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
-                        <td style="border:none;text-align:center;"><?php echo isset($errors['itemDetails']['itemRate'][$i-1]) ? '<span class="error">Invalid</span>': '' ?></td>
-                      </tr>
-                  <?php } ?>
-                <?php 
-                  endfor;
-                  $item_total_round = round($tot_gross_amount, 0);
-                  $round_off = $item_total_round - $tot_gross_amount;
-                ?>
-                  <tr>
-                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Gross Amount (in Rs.)</td>
-                    <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">Round Off (in Rs.)</td>
-                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;">NetPay (in Rs.)</td>
-                  </tr>
-                  <tr>
-                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;" class="grossAmount">
-                      <?php echo $tot_gross_amount > 0 ? number_format($tot_gross_amount, 2, '.', '') : '' ?>
-                    </td>
-                    <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;" class="roundOff">
-                      <?php echo $round_off !== '' ? number_format($round_off, 2, '.', '') : '' ?>
-                    </td>
-                    <td colspan="3" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:center;" class="netPay">
-                      <?php echo $item_total_round > 0 ? number_format($item_total_round, 2, '.', '') : '' ?>
-                    </td>
-                  </tr>
-              </tbody>
-            </table>
-          </div>
+          </div>          
           <div class="text-center">
             <button class="btn btn-primary" id="SaveCombo" name="op" value="Save">
               <i class="fa fa-save"></i> Save &amp; Print

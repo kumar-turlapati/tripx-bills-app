@@ -276,10 +276,11 @@ class BusinessUsersController {
     $phone = Utilities::clean_string($form_data['phone']);
     $gst_no = Utilities::clean_string($form_data['gstNo']);
 
-    if(ctype_alnum(str_replace([' ', '.'], ['',''], $user_name)) ) {
+    // if(ctype_alnum(str_replace([' ', '.'], ['',''], $user_name)) ) {
+    if($user_name !== '') {
       $cleaned_params['userName'] = $user_name;
     } else {
-      $form_errors['userName'] = 'Invalid user name. Only space and dot allowed.';
+      $form_errors['userName'] = 'Invalid user name or user name is required.';
     }
     if($mobile_no !== '') {
       if(strlen($mobile_no) === 10 && is_numeric($mobile_no)) {
