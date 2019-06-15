@@ -88,7 +88,7 @@
                   <th width="10%" class="text-center valign-middle">Lot No.</th>                                                
                   <th width="5%" class="text-center valign-middle">Opening<br />qty.</th>
                   <th width="5%" class="text-center valign-middle">Packed/<br />qty.</th>
-                  <th width="5%" class="text-center valign-middle">Total qty.</th>                
+                  <?php /*<th width="5%" class="text-center valign-middle">Total qty.</th> */ ?>
                   <th width="8%" class="text-center valign-middle">Opening rate<br />(in Rs.)</th>
                   <th width="8%" class="text-center valign-middle">Opening value<br />(in Rs.)</th>
                   <th width="8%" class="text-center valign-middle">Purchase rate<br />(in Rs.)</th>                
@@ -109,7 +109,7 @@
                     $tax_percent = $opening_details['taxPercent'];
                     $opening_code = $opening_details['openingCode'];
                     $packed_qty = $opening_details['packedQty'];
-                    $total_qty = round($opening_qty * $packed_qty, 2);
+                    $total_qty = round($opening_qty, 2);
                     $brand_name = $opening_details['mfgName'];
                     $container_no = $opening_details['cno'];
                     $lot_no = $opening_details['lotNo'];
@@ -126,7 +126,7 @@
                       <td class="text-left valign-middle"><?php echo $lot_no ?></td>                    
                       <td class="valign-middle"><?php echo number_format($opening_qty,2,'.','') ?></td>
                       <td class="valign-middle"><?php echo number_format($packed_qty,2,'.','') ?></td>
-                      <td class="valign-middle"><?php echo number_format($total_qty,2,'.','') ?></td>
+                      <?php /*<td class="valign-middle"><?php echo number_format($total_qty,2,'.','') ?></td> */ ?>
                       <td class="valign-middle"><?php echo number_format($opening_rate,2,'.','') ?></td>
                       <td class="text-bold valign-middle"><?php echo number_format($opening_value,2,'.','') ?></td>
                       <td class="text-bold valign-middle"><?php echo number_format($purchase_rate,2,'.','') ?></td>                    
@@ -146,7 +146,7 @@
                 endforeach; 
               ?>
                 <tr>
-                  <td colspan="10" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
+                  <td colspan="9" align="right">PAGE TOTALS (PURCHASE VALUE)</td>
                   <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_stock_value,2,'.','') ?></td>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>

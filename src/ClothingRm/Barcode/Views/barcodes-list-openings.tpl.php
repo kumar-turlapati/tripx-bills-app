@@ -109,6 +109,7 @@
                       $category_name = $opening_details['categoryName'];
                       $opening_rate = $opening_details['openingRate']; 
                       $opening_qty = $opening_details['openingQty'];
+                      $packed_qty = $opening_details['packedQty'];
                       $opening_value = $opening_qty*$opening_rate;
                       $purchase_rate = $opening_details['purchaseRate'];
                       $tax_percent = $opening_details['taxPercent'];
@@ -116,15 +117,18 @@
                       $item_code = $opening_details['itemCode'];
                       $lot_no = $opening_details['lotNo'];
                       $barcode = $opening_details['barcode'];
-                      $packed_qty = $opening_details['packedQty'];
                       $item_key = $item_code.'__'.$lot_no.'__'.$packed_qty;
                       $item_sku = $opening_details['itemSku'];
                       $mfg_name = $opening_details['mfgName'];
                       $cno = $opening_details['cno'];
                       $uom_name = $opening_details['uomName'];
-
                       $tot_opening_value_pur += ($opening_qty * $purchase_rate);
                       $tot_opening_value_sale += ($opening_qty * $opening_rate);
+                      if($packed_qty > 0) {
+                        $opening_qty_calc = round($opening_qty/$packed_qty, 2);
+                      } else {
+                        $opening_qty_calc = $opening_qty;
+                      }
                   ?>
                       <tr class="font11">
                         <td align="center">
@@ -148,7 +152,7 @@
                             name="stickerQty[<?php echo $item_key ?>]" 
                             style="background-color:#f1f442;border:1px solid #000;font-weight:bold;text-align:right;"
                             id="stickerQty_<?php echo $item_key ?>"
-                            value="<?php echo $opening_qty ?>"
+                            value="<?php echo $opening_qty_calc ?>"
                           />
                         </td>
                         <td class="valign-middle text-right text-bold font12"><?php echo number_format($opening_rate,2,'.','') ?></td>

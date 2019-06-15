@@ -673,18 +673,16 @@ class ReportsController
         $five_percent_taxable = $taxable_values['5.00'];
         $cgst_amount = $sgst_amount = round($taxable_gst_value['5.00']/2,2);
         $igst_amount = 0;
-      } else {
-        $five_percent_taxable = $igst_amount = $sgst_amount = $cgst_amount = 0;
+        $pdf->Ln();
+        $pdf->Cell(15,6,'5.00 %','LB',0,'R');    
+        $pdf->Cell(21,6,$five_percent_taxable > 0 ? number_format($five_percent_taxable, 2, '.', '') : '','LB',0,'R');
+        $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
+        $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
+        $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','LRB',0,'R');
+        $pdf->SetFont('Arial','B',12);
+        $pdf->Cell(95,6,'*** THANK YOU & VISIT AGAIN. ***','L',0,'C');
+        $pdf->SetFont('Arial','',9);
       }
-      $pdf->Ln();
-      $pdf->Cell(15,6,'5.00 %','LB',0,'R');    
-      $pdf->Cell(21,6,$five_percent_taxable > 0 ? number_format($five_percent_taxable, 2, '.', '') : '','LB',0,'R');
-      $pdf->Cell(19,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','LB',0,'R');    
-      $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','LB',0,'R');
-      $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','LRB',0,'R');
-      $pdf->SetFont('Arial','B',12);
-      $pdf->Cell(95,6,'*** THANK YOU & VISIT AGAIN. ***','L',0,'C');
-      $pdf->SetFont('Arial','',9);
 
       $pdf->Ln();
       if(count($tandc_a) > 0) {
