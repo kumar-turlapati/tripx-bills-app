@@ -106,7 +106,8 @@
                 <th width="10%" class="text-center">Invoice no.</th>
                 <th width="10%" class="text-center">Credit Note no.</th>
                 <th width="10%" class="text-center">Credit Note date</th>
-                <th width="10%" class="text-center">Amount</span></th>
+                <th width="10%" class="text-center">Credit Note value</span></th>
+                <th width="10%" class="text-center">Consumed Invoice No.</th>
                 <th width="10%" class="text-center">Balance value</span></th>                
                 <th width="15%" class="text-center">Store name</th>
                 <th width="15%" class="text-center">Actions</th>
@@ -128,6 +129,9 @@
                   $invoice_date = !is_null($voucher_details['invoiceDate']) ? date('d-M-Y', strtotime($voucher_details['invoiceDate'])) : '-';
                   $balance_value = $voucher_details['balanceValue'];
                   $voucher_type = $voucher_details['cnType'];
+                  $invoice_code = $voucher_details['invoiceCode'];
+                  $consumed_invoice_no = $voucher_details['consumedInvoiceNo'];
+                  $consumed_invoice_code =  $voucher_details['consumedInvoiceCode'];
 
                   $total += $voucher_amount;
                   $balance_total += $balance_value;
@@ -135,11 +139,24 @@
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="center" class="valign-middle"><?php echo $invoice_date ?></td>
-                  <td align="center" class="valign-middle"><?php echo $bill_no ?></td>                
+                  <td align="right" class="valign-middle">
+                    <i class="fa fa-external-link" aria-hidden="true"></i>&nbsp;
+                    <a href="/sales/view-invoice/<?php echo $invoice_code ?>" target="_blank" class="hyperlink">
+                      <?php echo $bill_no ?>
+                    </a>
+                  </td> 
                   <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
                   <td class="valign-middle"><?php echo $voucher_date ?></td>
-                  <td align="right" class="valign-middle"><?php echo number_format($voucher_amount,2) ?></td>
-                  <td align="right" class="valign-middle"><?php echo number_format($balance_value,2) ?></td>                  
+                  <td align="right" class="valign-middle"><?php echo number_format($voucher_amount,2,'.','') ?></td>
+                  <td align="right" class="valign-middle">
+                    <?php if((int)$consumed_invoice_no > 0): ?>
+                      <i class="fa fa-external-link" aria-hidden="true"></i>&nbsp;
+                      <a href="/sales/view-invoice/<?php echo $consumed_invoice_code ?>" target="_blank" class="hyperlink">
+                        <?php echo $consumed_invoice_no ?>
+                      </a>
+                    <?php endif; ?>
+                  </td>
+                  <td align="right" class="valign-middle"><?php echo number_format($balance_value,2,'.','') ?></td>                  
                   <td class="valign-middle"><?php echo $location_name ?></td>
                   <td class="valign-middle">
                     <div class="btn-actions-group" align="right">
@@ -172,6 +189,7 @@
               <tr class="text-bold">
                 <td colspan="5" align="right">TOTALS</td>
                 <td align="right"><?php echo number_format($total, 2, '.', '') ?></td>
+                <td>&nbsp;</td>
                 <td align="right"><?php echo number_format($balance_total, 2, '.', '') ?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>                

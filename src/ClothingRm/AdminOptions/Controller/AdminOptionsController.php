@@ -218,12 +218,12 @@ class AdminOptionsController
         $form_errors = $form_validation['errors'];
       } else {
         $submitted_data = $form_validation['cleaned_params'];
-        $api_response = $this->sales_return_model->remove_sales_return_transaction($submitted_data);
+        $api_response = $this->sales_return_model->delete_sales_return($submitted_data);
         if($api_response['status']) {
-          $this->flash->set_flash_message('Sales Return Voucher Deleted successfully.');
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i> Sales Return Voucher Deleted successfully.');
           Utilities::redirect('/admin-options/delete-invoice');
         } else {
-          $page_error = $api_response['apierror'];
+          $page_error = '<i class="fa fa-times" aria-hidden="true"></i> '.$api_response['apierror'];
           $this->flash->set_flash_message($page_error, 1);
         }
       }

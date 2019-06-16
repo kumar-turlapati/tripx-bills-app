@@ -281,7 +281,7 @@ class SalesReturnsController {
     $page_no = 1; 
     $per_page = 100;
 
-    # check for filter variables.
+    // check for filter variables.
     if(count($request->request->all()) > 0) {
       $search_params = $request->request->all();
     } else {
@@ -289,7 +289,7 @@ class SalesReturnsController {
       $search_params['perPage'] = $per_page;
       $search_params['fromDate'] = date("01-m-Y");
       $search_params['toDate'] = date("d-m-Y");
-      $search_params['locationCode'] = (int)$_SESSION['utype'] !== 3 && (int)$_SESSION['utype'] !== 9 ? $_SESSION['lc'] : '';
+      $search_params['locationCode'] = $_SESSION['lc'];
     }
 
     # ---------- get location codes from api -----------------------

@@ -41,6 +41,7 @@ class SalesReturns
 		}		
 	}
 
+	// update sales return
 	public function updateSalesReturn ($params=array(),$return_code='',$sale_item_details=array()) {
 		$request_params = array();		
 		$valid_result = $this->_validateFormData($params,$sale_item_details);
@@ -67,7 +68,94 @@ class SalesReturns
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);
 		}		
-	}	
+	}
+
+	// get sales returns
+	public function get_all_sales_returns($search_params=[]) {
+
+		// fetch client id
+		$client_id = Utilities::get_current_client_id();
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get','sales-return-register/'.$client_id,$search_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'sales_returns' => $response['response']['sales_returns'], 
+				'total_pages' => $response['response']['total_pages'],
+				'total_records' => $response['response']['total_records'],
+				'record_count' =>  $response['response']['this_page']
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}	
+	}
+
+	// get sales return details
+	public function get_sales_return_details($return_code='') {
+
+		$params = array();
+
+		// fetch client id
+		$client_id = Utilities::get_current_client_id();
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get','sales-return/'.$client_id.'/'.$return_code,$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'returnDetails' => $response['response']['returnDetails'],
+			);
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}
+	}
+
+	public function delete_sales_return($form_data = []) {
+		$request_uri = 'sales-return/delete';
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post',$request_uri,$form_data);
+		$status = $response['status'];
+		if($status === 'success') {
+			return array('status' => true);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
+
+	// sales return itemwise
+	public function get_itemwise_sales_returns($params=array()) {
+
+		$client_id = Utilities::get_current_client_id();
+		$end_point = 'reports/sales-return-itemwise/'.$client_id;
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$end_point,$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+			  'status' => true,
+				'returns' => $response['response']['returns'], 
+				'total_pages' => $response['response']['total_pages'],
+				'total_records' => $response['response']['total_records'],
+				'record_count' =>  $response['response']['this_page']			  
+			);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
 
 	private function _validateFormData($params=[], $sale_item_details=[]) {
 
@@ -155,78 +243,4 @@ class SalesReturns
 
 		return $errors;
 	}	
-
-	# get sales returns.
-	public function get_all_sales_returns($search_params=[]) {
-
-		// fetch client id
-		$client_id = Utilities::get_current_client_id();
-
-		// call api.
-		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get','sales-return-register/'.$client_id,$search_params);
-		$status = $response['status'];
-		if ($status === 'success') {
-			return array(
-				'status' => true,  
-				'sales_returns' => $response['response']['sales_returns'], 
-				'total_pages' => $response['response']['total_pages'],
-				'total_records' => $response['response']['total_records'],
-				'record_count' =>  $response['response']['this_page']
-			);
-		} elseif($status === 'failed') {
-			return array(
-				'status' => false, 
-				'apierror' => $response['reason']
-			);
-		}	
-	}
-
-	# get sales return details.
-	public function get_sales_return_details($return_code='') {
-
-		$params = array();
-
-		// fetch client id
-		$client_id = Utilities::get_current_client_id();
-
-		// call api.
-		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get','sales-return/'.$client_id.'/'.$return_code,$params);
-		$status = $response['status'];
-		if ($status === 'success') {
-			return array(
-				'status' => true,  
-				'returnDetails' => $response['response']['returnDetails'],
-			);
-		} elseif($status === 'failed') {
-			return array(
-				'status' => false, 
-				'apierror' => $response['reason']
-			);
-		}
-	}
-
-	# Sales Return Itemwise.
-	public function get_itemwise_sales_returns($params=array()) {
-
-		$client_id = Utilities::get_current_client_id();
-		$end_point = 'reports/sales-return-itemwise/'.$client_id;
-
-		// call api.
-		$api_caller = new ApiCaller();
-		$response = $api_caller->sendRequest('get',$end_point,$params);
-		$status = $response['status'];
-		if ($status === 'success') {
-			return array(
-			  'status' => true,
-				'returns' => $response['response']['returns'], 
-				'total_pages' => $response['response']['total_pages'],
-				'total_records' => $response['response']['total_records'],
-				'record_count' =>  $response['response']['this_page']			  
-			);
-		} elseif($status === 'failed') {
-			return array('status' => false, 'apierror' => $response['reason']);
-		}
-	}
 }

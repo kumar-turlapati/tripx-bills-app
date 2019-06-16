@@ -150,8 +150,8 @@ class InventoryReportsController {
         $slno++;
 
         $item_name = substr($item_details['itemName'], 0, 20);
-        $category_name = substr($item_details['categoryName'], 0, 15);
-        $brand_name = substr( strtolower($item_details['brandName']), 0, 14);
+        $category_name = substr($item_details['categoryName'], 0, 12);
+        $brand_name = substr( strtolower($item_details['brandName']), 0, 12);
         $lot_no = $item_details['lotNo'];
 
         $row_cntr++;
@@ -379,14 +379,18 @@ class InventoryReportsController {
         $opening_rate = $item_details['openingRate'];
         if($purchase_rate > 0 && $opening_qty > 0) {
           $item_amount = round($purchase_rate*$opening_qty,2);
+        } elseif($opening_rate > 0 && $opening_qty > 0) {
+          $item_amount = round($opening_rate*$opening_qty,2);
         } else {
           $item_amount = 0;
         }
-        if($item_amount>0 && $tax_percent > 0) {
+/*      if($item_amount>0 && $tax_percent > 0) {
           $tax_amount = round( ($item_amount*$tax_percent)/100, 2);
         } else {
           $tax_amount = 0;
-        }
+        }*/
+        
+        $tax_amount = 0;
 
         $item_total = $item_amount + $tax_amount;
         $tot_amount += $item_total;
