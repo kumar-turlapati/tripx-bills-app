@@ -113,9 +113,9 @@
                     $brand_name = $opening_details['mfgName'];
                     $container_no = $opening_details['cno'];
                     $lot_no = $opening_details['lotNo'];
-                    $opening_value = round($opening_qty*$opening_rate*$packed_qty,2);
+                    $opening_value = round($opening_qty*$opening_rate,2);
 
-                    $tot_opening_stock_value += round($opening_qty*$purchase_rate*$packed_qty, 2);
+                    $tot_opening_stock_value += round($opening_qty*$purchase_rate, 2);
                 ?>
                     <tr class="text-right font11">
                       <td class="valign-middle"><?php echo $cntr ?></td>
