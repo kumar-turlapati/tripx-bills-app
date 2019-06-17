@@ -8,6 +8,8 @@ use Atawa\Utilities;
 use Atawa\Constants;
 use Atawa\Template;
 use Atawa\Flash;
+use Atawa\ApiCaller;
+use Atawa\PDF;
 
 use ClothingRm\Sales\Model\Sales;
 use ClothingRm\Inventory\Model\Inventory;
@@ -32,6 +34,7 @@ class AdminOptionsController
     $this->supplier_model = new Supplier;
     $this->grn_model = new GrnNew;
     $this->sales_return_model = new SalesReturns;
+    $this->api_caller = new ApiCaller;
 	}
 
   // delete Org. Summary
@@ -248,6 +251,108 @@ class AdminOptionsController
     return array($this->template->render_view('delete-sales-return',$template_vars),$controller_vars);
   }  
 
+  public function deletedVouchers(Request $request) {
+    $form_errors = $submitted_data = [];
+
+    // get location codes
+    $client_locations = Utilities::get_client_locations();
+    $voc_types = Constants::$VOC_TYPES;
+    asort($voc_types);
+
+    // check for form Submission
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $form_validation = $this->_validate_delete_register_params($submitted_data, $client_locations);
+      if($form_validation['status']===false) {
+        $form_errors = $form_validation['errors'];
+      } else {
+        $submitted_data = $form_validation['cleaned_params'];
+        $submitted_voc_type = $voc_types[$submitted_data['vocType']];
+        $api_response = $this->_get_deleted_vouchers($submitted_data);
+        if($api_response['status']) {
+          $total_records = $api_response['response']['vouchers'];
+          $total_pages = $api_response['response']['total_pages'];
+          if($total_pages>1) {
+            for($i=2;$i<=$total_pages;$i++) {
+              $submitted_data['pageNo'] = $i;
+              $api_response = $this->_get_deleted_vouchers($submitted_data);
+              if($api_response['status']) {
+                $total_records = array_merge($total_records,$api_response['response']['vouchers']);
+              }
+            }
+          }
+
+          // dump($total_records);
+          // exit;
+
+          // start PDF printing.
+          $heading1 = 'Deleted Vouchers - '.$submitted_voc_type;
+          $item_widths = array(15,20,20,20,115);
+          //                    0, 1, 2, 3, 4
+          $slno = 0;
+
+          $pdf = PDF::getInstance();
+          $pdf->AliasNbPages();
+          $pdf->AddPage('P','A4');
+
+          // Print Bill Information.
+          $pdf->SetFont('Arial','B',16);
+          $pdf->Cell(0,0,$heading1,'',1,'C');
+          $pdf->SetFont('Arial','B',10);
+          $pdf->Ln(5);
+          $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+          $pdf->Cell($item_widths[1],6,'Voc. No','RTB',0,'C');
+          $pdf->Cell($item_widths[2],6,'Voc. Date','RTB',0,'C');
+          $pdf->Cell($item_widths[3],6,'Deleted on','RTB',0,'C');
+          $pdf->Cell($item_widths[4],6,'Reason','RTB',0,'C');
+          $pdf->SetFont('Arial','',9);
+
+          foreach($total_records as $record_details) {
+            $slno++;
+            $voc_no = $record_details['vocNo'];
+            $voc_date = date("d-m-Y", strtotime($record_details['vocDate']));
+            if($record_details['delDate'] !== '0000-00-00 00:00:00') {
+              $del_date = date("d-m-Y", strtotime($record_details['delDate']));
+            } else {
+              $del_date = '';
+            }
+            $remarks = substr($record_details['remarks'],0,50);
+            $pdf->Ln();
+            $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+            $pdf->Cell($item_widths[1],6,$voc_no,'RTB',0,'R');
+            $pdf->Cell($item_widths[2],6,$voc_date,'RTB',0,'R');
+            $pdf->Cell($item_widths[3],6,$del_date,'RTB',0,'R');
+            $pdf->Cell($item_widths[4],6,$remarks,'RTB',0,'R');
+          }
+        
+          $pdf->Output();
+
+        } else {
+          $page_error = '<i class="fa fa-times" aria-hidden="true"></i> '.$api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
+        }
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'client_locations' => [''=>'Choose'] + $client_locations,
+      'voc_types' => [''=>'Choose'] + $voc_types,
+      'errors' => $form_errors,
+      'submitted_data' => $submitted_data,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'flash_obj' => $this->flash,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Deleted Vouchers Register',
+      'icon_name' => 'fa fa-times',
+    );
+
+    // render template
+    return array($this->template->render_view('deleted-vouchers-register',$template_vars),$controller_vars);    
+  }
 
 
   // update business information
@@ -444,7 +549,7 @@ class AdminOptionsController
     }
   }
 
-  // validation for sales return voucher.
+  // validation for sales return voucher
   private function _validate_sales_return_details($form_data=[], $locations=[]) {
     $cleaned_params = $errors = [];
 
@@ -479,7 +584,70 @@ class AdminOptionsController
         'cleaned_params' => $cleaned_params,
       ];
     }
-  }  
+  }
+
+  // validate delete register params
+  private function _validate_delete_register_params($form_data=[], $locations=[]) {
+    $cleaned_params = $errors = [];
+    $voc_types = Constants::$VOC_TYPES;
+
+    $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : '';
+    $voc_type = isset($form_data['vocType']) ? Utilities::clean_string($form_data['vocType']) : '';
+    $from_date = isset($form_data['fromDate']) ? Utilities::clean_string($form_data['fromDate']) : '';
+    $to_date = isset($form_data['toDate']) ? Utilities::clean_string($form_data['toDate']) : '';
+
+    $location_keys = array_keys($locations);
+    $voc_keys = array_keys($voc_types);
+
+    // dump($voc_keys, $voc_types, $voc_type);
+
+    if(in_array($location_code, $location_keys)) {
+      $cleaned_params['locationCode'] = $location_code;
+    } else {
+      $errors['locationCode'] = 'Invalid store name';
+    }
+    if($form_data['fromDate'] !== '' && Utilities::validate_date($from_date)) {
+      $cleaned_params['fromDate'] = $form_data['fromDate'];
+    } else {
+      $errors['fromDate'] = 'Invalid from date';
+    }
+    if($form_data['toDate'] !== '' && Utilities::validate_date($to_date)) {
+      $cleaned_params['toDate'] = $form_data['toDate'];
+    } else {
+      $errors['toDate'] = 'Invalid to date';
+    }
+    if(in_array($voc_type, $voc_keys)) {
+      $cleaned_params['vocType'] = $voc_type;
+    } else {
+      $errors['vocType'] = 'Invalid voucher type';
+    }
+
+    if(count($errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
+  }
+
+  // deleted vouchers register
+  private function _get_deleted_vouchers($form_data = []) {
+    $response = $this->api_caller->sendRequest('post', 'clients/deleted-vouchers', $form_data);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array(
+        'status' => true,
+        'response' => $response['response'],
+      );
+    } elseif($status === 'failed') {
+      return array('status' => false, 'apierror' => $response['reason']);
+    }
+  }
 }
 
 /*

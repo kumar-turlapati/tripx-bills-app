@@ -1446,9 +1446,9 @@ class SalesReportsController {
       $pdf->SetFont('Arial','',8);
 
       $tot_cash_sales = $tot_split_sales = $tot_card_sales = $tot_credit_sales = $tot_sales = 0;
-      $tot_discounts = $tot_discount_bills = $tot_returns = 0;
-      $tot_cash_payments = $tot_card_payments = $tot_cnote_payments = 0;
       $tot_wallet_sales = 0;
+      $tot_discounts = $tot_discount_bills = $tot_returns = 0;
+      $tot_cash_payments = $tot_card_payments = $tot_cnote_payments = $tot_wallet_payments = 0;
       foreach($month_summary as $day_details) {
         $date = date("d-m-Y", strtotime($day_details['tranDate']));
         $week = date("l", strtotime($day_details['tranDate']));
@@ -1464,6 +1464,7 @@ class SalesReportsController {
         $tot_cash_payments += $day_details['cashPayments'];
         $tot_card_payments += $day_details['cardPayments'];
         $tot_cnote_payments += $day_details['cnotePayments'];
+        $tot_wallet_payments += $day_details['walletPayments'];
 
         $tot_discounts += $day_details['discountGiven'];
         $tot_discount_bills += $day_details['totalDiscountBills'];
@@ -1521,7 +1522,7 @@ class SalesReportsController {
       $pdf->Cell($item_widths[8],6,number_format($tot_cash_payments,2,'.',''),'RB',0,'R');
       $pdf->Cell($item_widths[9],6,number_format($tot_card_payments,2,'.',''),'RB',0,'R');        
       $pdf->Cell($item_widths[10],6,number_format($tot_cnote_payments,2,'.',''),'RB',0,'R');
-      $pdf->Cell($item_widths[11],6,'*****','RB',1,'R');
+      $pdf->Cell($item_widths[11],6,number_format($tot_wallet_payments,2,'.',''),'RB',1,'R');
       $pdf->SetFont('Arial','',8);
       $pdf->Ln(5);
       // $pdf->Cell(array_sum($item_widths),6,$discount_label,'',0,'R');

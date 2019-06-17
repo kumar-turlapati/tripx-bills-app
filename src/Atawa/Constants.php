@@ -143,7 +143,7 @@ class Constants
     'STR' => 'Stock Transfer',
     'PMT' => 'Payment',
     'RCP' => 'Receipt',
-    'PCA' => 'Petty Cash',
+    'PCA' => 'Cash Voucher',
     'SAD' => 'Stock Adjustment',
     'IND' => 'Sales Indent',
   ];

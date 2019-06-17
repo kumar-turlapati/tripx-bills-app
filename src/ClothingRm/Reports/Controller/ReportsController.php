@@ -698,7 +698,7 @@ class ReportsController
     $pdf->Cell(190,5,'Powered by QwikBills.com - Cloud based Billing & Inventory Solution.','T',1,'R');
 
     $pdf->Output();
-  }  
+  }
 
   // report options for each report.
   public function reportOptions(Request $request) {
@@ -1149,6 +1149,7 @@ class ReportsController
     return "<h1>Invalid Request</h1>";
   }
 
+  // get indent campaigns
   private function _get_indent_campaigns() {
     $campaigns_response = $this->camp_model->list_campaigns();
     if($campaigns_response['status']) {

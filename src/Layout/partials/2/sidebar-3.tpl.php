@@ -336,6 +336,9 @@
               <li><a href="/report-options/indent-dispatch-summary"><i class="fa fa-angle-right"></i> Dispatch Summary</a></li>              
             </ul>
           </li>
+          <li>
+            <a href="/deleted-vouchers" style="color:#6f0000;font-weight:bold;"> <i class="fa fa-times" style="color:#6f0000;"></i> Deleted vouchers</a> 
+          </li>          
         </ul>
       </li>
     </ul>

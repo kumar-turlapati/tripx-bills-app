@@ -584,7 +584,9 @@ $routes->add('adminOptions_deleteSalesReturn', new Routing\Route('/admin-options
 $routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-summary', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::orgSummary',
 )));
-
+$routes->add('deleted_register', new Routing\Route('/deleted-vouchers', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deletedVouchers',
+)));
 
 // file uploader
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(
