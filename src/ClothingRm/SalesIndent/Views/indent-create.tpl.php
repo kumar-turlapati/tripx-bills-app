@@ -50,8 +50,8 @@
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
               <thead>
                 <tr>
-                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:6%;padding-left:5px;">Scan Barcode</td>
-                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:20%;">
+                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:8%;padding-left:5px;">Scan Barcode</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:10%;">
                     <input
                       type="text"
                       id="indentBarcode"
@@ -60,8 +60,10 @@
                       maxlength="13"
                     />
                   </td>
-                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:6%;padding-left:5px;">Store name</td>
-                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:20%;text-align:left;">
+                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Scanned Qty.</td>
+                  <td id="indentScannedQty" style="width:10%;border-right:none;border-left:none;border-top:none;font-size:20px;font-weight:bold;vertical-align:middle;color:#225992;">&nbsp;</td>
+                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Store name</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <select class="form-control" name="locationCode" id="locationCode" disabled>
                       <?php 
                         foreach($client_locations as $location_key=>$value):

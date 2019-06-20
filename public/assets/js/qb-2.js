@@ -915,7 +915,7 @@ function initializeJS() {
       });
       totalQty = totalQty.toFixed(2);
       totalAmount = totalAmount.toFixed(2);
-      $('#totalItems').text(totalQty);
+      $('#totalItems, #indentScannedQty').text(totalQty);
       $('#grossAmount').text(totalAmount);
     }
 

@@ -643,8 +643,9 @@ class SalesIndentController {
 
         $item_total = round($item_sold_qty * $item_rate, 2);
 
-        # validate item name.
-        if(ctype_alnum(str_replace($item_special_chars, array_fill(0, count($item_special_chars)-1,''), $item_name)) === false) {
+        // validate item name.
+        if( $item_name === '') {
+        // if(ctype_alnum(str_replace($item_special_chars, array_fill(0, count($item_special_chars)-1,''), $item_name)) === false) {
           $form_errors['itemDetails']['itemName'][$item_key] = 'Invalid item name.';
         } else {
           $cleaned_params['itemDetails']['itemName'][$item_key] = $item_name;
