@@ -98,9 +98,9 @@ class ReportsIndentController {
     $pdf->AliasNbPages();
     $pdf->AddPage('P','A4');
 
-    $indent_info_widths = [30,20,70,70];
+    $indent_info_widths = [30,20,75,65];
     $customer_info_widths = [95,95];
-    $item_widths = [10,70,30,18,62];
+    $item_widths = [10,70,30,15,65];
     $final_tot_width = [23,23,23,25,20,30,23,23];    
 
     // print indents
@@ -132,18 +132,19 @@ class ReportsIndentController {
       $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
       $pdf->SetFont('Arial','',10);
       $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
-      $pdf->Cell($indent_info_widths[2],6,substr($placed_by,0,20),'RTB',0,'C');
+      $pdf->Cell($indent_info_widths[2],6,$placed_by,'RTB',0,'C');
       $pdf->Cell($indent_info_widths[3],6,$mobile_no,'RTB',0,'C');
 
       # third row
       $pdf->SetFont('Arial','B',9);
       $pdf->Ln();
-      $pdf->Cell(95,6,'Wholesaler Name','LRTB',0,'C');
-      $pdf->Cell(95,6,'Campaign','RTB',0,'C');
+      $pdf->Cell(125,6,'Wholesaler Name','LRTB',0,'C');
+      $pdf->Cell(65,6,'Campaign','RTB',0,'C');
       $pdf->Ln();
 
-      $pdf->Cell(95,6,substr($referred_by,0,20),'LRTB',0,'C');
-      $pdf->Cell(95,6,$campaign_name,'RTB',0,'C');
+      $pdf->SetFont('Arial','',9);
+      $pdf->Cell(125,6,$referred_by,'LRTB',0,'C');
+      $pdf->Cell(65,6,$campaign_name,'RTB',0,'C');
 
       # item details
       $pdf->Ln();
@@ -185,8 +186,8 @@ class ReportsIndentController {
 
       $pdf->SetFont('Arial','B',11);
       $pdf->Cell(110,6,'TOTALS','LR',0,'R');
-      $pdf->Cell(18,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
-      $pdf->Cell(62,6,'','R',0,'R');
+      $pdf->Cell(15,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
+      $pdf->Cell(65,6,'','R',0,'R');
       $pdf->SetFont('Arial','B',10);
       $pdf->Ln();
 
@@ -208,9 +209,9 @@ class ReportsIndentController {
     $indent_no = $request->get('indentNo');
     $slno = 0;
 
-    $indent_info_widths = [30,20,70,70];
+    $indent_info_widths = [30,20,85,55];
     $customer_info_widths = [95,95];
-    $item_widths = [10,60,35,35,25,25];
+    $item_widths = [10,60,35,30,30,25];
     $final_tot_width = [23,23,23,25,20,30,23,23];
 
     $indent_details = $this->indent_model->get_indent_details($indent_no);
@@ -256,19 +257,20 @@ class ReportsIndentController {
     $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
     $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
-    $pdf->Cell($indent_info_widths[2],6,substr($placed_by,0,20),'RTB',0,'C');
+
+    $pdf->Cell($indent_info_widths[2],6,$placed_by,'RTB',0,'C');
     $pdf->Cell($indent_info_widths[3],6,$mobile_no,'RTB',0,'C');
 
     # third row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
-    $pdf->Cell(95,6,'Wholesaler Name','LRTB',0,'C');
-    $pdf->Cell(95,6,'Campaign','RTB',0,'C');
+    $pdf->Cell(135,6,'Wholesaler Name','LRTB',0,'C');
+    $pdf->Cell(55,6,'Campaign','RTB',0,'C');
     $pdf->Ln();
 
     $pdf->SetFont('Arial','',9);
-    $pdf->Cell(95,6,substr($referred_by,0,20),'LRTB',0,'C');
-    $pdf->Cell(95,6,$campaign_name,'RTB',0,'C');
+    $pdf->Cell(135,6,$referred_by,'LRTB',0,'C');
+    $pdf->Cell(55,6,$campaign_name,'RTB',0,'C');
 
     # item details
     $pdf->Ln();
@@ -307,8 +309,8 @@ class ReportsIndentController {
     }
     
     $pdf->SetFont('Arial','B',11);
-    $pdf->Cell(140,6,'TOTALS','LRTB',0,'R');
-    $pdf->Cell(25,6,number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(135,6,'TOTALS','LRTB',0,'R');
+    $pdf->Cell(30,6,number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
     $pdf->Cell(25,6,'','LRTB',0,'R');    
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
@@ -332,10 +334,10 @@ class ReportsIndentController {
     $indent_no = $request->get('indentNo');
     $slno = 0;
 
-    $indent_info_widths = [30,20,70,70];
+    $indent_info_widths = [30,20,85,55];
     $customer_info_widths = [95,95];
-    $item_widths = [10,70,30,18,62];
-    $final_tot_width = [23,23,23,25,20,30,23,23];
+    $item_widths = [10,60,35,30,55,25];
+    $final_tot_width = [23,23,23,25,20,30,23,23];    
 
     $indent_details = $this->indent_model->get_indent_details($indent_no);
     if(!is_array($indent_details) || count($indent_details)<0) {
@@ -367,7 +369,7 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','B',11);
     $pdf->Ln(5);
 
-    # second row
+    // second row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
     $pdf->Cell($indent_info_widths[0],6,'Indent No.','LRTB',0,'C');
@@ -382,17 +384,18 @@ class ReportsIndentController {
     $pdf->Cell($indent_info_widths[2],6,substr($placed_by,0,20),'RTB',0,'C');
     $pdf->Cell($indent_info_widths[3],6,$mobile_no,'RTB',0,'C');
 
-    # third row
+    // third row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
-    $pdf->Cell(95,6,'Wholesaler Name','LRTB',0,'C');
-    $pdf->Cell(95,6,'Campaign','RTB',0,'C');
+    $pdf->Cell(135,6,'Wholesaler Name','LRTB',0,'C');
+    $pdf->Cell(55,6,'Campaign','RTB',0,'C');
     $pdf->Ln();
 
-    $pdf->Cell(95,6,substr($referred_by,0,20),'LRTB',0,'C');
-    $pdf->Cell(95,6,$campaign_name,'RTB',0,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(135,6,$referred_by,'LRTB',0,'C');
+    $pdf->Cell(55,6,$campaign_name,'RTB',0,'C');
 
-    # item details
+    // item details
     $pdf->Ln();
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
@@ -426,9 +429,9 @@ class ReportsIndentController {
     }
 
     $pdf->SetFont('Arial','B',11);
-    $pdf->Cell(110,6,'TOTALS','LR',0,'R');
-    $pdf->Cell(18,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
-    $pdf->Cell(62,6,'','R',0,'R');
+    $pdf->Cell(105,6,'TOTALS','LR',0,'R');
+    $pdf->Cell(30,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
+    $pdf->Cell(55,6,'','R',0,'R');
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
 
