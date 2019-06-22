@@ -1,6 +1,8 @@
 <?php
   use Atawa\Utilities;
+  
   $current_date = date("d-m-Y");
+  $from_date = date("01-m-Y");
 
   $format_options = ['pdf'=>'Download as PDF', 'csv' => 'Download as CSV'];
   $show_format = false;
@@ -66,8 +68,8 @@
               <?php endif; ?>
               <?php if(isset($show_fromto_dates) && $show_fromto_dates): ?>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $current_date ?>" />
+                  <div class="input-append date" data-date="<?php echo $from_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $from_date ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
