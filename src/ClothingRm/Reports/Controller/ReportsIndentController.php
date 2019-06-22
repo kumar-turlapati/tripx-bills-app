@@ -381,7 +381,7 @@ class ReportsIndentController {
     $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
     $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
-    $pdf->Cell($indent_info_widths[2],6,substr($placed_by,0,20),'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,$placed_by,'RTB',0,'C');
     $pdf->Cell($indent_info_widths[3],6,$mobile_no,'RTB',0,'C');
 
     // third row
