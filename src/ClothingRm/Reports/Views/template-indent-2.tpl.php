@@ -3,6 +3,9 @@
   $current_date = date("d-m-Y");
 
   $format_options = ['pdf'=>'Download as PDF', 'csv' => 'Download as CSV'];
+  $show_format = false;
+
+  $pkd_options = ['pkd' => 'Ordered * Packed Qty.', 'wpkd' => 'Ordered Qty.'];
 ?>
 
 <!-- Basic form starts -->
@@ -78,6 +81,15 @@
             </div>
             <div class="clearfix"></div>
               <div class="form-group">
+                <div class="col-sm-12 col-md-2 col-lg-2" style="margin-left:91px;">
+                  <div class="select-wrap">
+                    <select class="form-control" name="qtyFormat" id="qtyFormat">
+                      <?php foreach($pkd_options as $key=>$value): ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
                 <?php if(!isset($show_format)): ?>
                   <div class="col-sm-12 col-md-2 col-lg-2" style="margin-left:91px;">
                     <div class="select-wrap">

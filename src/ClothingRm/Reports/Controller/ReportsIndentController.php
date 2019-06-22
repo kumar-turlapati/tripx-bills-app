@@ -45,6 +45,11 @@ class ReportsIndentController {
       $agent_code =  Utilities::clean_string($request->get('agentCode'));
       $filter_params['agentCode'] = $agent_code;
     }
+    if(!is_null($request->get('qtyFormat')) && $request->get('qtyFormat') !== '') {
+      $qty_format =  Utilities::clean_string($request->get('qtyFormat'));
+    } else {
+      $qty_format = '';
+    }
 
     # ---------- get business users -------------------------------------------
     $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
@@ -151,18 +156,29 @@ class ReportsIndentController {
       $pdf->SetFont('Arial','',9);
       $pdf->Ln();
 
+      // dump($qty_format);
+      // exit;
+
       $tot_bill_value = $tot_items_qty = $slno = 0;
       foreach($indent_tran_details['itemsList'] as $item_details) {
         $slno++;
+        $moq = $item_details['mOq'];
+
+        if($moq > 0 && $item_details['itemQty'] > 0 && $qty_format === 'wpkd') {
+          $item_qty = round($item_details['itemQty']/$moq,0);
+        } else {
+          $item_qty = $item_details['itemQty'];
+        }
+
         $amount = round($item_details['itemQty']*$item_details['itemRate'], 2);
 
         $tot_bill_value += $amount;
-        $tot_items_qty += $item_details['itemQty'];
+        $tot_items_qty += $item_qty;
 
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,20),'RTB',0,'L');
         $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
-        $pdf->Cell($item_widths[3],6,$item_details['itemQty'],'RTB',0,'R');
+        $pdf->Cell($item_widths[3],6,$item_qty,'RTB',0,'R');
         $pdf->Cell($item_widths[4],6,'','RTB',0,'R');
         $pdf->Ln();
       }
@@ -452,6 +468,9 @@ class ReportsIndentController {
     if(!is_null($request->get('nearbyQty')) && $request->get('nearbyQty') !== '') {
       $filter_params['nearbyQty'] = Utilities::clean_string($request->get('nearbyQty'));
     }
+    if(!is_null($request->get('qtyFormat')) && $request->get('qtyFormat') !== '') {
+      $filter_params['qtyFormat'] = Utilities::clean_string($request->get('qtyFormat'));
+    }    
 
     # ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations(true);
@@ -608,6 +627,9 @@ class ReportsIndentController {
     } else {
       $to_date = date('d-m-Y');
     }
+    if(!is_null($request->get('qtyFormat')) && $request->get('qtyFormat') !== '') {
+      $filter_params['qtyFormat'] = Utilities::clean_string($request->get('qtyFormat'));
+    }    
 
     $indent_item_details = $this->indent_model->get_indents_itemwise($filter_params);
     if($indent_item_details['status']===false) {
@@ -733,6 +755,9 @@ class ReportsIndentController {
     } else {
       $to_date = date('d-m-Y');
     }
+    if(!is_null($request->get('qtyFormat')) && $request->get('qtyFormat') !== '') {
+      $filter_params['qtyFormat'] = Utilities::clean_string($request->get('qtyFormat'));
+    }    
 
     $indent_item_details = $this->indent_model->get_indents_agentwise($filter_params);
     if($indent_item_details['status']===false) {
@@ -839,6 +864,9 @@ class ReportsIndentController {
     } else {
       $to_date = date('d-m-Y');
     }
+    if(!is_null($request->get('qtyFormat')) && $request->get('qtyFormat') !== '') {
+      $filter_params['qtyFormat'] = Utilities::clean_string($request->get('qtyFormat'));
+    }    
 
     $indent_item_details = $this->indent_model->get_indents_statewise($filter_params);
     if($indent_item_details['status']===false) {
@@ -952,8 +980,11 @@ class ReportsIndentController {
     } else {
       $show_rate = 'no';
     }
+    if(!is_null($request->get('qtyFormat')) && $request->get('qtyFormat') !== '') {
+      $filter_params['qtyFormat'] = Utilities::clean_string($request->get('qtyFormat'));
+    }    
 
-    # ---------- get business users -------------------------------------------
+    // ---------- get business users -------------------------------------------
     $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {
@@ -966,7 +997,7 @@ class ReportsIndentController {
       $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
       $campaigns_a = array_combine($campaign_keys, $campaign_names);
     }
-    #---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
 
     $indents_response = $this->indent_model->get_all_indents($filter_params);
     if($indents_response['status']===false) {
@@ -1104,6 +1135,10 @@ class ReportsIndentController {
       $location_names[$location_key_a[0]] = $location_value;
     }
     #---------------------------------------------------------------------------
+    
+    if(!is_null($request->get('qtyFormat')) && $request->get('qtyFormat') !== '') {
+      $filter_params['qtyFormat'] = Utilities::clean_string($request->get('qtyFormat'));
+    }
 
     $indents_response = $this->indent_model->get_indent_dispatch_register($filter_params);
     if($indents_response['status']===false) {
@@ -1212,9 +1247,3 @@ class ReportsIndentController {
     $pdf->Ln();
   }
 }
-
-/*
-    // $pdf->SetFont('Arial','',9);
-    // $pdf->Cell(170,6,$remarks,'RT',0,'L');
-    // $pdf->Ln();
-*/

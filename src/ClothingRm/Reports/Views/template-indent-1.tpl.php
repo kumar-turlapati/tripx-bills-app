@@ -1,6 +1,7 @@
 <?php
   use Atawa\Utilities;
   $format_options = ['pdf'=>'PDF Format', 'csv' => 'CSV Format'];
+  $pkd_options = ['pkd' => 'Ordered * Packed Qty.', 'wpkd' => 'Ordered Qty.'];
 ?>
 
 <!-- Basic form starts -->
@@ -35,15 +36,26 @@
                 <input type="text" name="nearbyQty" id="nearbyQty" class="form-control" value="" placeholder="Threshold Qty." />
               </div>              
               <div class="col-sm-12 col-md-2 col-lg-2">
+                <?php /*
                 <div class="select-wrap">
                   <select class="form-control" name="format" id="format">
                     <?php 
-                      foreach($format_options as $key=>$value):
+                      foreach($pkd_options as $key=>$value):
                     ?>
                       <option value="<?php echo $key ?>"><?php echo $value ?></option>
                     <?php endforeach; ?>
                   </select>
                 </div>
+                */ ?>
+                <div class="select-wrap">
+                  <select class="form-control" name="qtyFormat" id="qtyFormat">
+                    <?php 
+                      foreach($pkd_options as $key=>$value):
+                    ?>
+                      <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>                
               </div>              
               <div class="col-sm-12 col-md-3 col-lg-3">
                 <input type="hidden" id="reportHook" name="reportHook" value="<?php echo $reportHook ?>" />
