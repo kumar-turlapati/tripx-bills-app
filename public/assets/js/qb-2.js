@@ -1903,11 +1903,13 @@ function initializeJS() {
       var itemIndex = jQuery(this).attr('index');
       var avaQty = returnNumber(parseFloat($('#qtyava_'+itemIndex).val()));
       var itemQty = returnNumber(parseFloat($(this).val()));
-      if(itemQty > avaQty) {
-        alert('Qty. not available');
-        $(this).val('');
-        $(this).focus();
-        return false;
+      if($('#in').length === 0) {
+        if(itemQty > avaQty) {
+          alert('Qty. not available');
+          $(this).val('');
+          $(this).focus();
+          return false;
+        }
       }
       if(typeof lotNosResponse !== 'undefined' && lotNosResponse.length > 0) {
         var itemQty = $(this).val();

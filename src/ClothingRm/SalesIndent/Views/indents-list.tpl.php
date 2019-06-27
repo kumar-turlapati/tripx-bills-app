@@ -148,11 +148,10 @@
                 <th width="7%" class="text-center valign-middle">Indent <br />Date</th>
                 <th width="6%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
                 <th width="20%" class="text-center valign-middle">Customer name</span></th>
-                <th width="11%" class="text-center valign-middle">Store name</span></th>                
                 <th width="10%" class="text-center valign-middle">Referred by</th>
-                <th width="12%" class="text-center valign-middle">Campaign name</th>                
+                <th width="10%" class="text-center valign-middle">Campaign name</th>                
                 <th width="6%" class="text-center valign-middle">Status</th>
-                <th width="16%" class="text-center valign-middle">Actions</th>
+                <th width="20%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -190,7 +189,6 @@
                   <td class="valign-middle"><?php echo $indent_date ?></td>
                   <td align="right" class="valign-middle text-bold"><?php echo number_format($netpay,2,'.','') ?></td>
                   <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,30) ?></td>                
-                  <td class="valign-middle"><?php //echo $ref_no ?></td>
                   <td class="valign-middle" title="<?php echo $agent_name ?>"><?php echo substr($agent_name,0,15) ?></td>
                   <td class="valign-middle"><?php echo $campaign_name ?></td>
                   <td class="valign-middle"><?php echo $status ?></td>
@@ -229,7 +227,6 @@
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
-                <td>&nbsp;</td>                
               </tr>
             </tbody>
           </table>

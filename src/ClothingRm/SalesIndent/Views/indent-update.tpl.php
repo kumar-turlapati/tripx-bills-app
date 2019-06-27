@@ -148,7 +148,6 @@
                         index="<?php echo $i ?>"
                         value="<?php echo $item_qty ?>"
                         style="text-align:right;"
-                        readonly
                       />
                     </td>
                     <td style="vertical-align:middle;" align="center">
