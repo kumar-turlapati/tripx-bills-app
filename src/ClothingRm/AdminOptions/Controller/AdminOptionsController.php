@@ -17,6 +17,7 @@ use ClothingRm\Inward\Model\Inward;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Grn\Model\GrnNew;
 use ClothingRm\SalesReturns\Model\SalesReturns;
+use ClothingRm\SalesIndent\Model\SalesIndent;
 use User\Model\User;
 
 class AdminOptionsController
@@ -35,6 +36,7 @@ class AdminOptionsController
     $this->grn_model = new GrnNew;
     $this->sales_return_model = new SalesReturns;
     $this->api_caller = new ApiCaller;
+    $this->sindent_model = new SalesIndent;
 	}
 
   // delete Org. Summary
@@ -251,6 +253,7 @@ class AdminOptionsController
     return array($this->template->render_view('delete-sales-return',$template_vars),$controller_vars);
   }  
 
+  // deleted vouchers
   public function deletedVouchers(Request $request) {
     $form_errors = $submitted_data = [];
 
@@ -354,6 +357,108 @@ class AdminOptionsController
     return array($this->template->render_view('deleted-vouchers-register',$template_vars),$controller_vars);    
   }
 
+  // export indents
+  public function exportIndents(Request $request) {
+    $form_errors = $submitted_data = [];
+
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $form_validation = $this->_validate_export_indent_data($submitted_data);
+      if($form_validation['status']===false) {
+        $form_errors = $form_validation['errors'];
+      } else {
+        $submitted_data = $form_validation['cleaned_params'];
+        $api_response = $this->sindent_model->export_indents($submitted_data);
+        if($api_response['status']) {
+          $this->_dump_csv_for_indents($api_response['response']);
+        } else {
+          $page_error = '<i class="fa fa-times" aria-hidden="true"></i> '.$api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
+        }
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'errors' => $form_errors,
+      'submitted_data' => $submitted_data,
+      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'flash_obj' => $this->flash,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Export Indents to CSV',
+      'icon_name' => 'fa fa-delicious',
+    );
+
+    // render template
+    return array($this->template->render_view('export-indents',$template_vars),$controller_vars);    
+  }
+
+  // dump csv for indents.
+  private function _dump_csv_for_indents($records = []) {
+    $total_records = [];
+    // dump($records);
+    // exit;
+    foreach($records as $record_key => $record_details) {
+
+      $agent_address = '';
+      if($record_details['agentAddress'] !== '') {
+        $agent_address .= $record_details['agentAddress'];
+      }
+      if($record_details['agentGstNo'] !== '') {
+        $gst_no = $record_details['agentGstNo'];
+      }
+
+      $amount = round($record_details['itemRate']*$record_details['itemQty'], 2);
+      $moq = $record_details['mOq'];
+      $gst = $record_details['taxPercent'];
+
+      if($record_details['itemQty'] > 0 && $moq > 0) {
+        $pcs = round($record_details['itemQty'] / $moq,2);
+      } else {
+        $pcs = '';
+      }
+
+      $total_records[$record_key] = [
+        'Indent.No' => '',
+        'Date' => date("d-m-Y", strtotime($record_details['indentDate'])), 
+        'PartyLedger' => $record_details['customerName'],
+        'PartyAddress' => '',
+        'Supplytype' => '',
+        'PartyGSTIN' => $gst_no,
+        'Mode/Terms of Payment' => '',
+        'Order Ref.No' => $record_details['indentNo'],
+        'Despatch Through' => '',
+        'Destination' => '',
+        'Agent Name' => $record_details['agentName'], 
+        'Section Name' => '', 
+        'Scheme Name' => '',
+        'Sales Man' => '',
+        'Division' => '',
+        'Brand' => $record_details['brandName'],
+        'Remarks' => $record_details['remarks'],
+        'Product Name' => $record_details['itemName'],
+        'Units' => $record_details['uomName'],
+        'HSN Code' => $record_details['hsnSacCode'],
+        'GST%' => number_format($gst, 2, '.', ''),
+        'Qty' => number_format($record_details['itemQty'], 2, '.', ''),
+        'Due On' => '',
+        'PCS' => $pcs,
+        'Rate' => number_format($record_details['itemRate'], 2, '.', ''),
+        'Amount' => number_format($amount, 2, '.', ''),
+        'Other ref' => '',
+        'Cases' => '',
+      ];
+    }
+
+    $csv_file_name = 'IndentExportCSV_'.date('d-m-Y');
+
+    Utilities::download_as_CSV_attachment($csv_file_name, [], $total_records);
+    return;
+  }
+
 
   // update business information
 	public function editBusinessInfoAction(Request $request) {
@@ -407,6 +512,52 @@ class AdminOptionsController
     // render template
     return array($this->template->render_view('edit-business-info',$template_vars),$controller_vars);
 	}
+
+  // validate indent export data inputs.
+  private function _validate_export_indent_data($submitted_data = []) {
+    $cleaned_params = $form_errors = [];
+
+    $from_indent_no = isset($submitted_data['fromIndentNo']) && $submitted_data['fromIndentNo'] !== '' ? $submitted_data['fromIndentNo'] : '';
+    $to_indent_no = isset($submitted_data['toIndentNo']) && $submitted_data['toIndentNo'] !== '' ? $submitted_data['toIndentNo'] : '';
+    $from_date = isset($submitted_data['fromDate']) && $submitted_data['fromDate'] !== '' ? $submitted_data['fromDate'] : date("01-m-Y");
+    $to_date = isset($submitted_data['toDate']) && $submitted_data['toDate'] !== '' ? $submitted_data['toDate'] : date("d-m-Y");
+
+    if($from_indent_no === '') {
+      $form_errors['fromIndentNo'] = 'Invalid Indent No.';
+    } else {
+      $cleaned_params['fromIndentNo'] = $from_indent_no;
+    }
+    if($to_indent_no === '') {
+      $form_errors['toIndentNo'] = 'Invalid Indent No.';
+    } else {
+      $cleaned_params['toIndentNo'] = $to_indent_no;
+    }    
+    if(Utilities::validate_date($from_date)) {
+      $cleaned_params['fromDate'] = $from_date;
+    } else {
+      $form_errors['fromDate'] = 'Invalid From Date';
+    }
+    if(Utilities::validate_date($to_date)) {
+      $cleaned_params['toDate'] = $to_date;
+    } else {
+      $form_errors['toDate'] = 'Invalid To Date';
+    }
+
+    // dump($form_errors, $submitted_data);
+    // exit;
+
+    if(count($form_errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $form_errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
+  }
 
   // validation of business info.
   private function _validate_businessinfo($form_data=[]) {

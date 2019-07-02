@@ -587,6 +587,9 @@ $routes->add('adminOptions_orgSummary', new Routing\Route('/admin-options/org-su
 $routes->add('deleted_register', new Routing\Route('/deleted-vouchers', array(
   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deletedVouchers',
 )));
+$routes->add('export_indents', new Routing\Route('/admin-options/export-indents', array(
+  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::exportIndents',
+)));
 
 // file uploader
 $routes->add('upload_inventory', new Routing\Route('/upload-inventory', array(

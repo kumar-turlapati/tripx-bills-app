@@ -720,6 +720,7 @@ class Utilities
     $date_m = date("n", $date_ts);
     $date_d = date("j", $date_ts);
     $date_y = date("Y", $date_ts);
+
     return checkdate($date_m, $date_d, $date_y);
   }
 

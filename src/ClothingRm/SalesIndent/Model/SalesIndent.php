@@ -116,4 +116,15 @@ class SalesIndent {
       return array('status'=>false, 'apierror' => $response['reason']);
     }    
   }
+
+  public function export_indents($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','reports/indent-data-export',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
+  }
+
 }
