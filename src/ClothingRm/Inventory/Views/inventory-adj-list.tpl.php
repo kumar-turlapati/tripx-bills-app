@@ -2,7 +2,7 @@
   use Atawa\Utilities;
 
   $current_date = date("d-m-Y");
-  $query_params = '';  
+  $query_params = [];  
 
   if(isset($search_params['adjDateFrom']) && $search_params['adjDateFrom'] !='') {
     $adjDateFrom = $search_params['adjDateFrom'];

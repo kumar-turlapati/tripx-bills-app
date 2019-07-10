@@ -370,7 +370,7 @@ class AdminOptionsController
         $submitted_data = $form_validation['cleaned_params'];
         $api_response = $this->sindent_model->export_indents($submitted_data);
         if($api_response['status']) {
-          $this->_dump_csv_for_indents($api_response['response']);
+          $this->_dump_csv_for_indents($api_response['response'], $submitted_data['billingMethod']);
         } else {
           $page_error = '<i class="fa fa-times" aria-hidden="true"></i> '.$api_response['apierror'];
           $this->flash->set_flash_message($page_error, 1);
@@ -397,18 +397,37 @@ class AdminOptionsController
   }
 
   // dump csv for indents.
-  private function _dump_csv_for_indents($records = []) {
+  private function _dump_csv_for_indents($records = [], $billing_method='b2c') {
     $total_records = [];
-    // dump($records);
-    // exit;
+    $states_a = Constants::$LOCATION_STATES;
     foreach($records as $record_key => $record_details) {
 
-      $agent_address = '';
-      if($record_details['agentAddress'] !== '') {
-        $agent_address .= $record_details['agentAddress'];
-      }
-      if($record_details['agentGstNo'] !== '') {
-        $gst_no = $record_details['agentGstNo'];
+      $address = $gst_no = '';
+
+      if($billing_method === 'b2b') {
+        if($record_details['agentAddress'] !== '') {
+          $address .= $record_details['agentAddress'];
+        }
+        if($record_details['agentCityName'] !== '') {
+          $address .= ', '.$record_details['agentCityName'];
+        }
+        if($record_details['agentStateID'] !== '') {
+          $address .= ', '.$states_a[$record_details['agentStateID']];
+        }
+        if($record_details['agentPincode'] !== '') {
+          $address .= ' - '.$record_details['agentPincode'];
+        }
+        if($record_details['agentGstNo'] !== '') {
+          $gst_no = $record_details['agentGstNo'];
+        }
+        $party_ledger = $record_details['agentName'];
+        $other_ref = $record_details['customerName'];
+        $agent_name = '';
+      } elseif($billing_method === 'b2c') {
+        $address = $gst_no = '';
+        $party_ledger = $record_details['customerName'];        
+        $agent_name = $record_details['agentName'];
+        $other_ref = ''; 
       }
 
       $amount = round($record_details['itemRate']*$record_details['itemQty'], 2);
@@ -424,15 +443,15 @@ class AdminOptionsController
       $total_records[$record_key] = [
         'Indent.No' => '',
         'Date' => date("d-m-Y", strtotime($record_details['indentDate'])), 
-        'PartyLedger' => $record_details['customerName'],
-        'PartyAddress' => '',
+        'PartyLedger' => $party_ledger,
+        'PartyAddress' => $address,
         'Supplytype' => '',
         'PartyGSTIN' => $gst_no,
         'Mode/Terms of Payment' => '',
         'Order Ref.No' => $record_details['indentNo'],
         'Despatch Through' => '',
         'Destination' => '',
-        'Agent Name' => $record_details['agentName'], 
+        'Agent Name' => $agent_name, 
         'Section Name' => '', 
         'Scheme Name' => '',
         'Sales Man' => '',
@@ -448,12 +467,12 @@ class AdminOptionsController
         'PCS' => $pcs,
         'Rate' => number_format($record_details['itemRate'], 2, '.', ''),
         'Amount' => number_format($amount, 2, '.', ''),
-        'Other ref' => '',
+        'Other ref' => $other_ref,
         'Cases' => '',
       ];
     }
 
-    $csv_file_name = 'IndentExportCSV_'.date('d-m-Y');
+    $csv_file_name = 'IndentExportCSV_'.strtoupper($billing_method).'_';
 
     Utilities::download_as_CSV_attachment($csv_file_name, [], $total_records);
     return;
@@ -542,6 +561,8 @@ class AdminOptionsController
     } else {
       $form_errors['toDate'] = 'Invalid To Date';
     }
+
+    $cleaned_params['billingMethod'] = Utilities::clean_string($submitted_data['billingMethod']);
 
     // dump($form_errors, $submitted_data);
     // exit;

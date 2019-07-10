@@ -6,7 +6,7 @@
 
   // dump($search_params);
 
-  $query_params = '';
+  $query_params = [];
   if(isset($search_params['startDate']) && $search_params['startDate'] !='') {
     $startDate = $search_params['startDate'];
     $query_params[] = 'startDate='.$startDate;

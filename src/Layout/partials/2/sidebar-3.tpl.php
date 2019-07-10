@@ -236,7 +236,7 @@
               <i class="fa fa-level-up"></i> Export Data <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/admin-options/export-indents"><i class="fa fa-delicious"></i> Indents</a></li>          
+              <li><a href="/admin-options/export-indents"><i class="fa fa-delicious"></i> Indents</a></li>
             </ul>
           </li>          
           <li>

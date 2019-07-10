@@ -2,7 +2,7 @@
   use Atawa\Utilities;
   use Atawa\Constants;
 
-  $query_params = '';
+  $query_params = [];
   if(isset($search_params['itemName']) && $search_params['itemName'] !='') {
     $itemName = $search_params['itemName'];
     $query_params[] = 'itemName='.$itemName;

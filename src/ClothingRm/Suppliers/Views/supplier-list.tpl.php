@@ -1,6 +1,6 @@
 <?php
   use Atawa\Utilities;
-  $query_params = '';  
+  $query_params = [];  
   if(isset($search_params['suppName']) && $search_params['suppName'] !='') {
     $suppName = $search_params['suppName'];
     $query_params[] = 'suppName='.$suppName;

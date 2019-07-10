@@ -1,6 +1,6 @@
 <?php 
   $pagination_url = $page_url = '/stock-audit/items/'.$audit_code;
-  $query_params = '';  
+  $query_params = [];  
   if(isset($search_params['psName']) && $search_params['psName'] !='') {
     $item_name = $search_params['psName'];
     $query_params[] = 'psName='.$item_name;

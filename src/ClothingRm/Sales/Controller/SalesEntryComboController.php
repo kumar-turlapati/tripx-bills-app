@@ -206,6 +206,7 @@ class SalesEntryComboController
     }    
 
     // validate item details.
+    $item_index = 0;
     for($item_key=0;$item_key<6;$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
         $one_item_found = true;
@@ -226,7 +227,7 @@ class SalesEntryComboController
         $tot_discount_amount += $item_discount;
         $tot_tax_value += $item_tax_amount;
 
-        $cleaned_params['itemDetails']['itemName'][$item_key] = $item_name;
+        $cleaned_params['itemDetails']['itemName'][$item_index] = $item_name;
 
         // validate barcode
         // if($barcode !== '' && is_numeric($barcode)) {
@@ -237,43 +238,45 @@ class SalesEntryComboController
 
         // validate item code
         if($item_code !== '' && is_numeric($item_code)) {
-          $cleaned_params['itemDetails']['comboItemCode'][$item_key] = $item_code;
+          $cleaned_params['itemDetails']['comboItemCode'][$item_index] = $item_code;
         } else {
-          $form_errors['itemDetails']['comboItemCode'][$item_key] = 'Invalid combo item code';
+          $form_errors['itemDetails']['comboItemCode'][$item_index] = 'Invalid combo item code';
         }
 
         // validate item avaiable qty.
         if(!is_numeric($item_ava_qty) || $item_ava_qty <= 0) {
-          $form_errors['itemDetails']['itemAvailQty'][$item_key] = 'Invalid available qty.';
+          $form_errors['itemDetails']['itemAvailQty'][$item_index] = 'Invalid available qty.';
         } else {
-          $cleaned_params['itemDetails']['itemAvailQty'][$item_key] = $item_ava_qty;
+          $cleaned_params['itemDetails']['itemAvailQty'][$item_index] = $item_ava_qty;
         }
 
         // validate sold qty.
         if(!is_numeric($item_sold_qty) || $item_sold_qty <= 0) {
-          $form_errors['itemDetails']['comboItemSoldQty'][$item_key] = 'Invalid sold qty.';
+          $form_errors['itemDetails']['comboItemSoldQty'][$item_index] = 'Invalid sold qty.';
         } else {
-          $cleaned_params['itemDetails']['comboItemSoldQty'][$item_key] = $item_sold_qty;
+          $cleaned_params['itemDetails']['comboItemSoldQty'][$item_index] = $item_sold_qty;
         }
 
         // validate item rate.
         if(!is_numeric($item_rate) || $item_rate<=0) {
-          $form_errors['itemDetails']['itemRate'][$item_key] = 'Invalid item rate.';
+          $form_errors['itemDetails']['itemRate'][$item_index] = 'Invalid item rate.';
         } else {
-          $cleaned_params['itemDetails']['itemRate'][$item_key] = $item_rate;
+          $cleaned_params['itemDetails']['itemRate'][$item_index] = $item_rate;
         }
 
         // validate item discount.
         if($item_discount !== '' && !is_numeric($item_discount) ) {
-          $form_errors['itemDetails']['itemDiscount'][$item_key] = 'Invalid item discount.';
+          $form_errors['itemDetails']['itemDiscount'][$item_index] = 'Invalid item discount.';
         } else {
-          $cleaned_params['itemDetails']['itemDiscount'][$item_key] = $item_discount;
+          $cleaned_params['itemDetails']['itemDiscount'][$item_index] = $item_discount;
         }
 
         // validate if sold qty. is more than available qty.
         if($item_sold_qty > $item_ava_qty) {
-          $form_errors['itemDetails']['comboItemSoldQty'][$item_key] = 'Invalid sold qty.';
+          $form_errors['itemDetails']['comboItemSoldQty'][$item_index] = 'Invalid sold qty.';
         }
+
+        $item_index++;
       }
     }
 
@@ -367,6 +370,9 @@ class SalesEntryComboController
 
     $cleaned_params['itemDetails']['lotNo'] = $lot_nos;
     $cleaned_params['itemDetails']['itemTaxPercent'] = $tax_percents;
+
+    // dump('hello world....', $cleaned_params);
+    // exit;
 
     return $cleaned_params;
   }

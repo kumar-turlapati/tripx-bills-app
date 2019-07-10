@@ -1,7 +1,7 @@
 <?php
   use Atawa\Utilities;
 
-  $query_params = '';
+  $query_params = [];
   $current_date = date("d-m-Y");
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
     $fromDate = $search_params['fromDate'];

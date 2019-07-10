@@ -1,5 +1,5 @@
 <?php 
-  $query_params = '';  
+  $query_params = [];  
   if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '') {
     $locationCode = $search_params['locationCode'];
     $query_params[] = 'locationCode='.$locationCode;

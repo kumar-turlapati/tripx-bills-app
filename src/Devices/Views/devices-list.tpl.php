@@ -8,7 +8,7 @@
   // dump($devices);
   // exit;
 
-  $query_params = '';
+  $query_params = [];
   if(isset($search_params['uuid']) && $search_params['uuid'] !='') {
     $sel_uuid = $search_params['uuid'];
     $query_params[] = 'uuid='.$sel_uuid;

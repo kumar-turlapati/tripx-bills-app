@@ -1,10 +1,7 @@
-<!-- container section start -->
 <section id="container" class="">
-  <!--footer start-->
   <footer class="footer">
-  	<div class="col-md-5 footer-logo"><img src="/assets/img/tripexpert-logo.png"></div>
-  	<div class="col-md-7 copy-rights"><p>&copy;&nbsp;2015&nbsp;-&nbsp;<?php echo date("Y") ?>, TripExpert Solutions, All rights reserved.</p></div>
+  	<?php /*
+  	<div class="col-md-5 footer-logo"><img src="/assets/img/tripexpert-logo.png"></div> */ ?>
+  	<div class="copy-rights" style="text-align: center;font-weight: bold;"><p>&copy;&nbsp;2017&nbsp;-&nbsp;<?php echo date("Y") ?>, Octet Logic. All rights reserved.</p></div>
   </footer>
-  <!--footer end--> 
 </section>
-<!-- container section start --> 

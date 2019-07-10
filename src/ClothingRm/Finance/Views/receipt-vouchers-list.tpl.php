@@ -3,7 +3,7 @@
   use Atawa\Constants;
 
   $current_date = date("d-m-Y");
-  $query_params = '';
+  $query_params = [];
 
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
     $fromDate = $search_params['fromDate'];

@@ -3,7 +3,7 @@
   $item_name = isset($form_data['itemName']) && $form_data['itemName'] !== '' ? $form_data['itemName'] : '';
   $location_code = isset($form_data['locationCode']) ? $form_data['locationCode'] : $default_location;
 
-  $query_params = '';
+  $query_params = [];
   if($location_code !== '') {
     $query_params[] = 'locationCode='.$location_code;
   }  

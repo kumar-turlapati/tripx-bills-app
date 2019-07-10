@@ -3,7 +3,7 @@
 
   $current_date = date("d-m-Y");
   $pagination_url = '/sales-return/list';
-  $query_params = '';
+  $query_params = [];
 
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
     $fromDate = $search_params['fromDate'];

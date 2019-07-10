@@ -4,7 +4,7 @@
   
   $current_date = date("01-m-Y");
 
-  $query_params = '';
+  $query_params = [];
   if(isset($search_params['fromDate']) && $search_params['fromDate'] !='') {
     $fromDate = $search_params['fromDate'];
     $query_params[] = 'fromDate='.$fromDate;

@@ -1,7 +1,7 @@
 <?php
   use Atawa\Utilities;
 
-  $query_params = '';  
+  $query_params = [];  
   if(isset($search_params['psName']) && $search_params['psName'] !== '') {
     $psName = $search_params['psName'];
     $query_params[] = 'psName='.$psName;

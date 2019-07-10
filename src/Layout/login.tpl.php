@@ -34,11 +34,7 @@
             <div class="g-recaptcha" data-sitekey="<?php echo $site_key ?>"></div>
             <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
             <div class="input-group login-copyrights">
-              <p>Powered by&nbsp;
-                <a href="http://tripexpert.co.in/" target="_blank">
-                  <img src="/assets/img/tripexpert-logo.png">
-                </a>
-              </p>
+              <p>Powered by <span style="color: #225992; font-weight: bold;">Octet Logic</span></p>
             </div>
           </div>
         </form>
