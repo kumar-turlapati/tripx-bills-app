@@ -931,11 +931,10 @@ class SalesEntryWoBarcode {
     $tax_calc_option = Utilities::clean_string($form_data['taxCalcOption']);
     $card_no = Utilities::clean_string($form_data['cardNo']);
     $auth_code = Utilities::clean_string($form_data['authCode']);
-    $split_payment_cash = isset($form_data['splitPaymentCash']) ? Utilities::clean_string($form_data['splitPaymentCash']) : 0;
-    $split_payment_card = isset($form_data['splitPaymentCard']) ? Utilities::clean_string($form_data['splitPaymentCard']) : 0;
-    $split_payment_cn = isset($form_data['splitPaymentCn']) ? Utilities::clean_string($form_data['splitPaymentCn']) : 0;
-    $split_payment_wallet = isset($form_data['splitPaymentWallet']) ? Utilities::clean_string($form_data['splitPaymentWallet']) : 0;
-    $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
+    $split_payment_cash = isset($form_data['splitPaymentCash']) && is_numeric($form_data['splitPaymentCash']) ? Utilities::clean_string($form_data['splitPaymentCash']) : 0;
+    $split_payment_card = isset($form_data['splitPaymentCard']) && is_numeric($form_data['splitPaymentCard'])  ? Utilities::clean_string($form_data['splitPaymentCard']) : 0;
+    $split_payment_cn = isset($form_data['splitPaymentCn']) && is_numeric($form_data['splitPaymentCn'])  ? Utilities::clean_string($form_data['splitPaymentCn']) : 0;
+    $split_payment_wallet = isset($form_data['splitPaymentWallet']) && is_numeric($form_data['splitPaymentWallet'])  ? Utilities::clean_string($form_data['splitPaymentWallet']) : 0;    $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
     $item_details = $form_data['itemDetails'];
     $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
     $referral_code = is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;

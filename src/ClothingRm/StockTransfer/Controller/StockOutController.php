@@ -493,7 +493,7 @@ class StockOutController
     }    
 
     # validate item details.
-    for($item_key=0;$item_key<=24;$item_key++) {
+    for($item_key=0;$item_key<12;$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
         $one_item_found = true;
 

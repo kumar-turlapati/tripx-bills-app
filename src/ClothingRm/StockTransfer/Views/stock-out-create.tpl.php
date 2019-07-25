@@ -139,9 +139,17 @@
                   <th width="10%" class="text-center">Amount<br />( in Rs. )</th>
                 </tr>
               </thead>
+              <tr>
+                <td colspan="5" class="labelStyle" style="font-size: 18px;text-align: right;">QTY. TOTALS</td>
+                <td class="stAvaQty" style="text-align: right;font-weight:bold;font-size:16px;font-weight: bold; color: green;">&nbsp;</td>
+                <td class="stTraQty" style="text-align: right;font-weight:bold;font-size:16px;font-weight: bold; color: green;">&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
               <tbody>
                 <?php
-                  for($i=1;$i<=25;$i++):
+                  for($i=1;$i<=12;$i++):
                     $bill_amount = $taxable_amount = $tax_amount = $item_total = 0;
                     $ex_index = $i-1;
                     if(isset($form_data['itemDetails'])) {
@@ -179,9 +187,6 @@
                         index="<?php echo $i-1 ?>"
                         style="border:1px dashed #00AEFF;font-weight:bold;color:#AA3E39;"
                       />
-                      <?php if(isset($errors['itemDetails']['barcode'][$ex_index])): ?>
-                        <span class="error"><?php echo $errors['itemDetails']['barcode'][$ex_index] ?></span>
-                      <?php endif; ?>
                     </td>
                     <td style="vertical-align:middle;">
                       <input 
@@ -194,9 +199,6 @@
                         value="<?php echo $item_name ?>"
                         style="width:200px;"
                       />
-                      <?php if(isset($errors['itemDetails']['itemName'][$ex_index])): ?>
-                        <span class="error"><?php echo $errors['itemDetails']['itemName'][$ex_index] ?></span>
-                      <?php endif; ?>
                     </td>
                     <td style="vertical-align:middle;">
                       <div class="select-wrap">
@@ -209,9 +211,7 @@
                           <option value="">Choose</option>
                         </select>
                       </div>
-                      <?php if(isset($errors['itemDetails']['lotNo'][$ex_index])): ?>
-                        <span class="error"><?php echo $errors['itemDetails']['lotNo'][$ex_index] ?></span>
-                      <?php endif; ?>                      
+                     
                     </td>
                     <td id="cno_<?php echo $i-1 ?>" style="vertical-align:middle;" align="right"></td>
                     <td style="vertical-align:middle;">
@@ -225,9 +225,7 @@
                         size="10"
                         readonly
                       />
-                      <?php if(isset($errors['itemDetails']['itemAvailQty'][$ex_index])): ?>
-                        <span class="error"><?php echo $errors['itemDetails']['itemAvailQty'][$ex_index] ?></span>
-                      <?php endif; ?>                      
+                     
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input
@@ -239,9 +237,7 @@
                         class="form-control saleItemQty"
                         index="<?php echo $i-1 ?>"                          
                       />
-                      <?php if(isset($errors['itemDetails']['itemSoldQty'][$ex_index])): ?>
-                        <span class="error"><?php echo $errors['itemDetails']['itemSoldQty'][$ex_index] ?></span>
-                      <?php endif; ?>                      
+                    
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
@@ -253,9 +249,7 @@
                         value = "<?php echo $item_rate ?>"
                         name = "itemDetails[itemRate][]"
                       />
-                      <?php if(isset($errors['itemDetails']['itemRate'][$ex_index])): ?>
-                        <span class="error"><?php echo $errors['itemDetails']['itemRate'][$ex_index] ?></span>
-                      <?php endif; ?>                      
+                      
                     </td>
                     <td
                       style="vertical-align:middle;"
@@ -281,9 +275,7 @@
                           <?php endforeach; ?>                            
                         </select>
                       </div>
-                      <?php if(isset($errors['itemDetails']['itemTaxPercent'][$ex_index])): ?>
-                        <span class="error"><?php echo $errors['itemDetails']['itemTaxPercent'][$ex_index] ?></span>
-                      <?php endif; ?>                      
+                     
                       <input type="hidden" class="taxAmount" id="taxAmount_<?php echo $i-1 ?>" />
                       <input type="hidden" class="itemType" id="itemType_<?php echo $i-1 ?>" />                      
                     </td>
@@ -313,7 +305,10 @@
                   <?php } ?>
                 <?php endfor; ?>
                   <tr>
-                    <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
+                    <td colspan="5" class="labelStyle" style="font-size: 18px;text-align: right;">QTY. TOTALS</td>
+                    <td class="stAvaQty" style="text-align: right;font-weight:bold;font-size:16px;font-weight: bold; color: green;">&nbsp;</td>
+                    <td class="stTraQty" style="text-align: right;font-weight:bold;font-size:16px;font-weight: bold; color: green;">&nbsp;</td>
+                    <td colspan="2" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
                     <td id="grossAmount" class="" style="font-size:16px;text-align:right;font-weight:bold;"></td>
                   </tr>
                   <tr>
@@ -332,7 +327,7 @@
             </table>
           </div>
           <div class="text-center">
-            <button class="btn btn-primary" id="Save" name="op" value="Save">
+            <button class="btn btn-primary" name="op" value="Save" id="transferSubmitBtn">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
             </button>
             <button class="btn btn-danger cancelButton" id="stransfer">

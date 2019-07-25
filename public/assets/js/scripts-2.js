@@ -1209,6 +1209,12 @@ function initializeJS() {
   if( $('#stockOutForm').length>0 ) {
     var lotNosResponse = [];
 
+    $('#transferSubmitBtn').on("click", function(e){
+      $(this).attr('disabled', true);
+      $('#stransfer').attr('disabled', true);
+      $('#stockOutForm').submit();
+    });
+
     jQuery('.saleItem').on("blur", function(e){
       var itemName = jQuery(this).val();
       var itemIndex = jQuery(this).attr('index');
@@ -1282,6 +1288,7 @@ function initializeJS() {
       if(transferQty>0) {
         updateTransferOutItemRow(itemIndex);
       } else {
+        updateTransferOutItemRow(itemIndex);
         jQuery(lotNoRef).empty().append(bnoFirstOption);
         jQuery('#qtyava_'+itemIndex).val('');
         jQuery('#mrp_'+itemIndex).val('');
@@ -1339,12 +1346,24 @@ function initializeJS() {
 
       var shippingCharges = insuranceCharges = otherCharges = 0;
 
+      var totAvailableQty = totTransferQty = 0;
+
       var taxCalcOption = $('#taxCalcOption').val();
 
       jQuery('.grossAmount').each(function(i, obj) {
         iTotal = returnNumber(parseFloat(jQuery(this).text()));
         totGrossAmount += iTotal;
       });
+
+      jQuery('.qtyAvailable').each(function(i, obj) {
+        iTotal = returnNumber(parseFloat(jQuery(this).val()));
+        totAvailableQty += iTotal;
+      });
+
+      jQuery('.saleItemQty').each(function(i, obj) {
+        iTotal = returnNumber(parseFloat(jQuery(this).val()));
+        totTransferQty += iTotal;
+      });         
 
       if(taxCalcOption === 'i') {
         totTaxAmount = 0;
@@ -1355,8 +1374,12 @@ function initializeJS() {
         });
       }
 
+      console.log(totAvailableQty, totTransferQty);
+
       $('#grossAmount').text(parseFloat(totGrossAmount).toFixed(2));
       $('#gstAmount').text(parseFloat(totTaxAmount).toFixed(2));
+      $('.stAvaQty').text(parseFloat(totAvailableQty).toFixed(2));
+      $('.stTraQty').text(parseFloat(totTransferQty).toFixed(2));
 
       netPay = parseFloat(totGrossAmount + totTaxAmount + shippingCharges + insuranceCharges + otherCharges);
       roundedNetPay = Math.round(netPay);

@@ -452,10 +452,10 @@ class salesEntryWithBarcode {
     $tax_calc_option = Utilities::clean_string($form_data['taxCalcOption']);
     $card_no = Utilities::clean_string($form_data['cardNo']);
     $auth_code = Utilities::clean_string($form_data['authCode']);
-    $split_payment_cash = isset($form_data['splitPaymentCash']) ? Utilities::clean_string($form_data['splitPaymentCash']) : 0;
-    $split_payment_card = isset($form_data['splitPaymentCard']) ? Utilities::clean_string($form_data['splitPaymentCard']) : 0;
-    $split_payment_cn = isset($form_data['splitPaymentCn']) ? Utilities::clean_string($form_data['splitPaymentCn']) : 0;
-    $split_payment_wallet = isset($form_data['splitPaymentWallet']) ? Utilities::clean_string($form_data['splitPaymentWallet']) : 0;
+    $split_payment_cash = isset($form_data['splitPaymentCash']) && is_numeric($form_data['splitPaymentCash']) ? Utilities::clean_string($form_data['splitPaymentCash']) : 0;
+    $split_payment_card = isset($form_data['splitPaymentCard']) && is_numeric($form_data['splitPaymentCard'])  ? Utilities::clean_string($form_data['splitPaymentCard']) : 0;
+    $split_payment_cn = isset($form_data['splitPaymentCn']) && is_numeric($form_data['splitPaymentCn'])  ? Utilities::clean_string($form_data['splitPaymentCn']) : 0;
+    $split_payment_wallet = isset($form_data['splitPaymentWallet']) && is_numeric($form_data['splitPaymentWallet'])  ? Utilities::clean_string($form_data['splitPaymentWallet']) : 0;
     $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
     $item_details = $form_data['itemDetails'];
     $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
@@ -601,7 +601,7 @@ class salesEntryWithBarcode {
         $item_tax_percent = Utilities::clean_string($item_details['itemTaxPercent'][$item_key]);
         $lot_no = Utilities::clean_string($item_details['lotNo'][$item_key]);
 
-        $item_total = round($item_sold_qty * $item_rate, 2);
+        $item_total = $item_sold_qty > 0 && $item_rate ? round($item_sold_qty * $item_rate, 2) : 0;
         $item_total_billable = $item_total - $item_discount;
         if($tax_calc_option === 'i') {
           $item_tax_amount = 0;
