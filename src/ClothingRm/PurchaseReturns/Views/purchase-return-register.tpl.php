@@ -125,6 +125,7 @@
 
                   $purchase_code = $return_details['purchaseCode'];
                   $return_code = $return_details['returnCode'];
+                  $grn_code = $return_details['grnCode'];
               ?>
                   <tr class="text-uppercase text-right font11">
                     <td class="valign-middle"><?php echo $cntr ?></td>
@@ -132,8 +133,12 @@
                     <td class="text-bold text-right valign-middle"><?php echo $return_no ?></td>
                     <td class="text-right valign-middle"><?php echo $return_date ?></td>
                     <td class="text-right valign-middle" style="font-size:14px;font-weight:bold;"><?php echo number_format($return_amount, 2, '.', '') ?></td>                    
-                    <td class="text-right valign-middle"><?php echo $grn_info ?></td>
-                    <td class="text-right valign-middle"><?php echo $po_info ?></td>                    
+                    <td class="text-right valign-middle">
+                      <a href="/grn/view/<?php echo $grn_code ?>" class="hyperlink" target="_blank"><?php echo $grn_info ?></a>
+                    </td>
+                    <td class="text-right valign-middle">
+                      <a href="/inward-entry/view/<?php echo $purchase_code ?>" class="hyperlink" title="View Purchase Order" target="_blank"><?php echo $po_info ?></a>
+                    </td>                    
                     <td class="valign-middle">
                       <div class="btn-actions-group">
                         <a class="btn btn-primary" href="/purchase-return/view/<?php echo $return_code ?>" title="View return entry">

@@ -83,7 +83,7 @@
         </div>
         <form class="form-validate form-horizontal" method="POST" id="inwardEntryForm" autocomplete="off">
           <?php if(isset($form_errors['itemDetailsError'])): ?>
-            <span class="error" style="font-size:18px;font-weight:bold;"><?php echo $form_errors['itemDetailsError'] ?></span>
+            <span class="error" style="font-size:18px;font-weight:bold;color:red;"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;<?php echo $form_errors['itemDetailsError'] ?></span>
           <?php endif; ?>          
           <div class="table-responsive">
             <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable">
@@ -108,6 +108,7 @@
                 $items_total =  $total_tax_amount = $items_tot_after_discount = $total_disc_amount = 0;
                 $taxable_values = $taxable_gst_value = [];
                 $total_item_qty = 0;
+
                 for($i=1; $i <= $total_item_rows; $i++):
                   if( isset($form_data['itemCode'][$i-1]) && $form_data['itemCode'][$i-1] !== '' ) {
                     $item_code = $form_data['itemCode'][$i-1];
@@ -239,8 +240,7 @@
                       <span class="error">Invalid</span>
                     <?php endif; ?>
                   </td>
-                  <td 
-                    style="text-align:right;width:80px;font-weight:bold;vertical-align:middle;"><?php echo $packed_string ?>
+                  <td style="text-align:right;width:80px;font-weight:bold;vertical-align:middle;"><?php echo $packed_string ?>
                   </td>                  
                   <td style="width:50px;">
                     <input
@@ -373,6 +373,9 @@
                     class="inwItemTaxAmount"
                   />
                 </tr>
+                <?php if(isset($form_errors['itemDetails'][$i-1][$item_code.'__'.$lot_no])): ?>
+                  <tr><td colspan="12" style="text-align:center;color:red;font-weight:bold"><?php echo $form_errors['itemDetails'][$i-1][$item_code.'__'.$lot_no] ?></td></tr>
+                <?php endif; ?>
               <?php 
                 endfor;
                 $items_tot_after_discount = round($items_total - $total_disc_amount, 2);

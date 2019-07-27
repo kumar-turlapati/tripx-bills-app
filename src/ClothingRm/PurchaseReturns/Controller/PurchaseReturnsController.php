@@ -67,7 +67,7 @@ class PurchaseReturnsController
       }
     }
 
-    # get purchase details if purchase code is available.
+    // get purchase details if purchase code is available.
     if( !is_null($request->get('pc')) ) {
       $purchase_code = Utilities::clean_string($request->get('pc'));
       $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
