@@ -196,7 +196,7 @@
                       <td class="text-right"><?php echo $sa_qty > 0 ? number_format($sa_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right"><?php echo $pr_qty > 0 ? number_format($pr_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right"><?php echo is_numeric($adj_qty) && $adj_qty !== 0 ? number_format($adj_qty, 2, '.', '') : '' ?></td>
-                      <td class="text-right"><?php echo is_numeric($st_qty) ? number_format($st_qty, 2, '.', '') : '' ?></td>
+                      <td class="text-right"><?php echo is_numeric($st_qty) && $st_qty !== 0 ? number_format($st_qty, 2, '.', '') : '' ?></td>
                       <td class="text-right text-bold green font14"><?php echo number_format($clos_qty, 2, '.', '') ?></td>                      
                       <td class="text-right">
                         <?php if($redirect_url !== ''): ?>
