@@ -38,7 +38,7 @@ class InventoryReportsController {
     $page_no = 1; $per_page = 300;
     $total_records = $categories_a = [];
     $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise'];
-    $neg_a = ['all' => 'All items', 'neg' => 'Negative values'];
+    $neg_a = ['all' => 'All items', 'neg' => 'Negative Balances'];
 
     $client_locations = Utilities::get_client_locations();
     $categories_a = $this->products_api->get_product_categories();

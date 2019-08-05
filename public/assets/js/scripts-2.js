@@ -1262,6 +1262,7 @@ function initializeJS() {
         jQuery('#qty_'+itemIndex+' option[value="'+'0'+'"]').attr('selected', 'selected');
       }
     });
+
     jQuery('.lotNo').on("change", function(e){
       var qtyAvailable = itemRate = itemType = '';
       var itemIndex = jQuery(this).attr('index');
@@ -1269,8 +1270,29 @@ function initializeJS() {
       var avaQtyContainer = jQuery('#qtyava_'+itemIndex);
       var mrpContainer = jQuery('#mrp_'+itemIndex);
       var itemTypeContainer = jQuery('#itemType_'+itemIndex);
+      var itemName = jQuery('#iname_'+itemIndex).val();
       if(lotNo !== '') {
-        if(Object.keys(lotNosResponse[lotNo]).length>0) {
+        var selectedLotNo = '';
+        var lotFound = false;
+        jQuery('.lotNo').each(function(i, obj) {
+          selectedLotNo = $(this).val();
+          if(selectedLotNo === lotNo && parseInt(itemIndex) !== parseInt(i)) {
+            lotFound = true;
+          }
+        });
+
+        if(lotFound) {
+          $('#lotNo_'+itemIndex).val('');
+          jQuery('#qtyava_'+itemIndex).val('');
+          jQuery('#qty_'+itemIndex).val('');
+          jQuery('#mrp_'+itemIndex).val('');
+          jQuery('#iname_'+itemIndex).val('');
+          jQuery('#barcode_'+itemIndex).val('');
+          bootbox.alert({
+            message: "This Lot No. is already selected for `" +itemName+"`. A Lot No. must be unique and selected only once in the bill against the same item."
+          });
+          return false;              
+        } else if(Object.keys(lotNosResponse[lotNo]).length>0) {
           jQuery('#qtyava_'+itemIndex).val(lotNosResponse[lotNo].closingQty);
           jQuery('#qty_'+itemIndex).val(lotNosResponse[lotNo].mOq);
           jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].mrp);
@@ -1280,25 +1302,31 @@ function initializeJS() {
         }
       }
     });
+
     jQuery('.saleItemQty').on('blur', function(){
       var transferQty = parseInt($(this).val());
       var itemIndex = jQuery(this).attr('index');
       var lotNoRef = $('#lotNo_'+itemIndex);
-      var bnoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");        
-      if(transferQty>0) {
+      var avaQty = $('#qtyava_'+itemIndex).val();
+      var bnoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");
+      if(transferQty>0 && (parseFloat(transferQty) <= parseFloat(avaQty))) {
         updateTransferOutItemRow(itemIndex);
       } else {
-        updateTransferOutItemRow(itemIndex);
+        bootbox.alert({
+          message: "Transfer Qty. is more than Available Qty."
+        });
         jQuery(lotNoRef).empty().append(bnoFirstOption);
         jQuery('#qtyava_'+itemIndex).val('');
         jQuery('#mrp_'+itemIndex).val('');
         jQuery('#itemType_'+itemIndex).val('');
         jQuery('#saItemTax_'+itemIndex+' option[value="'+''+'"]').attr('selected', 'selected');
-        jQuery('#qty_'+itemIndex+' option[value="'+'0'+'"]').attr('selected', 'selected');
+        jQuery('#qty_'+itemIndex).val('');
+        jQuery('#qtyava_'+itemIndex).val('');
         jQuery('#iname_'+itemIndex).val('');
         jQuery('#grossAmount_'+itemIndex).text('');
+        updateTransferOutItemRow(itemIndex);
       }
-    });    
+    });
 
     // update transfer item row.
     function updateTransferOutItemRow(itemIndex) {
@@ -1374,7 +1402,7 @@ function initializeJS() {
         });
       }
 
-      console.log(totAvailableQty, totTransferQty);
+      // console.log(totAvailableQty, totTransferQty);
 
       $('#grossAmount').text(parseFloat(totGrossAmount).toFixed(2));
       $('#gstAmount').text(parseFloat(totTaxAmount).toFixed(2));
