@@ -784,16 +784,22 @@ class Utilities
   }
 
   # get tax percent based on the amount.
-  public static function get_applicable_tax_percent($taxable_value=0, $item_qty=0) {
+  public static function get_applicable_tax_percent($taxable_value=0, $item_qty=0, $hsn_sac_code='', $domain='cl') {
     $tax_percent = ['status'=>'fail', 'taxPercent' => 0];
     if(is_numeric($taxable_value) && is_numeric($item_qty)) {
-      $per_item_tax_value = round( ($taxable_value/$item_qty), 2);
-      if($per_item_tax_value > 0 && $per_item_tax_value <= 1000) {
-        $tax_percent['taxPercent'] = 5;
-        $tax_percent['status'] = 'success';
-      } elseif($per_item_tax_value>1000) {
-        $tax_percent['taxPercent'] = 12;
-        $tax_percent['status'] = 'success';
+        /*apply logic for clothing */
+      if($domain === 'cl') {
+        /* apply tax only for hsn code 61 and 62 */
+        if(substr($hsn_sac_code, 0, 2) === '61' || substr($hsn_sac_code, 0, 2) === '62') {
+          $per_item_tax_value = round( ($taxable_value/$item_qty), 2);
+          if($per_item_tax_value > 0 && $per_item_tax_value <= 1000) {
+            $tax_percent['taxPercent'] = 5;
+            $tax_percent['status'] = 'success';
+          } elseif($per_item_tax_value>1000) {
+            $tax_percent['taxPercent'] = 12;
+            $tax_percent['status'] = 'success';
+          }
+        }
       }
     }
     return $tax_percent;

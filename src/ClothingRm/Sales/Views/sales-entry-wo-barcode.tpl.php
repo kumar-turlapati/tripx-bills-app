@@ -349,6 +349,9 @@
                   if($tax_calc_option === 'i') {
                     $tot_tax_amount = 0;
                   }
+                  if($tax_amount === '') {
+                    $tax_amount = 0;
+                  }
                   $net_pay_actual = $tot_taxable_amount + $tax_amount;
                   $rounded_off = round($net_pay_actual,0) - $net_pay_actual;
                   $net_pay = round($net_pay_actual,0);

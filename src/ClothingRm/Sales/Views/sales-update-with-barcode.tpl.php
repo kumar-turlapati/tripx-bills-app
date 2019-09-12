@@ -129,7 +129,6 @@
                     <input
                       type="text"
                       id="owBarcode"
-                      class="saleItem"
                       style="font-size:16px;font-weight:bold;border:1px dashed #225992;padding-left:5px;font-weight:bold;width:150px;"
                       maxlength="13"
                       <?php echo $from_indent ? 'disabled' : '' ?>

@@ -601,6 +601,13 @@ class salesEntryWithBarcode {
         $item_tax_percent = Utilities::clean_string($item_details['itemTaxPercent'][$item_key]);
         $lot_no = Utilities::clean_string($item_details['lotNo'][$item_key]);
 
+        if(!is_numeric($item_discount)) {
+          $item_discount = 0;
+        }
+        if(!is_numeric($item_tax_percent)) {
+          $item_tax_percent = 0;
+        }
+
         $item_total = $item_sold_qty > 0 && $item_rate ? round($item_sold_qty * $item_rate, 2) : 0;
         $item_total_billable = $item_total - $item_discount;
         if($tax_calc_option === 'i') {

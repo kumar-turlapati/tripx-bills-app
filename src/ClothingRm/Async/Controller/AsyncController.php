@@ -110,8 +110,10 @@ class AsyncController {
       }                    
     } elseif($api_string === 'get-tax-percent') {
       $taxable_value = Utilities::clean_string($request->get('taxableValue'));
-      $total_qty =  Utilities::clean_string($request->get('reqQty'));
-      $response = Utilities::get_applicable_tax_percent($taxable_value, $total_qty);
+      $total_qty = Utilities::clean_string($request->get('reqQty'));
+      $hsn_sac_code = Utilities::clean_string($request->get('hsn'));
+      $domain = Utilities::clean_string($request->get('dm'));
+      $response = Utilities::get_applicable_tax_percent($taxable_value, $total_qty, $hsn_sac_code, $domain);
       header("Content-type: application/json");
       echo json_encode($response);
     } elseif($api_string === 'get-ref-details') {

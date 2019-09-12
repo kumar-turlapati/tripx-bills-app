@@ -52,9 +52,10 @@ function initializeJS() {
 	jQuery('#timepicker1').timepicker();
   jQuery('.tooltips').tooltip();
   jQuery('.popovers').popover();
-  jQuery("html").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '6', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: '', zindex: '1000'});
-  jQuery("#sidebar").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '3', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: ''});
-  jQuery(".scroll-panel").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '3', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: ''});
+  
+  // jQuery("html").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '6', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: '', zindex: '1000'});
+  // jQuery("#sidebar").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '3', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: ''});
+  // jQuery(".scroll-panel").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '3', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: ''});
 
   jQuery('#sidebar .sub-menu > a').click(function () {
     var last = jQuery('.sub-menu.open', jQuery('#sidebar'));        
@@ -648,6 +649,7 @@ function initializeJS() {
       var upp = itemDetails.upp;
       var moq = itemDetails.mOq;
       var cno = itemDetails.cno;
+      var hsnSacCode = itemDetails.hsnSacCode;
       var discountAmount = itemDetails.discountAmount;
       var orderQty = (parseFloat(moq)*1).toFixed(2);
       var customerType = $('#customerType').val();
@@ -712,8 +714,10 @@ function initializeJS() {
         var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'"><i class="fa fa-times"></i></a></div></td>'; 
         var hiddenGrossAmountRow = '<input type="hidden" class="taxAmount" id="taxAmount_'+nextIndex+'" value="" />'; 
         var hiddenItemTypeRow = '<input type="hidden" class="itemType" id="itemType_'+nextIndex+'" value="" />';       
+        var hiddenHsnSacRow = '<input type="hidden" class="hsnSacCode" id="hsnSac_'+nextIndex+'" value="'+hsnSacCode+'" />';       
+        // var hiddenHsnSacRow = '';       
         var tableRowEnd = '</tr>';
-        var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyAvailableInput + qtyOrderedInput + mrpInput + grossAmount + discounInput + taxableInput + gstInput + deleteRow + hiddenGrossAmountRow + hiddenItemTypeRow + tableRowEnd;
+        var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyAvailableInput + qtyOrderedInput + mrpInput + grossAmount + discounInput + taxableInput + gstInput + deleteRow + hiddenGrossAmountRow + hiddenItemTypeRow + hiddenHsnSacRow + tableRowEnd;
         $('#tBodyowItems').append(tableRow);
       }
       // trigger change
@@ -2036,28 +2040,29 @@ function initializeJS() {
       $('#grossAmount_'+itemIndex).text(grossAmount);
       $('#taxableAmt_'+itemIndex).text(taxableAmount);
 
-      if(itemType === 'p') {
-        updateApplicableTax(itemIndex, taxableAmount, reqQty);
-      }
+      // console.log('hsn sac code is....', hsnSacCode, itemIndex, $('#hsnSac_'+itemIndex).val());
 
+      updateApplicableTax(itemIndex, taxableAmount, reqQty);
       updateSaleItemTotal();
     }
 
     // update applicable tax
     function updateApplicableTax(itemIndex, taxableAmount, reqQty) {
-/*      if(parseFloat(reqQty)>0) {
-        jQuery.ajax("/async/get-tax-percent?taxableValue="+taxableAmount+'&reqQty='+reqQty, {
+      if(parseFloat(reqQty)>0) {
+        var hsnSacCode = $('#hsnSac_'+itemIndex).val();
+        jQuery.ajax("/async/get-tax-percent?taxableValue="+taxableAmount+'&reqQty='+reqQty+'&hsn='+hsnSacCode+'&dm=cl', {
           success: function(response) {
             if(response.status === 'success') {
               var taxPercent = parseFloat(response.taxPercent).toFixed(2);
-              $('#saItemTax_'+itemIndex+' option[value="'+taxPercent+'"]').attr('selected', 'selected');            
+              // $('#saItemTax_'+itemIndex+' option[value="'+taxPercent+'"]').attr('selected', 'selected');            
+              $('#saItemTax_'+itemIndex).val(taxPercent);            
             }
           },
           error: function(e) {
             alert('Unable to update applicable tax percent.');
           }
         });
-      }*/
+      }
     }
 
     // update sale item total.
