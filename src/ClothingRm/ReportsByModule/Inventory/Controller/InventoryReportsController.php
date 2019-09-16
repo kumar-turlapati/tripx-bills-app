@@ -35,7 +35,7 @@ class InventoryReportsController {
   public function stockReport(Request $request) {
    
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 9000;
     $total_records = $categories_a = [];
     $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise'];
     $neg_a = ['all' => 'All items', 'neg' => 'Negative Balances'];
@@ -139,9 +139,6 @@ class InventoryReportsController {
         $pdf->SetFont('Arial','B',10);
         $pdf->Cell(0,5,$heading3,'B',1,'C');
       }
-
-      // dump($total_records);
-      // exit;
 
       $this->_add_page_heading_for_stock_report($pdf, $item_widths, $group_by_original);
       $first_page = true;
