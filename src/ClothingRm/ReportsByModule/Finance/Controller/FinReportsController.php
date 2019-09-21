@@ -28,7 +28,7 @@ class FinReportsController {
   public function payablesAction(Request $request) {
    
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = $suppliers_a = [];
     $aging_logic = false;
 
@@ -345,7 +345,7 @@ class FinReportsController {
   // receivables section
   public function receivablesAction(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = [];
     $aging_logic = false;
 

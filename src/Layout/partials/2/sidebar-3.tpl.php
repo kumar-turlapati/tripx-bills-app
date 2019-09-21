@@ -326,7 +326,8 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/item-master"><i class="fa fa-angle-right"></i> Item Master</a></li>
-              <li><a href="/reports/item-master-with-barcodes"><i class="fa fa-angle-right"></i> Barcode Register</a></li>
+              <?php /*
+              <li><a href="/reports/item-master-with-barcodes"><i class="fa fa-angle-right"></i> Barcode Register</a></li> */ ?>
               <li><a href="/reports/customer-master"><i class="fa fa-angle-right"></i> Customer Master</a></li>              
             </ul>            
           </li>          

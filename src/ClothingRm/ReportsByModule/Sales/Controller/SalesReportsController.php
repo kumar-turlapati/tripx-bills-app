@@ -415,7 +415,7 @@ class SalesReportsController {
   // prints sales register.
   public function printSalesRegister(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = [];
     $page_url = '/reports/sales-register';
 
@@ -583,7 +583,7 @@ class SalesReportsController {
   // prints itemwise sales register
   public function itemwiseSalesRegister(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = [];
     $sort_by_a = ['item' => 'SortBy - Itemwise', 'qty' => 'SortBy - Qtywise'];    
 
@@ -726,7 +726,7 @@ class SalesReportsController {
   // prints billwise and itemwise sales register
   public function salesBillwiseItemwise(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = [];
 
     $client_locations = Utilities::get_client_locations();
@@ -922,7 +922,7 @@ class SalesReportsController {
   // prints billwise and itemwise sales register
   public function salesBillwiseItemwiseCasewise(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = [];
 
     $client_locations = Utilities::get_client_locations();

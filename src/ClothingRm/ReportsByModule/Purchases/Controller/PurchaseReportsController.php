@@ -27,7 +27,7 @@ class PurchaseReportsController {
   public function poRegister(Request $request) {
    
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 100;
+    $page_no = 1; $per_page = 1000;
     $total_records = $suppliers = $suppliers_a = [];
 
     $client_locations = Utilities::get_client_locations();
@@ -200,7 +200,7 @@ class PurchaseReportsController {
   public function itemwisePoRegister(Request $request) {
    
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = $suppliers = $suppliers_a = [];
 
     $client_locations = Utilities::get_client_locations();
@@ -360,7 +360,7 @@ class PurchaseReportsController {
 
   public function poReturnRegister(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = $suppliers = $suppliers_a = [];
     $group_by_a = ['lot' => 'LotNo.wise', 'case' => 'Casewise/Containerwise/Boxwise'];
 

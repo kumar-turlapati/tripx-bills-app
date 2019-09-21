@@ -29,7 +29,7 @@ class MastersReportsController {
   public function itemMasterReport(Request $request) {
    
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 300;
+    $page_no = 1; $per_page = 1000;
     $total_records = $categories_a = [];
 
     $client_locations = Utilities::get_client_locations();
@@ -170,7 +170,7 @@ class MastersReportsController {
   public function itemMasterWithBarcodes(Request $request) {
    
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 30;
+    $page_no = 1; $per_page = 1000;
     $total_records = $categories_a = [];
 
     $client_locations = Utilities::get_client_locations();
@@ -328,7 +328,7 @@ class MastersReportsController {
 
   public function customerMasterReport(Request $request) {
     $default_location = $_SESSION['lc'];
-    $page_no = 1; $per_page = 200;
+    $page_no = 1; $per_page = 1000;
     $total_records = $categories_a = [];
     $customer_types = ['' => 'All Customers'] + Constants::$CUSTOMER_TYPES; 
 
