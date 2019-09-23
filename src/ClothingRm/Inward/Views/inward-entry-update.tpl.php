@@ -437,12 +437,12 @@
                   if( isset($form_data['inwardQty'][$i-1]) && $form_data['inwardQty'][$i-1] !== '' ) {
                     $inward_qty = $form_data['inwardQty'][$i-1];
                   } else {
-                    $inward_qty = '';
+                    $inward_qty = 0;
                   }
                   if( isset($form_data['freeQty'][$i-1]) && $form_data['freeQty'][$i-1] !== '' ) {
                     $free_qty = $form_data['freeQty'][$i-1];
                   } else {
-                    $free_qty = '';
+                    $free_qty = 0;
                   }
                   if( isset($form_data['billedQty'][$i-1]) && $form_data['billedQty'][$i-1] !== '' ) {
                     $billed_qty = $form_data['billedQty'][$i-1];
@@ -457,12 +457,12 @@
                   if( isset($form_data['mrp'][$i-1]) && $form_data['mrp'][$i-1] !== '' ) {
                     $mrp = $form_data['mrp'][$i-1];
                   } else {
-                    $mrp = '';
+                    $mrp = 0;
                   }
                   if( isset($form_data['itemRate'][$i-1]) && $form_data['itemRate'][$i-1] !== '' ) {
                     $item_rate = $form_data['itemRate'][$i-1];
                   } else {
-                    $item_rate = '';
+                    $item_rate = 0;
                   }
                   if( isset($form_data['taxPercent'][$i-1]) && $form_data['taxPercent'][$i-1] !== '' ) {
                     $tax_percent = $form_data['taxPercent'][$i-1];
@@ -472,7 +472,7 @@
                   if( isset($form_data['itemDiscount'][$i-1]) && $form_data['itemDiscount'][$i-1] !== '' ) {
                     $item_discount = $form_data['itemDiscount'][$i-1];
                   } else {
-                    $item_discount = '';
+                    $item_discount = 0;
                   }
                   if( isset($form_data['hsnCodes'][$i-1]) && $form_data['hsnCodes'][$i-1] !== '' ) {
                     $hsn_code = $form_data['hsnCodes'][$i-1];
@@ -624,7 +624,7 @@
                       placeholder="Rcvd."
                       style="width:60px;font-size:12px;"
                       id="inwRcvdQty_<?php echo $i ?>"
-                      value="<?php echo $inward_qty ?>"
+                      value="<?php echo $inward_qty > 0 ? $inward_qty : '' ?>"
                       title="Last transaction details for the item will be fetched automatically."                    
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['inwardQty']) ) :?>
@@ -639,7 +639,7 @@
                       placeholder="Free"
                       style="width:60px;font-size:12px;"
                       id="inwFreeQty_<?php echo $i ?>"
-                      value="<?php echo $free_qty ?>"                    
+                      value="<?php echo $free_qty > 0 ? $free_qty : '' ?>"                    
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['freeQty']) ) :?>
                       <span class="error">Invalid</span>
@@ -650,7 +650,7 @@
                       type="text"
                       id="inwBillQty_<?php echo $i ?>"
                       class="form-control inwBillQty noEnterKey"
-                      value="<?php echo $billed_qty ?>"
+                      value="<?php echo $billed_qty > 0 ? $billed_qty : '' ?>"
                       style="font-size:12px;width:60px;"
                       disabled
                     />
@@ -680,7 +680,7 @@
                       class="form-control noEnterKey"
                       style="width:60px;font-size:12px;"
                       id="mrp_<?php echo $i ?>"
-                      value="<?php echo $mrp ?>"                      
+                      value="<?php echo $mrp > 0 ? $mrp : '' ?>"                      
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['mrp']) ) :?>
                       <span class="error">Invalid</span>
@@ -694,7 +694,7 @@
                       class="form-control inwItemRate noEnterKey"
                       placeholder="Rate/Unit"
                       style="width:80px;font-size:12px;"
-                      value="<?php echo $item_rate ?>"                      
+                      value="<?php echo $item_rate > 0 ? $item_rate : '' ?>"                      
                     />
                     <?php if( isset($form_errors['itemDetails'][$i-1]['itemRate']) ) :?>
                       <span class="error">Invalid</span>

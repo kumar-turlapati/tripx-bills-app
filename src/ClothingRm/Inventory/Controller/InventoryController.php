@@ -252,7 +252,7 @@ class InventoryController {
       $search_params['category'] = !is_null($request->get('category')) ? Utilities::clean_string($request->get('category')) : '';
       $search_params['brandName'] = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';      
       $search_params['pageNo'] = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
-      $search_params['perPage'] = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 100;
+      $search_params['perPage'] = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 500;
     }
 
     $categories_a = $products_api->get_product_categories($search_params['locationCode']);
@@ -262,7 +262,7 @@ class InventoryController {
 
     $api_status = $items_list['status'];
 
-    $per_page = isset($search_params['perPage']) ? $search_params['perPage'] : 100;
+    $per_page = isset($search_params['perPage']) ? $search_params['perPage'] : 500;
     $page_no = isset($search_params['pageNo']) ? $search_params['pageNo'] : 1;
 
     // check api status

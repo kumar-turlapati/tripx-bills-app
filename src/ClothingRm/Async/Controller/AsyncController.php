@@ -79,7 +79,11 @@ class AsyncController {
       $api_url = 'reports/daily-sales/'.$client_id;
       $response = $api_caller->sendRequest('get',$api_url,$params,false);
       header("Content-type: application/json");
-      echo $response;
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     } elseif($api_string==='monthly-sales') {
       $sale_month = Utilities::clean_string($request->get('saleMonth'));
       $sale_year = Utilities::clean_string($request->get('saleYear'));

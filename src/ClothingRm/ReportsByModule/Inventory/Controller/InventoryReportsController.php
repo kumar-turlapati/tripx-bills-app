@@ -37,7 +37,7 @@ class InventoryReportsController {
     $default_location = $_SESSION['lc'];
     $page_no = 1; $per_page = 10000;
     $total_records = $categories_a = [];
-    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise', 'barcode' => 'Barcodewise'];
+    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise', 'barcode' => 'Additional Details'];
     $neg_a = ['all' => 'All items', 'neg' => 'Negative Balances'];
 
     $client_locations = Utilities::get_client_locations();
@@ -95,7 +95,7 @@ class InventoryReportsController {
         } elseif($group_by_original === 'case') {
           $report_string = 'Case/Container/Box wise';
         } elseif($group_by_original === 'barcode') {
-          $report_string = 'Barcodewise';
+          $report_string = 'Additional Details';
         }
 
         $heading1 = $report_string.' Stock Report - '.$location_name;
@@ -129,7 +129,7 @@ class InventoryReportsController {
       $item_widths = array(10,38,23,20,25,12,14,14,14,16,12,12,12,13,12,18,12);
       //                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16
 
-      $item_widths_bc = array(10,38,24,25,25,10,12,16,21,17,18,18,16,26,12,18,12);
+      $item_widths_bc = array(10,49,13,25,25,10,12,16,21,17,18,18,16,26,12,18,12);
       //                       0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16
 
       $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4]  + $item_widths[5];
@@ -191,7 +191,7 @@ class InventoryReportsController {
           $pdf->Ln();
           $pdf->Cell($item_widths_bc[0],6,$slno,'LRTB',0,'R');
           $pdf->Cell($item_widths_bc[1],6,$item_name,'RTB',0,'L');
-          $pdf->Cell($item_widths_bc[2],6,$barcode,'RTB',0,'L');
+          $pdf->Cell($item_widths_bc[2],6,$tax_percent,'RTB',0,'R');
           $pdf->Cell($item_widths_bc[3],6,$cno,'RTB',0,'L');
           $pdf->Cell($item_widths_bc[4],6,$style_code,'RTB',0,'L');
           $pdf->Cell($item_widths_bc[5],6,$size,'RTB',0,'R');
@@ -2319,7 +2319,7 @@ class InventoryReportsController {
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell($item_widths[0],  6,'Sno.','LRTB',0,'C');
     $pdf->Cell($item_widths[1],  6,'Item Name','RTB',0,'C');
-    $pdf->Cell($item_widths[2],  6,'Barcode','RTB',0,'C');
+    $pdf->Cell($item_widths[2],  6,'Tax %','RTB',0,'C');
     $pdf->Cell($item_widths[3],  6,'Case/Cont. No.','RTB',0,'C');
     $pdf->Cell($item_widths[4],  6,'Style Code','RTB',0,'C');
     $pdf->Cell($item_widths[5],  6,'Size','RTB',0,'C');
