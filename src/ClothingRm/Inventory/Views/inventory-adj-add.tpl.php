@@ -1,5 +1,4 @@
 <?php
-
   use Atawa\Utilities;
 
   if(isset($submitted_data['itemName']) && $submitted_data['itemName'] !== '') {
@@ -30,7 +29,7 @@
   if(isset($submitted_data['locationCode']) && $submitted_data['locationCode'] !== '') {
     $location_code = $submitted_data['locationCode'];
   } else {
-    $location_code = '';
+    $location_code = $default_location;
   }
   // dump($errors);
   // exit;
@@ -38,7 +37,6 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Add Stock Adjustment</h2>
       <div class="panel-body">
         <?php echo Utilities::print_flash_message() ?>
         <?php if($page_error !== ''): ?>
@@ -57,33 +55,20 @@
             </a>
           </div>
         </div>
-        <form class="form-validate form-horizontal" method="POST">
+
+        <form class="form-validate form-horizontal" method="POST" id="addAdjEntryFrm" autocomplete="off">
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Item name</label>
-              <input type="text" class="form-control inameAc" name="itemName" id="itemName" value="<?php echo $item_name ?>">
-              <?php if(isset($errors['itemName'])): ?>
-                <span class="error"><?php echo $errors['itemName'] ?></span>
-              <?php endif; ?>           
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label">Scan barcode</label>
+              <input
+                type="text"
+                id="adjBarcode"
+                style="font-size:16px;font-weight:bold;border:2px dashed #225992;padding-left:5px;font-weight:bold;background-color:#f7f705;height:35px;"
+                maxlength="13"
+              />
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Lot no.</label>
-              <input type="text" class="form-control" name="lotNo" id="lotNo" value="<?php echo $lot_no ?>">
-              <?php if(isset($errors['lotNo'])): ?>
-                <span class="error"><?php echo $errors['lotNo'] ?></span>
-              <?php endif; ?>              
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Adjustment qty.</label>
-                <input type="text" class="form-control" name="adjQty" id="adjQty" value="<?php echo $adj_qty ?>">
-                <?php if(isset($errors['adjQty'])): ?>
-                  <span class="error"><?php echo $errors['adjQty'] ?></span>
-                <?php endif; ?>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name (against which store this entry effects)</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label">Store name</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
@@ -104,7 +89,44 @@
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label">Item name</label>
+              <input type="text" class="form-control inameAc" name="itemName" id="itemName" value="<?php echo $item_name ?>">
+              <?php if(isset($errors['itemName'])): ?>
+                <span class="error"><?php echo $errors['itemName'] ?></span>
+              <?php endif; ?>           
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+              <label class="control-label">Lot no.</label>
+              <input type="text" class="form-control" name="lotNo" id="lotNo" value="<?php echo $lot_no ?>">
+              <?php if(isset($errors['lotNo'])): ?>
+                <span class="error"><?php echo $errors['lotNo'] ?></span>
+              <?php endif; ?>              
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+              <label class="control-label">Adjustment qty.</label>
+                <input type="text" class="form-control" name="adjQty" id="adjQty" value="<?php echo $adj_qty ?>">
+                <?php if(isset($errors['adjQty'])): ?>
+                  <span class="error"><?php echo $errors['adjQty'] ?></span>
+                <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+              <label class="control-label">Adjustment date</label>
+              <div class="form-group">
+                <div class="col-lg-12">
+                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="adjDate" id="adjDate" />
+                    <span class="add-on"><i class="fa fa-calendar"></i></span>
+                  </div>
+                  <?php if(isset($errors['adjDate'])): ?>
+                    <span class="error"><?php echo $errors['adjDate'] ?></span>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
               <label class="control-label">Reason for adjustment</label>
               <div class="select-wrap">
                 <select class="form-control" name="adjReasonCode" id="adjReasonCode">
@@ -130,24 +152,13 @@
                 <?php endif; ?>
               </div>             
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Adjustment date (dd-mm-yyyy)</label>
-              <div class="form-group">
-                <div class="col-lg-12">
-                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="adjDate" id="adjDate" />
-                    <span class="add-on"><i class="fa fa-calendar"></i></span>
-                  </div>
-                  <?php if(isset($errors['adjDate'])): ?>
-                    <span class="error"><?php echo $errors['adjDate'] ?></span>
-                  <?php endif; ?>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="text-center">
-            <button class="btn btn-primary" id="Save">
-              <i class="fa fa-save"></i> Save
+          <div class="text-center" style="padding-top:10px;">
+            <button class="btn btn-success cancelOp" id="adjSave">
+              <i class="fa fa-save"></i> Add Adjustment
+            </button>
+            <button class="btn btn-danger cancelButton" id="adjCancel">
+              <i class="fa fa-times"></i> Reset
             </button>
           </div>
         </form>

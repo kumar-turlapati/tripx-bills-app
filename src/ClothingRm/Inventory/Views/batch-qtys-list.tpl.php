@@ -14,6 +14,24 @@
   } else {
     $brandName = '';
   }
+  if(isset($search_params['size']) && $search_params['size'] !== '') {
+    $size = $search_params['size'];
+    $query_params[] = 'size='.$size;
+  } else {
+    $size = '';
+  }
+  if(isset($search_params['styleCode']) && $search_params['styleCode'] !== '') {
+    $styleCode = $search_params['styleCode'];
+    $query_params[] = 'styleCode='.$styleCode;
+  } else {
+    $styleCode = '';
+  }
+  if(isset($search_params['cno']) && $search_params['cno'] !== '') {
+    $cno = $search_params['cno'];
+    $query_params[] = 'cno='.$cno;
+  } else {
+    $cno = '';
+  }  
   if(isset($search_params['category']) && $search_params['category'] !== '') {
     $categoryCode = $search_params['category'];
     $query_params[] = 'category='.$categoryCode;
@@ -43,7 +61,7 @@
           <div id="filters-form">
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
@@ -62,7 +80,7 @@
                     </select>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Product / Service Name" type="text" name="psName" id="psName" class="form-control inameAc" value="<?php echo $psName ?>">
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
@@ -83,8 +101,18 @@
                     </select>
                    </div>
                 </div>                
-                <div class="col-sm-12 col-md-1 col-lg-1">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Brand" type="text" name="brandName" id="brandName" class="form-control brandAc" value="<?php echo $brandName ?>">
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Size" type="text" name="size" id="size" class="form-control" value="<?php echo $size ?>">
+                </div>                
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Style Code" type="text" name="styleCode" id="styleCode" class="form-control" value="<?php echo $styleCode ?>">
+                </div>
+                <div style="height:40px;"></div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Case / Box No." type="text" name="cno" id="cno" class="form-control" value="<?php echo $cno ?>">
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="container-fluid">
@@ -106,12 +134,14 @@
               <thead>
                 <tr>
                   <th width="5%" class="text-center">Sno</th>
-                  <th width="25%" class="text-left">Item name</th>
-                  <th width="15%" class="text-left">Category name</th>
-                  <th width="15%" class="text-left">Brand name</th>
-                  <th width="15%" class="text-left">Store name</th>
-                  <th width="10%" class="text-left">Lot no.</th>
-                  <th width="10%" class="text-left">CASE / Box no.</th>
+                  <th width="25%" class="text-center">Item name</th>
+                  <th width="10%" class="text-center">Category</th>
+                  <th width="10%" class="text-center">Brand</th>
+                  <th width="8%" class="text-center">Style code</th>
+                  <th width="6%" class="text-center">Size</th>
+                  <th width="8%" class="text-center">Color</th>
+                  <th width="10%" class="text-center">Lot no.</th>
+                  <th width="10%" class="text-center">CASE / Box no.</th>
                   <th width="8%" class="text-center">M.R.P<br />(in Rs.)</th>
                   <th width="8%" class="text-center">Available<br />Qty.</th>
                   <th width="10%" class="text-center">Value<br />(in Rs.)</th>                
@@ -133,35 +163,40 @@
                     $item_value = $ava_qty * $item_rate;
                     $location_id = $item_details['locationID'];
                     $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
+                    $style_code = $item_details['itemStyleCode'];
+                    $size = $item_details['itemSize'];
+                    $color = $item_details['itemColor'];
 
                     $total_value += $item_value;
                     $total_qty += $ava_qty;
                 ?>
                   <tr class="text-right font11">
                     <td><?php echo $cntr ?></td>
-                    <td class="text-left">
+                    <td class="text-left valign-middle">
                       <?php echo $item_name ?>
                     </td>
-                    <td class="text-left"><?php echo $category_name ?></td>                 
-                    <td class="text-left"><?php echo $brand_name ?></td>                 
-                    <td class="text-left"><?php echo $location_name ?></td>
-                    <td class="text-left"><?php echo $lot_no ?></td>
-                    <td class="text-left"><?php echo $cno ?></td>                                        
-                    <td class="text-right"><?php echo number_format($item_rate,2,'.','') ?></td>
-                    <td class="text-right"><?php echo number_format($ava_qty,2,'.','') ?></td>
-                    <td class="text-right"><?php echo number_format($item_value,2,'.','') ?></td>                    
+                    <td class="text-left valign-middle" title="<?php echo $category_name ?>"><?php echo substr($category_name,0,10) ?></td>                 
+                    <td class="text-left valign-middle" title="<?php echo $brand_name ?>"><?php echo substr($brand_name,0,10) ?></td>                 
+                    <td class="text-left valign-middle"><?php echo $style_code ?></td>
+                    <td class="text-right valign-middle"><?php echo $size ?></td>
+                    <td class="text-left valign-middle"><?php echo $color ?></td>
+                    <td class="text-left valign-middle"><?php echo $lot_no ?></td>
+                    <td class="text-left valign-middle"><?php echo $cno ?></td>                                        
+                    <td class="text-right valign-middle"><?php echo number_format($item_rate,2,'.','') ?></td>
+                    <td class="text-right valign-middle"><?php echo number_format($ava_qty,2,'.','') ?></td>
+                    <td class="text-right valign-middle"><?php echo number_format($item_value,2,'.','') ?></td>                    
                   </tr>
               <?php
                 $cntr++;
                 endforeach;
               ?>
                 <tr>
-                  <td colspan="8" style="font-size:14px;font-weight:bold;text-align:right;">PAGE TOTALS (MRP * Available Qty.)</td>
+                  <td colspan="10" style="font-size:14px;font-weight:bold;text-align:right;">PAGE TOTALS (MRP * Available Qty.)</td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($total_qty, 2, '.', '') ?></td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($total_value, 2, '.', '') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="8" style="font-size:14px;font-weight:bold;text-align:right;">STORE TOTALS (MRP * Available Qty.)</td>
+                  <td colspan="10" style="font-size:14px;font-weight:bold;text-align:right;">STORE TOTALS (MRP * Available Qty.)</td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($store_totals['totalQty'], 2, '.', '') ?></td>
                   <td style="font-size:16px;font-weight:bold;text-align:right;"><?php echo number_format($store_totals['totalValue'], 2, '.', '') ?></td>
                 </tr>

@@ -726,6 +726,52 @@ function initializeJS() {
     }
   }
 
+  if( $('#addAdjEntryFrm').length > 0) {
+    $('#adjBarcode').on('keypress', function(e){
+      if (e.keyCode == 13) {
+        var barcode = $(this).val();
+        var locationCode = $('#locationCode').val();
+        if(barcode.length !== 13) {
+          alert('Invalid barcode');
+          return false;
+        } else if(locationCode === '') {
+          alert('Choose a Store first.');
+          return false;
+        }
+        var locationCode = $('#locationCode').val();
+        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+          success: function(itemDetails) {
+            if(itemDetails.status === 'success') {
+              var objLength = Object.keys(itemDetails.response.bcDetails).length;
+              if(objLength > 0) {
+                console.log(itemDetails);
+                var itemName = itemDetails.response.bcDetails.itemName;
+                var availableQty = parseFloat(itemDetails.response.bcDetails.availableQty).toFixed(2);
+                var lotNo = itemDetails.response.bcDetails.lotNo;
+                $('#itemName').val(itemName);
+                $('#lotNo').val(lotNo);
+                $('#adjQty').val(availableQty);
+                $('#adjBarcode').val('');
+                $('#adjBarcode').focus();
+              } else {
+                alert('Barcode not found');                
+              }
+            }
+          },
+          error: function(e) {
+            alert('Barcode not found in the Selected store.');
+          }
+        });
+      }
+      e.preventDefault();
+    });
+    $('#adjSave').on("click", function(e){
+      $(this).attr('disabled', true);
+      $('#adjSave, #adjCancel').attr('disabled', true);
+      $('#addAdjEntryFrm').submit();
+    });
+  }
+
   if( $('.transBarcode').length > 0) {
     $('.transBarcode').on('blur', function(e){
       var barcode = $(this).val();
@@ -1134,8 +1180,9 @@ function initializeJS() {
       window.location.href = '/stock-transfer/register';      
     } else if(buttonId === 'comboCancel') {
       window.location.href = '/sales-combo/add';      
+    } else if(buttonId === 'adjCancel') {
+      window.location.href = '/inventory/stock-adjustment';      
     }
-
   });
 
   jQuery('.delPcVoucher').on("click", function(e){

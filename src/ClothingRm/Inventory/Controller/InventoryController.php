@@ -27,6 +27,8 @@ class InventoryController {
     $page_error = $page_success = '';
     $errors = $submitted_data = [];
 
+    $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+
     $api_response = $this->inven_api->get_inventory_adj_reasons();
     if($api_response['status']===true) {
       $adj_reasons = array(''=>'Choose') + $api_response['results'];
@@ -50,10 +52,12 @@ class InventoryController {
         $submitted_data = $params;
       } else {
         $adj_code = $api_response['results']['adjCode'];
-        $this->flash->set_flash_message('Adjustment entry added successfully with code [ '.$adj_code.' ]');
-        Utilities::redirect('/inventory/stock-adjustment');
+        $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Adjustment entry added successfully with code [ '.$adj_code.' ]');
+        Utilities::redirect('/inventory/stock-adjustment?lc='.$params['locationCode']);
       }
     }
+
+    $location_code = !is_null($request->get('lc')) ? Utilities::clean_string($request->get('lc')) : $default_location;
 
     // template variables.
     $template_vars = array(
@@ -63,12 +67,12 @@ class InventoryController {
       'page_success' => $page_success,
       'submitted_data' => $submitted_data,
       'client_locations' => array(''=>'Choose') + $client_locations,
-      'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'default_location' => $location_code,
     );
 
     // controller variables.
     $controller_vars = array(
-      'page_title' => 'Inventory - Stock Adjustment',
+      'page_title' => 'Inventory - Add Stock Adjustment',
       'icon_name' => 'fa fa-adjust',
     );         
 
@@ -251,6 +255,9 @@ class InventoryController {
       $search_params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $default_location;
       $search_params['category'] = !is_null($request->get('category')) ? Utilities::clean_string($request->get('category')) : '';
       $search_params['brandName'] = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';      
+      $search_params['size'] = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';      
+      $search_params['styleCode'] = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';      
+      $search_params['cno'] = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';      
       $search_params['pageNo'] = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
       $search_params['perPage'] = !is_null($request->get('perPage')) ? Utilities::clean_string($request->get('perPage')) : 500;
     }
