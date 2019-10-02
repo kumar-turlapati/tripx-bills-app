@@ -263,11 +263,11 @@ class InwardBulkUploadController
             $cno = Utilities::clean_string($item_details['ContainerOrCaseNo']);
             $uom_name = Utilities::clean_string($item_details['UomName']);
             $barcode = Utilities::clean_string($item_details['Barcode']);
-            $item_sku = isset($imported_record_details['ItemSku']) ? Utilities::clean_string($imported_record_details['ItemSku']) : '';
-            $item_style_code = isset($imported_record_details['ItemStyleCode']) ? Utilities::clean_string($imported_record_details['ItemStyleCode']) : '';
-            $item_size = isset($imported_record_details['ItemSize']) ? Utilities::clean_string($imported_record_details['ItemSize']) : '';
-            $item_color = isset($imported_record_details['ItemColor']) ? Utilities::clean_string($imported_record_details['ItemColor']) : '';
-            $item_sleeve = isset($imported_record_details['ItemSleeve']) ? Utilities::clean_string($imported_record_details['ItemSleeve']) : '';
+            $item_sku = isset($item_details['ItemSku']) ? Utilities::clean_string($item_details['ItemSku']) : '';
+            $item_style_code = isset($item_details['ItemStyleCode']) ? Utilities::clean_string($item_details['ItemStyleCode']) : '';
+            $item_size = isset($item_details['ItemSize']) ? Utilities::clean_string($item_details['ItemSize']) : '';
+            $item_color = isset($item_details['ItemColor']) ? Utilities::clean_string($item_details['ItemColor']) : '';
+            $item_sleeve = isset($item_details['ItemSleeve']) ? Utilities::clean_string($item_details['ItemSleeve']) : '';
 
             $imported_records[$key]['cno'] = $cno;
             $imported_records[$key]['uomName'] = $uom_name;

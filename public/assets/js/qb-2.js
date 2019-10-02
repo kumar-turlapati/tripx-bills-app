@@ -207,14 +207,14 @@ function initializeJS() {
             $('#qtyavaTd_'+itemId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
             $('#mrpTd_'+itemId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
             $('#grossAmountTd_'+itemId).html('<img src="/assets/img/wait.gif" alt="Wait.." />');
-            $('.grossAmount').html('<img src="/assets/img/wait.gif" alt="Wait.." />');
-            $('.roundOff').html('<img src="/assets/img/wait.gif" alt="Wait.." />');
-            $('.netPay').html('<img src="/assets/img/wait.gif" alt="Wait.." />');          
+            // $('.grossAmount').html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            // $('.roundOff').html('<img src="/assets/img/wait.gif" alt="Wait.." />');
+            // $('.netPay').html('<img src="/assets/img/wait.gif" alt="Wait.." />');          
           }
         }, 
         success: function(itemDetails) {
           if(itemDetails.status === 'success') {
-            var grossAmount = roundOff = netPay = roundedNetPay = 0;
+            var roundOff = netPay = roundedNetPay = 0;
             var avaQtys = itemDetails.response.comboItemAvaQtys;
             var itemMrps = itemDetails.response.comboItemMrps;
             var itemDiscounts = itemDetails.response.comboItemDiscounts;
@@ -248,11 +248,16 @@ function initializeJS() {
                 } else {
                   $('#qty_'+itemId).focus();
                 }
-
               } else {
                 emptyComboValues(i);
               }
             }
+          } else {
+            alert("Invalid combo code !");
+            $('#inameTd_'+itemId).html('');
+            $('#qtyavaTd_'+itemId).html('');
+            $('#mrpTd_'+itemId).html('');
+            $('#grossAmountTd_'+itemId).html('');
           }
         },
         error: function(e) {
@@ -315,6 +320,7 @@ function initializeJS() {
         $('#splitPaymentCash, #splitPaymentCard, #splitPaymentWallet, #splitPaymentCn, #cnNo, #walletID, #walletRefNo, #cardNo, #authCode').val('')
       }
     });
+
     $('.comboItemCode').on('keypress', function (e) {
      if (e.keyCode == 13) {
        var itemId = $(this).attr('id').split('_')[1];
@@ -357,17 +363,18 @@ function initializeJS() {
        }
      }
     });
+
     $('.comboItemCode').on('keyup', function (e) {
      if (e.keyCode == 8) {
       var stringLength = $(this).val().length;
       if(stringLength <= 0 ) {
         var itemId = $(this).attr('id').split('_')[1];
-        // $('#cbarcode_'+itemId).attr('disabled', false);
         emptyComboValues(itemId);
         comboCall(itemId);
       }      
      }
     });
+
     $('.comboItemQty').on('keypress', function (e) {
      var itemId = $(this).attr('id').split('_')[1];
      if (e.keyCode == 13) {

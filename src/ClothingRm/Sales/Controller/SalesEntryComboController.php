@@ -359,7 +359,7 @@ class SalesEntryComboController
       if($response['status'] === 'success') {
         foreach($response['response'] as $lot_details) {
           $closing_qty = $lot_details['closingQty'];
-          if($closing_qty > 0 && $closing_qty > $order_qtys[$item_key]) {
+          if($closing_qty > 0 && $closing_qty >= $order_qtys[$item_key]) {
             $lot_nos[$item_key] = $lot_details['lotNo'];
             $tax_percents[$item_key] = $lot_details['taxPercent'];
             break;
