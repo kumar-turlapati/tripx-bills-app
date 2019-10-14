@@ -1,6 +1,12 @@
 <?php
   use Atawa\Utilities;  
   $item_name = isset($form_data['itemName']) && $form_data['itemName'] !== '' ? $form_data['itemName'] : '';
+  $cno = isset($form_data['cno']) && $form_data['cno'] !== '' ? $form_data['cno'] : '';
+  $style_code = isset($form_data['styleCode']) && $form_data['styleCode'] !== '' ? $form_data['styleCode'] : '';
+  $size = isset($form_data['itemSize']) && $form_data['itemSize'] !== '' ? $form_data['itemSize'] : '';
+  $color = isset($form_data['itemColor']) && $form_data['itemColor'] !== '' ? $form_data['itemColor'] : '';
+  $sku = isset($form_data['itemSku']) && $form_data['itemSku'] !== '' ? $form_data['itemSku'] : '';
+  $sleeve = isset($form_data['itemSleeve']) && $form_data['itemSleeve'] !== '' ? $form_data['itemSleeve'] : '';
   $location_code = isset($form_data['locationCode']) ? $form_data['locationCode'] : $default_location;
 
   $query_params = [];
@@ -50,16 +56,54 @@
                     <span class="error"><?php echo $form_errors['locationCode'] ?></span>
                   <?php endif; ?>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <input placeholder="Item name" type="text" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $item_name ?>">
                   <?php if(isset($form_errors['itemName'])): ?>
                     <span class="error"><?php echo $form_errors['itemName'] ?></span>
                   <?php endif; ?>
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Case/Box No." type="text" name="cno" id="cno" class="form-control" value="<?php echo $cno ?>">
+                  <?php if(isset($form_errors['cno'])): ?>
+                    <span class="error"><?php echo $form_errors['cno'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Style code" type="text" name="styleCode" id="styleCode" class="form-control" value="<?php echo $style_code ?>">
+                  <?php if(isset($form_errors['styleCode'])): ?>
+                    <span class="error"><?php echo $form_errors['styleCode'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Size" type="text" name="size" id="size" class="form-control" value="<?php echo $size ?>">
+                  <?php if(isset($form_errors['size'])): ?>
+                    <span class="error"><?php echo $form_errors['size'] ?></span>
+                  <?php endif; ?>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Color" type="text" name="itemColor" id="itemColor" class="form-control" value="<?php echo $color ?>">
+                  <?php if(isset($form_errors['itemColor'])): ?>
+                    <span class="error"><?php echo $form_errors['itemColor'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="SKU" type="text" name="itemSku" id="itemSku" class="form-control" value="<?php echo $sku ?>">
+                  <?php if(isset($form_errors['itemSku'])): ?>
+                    <span class="error"><?php echo $form_errors['itemSku'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Sleeve" type="text" name="itemSleeve" id="itemSleeve" class="form-control" value="<?php echo $sleeve ?>">
+                  <?php if(isset($form_errors['itemSleeve'])): ?>
+                    <span class="error"><?php echo $form_errors['itemSleeve'] ?></span>
+                  <?php endif; ?>
+                </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="container-fluid">
                     <button class="btn btn-success">
-                      <i class="fa fa-file-text"></i> Get Track
+                      <i class="fa fa-angle-double-up"></i> Get Track
                     </button>
                     <button type="reset" class="btn btn-warning" onclick="javascript:resetFilter(<?php echo (isset($page_url) && $page_url != '' ? "'".$page_url."'" : '#') ?>)">
                       <i class="fa fa-refresh"></i> Reset
@@ -78,7 +122,7 @@
                   <th width="5%" class="text-center">Sno.</th>
                   <th width="9%" class="text-center">Transaction<br />Date</th>
                   <th width="8%" class="text-center">Lot No.</th>
-                  <th width="6%" class="text-center">CASE/<br />BOX No.</th>
+                  <th width="6%" class="text-center">Case <br />No.</th>
                   <th width="7%" class="text-center">Opening<br />Qty.</th>
                   <th width="7%" class="text-center">Purchased<br />Qty.</th>
                   <th width="8%" class="text-center">Sales Return<br />Qty.</th>

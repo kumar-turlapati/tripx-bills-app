@@ -234,7 +234,7 @@ class InwardBulkUploadController
       # initiate importer
       $importer = new Importer($file_path);
       $imported_records = $importer->_import_data();
-      if(is_array($imported_records) && count($imported_records)>0) {
+      if(is_array($imported_records) && count($imported_records) > 0 && count($imported_records) <= 50 ) {
         $fields_extracted = array_keys($imported_records[0]);
         # check whether all the fields are existing or not.
         foreach($inward_upload_fields as $field_name) {
@@ -349,6 +349,10 @@ class InwardBulkUploadController
           }
           $cleaned_params['itemDetails'] = $imported_records;
         }
+      } elseif(count($imported_records) > 0) {
+        $form_errors['fileName'] = '<i class="fa fa-times" aria-hidden="true"></i> Only 50 rows per file is allowed.';        
+      } else {
+        $form_errors['fileName'] = 'Unable to retrieve rows.';        
       }
     }
 

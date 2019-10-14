@@ -344,8 +344,15 @@ class InventoryController {
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
     $per_page = 100;
+
     $page_no = !is_null($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
     $item_name = !is_null($request->get('itemName')) ? Utilities::clean_string($request->get('itemName')) : '';
+    $cno = !is_null($request->get('cno')) ? Utilities::clean_string($request->get('cno')) : '';
+    $style_code = !is_null($request->get('styleCode')) ? Utilities::clean_string($request->get('styleCode')) : '';
+    $size = !is_null($request->get('size')) ? Utilities::clean_string($request->get('size')) : '';
+    $color = !is_null($request->get('itemColor')) ? Utilities::clean_string($request->get('itemColor')) : '';
+    $sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
+    $sleeve = !is_null($request->get('itemSleeve')) ? Utilities::clean_string($request->get('itemSleeve')) : '';
     $location_code = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
 
     $client_locations = Utilities::get_client_locations();
@@ -355,6 +362,12 @@ class InventoryController {
       $cleaned_params['perPage'] = $per_page;
       $cleaned_params['locationCode'] = $location_code;
       $cleaned_params['itemName'] = $item_name;
+      $cleaned_params['cno'] = $cno;
+      $cleaned_params['styleCode'] = $style_code;
+      $cleaned_params['itemSize'] = $size;
+      $cleaned_params['itemColor'] = $color;
+      $cleaned_params['itemSku'] = $sku;
+      $cleaned_params['itemSleeve'] = $sleeve;
 
       // hit api
       $api_response = $this->inven_api->track_item($cleaned_params);
