@@ -497,12 +497,14 @@ class BarcodeController
 
       } else {
         $item_name = isset($form_data['itemName']) ? Utilities::clean_string($form_data['itemName']) : '';
+        $index_by =  isset($form_data['idx']) ? Utilities::clean_string($form_data['idx']) : 'item';        
         $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : $_SESSION['lc'];
         $search_params = array(
           'itemName' => $item_name,
           'locationCode' => $location_code,
           'pageNo' => $page_no,
           'perPage' => $per_page,
+          'indexBy' => $index_by,
         );
       }
     } else {
@@ -511,10 +513,16 @@ class BarcodeController
       } else {
         $location_code = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
       }
+      if(!is_null($request->get('idx')) && $request->get('idx') !== '') {
+        $index_by = $request->get('idx');
+      } else {
+        $index_by = 'item';
+      }      
       $search_params = array(
         'pageNo' => $page_no,
         'perPage' => $per_page,
         'locationCode' => $location_code,
+        'indexBy' => $index_by,
       );
     }
 

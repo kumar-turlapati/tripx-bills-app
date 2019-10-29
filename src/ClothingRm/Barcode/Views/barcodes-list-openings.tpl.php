@@ -2,19 +2,25 @@
   use Atawa\Utilities;
 
   $query_params = [];
-  if(isset($search_params['itemName']) && $search_params['itemName'] !='') {
+  if(isset($search_params['itemName']) && $search_params['itemName'] !=='') {
     $itemName = $search_params['itemName'];
     $query_params[] = 'itemName='.$itemName;
   } else {
     $itemName = '';
   }
-  if(isset($search_params['category']) && $search_params['category'] !='' ) {
+  if(isset($search_params['category']) && $search_params['category'] !=='' ) {
     $category = $search_params['category'];
     $query_params[] = 'category='.$category;
   } else {
     $category = '';
   }
-  if(isset($search_params['locationCode']) && $search_params['locationCode'] !='' ) {
+  if(isset($search_params['indexBy']) && $search_params['indexBy'] !=='' ) {
+    $index_by = $search_params['indexBy'];
+    $query_params[] = 'idx='.$index_by;
+  } else {
+    $index_by = '';
+  }  
+  if(isset($search_params['locationCode']) && $search_params['locationCode'] !=='' ) {
     $locationCode = $search_params['locationCode'];
     $query_params[] = 'locationCode='.$locationCode;
   } else {
@@ -25,7 +31,9 @@
   } else {
     $query_params = '';
   }
-  $pagination_url = $page_url = '/barcode/opbal';  
+  $pagination_url = $page_url = '/barcode/opbal';
+
+  $sort_by_a = ['item' => 'Index by Item name', 'upload' => 'Index by Entry time'];
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -50,7 +58,7 @@
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control" value="<?php echo $itemName ?>">
                 </div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
@@ -69,6 +77,24 @@
                     </select>
                    </div>
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="idx" id="idx">
+                      <?php 
+                        foreach($sort_by_a as $sort_key=>$sort_value):
+                          if($sort_key === $index_by) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                       <option value="<?php echo $sort_key ?>" <?php echo $selected ?>>
+                          <?php echo $sort_value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>                
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
             </div>

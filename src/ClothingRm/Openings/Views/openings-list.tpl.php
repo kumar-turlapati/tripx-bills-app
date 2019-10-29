@@ -48,7 +48,7 @@
         				  <div class="col-sm-12 col-md-2 col-lg-2">
           					<input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $itemName ?>">
         				  </div>
-                  <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="col-sm-12 col-md-3 col-lg-3">
                     <div class="select-wrap">
                       <select class="form-control" name="locationCode" id="locationCode">
                         <?php 
