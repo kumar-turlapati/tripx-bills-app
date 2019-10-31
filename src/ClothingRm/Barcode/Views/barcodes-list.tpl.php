@@ -99,7 +99,7 @@
               <tr class="font11">
                 <th width="5%" class="text-center valign-middle">Sno</th>
                 <th width="5%" class="text-center valign-middle">Barcode</th>
-                <th width="8%" class="text-center valign-middle">Location Name</th>                
+                <?php /*<th width="8%" class="text-center valign-middle">Location Name</th>*/ ?>
                 <th width="15%" class="text-center valign-middle">Supplier Name</th>                
                 <th width="15%" class="text-center valign-middle">Item Name</th>
                 <th width="8%" class="text-center valign-middle">Lot No.</span></th>
@@ -117,7 +117,7 @@
                 foreach($barcodes as $barcode_details):
                   $barcode = $barcode_details['barcode'];
                   $item_name = substr($barcode_details['itemName'], 0, 20);
-                  $supp_name = substr($barcode_details['supplierName'], 0, 20);
+                  $supp_name = substr($barcode_details['supplierName'], 0, 25);
                   $lot_no = $barcode_details['lotNo'];
                   $cno = $barcode_details['cno'];
                   $purchase_code = $barcode_details['purchaseCode'];
@@ -141,8 +141,8 @@
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle" style="font-weight:bold;font-size:14px;"><?php echo $barcode ?></td>
-                  <td align="left" class="valign-middle" ><?php echo $location_name ?></td>
-                  <td align="left" class="valign-middle"><?php echo $supp_name ?></td>                  
+                  <?php /*<td align="left" class="valign-middle" ><?php echo $location_name ?></td>*/ ?>
+                  <td align="left" class="valign-middle" title="<?php echo $barcode_details['supplierName'] ?>"><?php echo $supp_name ?></td>                  
                   <td class="valign-middle" align="left"><?php echo $item_name ?></td>
                   <td align="right" class="valign-middle"><?php echo $lot_no ?></td>
                   <td align="right" class="valign-middle"><?php echo $cno ?></td>

@@ -29,13 +29,14 @@
             <thead>
               <tr class="font12">
                 <th width="5%"  class="text-center valign-middle">Sno</th>
-                <th width="20%" class="text-center valign-middle">Store name</th>
-                <th width="15%"  class="text-center valign-middle">Address1</th>
-                <th width="15%"  class="text-center valign-middle">Address2</span></th>
-                <th width="20%"  class="text-center valign-middle">City &amp; State</span></th>
+                <th width="18%" class="text-center valign-middle">Store name</th>
+                <th width="15%" class="text-center valign-middle">Address1</th>
+                <th width="15%" class="text-center valign-middle">Address2</span></th>
+                <th width="20%" class="text-center valign-middle">City &amp; State</span></th>
                 <th width="5%" class="text-center valign-middle">Pincode</span></th>
                 <th width="5%" class="text-center valign-middle">GST No.</span></th>                
-                <th width="10%" class="text-center valign-middle">Actions</th>
+                <th width="9%" class="text-center valign-middle">Status</th>
+                <th width="6%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -59,6 +60,15 @@
                   }
                   $pincode = $location_details['pincode'];
                   $gst_no = $location_details['gstNo'];
+                  if((int)$location_details['status'] === 1) {
+                    $location_status = '<span style="color:green; font-weight:bold;"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Active</span>';
+                  } elseif((int)$location_details['status'] === 0) {
+                    $location_status = '<span style="color:red; font-weight:bold;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;Inactive</span>';
+                  } elseif((int)$location_details['status'] === 2) {
+                    $location_status = '<span style="color:orange; font-weight:bold;"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Suspended</span>';
+                  } else {
+                    $location_status = 'Unknown';
+                  }
               ?>
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
@@ -67,8 +77,9 @@
                   <td class="valign-middle"><?php echo $address2 ?></td>
                   <td class="valign-middle"><?php echo $city_name.$state_name ?></td>                
                   <td class="valign-middle"><?php echo $pincode ?></td>
-                  <td class="valign-middle"><?php echo $gst_no ?></td>                  
-                  <td class="valign-middle">
+                  <td class="valign-middle"><?php echo $gst_no ?></td>
+                  <td class="valign-middle" style="text-align: left;"><?php echo $location_status ?></td>
+                  <td class="valign-middle" style="text-align: center;">
                   <?php if($location_code !== ''): ?>
                     <div class="btn-actions-group" align="right">                    
                       <a class="btn btn-primary" href="/location/update/<?php echo $location_code ?>" title="Edit Store Details">

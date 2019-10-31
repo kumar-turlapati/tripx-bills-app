@@ -584,7 +584,7 @@ class Utilities
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
         '/sales-entry/combos',
 
-        '/print-sales-bill-small', '/print-sales-bill', 
+        '/print-sales-bill-small', '/print-sales-bill', '/sales-invoice-b2b',
 
         '/sales-return/entry', '/sales-return/view', '/sales-return/list', '/print-sales-return-bill',
 

@@ -105,7 +105,7 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Update Store</h2>
+      <?php /*<h2 class="hdg-reports text-center">Update Store</h2> */ ?>
       <div class="panel-body">
         <?php echo Utilities::print_flash_message() ?>
         <div class="global-links actionButtons clearfix">
@@ -377,7 +377,7 @@
           <input type="hidden" value="<?php echo $sel_location_code ?>" id="locationCode" name="locationCode" />
           <div class="text-center">
             <button class="btn btn-success" id="Save">
-              <i class="fa fa-save"></i> Save
+              <i class="fa fa-edit"></i> Save
             </button>
           </div>
         </form>

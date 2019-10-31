@@ -98,7 +98,7 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Create Store</h2>
+      <?php /*<h2 class="hdg-reports text-center">Create Store</h2> */?>
       <div class="panel-body">
         <?php echo Utilities::print_flash_message() ?>
         <div class="global-links actionButtons clearfix">

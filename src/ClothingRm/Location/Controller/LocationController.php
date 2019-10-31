@@ -67,7 +67,7 @@ class LocationController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Store Locations',
+      'page_title' => 'Create a Store',
       'icon_name' => 'fa fa-location-arrow',
     );
 
@@ -143,7 +143,7 @@ class LocationController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Store Locations',
+      'page_title' => 'Update a Store',
       'icon_name' => 'fa fa-location-arrow',
     );
 
@@ -170,7 +170,7 @@ class LocationController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Stores List',
+      'page_title' => 'Stores',
       'icon_name' => 'fa fa-location-arrow',
     );
 
