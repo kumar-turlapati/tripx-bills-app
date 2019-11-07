@@ -376,8 +376,10 @@ class Utilities
     // dump($_SESSION);
     // exit;
 
+    $user_types_a = [3, 9, 10, 12];
+
     // check whether the device is allowed or not. Skip this for Administrator temporarily.
-    if( (int)$_SESSION['__utype'] !== 3 && $_SESSION['__just_logged_in'] === false) {
+    if( in_array((int)$_SESSION['__utype'], $user_types_a) === false && $_SESSION['__just_logged_in'] === false) {
       if( !(isset($_SESSION['__bq_fp']) && isset($_SESSION['__allowed_devices']))) {
         Utilities::redirect('/login');
       } elseif($cookie_validation) {
@@ -911,10 +913,11 @@ class Utilities
       $this_device_id = $_SESSION['__bq_fp'];
     }
 
+    $user_types_a = [3, 9, 10, 12];
+
     // dump($this_device_id);
     // exit;
-
-    switch ($user_type) {
+/*    switch ($user_type) {
       case 3:
         # code...
         break;
@@ -933,7 +936,27 @@ class Utilities
           Utilities::redirect('/error-device');         
         }
         break;
+    } 3, 9, 10, 12*/
+
+    // ignore device validation for below roles.
+    if(in_array($user_type, $user_types_a) === false) {
+      // if device id does not matched with allowed devices 
+      // setup the new device cookie and redirect to error page.
+      if(in_array($this_device_id, $allowed_devices) === false) {
+        // unset cookie immediately
+        setcookie('__ata__','',time()-200400);
+
+        // set device cookie.
+        Utilities::set_device_cookie($this_device_id, $cookie_name);
+
+        unset($_SESSION['ccode'], $_SESSION['uid'], $_SESSION['uname'], 
+              $_SESSION['bc'], $_SESSION['lc'], 
+              $_SESSION['lname'], $_SESSION['token_valid'], $_SESSION['cname']
+        );
+        Utilities::redirect('/error-device');         
+      }
     }
+
   }
 
  public static function get_business_user_types($bu_type=0, $return_all=true) {

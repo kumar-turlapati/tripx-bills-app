@@ -42,7 +42,7 @@ class Framework {
       Utilities::check_access_token();
 
       # check ACL.
-      $role_id = isset($_SESSION['utype']) && $_SESSION['utype'] >0 ? $_SESSION['utype'] : 0;
+      $role_id = isset($_SESSION['utype']) && $_SESSION['utype'] > 0 ? $_SESSION['utype'] : 0;
       Utilities::acls($role_id, $path);
     }
 
