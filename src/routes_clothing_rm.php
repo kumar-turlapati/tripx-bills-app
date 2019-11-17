@@ -950,6 +950,19 @@ $routes->add('report_dispatchSummary', new Routing\Route('/indent-dispatch-summa
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentDispatchSummary',
 )));
 
+//Ecommerce routes.
+$routes->add('gallery_create', new Routing\Route('/gallery/create', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::createGallery',
+)));
+$routes->add('gallery_update', new Routing\Route('/gallery/update/{locationCode}/{galleryCode}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::updateGallery',
+)));
+$routes->add('galleries_list', new Routing\Route('/galleries/list', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::galleriesList',
+)));
+
+
+
 return $routes;
 
 /*

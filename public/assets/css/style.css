@@ -3774,6 +3774,9 @@ ul.amounts li {
 .m-bot20 {
     margin-bottom: 20px;
 }
+.m-bot10 {
+    margin-bottom: 10px;
+}
 .m-bot-none {
     margin-bottom: 0;
 }
@@ -4911,6 +4914,11 @@ input[name^="itemDetails"] {
   font-size:13px !important;
   color:#2E1114;
   font-weight:bold;  
+}
+.labelStyleOnlyColor {
+  color:#2E1114;
+  font-weight:bold;  
+  border-bottom: 1px solid rgba(215,215,215,0.2);
 }
 .labelStyle .nobold {
   font-weight:normal;  

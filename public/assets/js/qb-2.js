@@ -179,6 +179,25 @@ function initializeJS() {
     });
   }
 
+  if($('#galleryForm').length > 0) {
+    $('.showImage').on('click', function() {
+      var imagePath = $(this).find('img').attr('src');
+      var imageName = $(this).attr('title');
+      $('#imagePreview').attr('src', imagePath);
+      $('#modal-title').text(imageName);
+      $('#imagemodal').modal('show');
+    });
+    $('#inputType').on('change', function(e){
+      var inputType = $(this).val();
+      if(inputType === 'barcode') {
+        $('#barcodeInput').show();
+        $('#imgBarcode').focus();
+      } else {
+        $('#barcodeInput').hide();
+      }
+    });
+  }
+
   // Combo Bills entry.
   if( $('#comboBillEntry').length>0 ) {
 
@@ -751,7 +770,6 @@ function initializeJS() {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
               if(objLength > 0) {
-                console.log(itemDetails);
                 var itemName = itemDetails.response.bcDetails.itemName;
                 var availableQty = parseFloat(itemDetails.response.bcDetails.availableQty).toFixed(2);
                 var lotNo = itemDetails.response.bcDetails.lotNo;
@@ -776,6 +794,75 @@ function initializeJS() {
       $(this).attr('disabled', true);
       $('#adjSave, #adjCancel').attr('disabled', true);
       $('#addAdjEntryFrm').submit();
+    });
+  }
+
+  if( $('#galleryForm').length > 0) {
+    $('#imgBarcode').on('keypress', function(e){
+      if (e.keyCode == 13) {
+        var barcode = $(this).val();
+        var locationCode = $('#locationCode').val();
+        if(barcode.length !== 13) {
+          alert('Invalid barcode');
+          return false;
+        } else if(locationCode === '') {
+          alert('Choose a Store first.');
+          return false;
+        }
+        var locationCode = $('#locationCode').val();
+        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+          success: function(itemDetails) {
+            if(itemDetails.status === 'success') {
+              var objLength = Object.keys(itemDetails.response.bcDetails).length;
+              if(objLength > 0) {
+                var itemName = itemDetails.response.bcDetails.itemName;
+                var lotNo = itemDetails.response.bcDetails.lotNo;
+                var itemSku = itemDetails.response.bcDetails.itemSku;
+                var itemSleeve = itemDetails.response.bcDetails.itemSleeve;
+                var itemStylecode = itemDetails.response.bcDetails.itemStylecode;
+                var itemColor = itemDetails.response.bcDetails.itemColor;
+                $('#itemName, #itemDescription').val(itemName);
+                $('#lotNo').val(lotNo);
+                $('#itemSku').val(itemSku);
+                $('#itemStylecode').val(itemStylecode);
+                $('#itemColor').val(itemColor);
+                $('#itemSleeve').val(itemSleeve);
+                $('#imgBarcode').val('');
+                $('#imgBarcode').focus();
+              } else {
+                alert('Barcode is not valid.');                
+              }
+            } else {
+              alert('Barcode not found.');                
+            }
+          },
+          error: function(e) {
+            alert('Barcode not found in the Selected store.');
+          }
+        });
+      }
+      e.preventDefault();
+    });
+    $('#imgUpload').on("click", function(e){
+      $(this).attr('disabled', true);
+      $('#imgUpload, #imgUploadCancel').attr('disabled', true);
+      $('#galleryForm').submit();
+    });
+    $('.showImage').on('click', function() {
+      var imagePath = $(this).find('img').attr('src');
+      var imageName = $(this).attr('title');
+      $('#imagePreview').attr('src', imagePath);
+      $('#modal-title').text(imageName);
+      $('#imagemodal').modal('show');
+    });
+    $('#inputType').on('change', function(e){
+      var inputType = $(this).val();
+      if(inputType === 'barcode') {
+        $('#barcodeInput').show();
+        $('#imgBarcode').focus();
+      } else {
+        $('#barcodeInput').hide();
+      }
     });
   }
 
@@ -1188,7 +1275,13 @@ function initializeJS() {
     } else if(buttonId === 'comboCancel') {
       window.location.href = '/sales-combo/add';      
     } else if(buttonId === 'adjCancel') {
-      window.location.href = '/inventory/stock-adjustment';      
+      window.location.href = '/inventory/stock-adjustment';
+    } else if(buttonId === 'imgUploadCancel') {
+      window.location.href = '/gallery/create';
+    } else if(buttonId === 'imgUpdateCancel') {
+      var gc = $('#gc').val();
+      var lc = $('#lc').val();
+      window.location.href = '/gallery/update'+'/'+lc+'/'+gc;      
     }
   });
 

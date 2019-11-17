@@ -170,7 +170,15 @@
           <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Invoices</a></li>
           <li><a href="/purchases/search-bills"><i class="fa fa-laptop"></i> Purchase Bills</a></li>          
         </ul>
-      </li>      
+      </li>
+      <li class="sub-menu">
+        <a href="javascript:void(0)">
+          <i class="fa fa-internet-explorer"></i> Ecommerce <span class="menu-arrow arrow_carrot-right"></span> 
+        </a>
+        <ul class="sub">
+          <li><a href="/galleries/list"><i class="fa fa-picture-o"></i> Product Galleries</a></li>
+        </ul>
+      </li>
       <li class="sub-menu">
         <a href="javascript:" class="">
           <i class="fa fa-key"></i> Admin Panel <span class="menu-arrow arrow_carrot-right"></span> 
