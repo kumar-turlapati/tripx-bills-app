@@ -297,12 +297,10 @@ class GalleryController {
       $cleaned_params['itemDescription'] = $item_description;
     } else {
       $form_errors['itemDescription'] = 'Invalid item description.';
-    }    
-    // if($item_color !== '') {
-    //   $cleaned_params['itemColor'] = $item_color;
-    // } else {
-    //   $form_errors['itemColor'] = 'Invalid item color.';
-    // }
+    }
+
+    $cleaned_params['itemColor'] = $item_color;
+
     foreach($files as $key => $file_details) {
       $file_name = $file_details['name'];
       $tmp_name = $file_details['tmp_name'];
