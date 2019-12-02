@@ -649,7 +649,8 @@ class Utilities
         '/barcode/generate', '/inward-entry/view', '/purchase-return/entry', '/fin/debit-note',
         '/grn/view', '/print-grn', '/grn/create', 
 
-        '/opbal/add', '/opbal/update', '/barcodes/print', '/barcode/opbal', 
+        // '/opbal/add', '/opbal/update', '/barcodes/print', '/barcode/opbal', 
+        '/barcodes/print', '/barcode/opbal', 
 
         '/reports/item-master-with-barcodes', '/reports/item-master',
 

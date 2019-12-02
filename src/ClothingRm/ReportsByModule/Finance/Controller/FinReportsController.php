@@ -422,14 +422,15 @@ class FinReportsController {
       }
       
       // start PDF printing.
-      $item_widths = array(8, 40, 30, 26, 17, 10, 21, 20, 21, 22, 22, 22, 22);
+      $item_widths = array(8, 40, 22, 26, 17, 10, 21, 20, 21, 22, 22, 22, 22);
                       //    0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12
 
       $slno = $tot_aging1 = $tot_aging2 = $tot_aging3 = $tot_aging4 = 0;
-      $total_bill_amount = $total_credits = $total_balance = 0;
+      $total_bill_amount = $total_credits = $total_balance = $total_returns = 0;
 
-      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] +
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[3] +
                       $item_widths[4] + $item_widths[5];
+
       $aging_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] +
                      $item_widths[4] + $item_widths[5] + $item_widths[6] + $item_widths[7] +
                      $item_widths[8];
@@ -450,13 +451,14 @@ class FinReportsController {
       $pdf->SetFont('Arial','B',8);
       $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'CustomerName','RTB',0,'C');
-      $pdf->Cell($item_widths[2],6,'Address','RTB',0,'C');
+      // $pdf->Cell($item_widths[2],6,'Address','RTB',0,'C');
       $pdf->Cell($item_widths[3],6,'Bill No.','RTB',0,'C');      
       $pdf->Cell($item_widths[4],6,'Bill Date','RTB',0,'C');      
       $pdf->Cell($item_widths[5],6,'CDays','RTB',0,'C');
-      $pdf->Cell($item_widths[6],6,'BillAmt','RTB',0,'C');
-      $pdf->Cell($item_widths[7],6,'Credits','RTB',0,'C');
-      $pdf->Cell($item_widths[8],6,'Balance','RTB',0,'C');
+      $pdf->Cell($item_widths[6],6,'BillAmt (Rs.)','RTB',0,'C');
+      $pdf->Cell($item_widths[7],6,'Receipts (Rs.)','RTB',0,'C');
+      $pdf->Cell($item_widths[2],6,'S.Returns (Rs.)','RTB',0,'C');      
+      $pdf->Cell($item_widths[8],6,'Balance (Rs.)','RTB',0,'C');
       $pdf->Cell($item_widths[9],6,$aging1,'RTB',0,'C');      
       $pdf->Cell($item_widths[10],6,$aging2,'RTB',0,'C');      
       $pdf->Cell($item_widths[11],6,$aging3,'RTB',0,'C');      
@@ -471,17 +473,19 @@ class FinReportsController {
         $total_bill_amount += $record_details['billAmount'];
         $total_credits += $record_details['recAmount'];
         $total_balance += $record_details['balAmount'];
+        $total_returns += $record_details['returnAmount'];
 
         $slno++;
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,substr($record_details['customerName'],0,22),'RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,substr($record_details['city_name'],0,15),'RTB',0,'L');
+        // $pdf->Cell($item_widths[2],6,substr($record_details['city_name'],0,15),'RTB',0,'L');
         $pdf->Cell($item_widths[3],6,substr($record_details['billNo'],0,17),'RTB',0,'L');
         $pdf->Cell($item_widths[4],6,date("d-m-Y", strtotime($record_details['billDate'])),'RTB',0,'R');
         $pdf->Cell($item_widths[5],6,$record_details['creditDays'],'RTB',0,'R');      
         $pdf->Cell($item_widths[6],6,$record_details['billAmount'],'RTB',0,'R');      
-        $pdf->Cell($item_widths[7],6,$record_details['recAmount'],'RTB',0,'R');      
+        $pdf->Cell($item_widths[7],6,$record_details['recAmount'],'RTB',0,'R');
+        $pdf->Cell($item_widths[2],6,$record_details['returnAmount'],'RTB',0,'R');
         $pdf->Cell($item_widths[8],6,$record_details['balAmount'],'RTB',0,'R');
         $pdf->Cell($item_widths[9],6,$record_details['aging1'] > 0 ? $record_details['aging1'] : '','RTB',0,'R');
         $pdf->Cell($item_widths[10],6,$record_details['aging2'] > 0 ? $record_details['aging2'] : '','RTB',0,'R');
@@ -499,6 +503,7 @@ class FinReportsController {
       $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
       $pdf->Cell($item_widths[6],6,number_format($total_bill_amount, 2, '.', ''),'RTB',0,'R');
       $pdf->Cell($item_widths[7],6,number_format($total_credits, 2, '.', ''),'RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($total_returns, 2, '.', ''),'RTB',0,'R');
       $pdf->Cell($item_widths[8],6,number_format($total_balance, 2, '.', ''),'RTB',0,'R');
       $pdf->Cell($item_widths[9],6,$tot_aging1 > 0 ? number_format($tot_aging1, 2, '.', '') : '','RTB',0,'R');
       $pdf->Cell($item_widths[10],6,$tot_aging2 > 0 ? number_format($tot_aging2, 2, '.', '') : '','RTB',0,'R');
@@ -574,6 +579,7 @@ class FinReportsController {
       $cleaned_params['aging4'] = 0;
     }
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+    $cleaned_params['return_all'] = Utilities::clean_string($form_data['returnAll']);
     if(count($form_errors)>0) {
       return ['status' => false, 'form_errors' => $form_errors];
     } else {

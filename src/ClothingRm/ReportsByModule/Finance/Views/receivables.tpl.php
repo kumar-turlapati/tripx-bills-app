@@ -1,6 +1,7 @@
 <?php
   $current_date = date("d-m-Y");
   $page_url = '/reports/receivables';
+  $yes_no_options = [1=>'Return all', 0=>'Balance > 0'];
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -25,6 +26,15 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="returnAll" id="returnAll">
+                      <?php foreach($yes_no_options as $key=>$value): ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
                 </div>                
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Customer Name" type="text" name="customerName" id="customerName" class="form-control cnameAc" />
@@ -40,8 +50,8 @@
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-1">
                   <input placeholder="Days 4" type="text" name="aging4" id="aging4" class="form-control" title="Aging Days 4"  />
-                </div>                
-                <div class="col-sm-12 col-md-2 col-lg-2">
+                </div>              
+                <div class="col-sm-12 col-md-2 col-lg-2" style="margin:5px 0 0 93px;">
                   <div class="select-wrap">
                     <select class="form-control" name="format" id="format">
                       <?php 
