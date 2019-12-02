@@ -1282,6 +1282,10 @@ function initializeJS() {
       var gc = $('#gc').val();
       var lc = $('#lc').val();
       window.location.href = '/gallery/update'+'/'+lc+'/'+gc;      
+    } else if(buttonId === 'catalogAddCancel') {
+      window.location.href = '/catalog/create';
+    } else if(buttonId === 'catalogUpdateCancel') {
+      window.location.href = '/catalog/list';
     }
   });
 
@@ -1326,6 +1330,76 @@ function initializeJS() {
       });
     });
   }
+
+  // delete catalog. 
+  if( $('.delCatalog').length>0 ) {
+    jQuery('.delCatalog').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Catalog?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }
+
+  // add item to catalog
+  if($('.addItemToCatalog').length > 0) {
+    $('.addItemToCatalog').on('click', function(e){
+      e.preventDefault();
+      var queryParams = $(this).attr('href');
+      if(queryParams.length > 0) {
+        var catalogArray = queryParams.split('/');
+        jQuery.ajax("/async-catalogitem", {
+          data: {lc: catalogArray[0], cc: catalogArray[1], ic:catalogArray[2]},
+          method:"POST",
+          success: function(response) {
+            if(response.status==='success') {
+              alert('Item added to Catalog successfully :)');
+              window.location.reload(true);
+            } else if(response.status==='failed') {
+              alert(response.reason);
+            } 
+          },
+          error: function(e) {
+            alert('An error occurred while add Item to Catalog :(');
+          }
+        });
+      } else {
+        return false;
+      }
+    });
+  }
+
+  // remove item from catalog
+  if($('.removeItemFromCatalog').length > 0) {
+    $('.removeItemFromCatalog').on('click', function(e){
+      e.preventDefault();
+      var queryParams = $(this).attr('href');
+      if(queryParams.length > 0) {
+        jQuery.ajax("/async-catalogitem-remove", {
+          data: {ic:queryParams},
+          method:"POST",
+          success: function(response) {
+            if(response.status==='success') {
+              alert('Item removed from Catalog successfully :)');
+              window.location.reload(true);
+            } else if(response.status==='failed') {
+              alert(response.reason);
+            } 
+          },
+          error: function(e) {
+            alert('An error occurred while removing item from Catalog :(');
+          }
+        });
+      } else {
+        return false;
+      }
+    });
+  }  
 
   // delete discount configuration.
   if( $('.delDiscount').length>0 ) {

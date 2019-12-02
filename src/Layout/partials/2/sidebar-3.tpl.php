@@ -177,6 +177,7 @@
         </a>
         <ul class="sub">
           <li><a href="/galleries/list"><i class="fa fa-picture-o"></i> Product Galleries</a></li>
+          <li><a href="/catalog/list"><i class="fa fa-briefcase"></i> Catalogs</a></li>
         </ul>
       </li>
       <li class="sub-menu">

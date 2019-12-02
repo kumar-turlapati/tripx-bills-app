@@ -960,8 +960,34 @@ $routes->add('gallery_update', new Routing\Route('/gallery/update/{locationCode}
 $routes->add('galleries_list', new Routing\Route('/galleries/list', array(
   '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::galleriesList',
 )));
-
-
+$routes->add('catalog_create', new Routing\Route('/catalog/create', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::createCatalog',
+)));
+$routes->add('catalog_update', new Routing\Route('/catalog/update/{catalogCode}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::updateCatalog',
+)));
+$routes->add('catalog_delete', new Routing\Route('/catalog/delete/{catalogCode}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::deleteCatalog',
+)));
+$routes->add('catalog_list', new Routing\Route('/catalog/list', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::catalogsList',
+)));
+$routes->add('catalog_items', new Routing\Route('/catalog/items/{catalogCode}/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::catalogItems',
+  'catalogCode' => null,
+  'pageNo' => null,
+)));
+$routes->add('catalog_view', new Routing\Route('/catalog/view/{catalogCode}/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::catalogView',
+  'catalogCode' => null,
+  'pageNo' => null,
+)));
+$routes->add('add_item_to_catalog', new Routing\Route('/async-catalogitem', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::addItemToCatalog',
+)));
+$routes->add('remove_item_from_catalog', new Routing\Route('/async-catalogitem-remove', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::removeItemFromCatalog',
+)));
 
 return $routes;
 
