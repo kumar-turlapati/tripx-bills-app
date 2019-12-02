@@ -9,11 +9,11 @@
     if(isset($_SESSION['finy_s_date']) &&  isset($_SESSION['finy_e_date'])) {
       $from_year = date("Y",strtotime($_SESSION['finy_s_date']));
       $to_year = date("Y",strtotime($_SESSION['finy_e_date']));
-      $finy_string = '<sup style="font-size:14px;color:#d9534f;font-weight:bold;">[ FY: '.$from_year.' - '.$to_year.' ]</sup>';
+      $finy_string = '<p style="font-size:14px;color:#fff;font-weight:bold;height:0px;">Financial Year: '.$from_year.' - '.$to_year.'</p>';
     } else {
       $finy_string = '';
     }
-    $org_name = trim($_SESSION['cname'].' '.$finy_string);
+    $org_name = trim($_SESSION['cname']);
   } else {
     $org_name = '';
   }
@@ -60,7 +60,10 @@
       </div>
       </div>
       <div class="theme-name">
-      	<h1><?php echo trim($org_name) ?></h1>
+      	<h1 style="margin-top:10px;"><?php echo trim($org_name) ?></h1>
+        <?php if($finy_string !== ''): ?>
+          <?php echo $finy_string ?>
+        <?php endif; ?>
       </div>
   </header>
   <?php if( isset($_SESSION['token_valid']) && $_SESSION['token_valid'] && $show_page_name ): ?>
