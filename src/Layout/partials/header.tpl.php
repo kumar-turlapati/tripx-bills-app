@@ -1,17 +1,17 @@
 <?php 
+
+  $finy_string = '';
+
   if(isset($_SESSION['uname']) && $_SESSION['uname'] !== '') {
     $uname = substr($_SESSION['uname'],0,10);
   } else {
     $uname = 'My Profile';
   }
-
   if(isset($_SESSION['cname']) && $_SESSION['cname'] !== '') {
     if(isset($_SESSION['finy_s_date']) &&  isset($_SESSION['finy_e_date'])) {
       $from_year = date("Y",strtotime($_SESSION['finy_s_date']));
       $to_year = date("Y",strtotime($_SESSION['finy_e_date']));
       $finy_string = '<p style="font-size:14px;color:#fff;font-weight:bold;height:0px;">Financial Year: '.$from_year.' - '.$to_year.'</p>';
-    } else {
-      $finy_string = '';
     }
     $org_name = trim($_SESSION['cname']);
   } else {
