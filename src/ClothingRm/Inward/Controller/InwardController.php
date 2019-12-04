@@ -59,12 +59,14 @@ class InwardController
     $client_business_state = $client_details['locState'];
 
     // get client locations
-    $client_locations_resp = $this->user_model->get_client_locations();
+/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
     if($client_locations_resp['status']) {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
         $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
       }
-    }
+    }*/
+
+    $client_locations = Utilities::get_client_locations(false, false, true);    
 
     // check if form is submitted.
     if(count($request->request->all()) > 0) {
@@ -166,12 +168,14 @@ class InwardController
     $client_business_state = $client_details['locState'];
 
     # get client locations
-    $client_locations_resp = $this->user_model->get_client_locations();
+/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
     if($client_locations_resp['status']) {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
         $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
       }
-    }    
+    }*/
+
+    $client_locations = Utilities::get_client_locations(false, false, true);    
 
     # validate purchase code.
     if( is_null($request->get('purchaseCode')) ) {
@@ -358,12 +362,14 @@ class InwardController
     $client_business_state = $client_details['locState'];
 
     # get client locations
-    $client_locations_resp = $this->user_model->get_client_locations();
+/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
     if($client_locations_resp['status']) {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
         $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
       }
-    }    
+    }*/
+
+    $client_locations = Utilities::get_client_locations(false, false, true);    
 
     # validate purchase code.
     if( is_null($request->get('purchaseCode')) ) {
@@ -641,12 +647,14 @@ class InwardController
     $client_business_state = $client_details['locState'];
 
     # get client locations
-    $client_locations_resp = $this->user_model->get_client_locations();
+/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
     if($client_locations_resp['status']) {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
         $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
       }
-    }    
+    }*/
+
+    $client_locations = Utilities::get_client_locations(false, false, true);    
 
     # validate purchase code.
     if( is_null($request->get('purchaseCode')) ) {
@@ -787,7 +795,7 @@ class InwardController
     $search_by_a = Constants::$INW_SEARCH_OPTIONS;
 
     // get location codes from api
-    $client_locations = Utilities::get_client_locations();
+    $client_locations = Utilities::get_client_locations(false, false, true);
 
     // check for filter variables.
     if(count($request->request->all()) > 0) {

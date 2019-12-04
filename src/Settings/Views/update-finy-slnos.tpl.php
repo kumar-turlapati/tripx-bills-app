@@ -19,10 +19,10 @@
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label"><b>Choose Financial Year</b></label>
               <div class="select-wrap">
-                <select class="form-control" name="finyCode" id="finyCode">
+                <select class="form-control" name="finyCodeDrop" id="finyCode" disabled>
                   <?php 
                     foreach($finys as $key=>$value):
-                      if($finy_code === $key) {
+                      if($selected_finy_code === $key) {
                         $selected = 'selected="selected"';
                       } else {
                         $selected = '';
@@ -31,11 +31,36 @@
                     <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                   <?php endforeach; ?>
                 </select>
-                <?php if(isset($errors['finyCode'])): ?>
-                  <span class="error"><?php echo $errors['finyCode'] ?></span>
-                <?php endif; ?>                 
-              </div>              
+              </div>
+              <?php if(isset($errors['finyCode'])): ?>
+                <span class="error"><?php echo $errors['finyCode'] ?></span>
+              <?php endif; ?>               
+              <input type="hidden" name="finyCode" value="<?php echo $selected_finy_code ?>" />
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label"><b>Store Name</b></label>              
+              <div class="select-wrap">
+                <select class="form-control" name="locationCodeDrop" id="locationCode" disabled>
+                  <?php 
+                    foreach($client_locations as $location_key=>$value):
+                      $location_key_a = explode('`', $location_key);
+                      if($location_code === $location_key_a[0]) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }  
+                  ?>
+                   <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['locationCode'])): ?>
+                <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
+            </div>            
+            <input type="hidden" name="locationCode" value="<?php echo $location_code ?>" />
           </div>
           <div class="table-responsive">
             <table class="table table-striped table-hover item-detail-table font12" id="finySlnosTable">

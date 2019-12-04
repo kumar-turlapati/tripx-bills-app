@@ -35,7 +35,7 @@ class InventoryMrpController {
     $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';    
 
     // get location codes from api
-    $client_locations = Utilities::get_client_locations(true);
+    $client_locations = Utilities::get_client_locations(true, false, true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;

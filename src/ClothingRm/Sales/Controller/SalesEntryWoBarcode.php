@@ -76,7 +76,7 @@ class SalesEntryWoBarcode {
     $sa_categories += $this->_get_sa_categories();
 
     // ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations();
+    $client_locations = Utilities::get_client_locations(false, false, true);
 
     // ---------- get business users --------------------------------
     if($_SESSION['__utype'] !== 3) {

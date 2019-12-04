@@ -31,11 +31,15 @@
   } else {
     $credit_days = '';
   }
+  if(isset($submitted_data['locationCode'])) {
+    $locationCode = $submitted_data['locationCode'];
+  } else {
+    $locationCode = '';
+  }
 ?>
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Add Supplier Opening Balance</h2>
       <div class="panel-body">
         <?php echo Utilities::print_flash_message() ?>
         <?php if($page_error !== ''): ?>
@@ -46,7 +50,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/fin/supp-opbal/list" class="btn btn-default">
-              <i class="fa fa-book"></i> List Supplier's Openings
+              <i class="fa fa-book"></i> Supplier Openings
             </a>
           </div>
         </div>
@@ -98,7 +102,7 @@
             </div>
           </div>      
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Bill no.</label>
               <input
                 type="text"
@@ -111,7 +115,7 @@
                 <span class="error"><?php echo $form_errors['billNo'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Bill date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -125,7 +129,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Credit days</label>
               <input
                 type="text"
@@ -137,6 +141,28 @@
               <?php if(isset($form_errors['creditDays'])): ?>
                 <span class="error"><?php echo $form_errors['creditDays'] ?></span>
               <?php endif; ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCode" id="locationCode">
+                  <?php 
+                    foreach($client_locations as $location_key=>$value):
+                      $location_key_a = explode('`', $location_key);
+                      if($locationCode === $location_key_a[0]) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                   <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+               </div>
             </div>
           </div>
           <div class="text-center">

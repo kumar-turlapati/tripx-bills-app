@@ -810,7 +810,7 @@ class Utilities
   }
 
   # return client locations based on user type.
-  public static function get_client_locations($with_ids=false, $return_all=false) {
+  public static function get_client_locations($with_ids=false, $return_all=false, $remove_inactive=false) {
     $client_locations = [];
     $utype = (int)$_SESSION['utype'];
     $user_model = new User;
@@ -824,7 +824,14 @@ class Utilities
           } else {
             $location_code = $loc_details['locationCode'];
           }
-          $client_locations[$location_code] = $loc_details['locationName'];
+          // remove inactive stores based on condition.
+          if($remove_inactive) {
+            if((int)$loc_details['status'] === 1) {
+              $client_locations[$location_code] = $loc_details['locationName'];
+            }
+          } else {
+            $client_locations[$location_code] = $loc_details['locationName'];
+          }
         }
       }        
       if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12) && !$return_all) {

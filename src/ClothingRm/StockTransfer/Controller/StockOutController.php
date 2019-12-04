@@ -38,7 +38,7 @@ class StockOutController
     }
 
     // ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations(true, true);
+    $client_locations = Utilities::get_client_locations(true, true, true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
@@ -148,7 +148,7 @@ class StockOutController
     }
 
     // ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations(true, true);
+    $client_locations = Utilities::get_client_locations(true, true, true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
@@ -269,7 +269,7 @@ class StockOutController
     }
 
     // ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations(true, true);
+    $client_locations = Utilities::get_client_locations(true, true, true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
@@ -376,10 +376,10 @@ class StockOutController
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
     # ---------- get from location codes from api -----------------------
-    $from_locations = Utilities::get_client_locations(true, true);
+    $from_locations = Utilities::get_client_locations(true, true, true);
     $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
 
-    $to_locations = Utilities::get_client_locations(true, true);
+    $to_locations = Utilities::get_client_locations(true, true, true);
     foreach($to_locations as $location_key => $location_value) {
         $location_key_a = explode('`', $location_key);
         $location_ids[$location_key_a[1]] = $location_value;

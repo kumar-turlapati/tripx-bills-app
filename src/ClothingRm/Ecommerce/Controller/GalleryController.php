@@ -28,7 +28,7 @@ class GalleryController {
   // create gallery
   public function createGallery(Request $request) {
     $form_errors = $submitted_data = [];
-    $client_locations = Utilities::get_client_locations();
+    $client_locations = Utilities::get_client_locations(false, false, true);
 
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();

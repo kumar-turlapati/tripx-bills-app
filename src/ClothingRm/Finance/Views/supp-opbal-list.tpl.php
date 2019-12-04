@@ -1,5 +1,7 @@
 <?php
   use Atawa\Utilities;
+
+  $page_url = $pagination_url = '/fin/supp-opbal/list';  
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -9,13 +11,43 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/fin/supp-opbal/create" class="btn btn-default">
-              <i class="fa fa-file-text-o"></i> Create Opening Balance 
+              <i class="fa fa-file-text-o"></i> Create Supplier Opening Balance 
             </a> 
           </div>
         </div>
-        <h2 class="hdg-reports text-center">List of Supplier's Opening Balances</h2>
+
+        <div class="filters-block">
+          <div id="filters-form">
+            <form class="form-validate form-horizontal" method="POST">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $location_key=>$value):
+                          $location_key_a = explode('`', $location_key);
+                          if($locationCode === $location_key_a[0]) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
+                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+              </div>
+           </form>
+          </div>
+        </div>
+
         <div class="table-responsive">
-          <table class="table table-striped table-hover">
+          <table class="table table-striped table-hover font12">
             <thead>
               <tr>
                 <th width="5%" class="text-center">Sno.</th>
@@ -53,24 +85,25 @@
                         $total_balance -= $amount;
                       }
                   ?>
-                    <tr class="text-right font12">
-                      <td class="text-right"><?php echo $cntr ?></td>
-                      <td class="text-left"><?php echo $supp_name ?></td>
+                    <tr class="text-right font11">
+                      <td class="text-right valign-middle"><?php echo $cntr ?></td>
+                      <td class="text-left valign-middle"><?php echo $supp_name ?></td>
                       <td class="text-right valign-middle"><?php echo $bill_no ?></td>
                       <td class="text-right valign-middle"><?php echo $bill_date ?></td>
                       <td class="text-right valign-middle"><?php echo $credit_days ?></td>                      
                       <td class="text-right valign-middle"><?php echo number_format($amount,2,'.','') ?></td>
                       <td class="text-center valign-middle"><?php echo $status ?></td>
                       <td class="text-right valign-middle"><?php echo $opbal_date ?></td>
-                      <td>
+                      <td align="center">
                         <div class="btn-actions-group">
                           <?php if($opbal_code !== ''): ?>
                             <a class="btn btn-primary" href="/fin/supp-opbal/update/<?php echo $opbal_code ?>" title="Edit Details">
                               <i class="fa fa-pencil"></i>
                             </a>
+                            <?php /*
                             <a class="btn btn-danger" href="#" title="Remove Opening Balance">
                               <i class="fa fa-times"></i>
-                            </a>
+                            </a>*/?>
                           <?php endif; ?>
                         </div>
                       </td>

@@ -84,7 +84,7 @@ class salesEntryWithBarcode {
     }
 
     // ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations();
+    $client_locations = Utilities::get_client_locations(false, false, true);
 
     // ---------- get sales executives ------------------------------
     if($_SESSION['__utype'] !== 3) {

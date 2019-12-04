@@ -27,8 +27,8 @@ class StockTransferController
     $search_params = [];
 
     # ---------------------- get location codes from api --------------------------------------------
-    $from_locations = ['' => 'Choose a Store'] + Utilities::get_client_locations();
-    $to_locations = ['' => 'Choose a Store'] + Utilities::get_client_locations(false, true);
+    $from_locations = ['' => 'Choose a Store'] + Utilities::get_client_locations(false, false, true);
+    $to_locations = ['' => 'Choose a Store'] + Utilities::get_client_locations(false, true, true);
     // unset($to_locations[$_SESSION['lc']]);
 
     if(count($request->request->all()) > 0) {

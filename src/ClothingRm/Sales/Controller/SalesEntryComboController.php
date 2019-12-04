@@ -48,7 +48,7 @@ class SalesEntryComboController
     $form_data = $form_errors = $taxes = [];
 
     // ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations(true, true);
+    $client_locations = Utilities::get_client_locations(true, true, true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;

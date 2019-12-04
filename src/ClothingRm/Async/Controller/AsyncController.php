@@ -183,7 +183,7 @@ class AsyncController {
     } elseif($api_string === 'suppAc' && !is_null($request->get('a'))) {
       $params['q'] = Utilities::clean_string($request->get('a'));
       $response = $api_caller->sendRequest('get','suppliers/ac/get-names',$params,false);
-      if(count($response)>0 && is_array($response)) {
+      if(is_array($response) && count($response)>0) {
         echo implode($response,"\n");
       }
     } elseif($api_string === 'brandAc' && !is_null($request->get('a'))) {

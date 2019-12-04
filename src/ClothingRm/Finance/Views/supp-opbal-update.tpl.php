@@ -33,11 +33,15 @@
   } else {
     $credit_days = '';
   }
+  if(isset($submitted_data['locationID']) && (int)$submitted_data['locationID'] > 0 ) {
+    $locationCode = isset($location_codes[$submitted_data['locationID']]) ? $location_codes[$submitted_data['locationID']] : '';
+  } else {
+    $locationCode = '';
+  }  
 ?>
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Add Supplier Opening Balance</h2>
       <div class="panel-body">
         <?php echo Utilities::print_flash_message() ?>
         <?php if($page_error !== ''): ?>
@@ -48,7 +52,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/fin/supp-opbal/list" class="btn btn-default">
-              <i class="fa fa-book"></i> List Supplier's Openings
+              <i class="fa fa-book"></i> Supplier Openings
             </a>
           </div>
         </div>
@@ -100,7 +104,7 @@
             </div>
           </div>      
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Bill no.</label>
               <input
                 type="text"
@@ -113,7 +117,7 @@
                 <span class="error"><?php echo $form_errors['billNo'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Bill date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
@@ -127,7 +131,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Credit days</label>
               <input
                 type="text"
@@ -141,9 +145,32 @@
               <?php endif; ?>
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label">Store name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="locationCodeDisp" id="locationCode" disabled>
+                  <?php 
+                    foreach($client_locations as $location_key=>$value):
+                      $location_key_a = explode('`', $location_key);
+                      if($locationCode === $location_key_a[0]) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                   <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="locationCode" value="<?php echo $locationCode ?>" />
+               </div>
+            </div>
+          </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">
-              <i class="fa fa-save"></i> Save
+              <i class="fa fa-edit"></i> Update
             </button>
           </div>          
         </form>

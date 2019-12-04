@@ -20,7 +20,6 @@
           <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
           <li><a href="/taxes/list"><i class="fa fa-scissors"></i> Taxes</a></li>
           <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>
-          <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores</a></li>
           <li><a href="/fin/bank/list"><i class="fa fa-university"></i> Banks</a></li>
           <li><a href="/bu/list"><i class="fa fa-user-circle-o"></i> Business Users</a></li>
           <li><a href="/fin/cust-opbal/list"><i class="fa fa-line-chart"></i> OpBal - Customers</a></li>
@@ -185,6 +184,7 @@
           <i class="fa fa-key"></i> Admin Panel <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
+          <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores</a></li>
           <li class="sub-menu">
             <a href="javascript:void(0)">
               <i class="fa fa-cogs"></i> Settings <span class="menu-arrow arrow_carrot-right"></span>

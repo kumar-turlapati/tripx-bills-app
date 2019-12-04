@@ -43,7 +43,7 @@ class FinySlnosController {
     }
 
     // ---------- get location codes from api ------------------
-    $client_locations = Utilities::get_client_locations(true);
+    $client_locations = Utilities::get_client_locations(true, false, true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
@@ -96,6 +96,7 @@ class FinySlnosController {
 
     $form_data = $form_errors = [];
     $voc_types = Constants::$VOC_TYPES;
+    $selected_finy_code = $location_code = '';
     
     $finy_response = $this->finy_model->get_finys();
     if($finy_response['status'] && count($finy_response['finys']) > 0) {
@@ -104,6 +105,14 @@ class FinySlnosController {
       $finys = array_combine($finy_codes, $finy_names);
     } else {
       $finys = [];
+    }
+
+    // ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true, false, false);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
     }    
 
     if( count($request->request->all())>0 ) {
@@ -114,7 +123,7 @@ class FinySlnosController {
         Utilities::redirect('/finy/list');
       }
       $submitted_data = $request->request->all();
-      $validation = $this->_validate_fin_year_slnos_data($submitted_data);
+      $validation = $this->_validate_fin_year_slnos_data($submitted_data, $location_codes);
       if($validation['status']) {
         $api_response = $this->finy_slno_model->update_finy_slnos($validation['cleaned_params'], $finy_slno_code);
         if($api_response['status']) {
@@ -131,11 +140,14 @@ class FinySlnosController {
     } elseif( !is_null($request->get('finySlnoCode')) ) {
       $finy_slno_code = Utilities::clean_string($request->get('finySlnoCode'));
       $finy_slno_details = $this->finy_slno_model->get_finy_slno_details($finy_slno_code);
+      // dump($finy_slno_details, $location_codes);
       if($finy_slno_details === false) {
         $this->flash->set_flash_message('Invalid parameter detected.');
         Utilities::redirect('/finy/list');
       } else {
         $form_data = $this->_map_api_data_with_form($finy_slno_details['finySlnoDetails']);
+        $selected_finy_code = $finy_slno_details['finySlnoDetails']['finyCode'];
+        $location_code = isset($location_codes[$finy_slno_details['finySlnoDetails']['locationID']]) ? $location_codes[$finy_slno_details['finySlnoDetails']['locationID']] : ''; 
       }
     }
 
@@ -145,7 +157,12 @@ class FinySlnosController {
       'errors' => $form_errors,
       'flash_obj' => $this->flash,
       'voc_types' => $voc_types,
-      'finys' => $finys,      
+      'finys' => $finys,
+      'selected_finy_code' => $selected_finy_code,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'location_code' => $location_code,
     );
 
     // build variables
@@ -161,12 +178,15 @@ class FinySlnosController {
   public function listFinySlnos(Request $request) {
     
     $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+    $default_finy_code = '';
 
     $finy_response = $this->finy_model->get_finys();
     if($finy_response['status'] && count($finy_response['finys']) > 0) {
       $finy_codes = array_column($finy_response['finys'], 'finyCode');
       $finy_names = array_column($finy_response['finys'], 'finyName');
       $finys = array_combine($finy_codes, $finy_names);
+      $actvie_finy_index = array_search(1, array_column($finy_response['finys'], 'isActive'));
+      $default_finy_code = $finy_response['finys'][$actvie_finy_index]['finyCode'];
     } else {
       $this->flash->set_flash_message('No Financial years were defined to create Serial numbers.');
       Utilities::redirect('/finy/list');
@@ -178,7 +198,7 @@ class FinySlnosController {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
-    }    
+    }
 
     $slnos = $search_params = [];
 
@@ -188,7 +208,7 @@ class FinySlnosController {
 
     $page_no = is_null($request->get('pageNo')) ? 1 : Utilities::clean_string($request->get('pageNo'));
     $per_page = is_null($request->get('perPage')) ? 100 : Utilities::clean_string($request->get('perPage'));
-    $finy_code = is_null($request->get('finyCode')) ? '' : Utilities::clean_string($request->get('finyCode'));
+    $finy_code = is_null($request->get('finyCode')) ? $default_finy_code : Utilities::clean_string($request->get('finyCode'));
     $location_code = is_null($request->get('locationCode')) ? $default_location : Utilities::clean_string($request->get('locationCode'));
 
     $search_params = [

@@ -37,7 +37,7 @@ class InventoryController {
     }
 
     # ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations();    
+    $client_locations = Utilities::get_client_locations(false, false, true);    
 
     if(count($request->request->all()) > 0) {
       $params = $request->request->all();
@@ -124,7 +124,7 @@ class InventoryController {
     $page_success = $page_error = '';
 
     # ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations();
+    $client_locations = Utilities::get_client_locations(false, false, true);
     $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
 
     if($request->get('adjDateFrom') && $request->get('adjDateFrom') !== '') {

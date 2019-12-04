@@ -46,6 +46,13 @@ class FinSuppOpBalController {
       }
     }
 
+    $client_locations = Utilities::get_client_locations(true, false, true);  
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
     // prepare form variables.
     $template_vars = array(
       'page_error' => $page_error,
@@ -53,11 +60,14 @@ class FinSuppOpBalController {
       'form_errors' => $form_errors,
       'modes' => $modes_a,
       'submitted_data' => $submitted_data,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'client_locations' => array(''=>'All Locations') + $client_locations,
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Finance Management - Suppliers',
+      'page_title' => 'Finance Management - Create Supplier Opening Balance',
       'icon_name' => 'fa fa-university',
     );
 
@@ -95,6 +105,13 @@ class FinSuppOpBalController {
       $submitted_data = $this->_validate_opbal_code($opbal_code);
     }
 
+    $client_locations = Utilities::get_client_locations(true);  
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
+
      // prepare form variables.
     $template_vars = array(
       'page_error' => $page_error,
@@ -104,11 +121,14 @@ class FinSuppOpBalController {
       'modes' => $modes_a,
       'submitted_data' => $submitted_data,
       'opbal_code' => $opbal_code,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'client_locations' => array(''=>'All Locations') + $client_locations,
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Finance Management - Suppliers',
+      'page_title' => 'Finance Management - Update Supplier Opening Balance',
       'icon_name' => 'fa fa-university',
     );
 
@@ -118,23 +138,39 @@ class FinSuppOpBalController {
 
   // supplier opbal list action
 	public function supplierOpBalListAction(Request $request) {
-    $balances = array();
-    
-    $fin_model = new SuppOpbal();
-    $result = $fin_model->get_supp_opbal_list(array('per_page'=>300));
+    $balances = $filter_params = [];
+
+    $location_code = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
+
+    $filter_params['locationCode'] = $location_code;
+    $filter_params['perPage'] = 500;
+
+    $result = $this->supp_op_model->get_supp_opbal_list($filter_params);
+
     // dump($result);
     if($result['status']) {
       $balances = $result['balances'];
     }
 
+    $client_locations = Utilities::get_client_locations(true);  
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
      // prepare form variables.
     $template_vars = array(
       'balances' => $balances,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'locationCode' => $location_code,
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Finance Management - Suppliers',
+      'page_title' => 'Finance Management - Billwise Supplier Opening Balances',
       'icon_name' => 'fa fa-university',
     );
 
@@ -152,6 +188,7 @@ class FinSuppOpBalController {
     $bill_no = Utilities::clean_string($form_data['billNo']);
     $bill_date = Utilities::clean_string($form_data['billDate']);
     $credit_days = Utilities::clean_string($form_data['creditDays']);
+    $location_code = Utilities::clean_string($form_data['locationCode']);
 
     if($supplier_name === '') {
       $errors['suppName'] = 'Invalid supplier name';
@@ -182,6 +219,11 @@ class FinSuppOpBalController {
       $cleaned_params['creditDays'] = $credit_days;
     } else {
       $errors['creditDays'] = 'Invalid credit days';
+    }
+    if($location_code === '') {
+      $errors['locationCode'] = 'Invalid store name';
+    } else {
+      $cleaned_params['locationCode'] = $location_code;
     }
     if(count($errors)>0) {
       return array('status' => false, 'errors' => $errors);
