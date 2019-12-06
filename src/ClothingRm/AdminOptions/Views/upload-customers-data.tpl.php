@@ -80,7 +80,7 @@
           </div>
           <div class="text-center margin-top-20">
             <button class="btn btn-primary" id="saveForm">
-              <i class="fa fa-upload"></i> Upload Data
+              <i class="fa fa-upload"></i> Upload
             </button>
             <button class="btn btn-danger cancelButton" id="uploadCustomers">
               <i class="fa fa-times"></i> Cancel

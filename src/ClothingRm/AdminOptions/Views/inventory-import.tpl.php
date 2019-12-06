@@ -72,7 +72,7 @@
               <i class="fa fa-times"></i> Cancel
             </button>&nbsp;&nbsp;
             <button class="btn btn-primary" id="saveForm">
-              <i class="fa fa-download"></i> Import
+              <i class="fa fa-upload"></i> Upload
             </button>
           </div>      
         </form>

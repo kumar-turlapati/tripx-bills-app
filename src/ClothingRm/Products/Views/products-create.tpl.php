@@ -34,6 +34,11 @@
   } else {
     $uom = '';
   }
+  if(isset($submitted_data['uomSub'])) {
+    $uom_sub = $submitted_data['uomSub'];
+  } else {
+    $uom_sub = '';
+  }  
   if(isset($submitted_data['itemStatus'])) {
     $sel_status = (int)$submitted_data['itemStatus'];
   } else {
@@ -209,23 +214,17 @@
           </div>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Status</label>
-              <div class="select-wrap">
-                <select class="form-control" name="itemStatus" id="itemStatus">
-                  <?php 
-                    foreach($status as $key=>$value): 
-                      if($sel_status === $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-              <?php if(isset($errors['status'])): ?>
-                <span class="error"><?php echo $errors['status'] ?></span>
+              <label class="control-label">Sub measurement unit name (Max. 5 characters)</label>
+              <input
+                type="text" 
+                class="form-control noEnterKey"
+                name="uomSub"
+                id="uomSub"
+                value="<?php echo $uom_sub ?>"
+                maxlength="5"
+              >
+              <?php if(isset($errors['uomSub'])): ?>
+                <span class="error"><?php echo $errors['uomSub'] ?></span>
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
@@ -284,6 +283,26 @@
                 <span class="error"><?php echo $errors['comboCode'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Status</label>
+              <div class="select-wrap">
+                <select class="form-control" name="itemStatus" id="itemStatus">
+                  <?php 
+                    foreach($status as $key=>$value): 
+                      if($sel_status === $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }                       
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($errors['status'])): ?>
+                <span class="error"><?php echo $errors['status'] ?></span>
+              <?php endif; ?>
+            </div>            
           </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">

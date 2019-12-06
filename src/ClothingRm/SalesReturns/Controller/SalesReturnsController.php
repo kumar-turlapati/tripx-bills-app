@@ -368,7 +368,7 @@ class SalesReturnsController {
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Sales Returns Register',
+      'page_title' => 'Sales Return Register',
       'icon_name' => 'fa fa-repeat',
     );
 

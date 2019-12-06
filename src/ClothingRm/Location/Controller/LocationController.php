@@ -199,6 +199,7 @@ class LocationController
     $bank_code = Utilities::clean_string($form_data['bankCode']);
     $tac_b2b = Utilities::clean_string($form_data['tacB2B'], true);
     $tac_b2c = Utilities::clean_string($form_data['tacB2C'], true);
+    $status = isset($form_data['status']) && ((int)$form_data['status'] === 0 || (int)$form_data['status'] === 1) ? $form_data['status'] : 0; 
 
     if($sms_sender_id !== '') {
       if(strlen($sms_sender_id) === 6 && ctype_alpha($sms_sender_id)) {
@@ -282,6 +283,7 @@ class LocationController
     $cleaned_params['bankCode'] = $bank_code;
     $cleaned_params['tacB2B'] = $tac_b2b;
     $cleaned_params['tacB2C'] = $tac_b2c;
+    $cleaned_params['status'] = $status;
 
     if(count($errors)>0) {
       return array('status' => false, 'errors' => $errors);

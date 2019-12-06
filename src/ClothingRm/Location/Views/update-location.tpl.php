@@ -100,7 +100,16 @@
     $allow_man_discount = (int)$submitted_data['allowManualDiscount'];
   } else {
     $allow_man_discount = 1; 
-  }  
+  }
+  if(isset($submitted_data['status']) && $submitted_data['status'] !== '' ) {
+    $location_status = (int)$submitted_data['status'];
+  } else {
+    $location_status = 1;
+  }
+
+  $disabled_status_class = $location_status === 0 ? 'disabled' : '';
+
+  $active_inactive_a = [0=>'Inactive', 1=>'Active'];
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -118,7 +127,7 @@
         <form class="form-validate form-horizontal" method="POST">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Location name</label>
+              <label class="control-label">Store name</label>
               <input
                 type="text" 
                 class="form-control" 
@@ -361,23 +370,51 @@
             </div>            
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-6 col-lg-6 m-bot15">
+            <div class="col-sm-12 col-md-6 col-lg-6">
               <label class="control-label">
                 <span style="font-size:14px;color:#2E1114;font-weight:bold;">Terms &amp; Conditions on B2B Invoice (one per line)</span>
               </label>
               <textarea id="tacB2B" name="tacB2B" rows="5" cols="60"><?php echo $tac_b2b ?></textarea>
             </div>
-            <div class="col-sm-12 col-md-6 col-lg-6 m-bot15">
+            <div class="col-sm-12 col-md-6 col-lg-6">
               <label class="control-label">
                 <span style="font-size:14px;color:#2E1114;font-weight:bold;">Terms &amp; Conditions on B2C Invoice (one per line)</span>
               </label>
               <textarea id="tacB2C" name="tacB2C" rows="5" cols="60"><?php echo $tac_b2c ?></textarea>
             </div>            
-          </div>          
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Status</label>
+              <div class="select-wrap">
+                <select class="form-control" name="status" id="status" style="border: 2px solid red;" <?php echo $disabled_status_class ?>>
+                  <?php 
+                    foreach($active_inactive_a as $key=>$value):
+                      if($location_status === $key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['status'])): ?>
+                <span class="error"><?php echo $form_errors['status'] ?></span>
+              <?php endif; ?>
+            </div>
+            <?php if($location_status === 1): ?>
+              <div class="col-sm-12 col-md-9 col-lg-9 m-bot15">
+                <p style="padding-top: 30px; font-size: 14px; text-decoration: underline; font-weight: bold;color: red;">Making this store inactive will lock the store with immediate effect. You can't make active again.</p>
+              </div>
+            <?php endif; ?>
+          </div>
           <input type="hidden" value="<?php echo $sel_location_code ?>" id="locationCode" name="locationCode" />
           <div class="text-center">
             <button class="btn btn-success" id="Save">
-              <i class="fa fa-edit"></i> Save
+              <i class="fa fa-edit"></i> Update
             </button>
           </div>
         </form>

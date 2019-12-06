@@ -104,10 +104,10 @@ class Products
 		}
 
 		// check for data in posted forms
-		if($params['itemName'] =='') {
+		if($params['itemName'] === '') {
 			$errors['itemName'] = $this->_errorDescriptions('itemName');
 		}
-		if($params['locationCode'] =='') {
+		if($params['locationCode'] === '') {
 			$errors['locationCode'] = $this->_errorDescriptions('locationCode');
 		}
 		if($params['hsnSacCode'] !== '' && (!is_numeric($params['hsnSacCode']) || strlen($params['hsnSacCode']) > 8) ) {
