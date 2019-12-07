@@ -31,7 +31,7 @@ class PettyCashController {
     $parties = array(''=>'Choose');
 
     # ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations();
+    $client_locations = Utilities::get_client_locations(false, false, true);
 
     if(count($request->request->all()) > 0) {
       $validate_form = $this->_validate_form_data($request->request->all());
@@ -82,7 +82,7 @@ class PettyCashController {
     $voc_no = 0;
     
     # ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations(true);
+    $client_locations = Utilities::get_client_locations(true, false, true);
     foreach($client_locations as $location_key => $location_value) {
       $location_key_a = explode('`', $location_key);
       $location_ids[$location_key_a[1]] = $location_value;
@@ -113,6 +113,8 @@ class PettyCashController {
       $voc_no = $request->get('vocNo');
       $location_code = $request->get('l');
       $voucher_details = $this->pettycash_model->get_pc_voucher_details($voc_no, $location_code);
+      // dump($voucher_details);
+      // exit;
       if($voucher_details['status']===false) {
         $this->flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
         Utilities::redirect('/fin/cash-vouchers');
@@ -135,6 +137,7 @@ class PettyCashController {
       'client_locations' => array(''=>'Choose') + $client_locations,
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
+      'curVocNo' => $voc_no,
     );
 
     // build variables
