@@ -37,7 +37,14 @@
     $location_code = $submitted_data['locationCode'];
   } else {
     $location_code = $default_location;
-  }  
+  }
+  if(isset($submitted_data['cnNo'])) {
+    $cn_no = $submitted_data['cnNo'];
+  } else {
+    $cn_no = '';
+  }
+
+  $cn_no_class = $action === 'receipt' ? 'disabled' : '';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -55,7 +62,7 @@
             </a>
           </div>
         </div>
-        <form class="form-validate form-horizontal" method="POST" autocomplete="off">
+        <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="cashVoucherForm">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Voucher date (dd-mm-yyyy)</label>
@@ -90,58 +97,6 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Amount</label>
-              <input 
-                type="text" class="form-control" name="amount" id="amount" 
-                value="<?php echo $amount ?>"
-              >
-              <?php if(isset($form_errors['amount'])): ?>
-                <span class="error"><?php echo $form_errors['amount'] ?></span>
-              <?php endif; ?>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Bill no. (if applicable)</label>
-              <input 
-                type="text" class="form-control" name="refNo" id="refNo" 
-                value="<?php echo $ref_no ?>"
-              >
-              <?php if(isset($form_errors['refNo'])): ?>
-                <span class="error"><?php echo $form_errors['refNo'] ?></span>
-              <?php endif; ?>
-            </div>                 
-            <div class="col-sm-12 col-md-4 col-lg-4">            
-              <label class="control-label">Bill date (dd-mm-yyyy)</label>
-              <div class="form-group">
-                <div class="col-lg-12">
-                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="refDate" id="refDate" />
-                    <span class="add-on"><i class="fa fa-calendar"></i></span>
-                  </div>
-                  <?php if(isset($errors['refDate'])): ?>
-                    <span class="error"><?php echo $errors['refDate'] ?></span>
-                  <?php endif; ?>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Narration</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                name="narration" 
-                id="narration" 
-                value="<?php echo $narration ?>" 
-                maxlength="250"
-              >
-              <?php if(isset($form_errors['narration'])): ?>
-                <span class="error"><?php echo $form_errors['narration'] ?></span>
-              <?php endif; ?>
-            </div>            
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Store name</label>
               <select class="form-control" name="locationCode" id="locationCode">
                 <?php 
@@ -160,6 +115,68 @@
               </select>
               <?php if(isset($form_errors['locationCode'])): ?>
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
+              <?php endif; ?>
+            </div>            
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Bill no. (if applicable)</label>
+              <input 
+                type="text" class="form-control" name="refNo" id="refNo" 
+                value="<?php echo $ref_no ?>"
+              >
+              <?php if(isset($form_errors['refNo'])): ?>
+                <span class="error"><?php echo $form_errors['refNo'] ?></span>
+              <?php endif; ?>
+            </div>                 
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Bill date (dd-mm-yyyy)</label>
+              <div class="form-group">
+                <div class="col-lg-12">
+                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="refDate" id="refDate" />
+                    <span class="add-on"><i class="fa fa-calendar"></i></span>
+                  </div>
+                  <?php if(isset($errors['refDate'])): ?>
+                    <span class="error"><?php echo $errors['refDate'] ?></span>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Credit Note No.</label>
+              <input 
+                type="text" class="form-control" name="cnNo" id="cnNo" 
+                value="<?php echo $cn_no ?>" <?php echo $cn_no_class ?>
+              >              
+              <?php if(isset($form_errors['action'])): ?>
+                <span class="error"><?php echo $form_errors['action'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Amount (in Rs.)</label>
+              <input
+                type="text" class="form-control" name="amount" id="amount" 
+                value="<?php echo $amount ?>"
+              >
+              <?php if(isset($form_errors['amount'])): ?>
+                <span class="error"><?php echo $form_errors['amount'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-8 col-lg-8 m-bot15">
+              <label class="control-label">Narration</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="narration" 
+                id="narration" 
+                value="<?php echo $narration ?>" 
+                maxlength="250"
+              >
+              <?php if(isset($form_errors['narration'])): ?>
+                <span class="error"><?php echo $form_errors['narration'] ?></span>
               <?php endif; ?>
             </div>
           </div>

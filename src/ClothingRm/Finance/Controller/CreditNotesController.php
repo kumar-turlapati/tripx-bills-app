@@ -21,7 +21,7 @@ class CreditNotesController
     $this->flash = new Flash;
 	}
 
-  # create credit note.
+  // create credit note.
   public function cnCreateAction(Request $request) {
     $form_data = $form_errors = [];
     $api_error = '';
@@ -73,8 +73,6 @@ class CreditNotesController
 
   # update credit note.
   public function cnUpdateAction(Request $request) {
-
-
 
     // build variables
     $controller_vars = array(

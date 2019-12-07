@@ -123,6 +123,17 @@ function initializeJS() {
    }
   });
 
+  if($('#cashVoucherForm').length > 0) {
+    $('#action').on('change', function(e){
+      var vocType = $(this).val();
+      if(vocType === 'payment') {
+        $('#cnNo').attr('disabled', false);
+      } else {
+        $('#cnNo').attr('disabled', true);
+      }
+    });
+  }
+
   if($('.postSc2CB').length > 0) {
     $('.postSc2CB').on('click', function(e){
       var buttonObjId = $(this).attr('id');
@@ -2440,7 +2451,9 @@ function initializeJS() {
             var creditSales = parseFloat(daySales.creditSales);
             var salesReturn = parseFloat(daySales.returnAmount);
             var totalSales = parseFloat(cashSales+cardSales+splitSales+creditSales+walletSales) - salesReturn;
-            var cashInHand = parseFloat(daySales.cashInHand);
+            var cashReceipts = parseFloat(daySales.cashReceipts);
+            var cashPayments = parseFloat(daySales.cashPayments);
+            var cashInHand = parseFloat( (parseFloat(daySales.cashInHand)+parseFloat(daySales.cashReceipts))-parseFloat(daySales.cashPayments));
             $('#ds-cashsale').text(cashSales.toFixed(2));
             $('#ds-cardsale').text(cardSales.toFixed(2));
             $('#ds-walletsale').text(walletSales.toFixed(2));
@@ -2449,6 +2462,8 @@ function initializeJS() {
             $('#ds-returns').text(salesReturn.toFixed(2));            
             $('#ds-netsale').text(totalSales.toFixed(2));
             $('#ds-cashinhand').text(cashInHand.toFixed(2));                                          
+            $('#ds-cashpayments').text(cashPayments.toFixed(2));                                          
+            $('#ds-cashreceipts').text(cashReceipts.toFixed(2));                                          
           }
         },
         error: function(e) {

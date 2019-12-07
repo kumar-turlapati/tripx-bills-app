@@ -81,6 +81,14 @@
                         <td align="right"><b><span id="ds-netsale"></span></b></td>
                       </tr>
                       <tr>
+                        <td ><b>Cash Receipts</b></td>
+                        <td align="right"><b><span id="ds-cashreceipts"></span></b></td>
+                      </tr>                      
+                      <tr>
+                        <td ><b>Cash Payments(-)</b></td>
+                        <td align="right"><b><span id="ds-cashpayments"></span></b></td>
+                      </tr>                      
+                      <tr>
                         <td ><b>Cash in hand</b></td>
                         <td align="right"><b><span id="ds-cashinhand"></span></b></td>
                       </tr>

@@ -4841,6 +4841,12 @@ input[name^="itemDetails"] {
 .priceTable tr:nth-child(7) td{
   color: #d9534f;
 }
+.priceTable tr:nth-child(8) td{
+  color: #f0ad4e;
+}
+.priceTable tr:nth-child(9) td{
+  color: #394a59;
+}
 .jqplot-xaxis {
   display:none;
 }

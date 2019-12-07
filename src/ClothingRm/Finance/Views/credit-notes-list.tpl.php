@@ -107,7 +107,7 @@
                 <th width="10%" class="text-center">Credit Note no.</th>
                 <th width="10%" class="text-center">Credit Note date</th>
                 <th width="10%" class="text-center">Credit Note value</span></th>
-                <th width="10%" class="text-center">Consumed Invoice No.</th>
+                <th width="10%" class="text-center">Consumed Invoice/Cash Voc. No.</th>
                 <th width="10%" class="text-center">Balance value</span></th>                
                 <th width="15%" class="text-center">Store name</th>
                 <th width="15%" class="text-center">Actions</th>
@@ -125,7 +125,8 @@
                   $location_id = $voucher_details['locationID'];
                   $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
                   $voucher_amount = $voucher_details['cnValue'];
-                  $bill_no = $voucher_details['billNo'] >0 ? $voucher_details['billNo'] : '-';
+                  $bill_no = $voucher_details['billNo'] > 0 ? $voucher_details['billNo'] : '-';
+                  $cash_voc_no = $voucher_details['cashVocNo'] > 0 ? $voucher_details['cashVocNo'] : 0;
                   $invoice_date = !is_null($voucher_details['invoiceDate']) ? date('d-M-Y', strtotime($voucher_details['invoiceDate'])) : '-';
                   $balance_value = $voucher_details['balanceValue'];
                   $voucher_type = $voucher_details['cnType'];
@@ -155,6 +156,9 @@
                         <?php echo $consumed_invoice_no ?>
                       </a>
                     <?php endif; ?>
+                    <?php if((int)$cash_voc_no > 0): ?>
+                      <?php echo 'CV: '.$cash_voc_no ?>
+                    <?php endif; ?>                    
                   </td>
                   <td align="right" class="valign-middle"><?php echo number_format($balance_value,2,'.','') ?></td>                  
                   <td class="valign-middle"><?php echo $location_name ?></td>

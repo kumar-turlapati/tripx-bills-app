@@ -14,7 +14,7 @@ use ClothingRm\Sales\Model\Sales;
 
 class PettyCashController {
 	
-  protected $views_path,$finmodel;
+  protected $views_path;
 
 	public function __construct() {
     $this->template = new Template(__DIR__.'/../Views/');
@@ -31,7 +31,7 @@ class PettyCashController {
     $parties = array(''=>'Choose');
 
     # ---------- get location codes from api -----------------------
-    $client_locations = Utilities::get_client_locations();  
+    $client_locations = Utilities::get_client_locations();
 
     if(count($request->request->all()) > 0) {
       $validate_form = $this->_validate_form_data($request->request->all());
@@ -43,8 +43,7 @@ class PettyCashController {
           $message = 'Petty cash voucher created successfully with Voucher No. ` '.$result['data']['vocNo'].' `';
           $this->flash->set_flash_message($message);
         } else {
-          $message = 'An error occurred while creating petty cash voucher.';
-          $this->flash->set_flash_message($message,1);          
+          $this->flash->set_flash_message($result['apierror'],1);          
         }
         Utilities::redirect('/fin/cash-voucher/create');
       } else {
@@ -71,7 +70,6 @@ class PettyCashController {
     );
 
     // render template
-    $template = new Template($this->views_path);
     return array($this->template->render_view('pc-voucher-create', $template_vars), $controller_vars);
 	}
 
@@ -519,6 +517,7 @@ class PettyCashController {
     $ref_no = Utilities::clean_string($form_data['refNo']);
     $ref_date = Utilities::clean_string($form_data['refDate']);
     $location_code = Utilities::clean_string($form_data['locationCode']);
+    $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
 
     if(!is_numeric($amount)) {
       $errors['amount'] = 'Invalid amount.';
@@ -545,6 +544,7 @@ class PettyCashController {
       $cleaned_params['refNo'] = $ref_no;
       $cleaned_params['refDate'] = $ref_date;
       $cleaned_params['locationCode'] = $location_code;
+      $cleaned_params['cnNo'] = $cn_no;
       return array('status'=>true, 'cleaned_params'=>$cleaned_params);
     }
   }

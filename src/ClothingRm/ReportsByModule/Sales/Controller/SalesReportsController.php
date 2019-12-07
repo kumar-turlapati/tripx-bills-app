@@ -1210,8 +1210,10 @@ class SalesReportsController {
         $split_sales = $day_summary[0]['splitSales'];
         $wallet_sales = $day_summary[0]['walletSales'];
         $credit_sales = $day_summary[0]['creditSales'];
-        $cash_in_hand = $day_summary[0]['cashInHand'];
         $sales_return = $day_summary[0]['returnAmount'];
+        $cash_receipts = $day_summary[0]['cashReceipts'];
+        $cash_payments = $day_summary[0]['cashPayments'];
+        $cash_in_hand = ($day_summary[0]['cashInHand']+$cash_receipts)-$cash_payments;
         $day_sales = $cash_sales + $card_sales + $split_sales + $credit_sales;
         $total_sales = $day_sales - $sales_return;
       }
@@ -1258,12 +1260,12 @@ class SalesReportsController {
       $pdf->Cell($item_widths[2],6,number_format($split_sales,2,'.',''),'RTB',0,'R');      
 
       $pdf->Ln();                
-      $pdf->Cell($item_widths[0],6,'c)','LRTB',0,'C');
+      $pdf->Cell($item_widths[0],6,'d)','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'eWallet/UPI/EMI','RTB',0,'L');
       $pdf->Cell($item_widths[2],6,number_format($wallet_sales,2,'.',''),'RTB',0,'R');      
 
       $pdf->Ln();                
-      $pdf->Cell($item_widths[0],6,'d)','LRTB',0,'C');
+      $pdf->Cell($item_widths[0],6,'e)','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'Credit Sale','RTB',0,'L');
       $pdf->Cell($item_widths[2],6,number_format($credit_sales,2,'.',''),'RTB',0,'R');
 
@@ -1286,14 +1288,26 @@ class SalesReportsController {
       $pdf->Cell($item_widths[2],6,number_format($total_sales,2,'.',''),'RTB',0,'R');
 
       $pdf->Ln();
+      $pdf->SetFont('Arial','');              
+      $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
+      $pdf->Cell($item_widths[1],6,'Cash Receipts','RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($cash_receipts,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','');              
+      $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
+      $pdf->Cell($item_widths[1],6,'Cash Payments','RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($cash_payments,2,'.',''),'RTB',0,'R');
+
+      $pdf->Ln();
       $pdf->SetFont('Arial','B');              
       $pdf->Cell($item_widths[0],6,'','LRTB',0,'C');                     
       $pdf->Cell($item_widths[1],6,'Cash in hand **','RTB',0,'R');
       $pdf->Cell($item_widths[2],6,number_format($cash_in_hand,2,'.',''),'RTB',0,'R');
 
       $pdf->Ln();
-      $pdf->SetFont('Arial','B',10);              
-      $pdf->Cell($item_widths[0] + $item_widths[1] + $item_widths[2], 6, '** Cash Sale + Cash Paid in Split Sale');
+      $pdf->SetFont('Arial','B',9);              
+      $pdf->Cell($item_widths[0] + $item_widths[1] + $item_widths[2], 6, '** Cash Sale + Cash Paid in Split Sale + Cash Receipts - Cash Payments');
 
       $pdf->Ln();
       $pdf->Ln();
