@@ -60,10 +60,9 @@
   
   $wallet_id = isset($form_data['walletID']) ? $form_data['walletID'] : '';
   $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';  
+  $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
   $form_submit_url = '/sales/entry';
-
-  // dump($promo_key);
 ?>
 
 <div class="row">
@@ -794,6 +793,25 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Agent name</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="agentCode" id="agentCode">
+                      <?php 
+                        foreach($agents as $key=>$value): 
+                          if($agent_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
               </div>
             </div>
           </div>

@@ -58,7 +58,8 @@
 
   $remarks_invoice = isset($form_data['remarksInvoice']) ? $form_data['remarksInvoice'] : '';
   $wallet_id = isset($form_data['walletID']) ? $form_data['walletID'] : '';
-  $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';  
+  $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';
+  $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
 
@@ -784,14 +785,14 @@
           <div class="panel" style="margin-bottom:10px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="remarksWindow">
             <div class="panel-body" style="border: 2px dashed;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-8 col-lg-8">
+                <div class="col-sm-12 col-md-8 col-lg-6">
                   <label class="control-label labelStyle">Remarks / Notes (200 characters maximum)</label>
                   <input type="text" class="form-control noEnterKey" name="remarksInvoice" id="remarksInvoice" maxlength="200" value="<?php echo $remarks_invoice ?>">
                   <?php if(isset($errors['remarksInvoice'])): ?>
                     <span class="error"><?php echo $errors['remarksInvoice'] ?></span>
                   <?php endif; ?>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-4 col-lg-3">
                   <label class="control-label labelStyle">Sales category</label>
                   <div class="select-wrap">                
                     <select class="form-control" name="salesCategory" id="salesCategory">
@@ -809,7 +810,26 @@
                       <?php endforeach; ?>
                     </select>
                   </div>
-                </div>                
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-3">
+                  <label class="control-label labelStyle">Agent name</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="agentCode" id="agentCode">
+                      <?php 
+                        foreach($agents as $key=>$value): 
+                          if($agent_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

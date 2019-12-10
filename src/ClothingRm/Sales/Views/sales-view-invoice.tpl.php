@@ -74,6 +74,7 @@
   $lr_no = isset($form_data['lrNo']) ? $form_data['lrNo'] : '';
   $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
   $challan_no = isset($form_data['challanNo']) ? $form_data['challanNo'] : '';
+  $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
   $card_and_auth_style = (int)$payment_method === 0 || (int)$payment_method === 3 ? 'style="display:none;"' : '';
   $split_payment_input_style = (int)$payment_method === 2 ? '' : 'disabled';
@@ -506,7 +507,7 @@
                   <div class="form-group">
                     <div class="col-lg-12">
                       <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" />
+                        <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="saleDate" id="saleDate" disabled />
                         <span class="add-on"><i class="fa fa-calendar"></i></span>
                       </div>
                       <?php if(isset($errors['saleDate'])): ?>
@@ -656,6 +657,25 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Agent name</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="agentCode" id="agentCode" disabled>
+                      <?php 
+                        foreach($agents as $key=>$value): 
+                          if($agent_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
               </div>
             </div>
           </div>

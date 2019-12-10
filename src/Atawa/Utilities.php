@@ -969,7 +969,7 @@ class Utilities
 
  public static function get_business_user_types($bu_type=0, $return_all=true) {
     $sources = [
-      90 => 'Wholesaler',
+      90 => 'Wholesaler/Agent',
       91 => 'Marketing Executive',
       92 => 'Sales Executive - ShowRoom',
     ];

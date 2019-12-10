@@ -108,6 +108,7 @@
   $wallet_id = isset($form_data['walletID']) ? $form_data['walletID'] : '';
   $wallet_ref_no = isset($form_data['walletRefNo']) ? $form_data['walletRefNo'] : '';
   $is_combo_bill = isset($form_data['isComboBill']) ? $form_data['isComboBill'] : 0; 
+  $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
   $form_submit_url = '/sales/update/'.$ic;
 ?>
@@ -246,9 +247,9 @@
                       $tot_discount += $item_discount;
 
                     } else {
-                      $item_amount = '';
-                      $taxable_amount = '';
-                      $tax_amount = '';
+                      $item_amount = 0;
+                      $taxable_amount = 0;
+                      $tax_amount = 0;
                     }
                 ?>
                   <tr>
@@ -286,7 +287,7 @@
                         id="qtyava_<?php echo $i-1 ?>"
                         name="itemDetails[itemAvailQty][]"
                         index="<?php echo $i-1 ?>"
-                        value="<?php echo $item_qty_available ?>"
+                        value="<?php echo $item_qty_available > 0 ? $item_qty_available : '' ?>"
                         size="10"
                         readonly
                       />
@@ -297,7 +298,7 @@
                           name="itemDetails[itemSoldQty][]"
                           id="qty_<?php echo $i-1 ?>"
                           index="<?php echo $i-1 ?>"
-                          value="<?php echo $item_qty ?>"
+                          value="<?php echo $item_qty > 0 ? $item_qty : '' ?>"
                         />
                     </td>
                     <td style="vertical-align:middle;" align="center">
@@ -316,7 +317,7 @@
                       id="grossAmount_<?php echo $i-1 ?>" 
                       index="<?php echo $i-1 ?>"
                       style="vertical-align:middle;text-align:right;"
-                    ><?php echo $item_amount ?></td>
+                    ><?php echo $item_amount > 0 ? $item_amount : '' ?></td>
                     <td align="center" style="vertical-align:middle;">
                       <input
                         type="text" 
@@ -333,7 +334,7 @@
                       id="taxableAmt_<?php echo $i-1 ?>" 
                       index="<?php echo $i-1 ?>"
                       style="vertical-align:middle;text-align:right;"                      
-                    ><?php echo $taxable_amount ?></td>
+                    ><?php echo $taxable_amount > 0 ? $taxable_amount : '' ?></td>
                     <td
                       style="vertical-align:middle;"
                     >
@@ -893,6 +894,25 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Agent name</label>
+                  <div class="select-wrap">                
+                    <select class="form-control" name="agentCode" id="agentCode">
+                      <?php 
+                        foreach($agents as $key=>$value): 
+                          if($agent_code === $key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
               </div>
             </div>
           </div>

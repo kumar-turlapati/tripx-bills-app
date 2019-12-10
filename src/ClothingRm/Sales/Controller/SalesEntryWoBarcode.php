@@ -41,7 +41,7 @@ class SalesEntryWoBarcode {
     # -------- initialize variables ---------------------------
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
-    $taxes = $loc_states = [];
+    $taxes = $loc_states = $agents_a = [];
     $sa_categories = ['' => 'Choose'];
     $customer_types = Constants::$CUSTOMER_TYPES;    
 
@@ -84,6 +84,18 @@ class SalesEntryWoBarcode {
     } else {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
     }
+
+    # ---------- get agents ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }    
 
     // dump($sexe_response);
     // exit;
@@ -188,7 +200,7 @@ class SalesEntryWoBarcode {
       'payment_methods' => Constants::$PAYMENT_METHODS_RC,
       'offers' => array(''=>'Choose') + $offers,
       'offers_raw' => $offers_raw,
-      'credit_days_a' => array(0=>'Choose') + $credit_days_a,
+      'credit_days_a' => [0=>'Choose'] + $credit_days_a,
       'errors' => $form_errors,
       'page_error' => $page_error,
       'page_success' => $page_success,
@@ -207,6 +219,7 @@ class SalesEntryWoBarcode {
       'no_of_rows' => $no_of_rows,
       'sa_categories' => $sa_categories,
       'wallets' => array(''=>'Choose') + Constants::$WALLETS,
+      'agents' => [''=>'Choose']+$agents_a,
     );
 
     return array($this->template->render_view('sales-entry-wo-barcode', $template_vars),$controller_vars);
@@ -224,6 +237,7 @@ class SalesEntryWoBarcode {
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = [];
+    $agents_a = [];
     $sa_categories = ['' => 'Choose'];
 
     $customer_types = Constants::$CUSTOMER_TYPES;    
@@ -300,6 +314,18 @@ class SalesEntryWoBarcode {
     } else {
       $sa_executives = [];
     }
+
+    # ---------- get agents ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }    
 
     # ---------- check for last bill printing ----
     if($request->get('lastBill')) {
@@ -413,6 +439,7 @@ class SalesEntryWoBarcode {
       'ic' => $sales_code,
       'sa_categories' => $sa_categories,
       'wallets' => array(''=>'Choose') + Constants::$WALLETS,
+      'agents' => [''=>'Choose'] + $agents_a,
     );
 
     return array($this->template->render_view('sales-update-wo-barcode', $template_vars),$controller_vars);
@@ -424,7 +451,7 @@ class SalesEntryWoBarcode {
     # -------- initialize variables ---------------------------
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
-    $taxes = $loc_states = [];
+    $taxes = $loc_states = $agents_a = [];
     $customer_types = Constants::$CUSTOMER_TYPES;    
 
     $page_error = $page_success = $promo_key = '';
@@ -490,6 +517,18 @@ class SalesEntryWoBarcode {
       $sa_executives = [];
     }
 
+    # ---------- get agents ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }    
+
     # --------------- build variables -----------------
     $controller_vars = array(
       'page_title' => 'View Invoice :: Bill No - '.$form_data['billNo'],
@@ -516,7 +555,8 @@ class SalesEntryWoBarcode {
       'promo_key' => $promo_key,
       'customer_types' => $customer_types,
       'no_of_rows' => count($form_data['itemDetails']['itemName']),
-      'ic' => $sales_code,      
+      'ic' => $sales_code,
+      'agents' => [''=>'Choose'] + $agents_a,
     );
 
     return array($this->template->render_view('sales-view-invoice', $template_vars),$controller_vars);
@@ -954,6 +994,8 @@ class SalesEntryWoBarcode {
     $lr_date = Utilities::clean_string($form_data['lrDate']);
     $chalan_no = Utilities::clean_string($form_data['challanNo']);
 
+    $agent_code = Utilities::clean_string($form_data['agentCode']);
+
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
     $is_combo_bill = isset($form_data['isComboBill']) ? Utilities::clean_string($form_data['isComboBill']) : 0;
@@ -1210,6 +1252,7 @@ class SalesEntryWoBarcode {
     $cleaned_params['remarksInvoice'] = $remarks_invoice;  
     $cleaned_params['salesCategory'] = $sales_category;
     $cleaned_params['isComboBill'] = $is_combo_bill;
+    $cleaned_params['agentCode'] = $agent_code;
 
     # return response.
     if(count($form_errors)>0) {
