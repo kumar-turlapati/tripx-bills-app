@@ -51,7 +51,7 @@
         <?php endif; ?>
   		  <div class="filters-block">
     		  <div id="filters-form">
-            <form class="form-validate form-horizontal">
+            <form class="form-validate form-horizontal" method="POST" autocomplete="off">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1"><b>Filter by</b></div>
                 <div class="col-sm-12 col-md-2 col-lg-2">

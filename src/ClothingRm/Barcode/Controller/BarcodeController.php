@@ -305,6 +305,11 @@ class BarcodeController
       'perPage' => $per_page,
     );
 
+    if( count($request->request->all()) > 0) {
+      $search_params['pageNo'] = 1;
+      $page_no = 1;
+    }
+
     // dump($search_params);
     // exit;
 
