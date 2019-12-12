@@ -64,7 +64,7 @@
         <!-- Right links ends --> 
         
         <!-- Form starts -->
-        <form class="form-validate form-horizontal" method="POST">
+        <form class="form-validate form-horizontal" method="POST" autocomplete="off">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">User name</label>
