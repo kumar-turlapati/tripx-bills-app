@@ -38,12 +38,14 @@ class SalesReturnsController {
     $sales = new Sales;
     $flash = new Flash;
 
-    # get sales details from salesCode
-    if( !is_null($request->get('salesCode')) && $request->get('salesCode')!=='') {
+    // get sales details from salesCode
+    if( !is_null($request->get('salesCode')) && $request->get('salesCode') !=='' ) {
       $sales_code = Utilities::clean_string($request->get('salesCode'));
       $sales_response = $sales->get_sales_details($sales_code);
       if($sales_response['status']) {
         $sale_details = $sales_response['saleDetails'];
+        // dump($sale_details);
+        // exit;
         $sale_date = date("Y-m-d", strtotime($sale_details['invoiceDate']));
         $date_diff = time()-strtotime($sale_date);
         $total_days = floor($date_diff / (60 * 60 * 24));
@@ -81,28 +83,28 @@ class SalesReturnsController {
     }
 
     # check to see return code is valid or not.
-    if($update_flag) {
-      if($request->get('salesReturnCode') && $request->get('salesReturnCode')!=='') {
-        $return_code = $request->get('salesReturnCode');
-        $return_details = $sales_returns->get_sales_return_details($return_code);
-        if($return_details['status']===true) {
-          $return_items_qtys = array_column($return_details['returnDetails']['itemDetails'],'itemQty');
-          $return_item_names = array_column($return_details['returnDetails']['itemDetails'],'itemName');
-          $return_items_a = array_combine($return_item_names, $return_items_qtys);
-        } else {
-          $flash->set_flash_message('Invalid Sales Return Code.',1);
-          Utilities::redirect('/sales-return/entry/'.$sales_code);                     
-        }
-      } else {
-        $flash->set_flash_message('Invalid Sales Return Code.',1);
-        Utilities::redirect('/sales-return/entry/'.$sales_code);                
-      }
-      $page_title = 'Update Sales Return - Bill No - '.$sale_details['billNo'];
-      $btn_label = 'Update';
-    } else {
-      $page_title = 'Create Sales Return - Bill No - '.$sale_details['billNo'];
+    // if($update_flag) {
+    //   if($request->get('salesReturnCode') && $request->get('salesReturnCode')!=='') {
+    //     $return_code = $request->get('salesReturnCode');
+    //     $return_details = $sales_returns->get_sales_return_details($return_code);
+    //     if($return_details['status']===true) {
+    //       $return_items_qtys = array_column($return_details['returnDetails']['itemDetails'],'itemQty');
+    //       $return_item_names = array_column($return_details['returnDetails']['itemDetails'],'itemName');
+    //       $return_items_a = array_combine($return_item_names, $return_items_qtys);
+    //     } else {
+    //       $flash->set_flash_message('Invalid Sales Return Code.',1);
+    //       Utilities::redirect('/sales-return/entry/'.$sales_code);                     
+    //     }
+    //   } else {
+    //     $flash->set_flash_message('Invalid Sales Return Code.',1);
+    //     Utilities::redirect('/sales-return/entry/'.$sales_code);                
+    //   }
+    //   $page_title = 'Update Sales Return - Bill No - '.$sale_details['billNo'];
+    //   $btn_label = 'Update';
+    // } else {
+      $page_title = 'Sales Return';
       $btn_label = 'Save';
-    }
+    // }
 
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
@@ -146,22 +148,22 @@ class SalesReturnsController {
 
     // prepare form variables.
     $template_vars = array(
-        'sale_details' => $sale_details,
-        'sale_item_details' => $sale_item_details,
-        'tot_return_qtys' => $tot_return_qtys,
-        'return_items' => $return_items_a,
-        'status' => Constants::$RECORD_STATUS,
-        'payment_methods' => Constants::$PAYMENT_METHODS_RC,
-        'ages' => $ages_a,
-        'credit_days_a' => array(0=>'Choose'),
-        'qtys_a' => $qtys_a,
-        'yes_no_options' => array(''=>'Choose', 1=>'Yes', 0=>'No'),
-        'errors' => $errors,
-        'page_error' => $page_error,
-        'page_success' => $page_success,
-        'btn_label' => $btn_label,
-        'submitted_data' => $submitted_data,
-        'flash_obj' => $flash,
+      'sale_details' => $sale_details,
+      'sale_item_details' => $sale_item_details,
+      'tot_return_qtys' => $tot_return_qtys,
+      'return_items' => $return_items_a,
+      'status' => Constants::$RECORD_STATUS,
+      'payment_methods' => Constants::$PAYMENT_METHODS_RC,
+      'ages' => $ages_a,
+      'credit_days_a' => array(0=>'Choose'),
+      'qtys_a' => $qtys_a,
+      'yes_no_options' => array(''=>'Choose', 1=>'Yes', 0=>'No'),
+      'errors' => $errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => $btn_label,
+      'submitted_data' => $submitted_data,
+      'flash_obj' => $flash,
     );
 
     // render template

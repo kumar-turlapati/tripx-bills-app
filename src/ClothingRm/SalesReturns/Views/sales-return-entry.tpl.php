@@ -1,4 +1,6 @@
 <?php
+
+  use Atawa\Utilities;
   
   if(isset($submitted_data['returnDate']) && $submitted_data['returnDate']!=='') {
     $current_date = date("d-m-Y", strtotime($submitted_data['returnDate']));
@@ -56,7 +58,67 @@
           </div>
         </div>
         
-        <form class="form-validate form-horizontal" method="POST" id="salesReturnWindow">
+        <form class="form-validate form-horizontal" method="POST" id="salesReturnWindow" autocomplete="off">
+
+          <div class="table-responsive">
+            <table class="table table-bordered font12">
+              <tr>
+                <td colspan="9" style="font-size:18px;font-weight: bold;text-align: center;color: #225992;">Invoice Details</td>
+              </tr>
+              <tr>
+                <td width="8%" class="text-center sr-heading-style valign-middle">Invoice date</td>                  
+                <td width="8%" class="text-center sr-heading-style valign-middle">Invoice no.</td>                  
+                <td width="20%" class="text-center sr-heading-style valign-middle">Store name</td>
+                <td width="10%" class="text-center sr-heading-style valign-middle">Payment method</td>
+                <td width="8%" class="text-center sr-heading-style valign-middle">GrossAmt. (Rs.)</td>
+                <td width="8%" class="text-center sr-heading-style valign-middle">Discount (Rs.)</td>
+                <td width="8%" class="text-center sr-heading-style valign-middle">NetPay (Rs.)</td>
+                <td width="8%" class="text-center sr-heading-style valign-middle">Taxable (Rs.)</td>
+                <td width="8%" class="text-center sr-heading-style valign-middle">GST (Rs.)</td>
+              </tr>
+              <tr>
+                <td class="text-center sr-value-style valign-middle"><?php echo date("d-m-Y", strtotime($sale_details['invoiceDate'])) ?></td>                  
+                <td class="text-center sr-value-style valign-middle"><?php echo $sale_details['billNo'] ?></td>
+                <td class="text-center sr-value-style valign-middle"><?php echo $sale_details['locationName'] ?></td>
+                <td class="text-center sr-value-style valign-middle"><?php echo isset($payment_methods[$sale_details['paymentMethod']]) ? $payment_methods[$sale_details['paymentMethod']] : ''?></td>
+                <td class="text-right sr-value-style valign-middle"><?php echo number_format($sale_details['billAmount'], 2, '.', '') ?></td>
+                <td class="text-right sr-value-style valign-middle"><?php echo number_format($sale_details['discountAmount'], 2, '.', '') ?></td>
+                <td class="text-right sr-value-style valign-middle" style="color:red; font-size: 18px;"><?php echo number_format($sale_details['netPay'], 2, '.', '') ?></td>
+                <td class="text-right sr-value-style valign-middle"><?php echo number_format($sale_details['totalAmount'], 2, '.', '') ?></td>
+                <td class="text-right sr-value-style valign-middle"><?php echo number_format($sale_details['taxAmount'], 2, '.', '') ?></td>
+              </tr>              
+            </table>
+          </div> 
+
+
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label sr-heading-style">Scan barcode</label>
+              <input
+                type="text"
+                id="srBarcode"
+                style="font-size:16px;font-weight:bold;border:2px dashed #225992;padding-left:5px;font-weight:bold;background-color:#f7f705;height:35px;"
+                maxlength="13"
+              />
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label sr-heading-style">Return date</label>
+              <?php if(Utilities::is_admin()): ?>
+                <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                  <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="returnDate" id="returnDate" />
+                  <span class="add-on"><i class="fa fa-calendar"></i></span>
+                </div>
+                <?php if(isset($errors['returnDate'])): ?>
+                  <span class="error"><?php echo $errors['returnDate'] ?></span>
+                <?php endif; ?>                     
+              <?php else: ?>
+                <div style="font-size:16px;font-weight:bold;color:#225992;"><?php echo $current_date ?></div>
+                <input type="hidden" id="returnDate" name="returnDate" value="<?php echo $current_date ?>" />
+              <?php endif; ?>
+            </div>
+          </div>
+
+          <?php /*
           <div class="panel">
             <div class="panel-body">          
               <h2 class="hdg-reports borderBottom">Return Details</h2>
@@ -81,19 +143,20 @@
           <h2 class="hdg-reports borderBottom">Return Item Details</h2>
           <?php if(isset($errors['itemDetails'])): ?>
             <span class="error"><?php echo $errors['itemDetails'] ?></span>
-          <?php endif; ?>          
+          <?php endif; ?> */ ?>
+
           <div class="table-responsive">
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover font12" id="salesReturnTable">
               <thead>
                 <tr>
                   <th width="5%" class="text-center">Sno.</th>                  
                   <th width="30%" class="text-center">Item name</th>
                   <th width="10%" class="text-center">Lot no.</th>
-                  <th width="10%" class="text-center">Item rate</th>
-                  <th width="10%" class="text-center">Sold<br />qty.</th>
+                  <th width="10%" class="text-center">Item rate (Rs.)</th>
+                  <th width="10%" class="text-center">Sold qty.</th>
                   <th width="10%" class="text-center">Previous<br />returns</th>
                   <th width="10%" class="text-center">Current<br />returns</th>
-                  <th width="10%" class="text-center">Amount</th>
+                  <th width="10%" class="text-center">Amount (Rs.)</th>
                 </tr>
               </thead>
               <tbody>               
@@ -133,17 +196,17 @@
                       $return_value = $item_rate*$return_qty;
                 ?>
                   <tr>
-                    <td align="right" style="vertical-align:middle;"><?php echo $i+1 ?></td>
-                    <td style="vertical-align:middle;"><?php echo $item_name ?></td>
-                    <td align="right" style="vertical-align:middle;"><?php echo $lot_no ?></td>                    
-                    <td align="right" style="vertical-align:middle;" id="returnRate_<?php echo $i ?>">
+                    <td align="right" class="valign-middle"><?php echo $i+1 ?></td>
+                    <td class="valign-middle"><?php echo $item_name ?></td>
+                    <td align="right" class="valign-middle returnLotNo" id="lotNo_<?php echo $i ?>"><?php echo $lot_no ?></td>                    
+                    <td align="right" class="valign-middle" id="returnRate_<?php echo $i ?>">
                       <?php echo $item_rate ?>
                     </td>
-                    <td align="right" style="vertical-align:middle;"><?php echo $item_qty ?></td>
-                    <td id="returnason_<?php echo $i ?>" align="right" class="itemReturnValueAson" style="vertical-align:middle;">
+                    <td align="right" class="valign-middle" id="sold_<?php echo $i ?>"><?php echo $item_qty ?></td>
+                    <td id="returnason_<?php echo $i ?>" align="right" class="itemReturnValueAson valign-middle">
                       <?php echo $return_ason_date ?>
                     </td>                    
-                    <td style="vertical-align:middle;">
+                    <td class="valign-middle">
                       <input type="hidden" name="itemInfo[]" id="<?php echo $item_code ?>" value="<?php echo $item_string ?>" />
                       <input 
                         type="text" 
@@ -160,31 +223,38 @@
                     </td>                  
                   </tr>
                 <?php endfor; ?>
+
                   <tr>
-                    <td colspan="7" align="right">Total Amount</td>
-                    <td id="totalAmount" align="right" class="totalAmount">
-                      <?php echo number_format($totalReturnAmount,2)?>                      
-                    </td>
+                    <td colspan="3" class="text-center sr-value-style">Gross amount (Rs.)</td>
+                    <td colspan="3" class="text-center sr-value-style">Round off (Rs.)</td>
+                    <td colspan="2" class="text-center sr-value-style">Return value (Rs.)</td>
                   </tr>
                   <tr>
-                    <td colspan="7" align="right">Round off</td>
-                    <td id="totalAmount" align="right" class="roundOff">
-                      <?php echo number_format($totalReturnAmountRound,2)?>
+                    <td id="totalAmount" align="center" class="totalAmount" colspan="3" style="font-size: 16px;">
+                      <?php echo number_format($totalReturnAmount,2,'.','')?>                      
                     </td>
-                  </tr>                  
-                  <tr>
-                    <td colspan="7" align="right">Total Return Value</td>
-                    <td id="netPay" align="right" class="netPay"><?php echo number_format($returnAmount,2) ?></td>
-                  </tr>                                 
+                    <td id="totalAmount" align="center" class="roundOff" colspan="3" style="font-size: 16px;">
+                      <?php echo number_format($totalReturnAmountRound,2,'.','')?>
+                    </td>
+                    <td id="netPay" align="center" class="netPay" colspan="2" style="font-weight: bold; color:red; font-size: 18px;">
+                      <?php echo number_format($returnAmount,2,'.','') ?>
+                    </td>
+                  </tr>
               </tbody>
             </table>
           </div>
+
+         
+          <br />
           <div class="text-center">
             <button class="btn btn-primary" id="Save" <?php echo $disabled ?>>
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
             </button>
           </div>
-          <input type="hidden" id="status" name="status" value="1" />          
+
+          <input type="hidden" id="status" name="status" value="1" />
+          <input type="hidden" id="locationCode" name="locationCode" value="<?php echo $sale_details['locationCode'] ?>" />
+
         </form>  
       </div>
     </section>

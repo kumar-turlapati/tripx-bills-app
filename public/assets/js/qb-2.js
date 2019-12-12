@@ -776,7 +776,7 @@ function initializeJS() {
           return false;
         }
         var locationCode = $('#locationCode').val();
-        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=true', {
           success: function(itemDetails) {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -2358,11 +2358,74 @@ function initializeJS() {
 
   // sales return window.
   if( $('#salesReturnWindow').length > 0 ) {
+
+    if($('#srBarcode').length > 0) {
+      $('#srBarcode').focus();
+
+      $('#srBarcode').on('keypress', function(e){
+        if (e.keyCode == 13) {
+          var barcode = $(this).val();
+          var locationCode = $('#locationCode').val();
+          if(barcode.length !== 13) {
+            alert('Invalid barcode');
+            return false;
+          } else if(locationCode === '') {
+            alert('Choose a Store first.');
+            return false;
+          }
+          var locationCode = $('#locationCode').val();
+          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=true', {
+            success: function(itemDetails) {
+              if(itemDetails.status === 'success') {
+                var objLength = Object.keys(itemDetails.response.bcDetails).length;
+                var lotNoId = moQ = '';
+                if(objLength > 0) {
+                  var itemName = itemDetails.response.bcDetails.itemName;
+                  var lotNo = itemDetails.response.bcDetails.lotNo;
+                  $('#salesReturnTable tr').each(function() {
+                    var lotNoTd = $(this).find(".returnLotNo");
+                    if(lotNoTd.text() === lotNo) {
+                      lotNoId = lotNoTd.attr('id').split('_')[1];
+                    }
+                  });
+                  if(parseInt(lotNoId) >= 0) {
+                    var prevReturns = parseFloat(returnNumber($('#returnason_'+lotNoId).text()));
+                    var soldQty = parseFloat(returnNumber($('#sold_'+lotNoId).text()));
+                    var balReturns = parseFloat(returnNumber(soldQty-prevReturns)).toFixed(2);
+                    $('#returnQty_'+lotNoId).val(balReturns);
+                    $('#srBarcode').val('');
+                    $('.returnQty').trigger('blur')
+                  } else {
+                    alert('Barcode not found in this Invoice.');
+                  }
+
+                } else {
+                  alert('Barcode not found');                
+                }
+              }
+            },
+            error: function(e) {
+              alert('Barcode not found in the Selected store.');
+            }
+          });
+        }
+        e.preventDefault();
+      });
+    }
+
     $('.returnQty').on("blur", function(e){
       var returnItemId = $(this).attr('id').split('_')[1];
-      var returnRate = parseFloat($('#returnRate_'+returnItemId).text());
-      var returnQty = parseFloat($(this).val());
-      var returnValue = parseFloat(returnRate*returnQty);
+      var returnRate = parseFloat(returnNumber($('#returnRate_'+returnItemId).text()));
+      var soldQty = parseFloat(returnNumber($('#sold_'+returnItemId).text()));
+      var prevReturns = parseFloat(returnNumber($('#returnason_'+returnItemId).text()));
+      var returnQty = parseFloat(returnNumber($(this).val()));
+      if(returnQty > 0 && (returnQty > (soldQty - prevReturns))) {
+        alert('Return Qty. is greater than available Qty. for return.');
+        $(this).val('');
+        $(this).focus();
+        return false;
+      }
+      var returnValue = parseFloat(returnNumber(returnRate*returnQty));
       $('#returnValue_'+returnItemId).text(returnValue.toFixed(2));
       updateSalesReturnValue();
     });

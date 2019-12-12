@@ -4929,3 +4929,12 @@ input[name^="itemDetails"] {
 .labelStyle .nobold {
   font-weight:normal;  
 }
+.sr-heading-style {
+  color: #2F7192; 
+  font-weight: bold;
+  font-size: 13px;
+}
+.sr-value-style {
+  color:#2E1114;
+  font-weight:bold;
+}
