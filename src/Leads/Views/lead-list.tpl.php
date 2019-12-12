@@ -8,7 +8,6 @@
   <div class="col-lg-12">
     <!-- Panel starts -->
     <section class="panelBox">
-      <h2 class="hdg-reports text-center">Leads List</h2>
       <div class="panelBody">
 
         <?php echo Utilities::print_flash_message() ?>

@@ -989,16 +989,6 @@ $routes->add('remove_item_from_catalog', new Routing\Route('/async-catalogitem-r
   '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::removeItemFromCatalog',
 )));
 
-return $routes;
-
-/*
-// $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
-//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
-// )));
-// $routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
-//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
-// )));
-
 // lead routes.
 $routes->add('lead_create', new Routing\Route('/lead/create', array(
   '_controller' => 'Leads\\Controller\\LeadsController::leadCreateAction',
@@ -1020,6 +1010,18 @@ $routes->add('lead_details', new Routing\Route('/lead/details/{leadCode}', array
 $routes->add('lead_import', new Routing\Route('/lead/import', array(
   '_controller' => 'Leads\\Controller\\LeadsController::importLeadsAction',
 )));
+
+return $routes;
+
+/*
+// $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
+//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
+// )));
+// $routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
+//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
+// )));
+
+
 
 // reports
 $routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(

@@ -9,7 +9,6 @@
     
     <!-- Panel starts -->
     <section class="panel">
-      <h2 class="hdg-reports text-center">Import Leads</h2>
       <div class="panel-body">
 
         <?php echo Utilities::print_flash_message() ?>

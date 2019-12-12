@@ -79,8 +79,8 @@ class LeadsController
 
     # build variables
     $controller_vars = array(
-      'page_title' => 'Marketing - Lead Management',
-      'icon_name' => 'fa fa-magic',
+      'page_title' => 'CRM - Create Lead',
+      'icon_name' => 'fa fa-users',
     );
 
     return array($this->template->render_view('lead-create', $template_vars),$controller_vars);		
@@ -160,8 +160,8 @@ class LeadsController
 
     # build variables
     $controller_vars = array(
-      'page_title' => 'Marketing - Lead Management',
-      'icon_name' => 'fa fa-magic',
+      'page_title' => 'CRM - Update Lead',
+      'icon_name' => 'fa fa-users',
     );
 
     return array($this->template->render_view('lead-update', $template_vars),$controller_vars);
@@ -265,8 +265,8 @@ class LeadsController
 
     # build variables
     $controller_vars = array(
-      'page_title' => 'Marketing - Lead Management',
-      'icon_name' => 'fa fa-magic',
+      'page_title' => 'CRM - Leads',
+      'icon_name' => 'fa fa-users',
     );
 
     return array($this->template->render_view('lead-list', $template_vars),$controller_vars);
@@ -379,8 +379,8 @@ class LeadsController
 
     # build variables
     $controller_vars = array(
-      'page_title' => 'Marketing - Lead Management',
-      'icon_name' => 'fa fa-magic',
+      'page_title' => 'CRM - Import Leads',
+      'icon_name' => 'fa fa-users',
     );
 
     return array($this->template->render_view('lead-import', $template_vars), $controller_vars);
