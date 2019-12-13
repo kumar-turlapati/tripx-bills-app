@@ -71,13 +71,14 @@ class FinReportsController {
           }
         }
 
-        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
-          $location_name = $client_locations[$form_data['locationCode']];
-        } else {
-          $location_name = '';
-        }
+        // if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+        //   $location_name = $client_locations[$form_data['locationCode']];
+        // } else {
+        //   $location_name = '';
+        // }
 
-        $heading1 = 'Payables - '.$location_name;
+        // $heading1 = 'Payables - '.$location_name;
+        $heading1 = 'Payables';
         $heading2 = 'As on '.date('jS F, Y');
         $csv_headings = [ [$heading1], [$heading2]];
       }
@@ -251,11 +252,11 @@ class FinReportsController {
 
   private function _validate_payables_data($form_data = []) {
     $cleaned_params = $form_errors = [];
-    if($form_data['locationCode'] !== '') {
-      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
-    } else {
-      $form_errors['StoreName'] = 'Invalid Store name.';
-    }
+    // if($form_data['locationCode'] !== '') {
+    //   $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    // } else {
+    //   $form_errors['StoreName'] = 'Invalid Store name.';
+    // }
     if($form_data['supplierCode'] !== '') {
       $cleaned_params['supplierCode'] = Utilities::clean_string($form_data['supplierCode']);
     } else {

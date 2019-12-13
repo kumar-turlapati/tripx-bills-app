@@ -11,6 +11,7 @@
     			  <form class="form-validate form-horizontal" method="POST">
       				<div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1">Filters</div>
+                <?php /*
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
@@ -24,7 +25,7 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
-                </div>                
+                </div> */ ?>              
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="supplierCode" id="supplierCode">
