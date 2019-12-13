@@ -94,14 +94,14 @@
           <?php if(count($dnotes)>0): ?>
              <table class="table table-striped table-hover">
               <thead>
-                <tr class="font12">
+                <tr class="font11">
                   <th width="5%" class="text-center">Sno.</th>
                   <th width="10%" class="text-center">Purchase Date</th>
                   <th width="10%" class="text-center">Bill No.</th>                
-                  <th width="10%" class="text-center">Bill Value</th>
+                  <th width="10%" class="text-center">Bill Value (Rs.)</th>
                   <th width="10%" class="text-center">Debit Note No.</th>
                   <th width="10%" class="text-center">Debit Note Date</th>
-                  <th width="10%" class="text-center">Amount</span></th>
+                  <th width="10%" class="text-center">Amount (Rs.)</span></th>
                   <th width="10%" class="text-center">Debit Type</span></th>                
                   <th width="15%" class="text-center">Store Name</th>
                   <th width="15%" class="text-center">Actions</th>
@@ -122,29 +122,57 @@
                     $bill_no = $voucher_details['billNo'] !== '' ? $voucher_details['billNo'] : '-';
                     $bill_value = $voucher_details['billValue'] > 0 ? $voucher_details['billValue'] : 0;
                     $purchase_date = !is_null($voucher_details['purchaseDate']) ? date('d-M-Y', strtotime($voucher_details['purchaseDate'])) : '-';
-                    $voucher_type = $voucher_details['dnType'] === 'ma' ? 'Manual' : 'Auto';
+                    $voucher_type = $voucher_details['dnType'] === 'ma' ? 'Pur.Return' : 'Auto';
+
+                    $purchase_code = $voucher_details['purchaseCode'];
+                    // $grn_code = $voucher_details['grnCode'];
+                    // $return_code = $voucher_details['purchaseReturnCode'];
+
+                    $grn_code = '';
+                    $return_code = '';                    
 
                     $total += $voucher_amount;
                     $tot_bill_value += $bill_value;
                 ?>
-                  <tr class="font12">
-                    <td align="right"><?php echo $cntr ?></td>
-                    <td align="center"><?php echo $purchase_date ?></td>
-                    <td align="center"><?php echo $bill_no ?></td>                
-                    <td align="right"><?php echo number_format($bill_value, 2, '.', '') ?></td>
-                    <td align="right"><?php echo $voucher_no ?></td>                  
-                    <td><?php echo $voucher_date ?></td>
-                    <td align="right"><?php echo number_format($voucher_amount,2, '.', '') ?></td>
-                    <td align="right"><?php echo $voucher_type ?></td>                  
-                    <td><?php echo $location_name ?></td>
-                    <td>
-                      <div class="btn-actions-group" align="right">
-                        <?php if( ($user_type === 3 || $user_type === 9 || $user_type === 7) && $voucher_type === 'ma'): ?>
+                  <tr class="font11">
+                    <td align="right" class="valign-middle"><?php echo $cntr ?></td>
+                    <td align="center" class="valign-middle">
+                      <a href="/inward-entry/view/<?php echo $purchase_code ?>" class="hyperlink" title="View inward entry" target="_blank">
+                        <?php echo $purchase_date ?>
+                      </a>
+                    </td>
+                    <td align="left" class="valign-middle">
+                      <?php if($grn_code !== ''): ?>
+                      <a href="/grn/view/<?php echo $grn_code ?>" class="hyperlink" title="View GRN entry" target="_blank">
+                        <?php echo $bill_no ?>
+                      </a>
+                      <?php else: ?>
+                        <?php echo $bill_no ?>
+                      <?php endif; ?>
+                    </td>                
+                    <td align="right" class="valign-middle"><?php echo number_format($bill_value, 2, '.', '') ?></td>
+                    <td align="right" class="valign-middle">
+                      <?php if($return_code !== ''): ?>
+                      <a href="/purchase-return/view/<?php echo $return_code ?>" class="hyperlink" title="View Debit Note" target="_blank">
+                        <?php echo $voucher_no ?>
+                      </a>
+                      <?php else: ?>
+                        <?php echo $voucher_no ?>
+                      <?php endif; ?>
+                    </td>
+                    <td align="right" class="valign-middle"><?php echo $voucher_date ?></td>
+                    <td align="right" class="valign-middle"><?php echo number_format($voucher_amount,2, '.', '') ?></td>
+                    <td align="center" class="valign-middle"><?php echo $voucher_type ?></td>                  
+                    <td class="valign-middle"><?php echo $location_name ?></td>
+                    <td>&nbsp;
+                      <?php /*
+                      <div class="btn-actions-group" align="center">
+                        <?php if( $user_type === 3 && $voucher_details['dnType'] === 'ma'): ?>
                           <a class="btn btn-danger delDNote" href="/fin/debit-note/delete/<?php echo $voucher_code ?>" title="Delete Voucher">
                             <i class="fa fa-times "></i>
                           </a>
                         <?php endif; ?>
-                      </div>
+                      </div>*/ ?>
                     </td>
                   </tr>
               <?php
@@ -152,9 +180,11 @@
                 endforeach; 
               ?>
                 <tr class="text-bold">
-                  <td colspan="5" align="right">TOTALS</td>
-                  <td align="right"><?php echo number_format($total, 2) ?></td>
-                  <td align="right"><?php echo number_format($tot_bill_value, 2) ?></td>
+                  <td colspan="3" align="right">TOTALS</td>
+                  <td align="right"><?php echo number_format($tot_bill_value, 2, '.', '') ?></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td align="right"><?php echo number_format($total, 2, '.', '') ?></td>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>                  
