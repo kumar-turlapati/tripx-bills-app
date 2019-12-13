@@ -11,15 +11,11 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <?php echo Utilities::print_flash_message() ?>
+      <?php echo $flash_obj->print_flash_message(); ?>
       <div class="panel-body">
         <?php if($page_error !== ''): ?>
           <div class="alert alert-danger" role="alert">
             <strong>Error!</strong> <?php echo $page_error ?> 
-          </div>
-        <?php elseif($page_success !== ''): ?>
-          <div class="alert alert-success" role="alert">
-            <strong>Success!</strong> <?php echo $page_success ?> 
           </div>
         <?php endif; ?>
         <div class="global-links actionButtons clearfix">
@@ -51,7 +47,7 @@
                 class="form-control" 
                 name="tinNo" 
                 id="tinNo"
-                value="<?php echo (isset($submitted_data['tinNo'])?$submitted_data['tinNo']:'') ?>"
+                value="<?php echo isset($submitted_data['gstNo']) ? $submitted_data['gstNo'] : '' ?>"
                 maxlength="15"
               >
               <?php if(isset($errors['tinNo'])): ?>

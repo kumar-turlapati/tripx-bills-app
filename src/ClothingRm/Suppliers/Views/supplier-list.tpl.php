@@ -68,7 +68,7 @@
                 foreach($suppliers as $supplier_details):
                   $supplier_code = $supplier_details['supplierCode'];
                   $reg_no = $supplier_details['dlNo'];
-                  $gst_no = $supplier_details['tinNo'];
+                  $gst_no = $supplier_details['gstNo'];
               ?>
                   <tr class="text-uppercase text-right font11">
                     <td class="text-center valign-middle"><?php echo $cntr ?></td>

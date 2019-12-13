@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Atawa\Utilities;
 use Atawa\Constants;
 use Atawa\Template;
+use Atawa\Flash;
 
 use ClothingRm\Suppliers\Model\Supplier;
 
@@ -16,6 +17,7 @@ class SupplierController {
 
   public function __construct() {
   	$this->views_path = __DIR__.'/../Views/';
+    $this->flash = new Flash;
   }
 
   public function supplierCreateAction(Request $request) {
@@ -60,9 +62,12 @@ class SupplierController {
         }
       } elseif($update_flag===false) {
         $page_success   = 'Supplier information added successfully with code ['.$new_supplier['supplierCode'].']';
-        $submitted_data = array();
+        $this->flash->set_flash_message($page_success);
+        Utilities::redirect('/suppliers/list');        
       } else {
-        $page_success   = 'Supplier information updated successfully';
+        $page_success   = 'Supplier information updated successfully.';
+        $this->flash->set_flash_message($page_success);
+        Utilities::redirect('/suppliers/list');        
       }
     } elseif(count($supplier_details)>0) {
       $submitted_data = $supplier_details;
@@ -82,6 +87,7 @@ class SupplierController {
       'btn_label' => $btn_label,
       'supplier_code' => $supplier_code,
       'states' => array(0=>'Choose')+$states_a,
+      'flash_obj' => $this->flash,
     );
 
     // build variables
@@ -95,52 +101,50 @@ class SupplierController {
     return array($template->render_view('supplier-create', $template_vars), $controller_vars);
   }
 
-  public function supplierRemoveAction(Request $request)
-  {
-      if($request->get('supplierCode') && $request->get('supplierCode')!='') {
-          $supplier_code = Utilities::clean_string($request->get('supplierCode'));
-      } else {
-          Utilities::set_flash_message("Invalid Supplier Code",1);
-          Utilities::redirect('/suppliers/list');
-      }
-
-      # initiate supplier model.
-      $suppliers = new Supplier;            
-      
-      $supplier_response = $suppliers->get_supplier_details($supplier_code);
-      if($supplier_response['status']===true) {
-          $supplier_details = $supplier_response['supplierDetails'];
-      } else {
-          Utilities::set_flash_message("Invalid Supplier Code",1);
-          Utilities::redirect('/suppliers/list');                
-      }
-
-      $remove_response = $suppliers->removeSupplier($supplier_code);
-      if($remove_response['status']===true) {
-          $flash_message = "Supplier '$supplier_details[supplierName]' removed successfully";
-          Utilities::set_flash_message($flash_message);            
-      } else {
-          $flash_message = "Unable to remove Supplier";
-          Utilities::set_flash_message($flash_message,1);
-      }
-      
+  public function supplierRemoveAction(Request $request) {
+    if($request->get('supplierCode') && $request->get('supplierCode')!='') {
+      $supplier_code = Utilities::clean_string($request->get('supplierCode'));
+    } else {
+      Utilities::set_flash_message("Invalid Supplier Code",1);
       Utilities::redirect('/suppliers/list');
+    }
+
+    # initiate supplier model.
+    $suppliers = new Supplier;            
+    
+    $supplier_response = $suppliers->get_supplier_details($supplier_code);
+    if($supplier_response['status']===true) {
+      $supplier_details = $supplier_response['supplierDetails'];
+    } else {
+      Utilities::set_flash_message("Invalid Supplier Code",1);
+      Utilities::redirect('/suppliers/list');                
+    }
+
+    $remove_response = $suppliers->removeSupplier($supplier_code);
+    if($remove_response['status']===true) {
+      $flash_message = "Supplier '$supplier_details[supplierName]' removed successfully";
+      Utilities::set_flash_message($flash_message);            
+    } else {
+      $flash_message = "Unable to remove Supplier";
+      Utilities::set_flash_message($flash_message,1);
+    }
+    
+    Utilities::redirect('/suppliers/list');
   }
 
-  public function supplierViewAction(Request $request)
-  {
+  public function supplierViewAction(Request $request) {
 
-      $template_vars = $controller_vars = array();
+    $template_vars = $controller_vars = array();
 
-      // build variables
-      $controller_vars = array(
-          'page_title' => 'View Supplier',
-          'render' => false,
-      );        
+    // build variables
+    $controller_vars = array(
+        'page_title' => 'View Supplier',
+        'render' => false,
+    );        
 
-      // render template
-      $template = new Template($this->views_path);
-      return array($template->render_view('supplier-view', $template_vars), $controller_vars);        
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('supplier-view', $template_vars), $controller_vars);
   }
 
   public function suppliersListAction(Request $request) {
@@ -231,15 +235,15 @@ class SupplierController {
       'current_page' => $page_no,
     );
 
-      // build variables
-      $controller_vars = array(
-        'page_title' => 'Suppliers',
-        'icon_name' => 'fa fa-users'
-      );
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Suppliers',
+      'icon_name' => 'fa fa-users'
+    );
 
-      // render template
-      $template = new Template($this->views_path);
-      return array($template->render_view('supplier-list', $template_vars), $controller_vars);       
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('supplier-list', $template_vars), $controller_vars);       
   }
 
 }
