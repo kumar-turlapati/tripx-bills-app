@@ -257,7 +257,7 @@ class UploadBalancesController {
       if($customer_name !== '') {
         $row_no = $key+2;
         $gst_no = Utilities::clean_string($imported_record_details['GSTNo']);
-        $customer_type = Utilities::clean_string($imported_record_details['CustomerType']);
+        $customer_type = strtolower(Utilities::clean_string($imported_record_details['CustomerType']));
         $address = Utilities::clean_string($imported_record_details['Address']);
         $city_name = Utilities::clean_string($imported_record_details['CityName']);
         $state_id = Utilities::clean_string($imported_record_details['StateCode']);
@@ -339,8 +339,8 @@ class UploadBalancesController {
     $xl_errors = [];
     $error_flag = false;
     foreach($imported_records as $key => $imported_record_details) {
-      $customer_name = Utilities::clean_string($imported_record_details['CustomerName']);
-      if($customer_name !== '') {
+      $supplier_name = Utilities::clean_string($imported_record_details['SupplierName']);
+      if($supplier_name !== '') {
         $row_no = $key+2;
         $gst_no = Utilities::clean_string($imported_record_details['GSTNo']);
         $address = Utilities::clean_string($imported_record_details['Address']);
@@ -377,7 +377,7 @@ class UploadBalancesController {
         }
 
         if($error_flag === false) {
-          $cleaned_array[$key]['CustomerName'] = $customer_name;
+          $cleaned_array[$key]['SupplierName'] = $supplier_name;
           $cleaned_array[$key]['GSTNo'] = $gst_no;
           $cleaned_array[$key]['Address'] = $address;
           $cleaned_array[$key]['CityName'] = $city_name;
@@ -407,10 +407,10 @@ class UploadBalancesController {
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
 
     $op = Utilities::clean_string($form_data['op']);
-    $location_code = Utilities::clean_string($form_data['locationCode']);
+    // $location_code = Utilities::clean_string($form_data['locationCode']);
 
     # ---------- get location codes from api -------------
-    $client_location_keys = array_keys(Utilities::get_client_locations()); 
+    $client_location_keys = array_keys(Utilities::get_client_locations());
 
     # check uploaded file information
     $file_details = $_FILES['fileName'];
@@ -423,11 +423,11 @@ class UploadBalancesController {
     } else {
       $cleaned_params['op'] = $op;
     }
-    if($location_code !== '' && in_array($location_code, $client_location_keys)) {
-      $cleaned_params['locationCode'] = $location_code;
-    } else {
-      $form_errors['locationCode'] = 'Invalid store name.';
-    }
+    // if($location_code !== '' && in_array($location_code, $client_location_keys)) {
+    //   $cleaned_params['locationCode'] = $location_code;
+    // } else {
+    //   $form_errors['locationCode'] = 'Invalid store name.';
+    // }
 
     if(count($form_errors)>0) {
       return array(

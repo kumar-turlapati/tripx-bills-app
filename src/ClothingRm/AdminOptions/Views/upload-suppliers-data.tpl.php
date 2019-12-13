@@ -35,6 +35,7 @@
                 <span class="error"><?php echo $form_errors['fileName'] ?></span>
               <?php endif; ?>
             </div>
+            <?php /*
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Store name</label>
               <div class="select-wrap">
@@ -56,7 +57,7 @@
               <?php if(isset($form_errors['locationCode'])): ?>
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
-            </div>            
+            </div>*/?>          
             <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
               <label class="control-label">Upload action</label>
               <div class="select-wrap">
