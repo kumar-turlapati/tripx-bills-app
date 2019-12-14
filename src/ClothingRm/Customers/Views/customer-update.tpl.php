@@ -27,7 +27,7 @@
   if(isset($submitted_data['countryID']) && $submitted_data['countryID'] !== '' ) {
     $country_id = $submitted_data['countryID'];
   } else {
-    $country_id = '';
+    $country_id = 99;
   }
   if(isset($submitted_data['stateID']) && $submitted_data['stateID'] !== '' ) {
     $state_id = $submitted_data['stateID'];
@@ -59,6 +59,16 @@
   } else {
     $gst_no = '';
   }
+  if(isset($submitted_data['maExecutive']) && $submitted_data['maExecutive'] !== '') {
+    $mexe_code = $submitted_data['maExecutive'];
+  } else {
+    $mexe_code = '';
+  }
+  if(isset($submitted_data['agentCode']) && $submitted_data['agentCode'] !== '') {
+    $agent_code = $submitted_data['agentCode'];
+  } else {
+    $agent_code = '';
+  }  
 
   # bio details
   if(isset($submitted_data['age']) && $submitted_data['age'] !== '' ) {
@@ -222,7 +232,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">GST No.</label>
               <input 
                 type="text" 
@@ -235,7 +245,7 @@
                 <span class="error"><?php echo $errors['gstNo'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Store name</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
@@ -258,7 +268,7 @@
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Marketing executive name</label>
               <div class="select-wrap">                        
                 <select 
@@ -269,7 +279,7 @@
                 >
                   <?php
                     foreach($ma_executives as $key=>$value):
-                      if($key == $uuid) {
+                      if($key === $mexe_code) {
                         $selected = 'selected="selected"';
                       } else {
                         $selected = '';
@@ -283,6 +293,32 @@
               </div>
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Agent / Referral name</label>
+              <div class="select-wrap">                        
+                <select 
+                  class="form-control"
+                  id="agentCode" 
+                  name="agentCode"
+                  style="font-size:12px;"
+                >
+                  <?php
+                    foreach($agents as $key => $value):
+                      if($key === $agent_code) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>                            
+                </select>
+              </div>
+            </div>
+          </div>          
           <div id="bioContainer" <?php echo $bio_container_style ?>>
             <h3 class="hdg-reports text-center">Personal Details</h3>
             <div class="form-group">

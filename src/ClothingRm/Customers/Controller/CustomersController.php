@@ -11,6 +11,7 @@ use Atawa\Flash;
 
 use ClothingRm\Customers\Model\Customers;
 use User\Model\User;
+use BusinessUsers\Model\BusinessUsers;
 
 class CustomersController
 {
@@ -21,12 +22,14 @@ class CustomersController
     $this->customer_api_call = new Customers;
     $this->flash_obj = new Flash;
     $this->user_model = new User;
+    $this->bu_model = new BusinessUsers;    
 	}
 
   public function customerCreateAction(Request $request) {
     $form_errors = $submitted_data = $users = [];
     $page_error = $page_success = $cust_code = '';
     $redirect_url = '/customers/create';
+    $agents_a = $ma_executives = [];
 
     $states_a = Constants::$LOCATION_STATES;
     asort($states_a);
@@ -41,13 +44,26 @@ class CustomersController
     $client_locations = Utilities::get_client_locations();
     
     # ---------- get marketing users from api ------------
-    $result = $this->user_model->get_users(['userType' => 10]);
-    if($result['status']) {
-      $users_a = $result['users'];
-      foreach($users_a as $user_details) {
-        $users[$user_details['uuid']] = $user_details['userName'];
+    $mexe_response = $this->bu_model->get_business_users(['userType' => 91]);
+    if($mexe_response['status']) {
+      foreach($mexe_response['users'] as $user_details) {
+        $ma_executives[$user_details['userCode']] = $user_details['userName'];
       }
+    } else {
+      $ma_executives = [];
     }
+
+    # ---------- get agents ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }    
 
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];
@@ -89,7 +105,8 @@ class CustomersController
       'client_business_state' => $client_business_state,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
-      'ma_executives' => ['' => 'Choose'] + $users,
+      'ma_executives' => ['' => 'Choose'] + $ma_executives,
+      'agents' => ['' => 'Choose'] + $agents_a,
     );
       
     # build variables
@@ -105,6 +122,7 @@ class CustomersController
   public function customerUpdateAction(Request $request) {
     $form_errors = $submitted_data = $customer_details = $users = [];
     $page_error = $page_success = $cust_code = '';
+    $agents_a = $ma_executives = [];
 
     $redirect_url = '/customers/list';
 
@@ -125,12 +143,25 @@ class CustomersController
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
     }
 
-    # ---------- get marketing users from api ----------------
-    $result = $this->user_model->get_users(['userType' => 10]);
-    if($result['status']) {
-      $users_a = $result['users'];
-      foreach($users_a as $user_details) {
-        $users[$user_details['uuid']] = $user_details['userName'];
+    # ---------- get marketing users from api ------------
+    $mexe_response = $this->bu_model->get_business_users(['userType' => 91]);
+    if($mexe_response['status']) {
+      foreach($mexe_response['users'] as $user_details) {
+        $ma_executives[$user_details['userCode']] = $user_details['userName'];
+      }
+    } else {
+      $ma_executives = [];
+    }
+
+    # ---------- get agents ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
       }
     }
 
@@ -186,9 +217,10 @@ class CustomersController
       'client_business_state' => $client_business_state,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
-      'ma_executives' => ['' => 'Choose'] + $users,
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
+      'ma_executives' => ['' => 'Choose'] + $ma_executives,
+      'agents' => ['' => 'Choose'] + $agents_a,
     );
 
     # build variables
@@ -316,6 +348,9 @@ class CustomersController
     $pincode = Utilities::clean_string($form_data['pincode']);
     $phone = Utilities::clean_string($form_data['phone']);
     $gst_no = Utilities::clean_string($form_data['gstNo']);
+    $agent_code = Utilities::clean_string($form_data['agentCode']);
+    $ma_exe_code = Utilities::clean_string($form_data['maExecutive']);
+
     $age = Utilities::clean_string($form_data['age']);
     $age_category = Utilities::clean_string($form_data['ageCategory']);
     $gender = Utilities::clean_string($form_data['gender']) === '' ? 'o' : Utilities::clean_string($form_data['gender']);
@@ -374,6 +409,8 @@ class CustomersController
     $cleaned_params['customerType'] = $customer_type;
     $cleaned_params['address'] = $address;
     $cleaned_params['gender'] = $gender;
+    $cleaned_params['agentCode'] = $agent_code;
+    $cleaned_params['maExecutive'] = $ma_exe_code;
 
     if(count($form_errors)>0) {
       return [

@@ -388,7 +388,7 @@ class FinReportsController {
         if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
           $location_name = $client_locations[$form_data['locationCode']];
         } else {
-          $location_name = '';
+          $location_name = 'All Stores';
         }
 
         $heading1 = 'Receivables - '.$location_name;
@@ -536,7 +536,8 @@ class FinReportsController {
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
     } else {
-      $form_errors['StoreName'] = 'Invalid Store name.';
+      $cleaned_params['locationCode'] = '';
+      // $form_errors['StoreName'] = 'Invalid Store name.';
     }
     if($form_data['customerName'] !== '') {
       $cleaned_params['customerName'] = Utilities::clean_string($form_data['customerName']);

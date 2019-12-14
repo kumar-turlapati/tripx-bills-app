@@ -90,7 +90,7 @@ class salesEntryWithBarcode {
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
     } else {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);
     }
     if($sexe_response['status']) {
       foreach($sexe_response['users'] as $user_details) {
