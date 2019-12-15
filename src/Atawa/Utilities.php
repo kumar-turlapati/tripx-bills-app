@@ -879,7 +879,7 @@ class Utilities
 
     $Rupees = implode('', array_reverse($str));
     $paise = ($decimal) ? "." . ($words[$decimal / 10] . " " . $words[$decimal % 10]) . ' Paise' : '';
-    return ($Rupees ? 'Rupees '.$Rupees . ' only.' : '');
+    return ($Rupees ? 'Rupees '.trim($Rupees) . ' only.' : '');
   }
 
   // validate the device name from where the client is logged in.

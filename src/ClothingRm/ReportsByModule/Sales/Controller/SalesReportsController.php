@@ -129,14 +129,14 @@ class SalesReportsController {
     ];
     $customer_info['shipping'] = [
       'customer_name' => $customer_name,
-      'address' => $sale_details['shippingAddress'],
-      'city_name' => $sale_details['shippingCityName'],
-      'state_name' => Utilities::get_location_state_name($sale_details['shippingStateID']),
-      'country_name' => Utilities::get_country_name($sale_details['shippingCountryID']),
-      'pincode' => $sale_details['shippingPincode'],
-      'phones' => $sale_details['shippingPhones'],
+      'address' => $sale_details['shippingAddress'] !== '' ? $sale_details['shippingAddress'] : $sale_details['address'],
+      'city_name' => $sale_details['shippingCityName'] !== '' ? $sale_details['shippingCityName'] : $sale_details['cityName'],
+      'state_name' => $sale_details['shippingStateID'] !== '' ? Utilities::get_location_state_name($sale_details['shippingStateID']) : Utilities::get_location_state_name($sale_details['stateID']),
+      'country_name' => $sale_details['shippingCountryID'] !== '' ? Utilities::get_country_name($sale_details['shippingCountryID']) : Utilities::get_country_name($sale_details['countryID']),
+      'pincode' => $sale_details['shippingPincode'] !== '' ? $sale_details['shippingPincode'] : $sale_details['pincode'],
+      'phones' => $sale_details['shippingPhones'] !== '' ? $sale_details['shippingPhones'] : $sale_details['phones'],
       'gst_no' => $sale_details['customerGstNo'],
-      'state_id' => $sale_details['shippingStateID'],
+      'state_id' => $sale_details['shippingStateID'] !== '' ? $sale_details['shippingStateID'] : $sale_details['stateID'],
     ];
     $customer_info['transport_details'] = [
       'transporter_name' => $sale_details['transporterName'],
@@ -151,7 +151,7 @@ class SalesReportsController {
 
     $pdf = PDF::getInstance(false, $loc_address);
     $pdf->AliasNbPages();
-    $pdf->SetAutoPageBreak(false);
+    $pdf->SetAutoPageBreak(true);
     $pdf->AddPage('P','A4');
     $pdf->setTitle('B2B Invoice'.' - '.date('jS F, Y'));
 
@@ -257,20 +257,20 @@ class SalesReportsController {
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell($gst_width,  6,'Total Taxable Amount (Rs.)','L',0,'R');
     $pdf->Cell($item_widths[8],  6,number_format($tot_taxable,2,'.',''),'R',0,'R');
-    $pdf->Ln();
+    $pdf->Ln(4);
 
     $pdf->Cell($gst_width,  6,'Total GST (Rs.)','L',0,'R');
     $pdf->Cell($item_widths[8],  6,number_format($tot_tax_amount,2,'.',''),'R',0,'R');
-    $pdf->Ln();
+    $pdf->Ln(4);
 
     $pdf->Cell($gst_width,  6,'Rounding off (Rs.)','L',0,'R');
     $pdf->Cell($item_widths[8],  6,number_format($round_off,2,'.',''),'R',0,'R');
-    $pdf->Ln();
+    $pdf->Ln(4);
 
     $pdf->Cell($gst_width,  6,'Invoice Value (Rs.)','L',0,'R');
     $pdf->SetFont('Arial','BU',10);
     $pdf->Cell($item_widths[8],  6,number_format($net_pay,2,'.',''),'R',0,'R');
-    $pdf->Ln();
+    $pdf->Ln(3);
 
     $pdf->SetFont('Arial','',8);
     $pdf->Cell(190,6,'In words: '.Utilities::get_indian_currency($net_pay),'LRB',0,'C');
@@ -400,7 +400,7 @@ class SalesReportsController {
     
     $pdf->setXY($final_x, $final_y);
 
-    $pdf->Ln(30);
+    $pdf->Ln(20);
     $pdf->SetFont('Arial','BU',9);
     $pdf->Cell(63.33,6,'Prepared by','',0,'C');
     $pdf->Cell(63.33,6,'Verified by','',0,'C');
@@ -3013,7 +3013,7 @@ class SalesReportsController {
 
     $pdf->Cell(95,6,'GST State: '.$billing_state_name,'LR',0,'L');
     $pdf->Cell(95,6,'GST State: '.$shipping_state_name,'R',0,'L');
-    $pdf->Ln();
+    $pdf->Ln(4.5);
 
     $pdf->Cell(95,5,'GSTIN: '.$customer_info['billing']['gst_no'],'LRB',0,'L');
     $pdf->Cell(95,5,'GSTIN: '.$customer_info['shipping']['gst_no'],'RB',0,'L');

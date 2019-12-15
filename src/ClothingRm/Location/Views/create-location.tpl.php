@@ -132,7 +132,7 @@
                 name="address1"
                 id="address1" 
                 value="<?php echo $address1 ?>"
-                maxlength="50"
+                maxlength="100"
               >
               <?php if(isset($form_errors['address1'])): ?>
                 <span class="error"><?php echo $form_errors['address1'] ?></span>
@@ -146,7 +146,7 @@
                 name="address2"
                 id="address2" 
                 value="<?php echo $address2 ?>"
-                maxlength="50"
+                maxlength="100"
               >
               <?php if(isset($form_errors['address2'])): ?>
                 <span class="error"><?php echo $form_errors['address2'] ?></span>

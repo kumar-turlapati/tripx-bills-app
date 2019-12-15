@@ -38,6 +38,11 @@
     $wallet_id = $search_params['walletID'];
   } else {
     $wallet_id = '';
+  }
+  if(isset($search_params['custName']) && $search_params['custName'] !== '' ) {
+    $customer_name = $search_params['custName'];
+  } else {
+    $customer_name = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -156,6 +161,16 @@
                     <?php endforeach; ?>
                   </select>
                  </div>
+              </div>
+              <div class="col-sm-12 col-md-3 col-lg-3">
+                <input 
+                  placeholder="Customer name" 
+                  type="text" 
+                  name="custName" 
+                  id="custName" 
+                  class="form-control cnameAc" 
+                  value="<?php echo $customer_name ?>"
+                />
               </div>
               <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
             </div>

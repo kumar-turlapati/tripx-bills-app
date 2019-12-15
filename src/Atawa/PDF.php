@@ -29,18 +29,25 @@ class PDF extends FPDF {
   public function Header() {
     global $height;
 
-
     if(is_array(self::$loc_address) && count(self::$loc_address)>0) {
       $business_name = self::$loc_address['store_name'];
       $address = self::$loc_address['address1'].', '.self::$loc_address['address2'];
+
+      $address1 = self::$loc_address['address1'];
+      $address2 = self::$loc_address['address2'];
       $address3 = self::$loc_address['address3'];
+
       $phones = self::$loc_address['phones'];
       $gst_no = self::$loc_address['gst_no'];
     } else {
       $client_details = $this->get_client_details();
       $business_name = $client_details['businessName'];
       $address = $client_details['addr1'].', '.$client_details['addr2'];
+
+      $address1 = $client_details['addr1'];
+      $address2 = $client_details['addr2'];
       $address3 = '';
+
       $phones = $client_details['phones'];
       $gst_no = $client_details['gstNo'];
     }
@@ -50,11 +57,13 @@ class PDF extends FPDF {
     $this->Cell(0, $height, $business_name, 0, 1, 'C');
     $this->SetFont('Arial','B',8);
     $this->Ln(5);
-    $this->Cell(0,$height,$address,'',1,'C');
-    if($address3 !== '') {
-      $this->Ln(4);
-      $this->Cell(0,$height,$address3,'',1,'C');
-    }
+    $this->Cell(0,$height,$address1,'',1,'C');
+    $this->Ln(3);
+    $this->Cell(0,$height,$address2,'',1,'C');
+    // if($address3 !== '') {
+    //   // $this->Ln(4);
+    //   $this->Cell(1,$height,$address3,'',1,'C');
+    // }
     $this->Ln(4);
     $this->Cell(0,$height,'Phone(s):'.$phones,'',1,'C');
     if($gst_no !== '') {

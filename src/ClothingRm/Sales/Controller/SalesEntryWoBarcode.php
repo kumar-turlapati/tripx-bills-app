@@ -597,12 +597,12 @@ class SalesEntryWoBarcode {
     if(is_null($request->get('fromDate'))) {
       $search_params['fromDate'] = date("d-m-Y");
     } else {
-      $search_params['fromDate'] = $request->get('fromDate');
+      $search_params['fromDate'] = Utilities::clean_string($request->get('fromDate'));
     }
     if(is_null($request->get('toDate'))) {
       $search_params['toDate'] = date("d-m-Y");
     } else {
-      $search_params['toDate'] = $request->get('toDate');
+      $search_params['toDate'] = Utilities::clean_string($request->get('toDate'));
     }        
     if(is_null($request->get('paymentMethod'))) {
       $search_params['paymentMethod'] = 99;
@@ -619,12 +619,17 @@ class SalesEntryWoBarcode {
     if(is_null($request->get('locationCode'))) {
       $search_params['locationCode'] = '';
     } else {
-      $search_params['locationCode'] = $request->get('locationCode');
+      $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
     }
     if(is_null($request->get('saExecutiveCode'))) {
       $search_params['saExecutiveCode'] = '';
     } else {
-      $search_params['saExecutiveCode'] = $request->get('saExecutiveCode');
+      $search_params['saExecutiveCode'] = Utilities::clean_string($request->get('saExecutiveCode'));
+    }
+    if(is_null($request->get('custName'))) {
+      $search_params['custName'] = '';
+    } else {
+      $search_params['custName'] = Utilities::clean_string($request->get('custName'));
     }
 
     $search_params['walletID'] = !is_null($request->get('walletID')) ? Utilities::clean_string($request->get('walletID')) : '';
@@ -883,21 +888,21 @@ class SalesEntryWoBarcode {
       $cleaned_params['billNo'] = $bill_no;
     }
 
-    if($transporter_name === '') {
-      $form_errors['transporterName'] = 'Invalid transporter name.';
-    } else {
+    // if($transporter_name === '') {
+    //   $form_errors['transporterName'] = 'Invalid transporter name.';
+    // } else {
       $cleaned_params['transporterName'] = $transporter_name;
-    }
-    if($lr_nos === '') {
-      $form_errors['lrNo'] = 'Invalid LR No.';
-    } else {
+    // }
+    // if($lr_nos === '') {
+    //   $form_errors['lrNo'] = 'Invalid LR No.';
+    // } else {
       $cleaned_params['lrNos'] = $lr_nos;
-    }
-    if($lr_date === '') {
-      $form_errors['lrDate'] = $lr_date;
-    } else {
+    // }
+    // if($lr_date === '') {
+    //   $form_errors['lrDate'] = $lr_date;
+    // } else {
       $cleaned_params['lrDate'] = $lr_date;
-    }
+    // }
     if($address1 === '') {
       $form_errors['address1'] = 'Invalid address.';
     } else {
@@ -913,16 +918,18 @@ class SalesEntryWoBarcode {
     } else {
       $cleaned_params['stateID'] = $state_id;
     }
-    if(!Utilities::validateMobileNo($mobile_no)) {
-      $form_errors['mobileNo'] = 'Invalid mobile number.';
-    } else {
+    if($mobile_no !== '' && Utilities::validateMobileNo($mobile_no)) {
       $cleaned_params['mobileNo'] = $mobile_no;
-    }
-    if((int)$send_sms === 0 || (int)$send_sms === 1) {
-      $cleaned_params['sendSMS'] = (int)$send_sms;
+      if((int)$send_sms === 0 || (int)$send_sms === 1) {
+        $cleaned_params['sendSMS'] = (int)$send_sms;
+      } else {
+        $form_errors['sendSMS'] = 'Invalid message choice.';
+      }
     } else {
-      $form_errors['sendSMS'] = 'Invalid message choice.';
+      $cleaned_params['sendSMS'] = 0;
+      $cleaned_params['mobileNo'] = '';
     }
+
     /*
     if($challan_no === '') {
       $form_errors['challanNo'] = 'Invalid Challan No.';

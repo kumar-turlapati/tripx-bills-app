@@ -225,6 +225,7 @@ class LocationController
     } else {
       $errors['locationNameShort'] = 'Invalid location short name.';
     }    
+    /*
     if($address1 !== '' && ctype_alnum(str_replace([' ', '-', '#', ',', '/'], ['','','','',''], $address1))) {
       $cleaned_params['address1'] = $address1;
     } else {
@@ -234,7 +235,19 @@ class LocationController
       $cleaned_params['address2'] = $address2;
     } else {
       $errors['address2'] = 'Only alphabets, numbers, space, -, #, / and comma symbols are allowed.';
+    }*/
+
+    if($address1 !== '') {
+      $cleaned_params['address1'] = $address1;
+    } else {
+      $errors['address1'] = 'Address1 is required.';
     }
+    if($address2 !== '') {
+      $cleaned_params['address2'] = $address2;
+    } else {
+      $cleaned_params['address2'] = '';
+    }
+
     if($country_id !== '' && $country_id>0) {
       $cleaned_params['countryID'] = $country_id;
     } else {
