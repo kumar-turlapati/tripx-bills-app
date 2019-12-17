@@ -45,7 +45,7 @@
             </a>            
           </div>
         </div>
-    		<div class="panel">
+    		<div class="panel" style="margin-bottom: 0px;">
           <div class="panel-body">
         	<div id="filters-form">
             <form class="form-validate form-horizontal" method="POST">
@@ -95,15 +95,15 @@
         </div>
         <?php if(count($grns)>0): ?>        
           <div class="table-responsive">
-            <table class="table table-striped table-hover font11">
+            <table class="table table-striped table-hover font12">
               <thead>
                 <tr>
                   <th width="5%" class="text-center valign-middle">Sl.No.</th>
-                  <th width="10%" class="text-center valign-middle">GRN No.</th>
-                  <th width="10%" class="text-center valign-middle">GRN Date</th>
-                  <th width="15%" class="text-center valign-middle">Supplier Name</span></th>
-                  <th width="15%" class="text-center valign-middle">PO No.&amp;Date</th>
-                  <th width="15%" class="text-center valign-middle">Bill No.</th>
+                  <th width="5%" class="text-center valign-middle">GRN No.</th>
+                  <th width="7%" class="text-center valign-middle">GRN Date</th>
+                  <th width="20%" class="text-center valign-middle">Supplier Name</span></th>
+                  <th width="10%" class="text-center valign-middle">PO No. &amp; Date</th>
+                  <th width="10%" class="text-center valign-middle">Bill No.</th>
                   <th width="10%" class="text-center valign-middle">Bill Amount</th>
                   <th width="10%" class="text-center valign-middle">Actions</th>
                 </tr>
@@ -119,16 +119,26 @@
                     $po_info = $grn_details['poNo'].' / '.date("d-M-Y", strtotime($grn_details['purchaseDate']));
                     $bill_no = $grn_details['billNo'];
                     $bill_amount = $grn_details['netPay'];
+                    $supplier_code = $grn_details['supplierCode'];
+                    $purchase_code = $grn_details['purchaseCode'];
                 ?>
                     <tr class="text-right font11">
                       <td class="valign-middle"><?php echo $cntr ?></td>
                       <td class="text-left valign-middle"><?php echo $grn_no ?></td>
-                      <td class="valign-middle"><?php echo $grn_date ?></td>
-                      <td class="text-bold text-left valign-middle"><?php echo $supplier_name ?></td>
-                      <td class="text-left valign-middle"><?php echo $po_info ?></td>
-                      <td class="text-right valign-middle"><?php echo $bill_no ?></td>
+                      <td class="text-left valign-middle"><?php echo $grn_date ?></td>
+                      <td class="text-bold text-left valign-middle">
+                        <a href="/suppliers/update/<?php echo $supplier_code ?>" class="hyperlink" target="_blank" title="Update supplier">
+                          <?php echo $supplier_name ?>
+                        </a>
+                      </td>
+                      <td class="text-left valign-middle">
+                        <a href="/inward-entry/view/<?php echo $purchase_code ?>" class="hyperlink" target="_blank" title="View PO">
+                          <?php echo $po_info ?>
+                        </a>
+                      </td>
+                      <td class="text-left valign-middle"><?php echo $bill_no ?></td>
                       <td class="text-right valign-middle"><?php echo $bill_amount ?></td>
-                      <td class="valign-middle">
+                      <td class="valign-middle text-center">
                         <div class="btn-actions-group">
                           <?php if($grn_code !== ''): ?>
                             <a class="btn btn-primary" href="/grn/view/<?php echo $grn_code ?>" title="View GRN Transaction">

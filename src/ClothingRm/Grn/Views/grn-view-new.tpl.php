@@ -1,5 +1,6 @@
 <?php 
   use Atawa\Utilities;
+  use Atawa\Constants;
 
   // $current_date = date("d-m-Y");
 
@@ -10,11 +11,12 @@
   
   $po_no = $grn_details['poNo'];
   $supplier_code = $grn_details['supplierCode'];
-  $payment_method = $grn_details['paymentMethod'];
+  $supplier_name = $grn_details['supplierName'];
   $credit_period = $grn_details['creditDays'];
   $bill_number = $grn_details['billNo'];
   $grn_date = date("d-m-Y", strtotime($grn_details['grnDate']));
   $remarks = $grn_details['remarks'];
+  $payment_method_name = Constants::$PAYMENT_METHODS_PURCHASE[$grn_details['paymentMethod']];
 
   $packing_charges = isset($grn_details['packingCharges']) ? $grn_details['packingCharges'] : '';
   $shipping_charges = isset($grn_details['shippingCharges']) ? $grn_details['shippingCharges'] : '';
@@ -47,93 +49,29 @@
             <a href="/inward-entry/list" class="btn btn-default"><i class="fa fa-book"></i> Purchase Register</a> 
           </div>
         </div>
-        <div class="panel">
-          <div class="panel-body">
-            <h2 class="hdg-reports borderBottom">Transaction Details</h2>
-            <div class="form-group">
-              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                <label class="control-label">Purchaser order (PO) No.</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  name="poNo" 
-                  id="poNoGrn" 
-                  value="<?php echo $po_no ?>" 
-                  disabled
-                />
-              </div>
-              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                <label class="control-label">Supplier name</label>
-                <div class="select-wrap">
-                  <select class="form-control" name="supplierID" id="supplierID" disabled>
-                    <?php 
-                    	foreach($suppliers as $key=>$value):
-                        if($supplier_code === $key) {
-                          $selected = 'selected="selected"';
-                        } else {
-                          $selected = '';
-                        }                  		
-                    ?>
-                      <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>         
-              </div>
-              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-                <label class="control-label">Payment method</label>
-                <div class="select-wrap">
-                  <select class="form-control" name="paymentMethod" id="paymentMethod" disabled>
-                    <?php 
-                    	foreach($payment_methods as $key=>$value):
-                        if((int)$payment_method === (int)$key) {
-                          $selected = 'selected="selected"';
-                        } else {
-                          $selected = '';
-                        }                   	 
-                    ?>
-                      <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="col-sm-12 col-md-4 col-lg-4">
-                <label class="control-label">Credit period (in days)</label>
-                <div class="select-wrap">
-                  <select class="form-control" name="creditDays" id="creditDays" disabled>
-                    <?php 
-                    	foreach($credit_days_a as $key=>$value): 
-                        if((int)$credit_period === (int)$key) {
-                          $selected = 'selected="selected"';
-                        } else {
-                          $selected = '';
-                        }                  		
-                    ?>
-                      <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-              </div>
-              <div class="col-sm-12 col-md-4 col-lg-4">
-                <label class="control-label">Bill number</label>
-                <input type="text" class="form-control" name="billNo" id="billNo" value="<?php echo $bill_number ?>" disabled>
-              </div>
-              <div class="col-sm-12 col-md-4 col-lg-4">
-                <label class="control-label">GRN date (dd-mm-yyyy)</label>
-                <div class="form-group">
-                  <div class="col-lg-12">
-                    <div class="input-append date" data-date="<?php echo $grn_date ?>" data-date-format="dd-mm-yyyy">
-                      <input class="span2" value="<?php echo $grn_date ?>" size="16" type="text" disabled name="grnDate" id="grnDate" />
-                      <span class="add-on"><i class="fa fa-calendar"></i></span>
-                    </div>
-                  </div>
-                </div>
-              </div>              
-            </div>
-          </div>
-        </div>
-        <h2 class="hdg-reports">Item Details</h2>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover item-detail-table font12" id="purchaseTable" style="margin-bottom:0px;">
+            <thead>
+              <tr>
+                <th class="text-center valign-middle">PO No.</th>
+                <th class="text-center">Supplier name</th>                  
+                <th class="text-center">Payment method</th>
+                <th class="text-center">Credit period</th>
+                <th class="text-center">Bill number</th>
+                <th class="text-center">GRN Date</th>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; vertical-align: middle;"><?php echo $po_no ?></td>
+                <td style="font-weight: bold; vertical-align: middle;"><?php echo $supplier_name ?></td>
+                <td style="font-weight: bold; vertical-align: middle;"><?php echo $payment_method_name ?></td>
+                <td style="font-weight: bold; vertical-align: middle;"><?php echo $credit_period.' days' ?></td>
+                <td style="font-weight: bold; vertical-align: middle;"><?php echo $bill_number ?></td>
+                <td style="font-weight: bold; vertical-align: middle;"><?php echo $grn_date ?></td>
+              </tr>
+            </thead>            
+          </table>
+        </div>        
+
         <div class="table-responsive">
           <table class="table table-striped table-hover item-detail-table font12" id="purchaseTable" style="margin-bottom:0px;">
             <thead>
@@ -190,29 +128,6 @@
                     <td class="text-right"><?php echo number_format($tax_percent,2,'.','') ?></td>
                   </tr>
               <?php endfor; ?>
-              <?php /*
-                <tr>
-                  <td colspan="3" align="right" style="vertical-align:middle;font-size:16px;">TOTALS</td>
-                  <td align="right" style="font-size:16px;font-weight:bold;vertical-align:middle;font-size:16px;"><?php echo $tot_acc_qty ?></td>
-                  <td colspan="4" style="vertical-align:middle;text-align:right;font-size:16px;font-weight:bold;">Taxable value</td>
-                  <td id="inwItemsTotal" style="vertical-align:middle;text-align:right;font-size:16px;font-weight:bold;"><?php echo number_format($bill_amount_after_disc, 2) ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;" colspan="9" align="right">G.S.T</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount,2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Bill value</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_value,2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" colspan="9" align="right">Round off</td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off,2,'.','') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;font-size:18px;" colspan="9" align="right">Net pay</td>
-                  <td style="vertical-align:middle;text-align:right;font-weight:bold;font-size:18px;"><?php echo number_format($net_pay,2,'.','') ?></td>
-                </tr> */ ?>              
             </tbody>
           </table>
         </div>
@@ -233,7 +148,7 @@
           </table>
         </div>
         <div class="table-responsive">
-          <table class="table table-striped table-hover font14" id="owItemsTable">
+          <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
               <tr>
                 <th width="10%" class="text-center valign-middle">Insurance Charges (in Rs.)</th>
                 <th width="10%" class="text-center valign-middle">Other Charges (in Rs.)</th>
@@ -249,7 +164,7 @@
           </table>
         </div>
         <div class="table-responsive">
-          <table class="table table-striped table-hover font14" id="owItemsTable">
+          <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
               <tr>
                 <th width="10%" class="text-center valign-middle">Transport Name</th>
                 <th width="10%"  class="text-center valign-middle">L.R. No.</th>             
