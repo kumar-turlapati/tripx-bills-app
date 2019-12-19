@@ -22,9 +22,9 @@ class SalesReturnsController {
   // sales return entry
   public function salesReturnEntryAction(Request $request) {
 
-    $errors = $sale_details = $sale_item_details = array();
-    $submitted_data = $return_item_details = array();
-    $return_items_a = $return_details = array();
+    $errors = $sale_details = $sale_item_details = [];
+    $submitted_data = $return_item_details = [];
+    $return_items_a = $return_details = [];
 
     $page_error = $page_success = '';
     $path_info = $request->getpathInfo();
@@ -59,15 +59,19 @@ class SalesReturnsController {
         if(count($sale_details['itemDetails'])>0) {
           $sale_item_details = $sale_details['itemDetails'];
           unset($sale_details['itemDetails']);
-
           if(isset($sale_details['returnDetails'])) {
             $return_item_details = $sale_details['returnDetails'];
             unset($sale_details['returnDetails']);
-            $return_item_keys = array_column($return_item_details, 'itemCode');
-            $return_item_qtys = array_column($return_item_details, 'totReturnQty');
-            $tot_return_qtys = array_combine($return_item_keys, $return_item_qtys);
+            foreach($return_item_details as $ritem_details) {
+              $return_key = $ritem_details['itemName'].'__'.$ritem_details['lotNo'];
+              $tot_return_qtys[$return_key] = $ritem_details['totReturnQty'];
+            }
+            // $return_item_keys = array_column($return_item_details, 'itemCode');
+            // $return_item_qtys = array_column($return_item_details, 'totReturnQty');
+            // $return_item_lots = array_column($return_item_details, 'lotNo');
+            // $tot_return_qtys = array_combine($return_item_keys, $return_item_qtys);
           } else {
-            $tot_return_qtys = array();
+            $tot_return_qtys = [];
           }
         } else {
           $flash->set_flash_message('No items found to return.',1);

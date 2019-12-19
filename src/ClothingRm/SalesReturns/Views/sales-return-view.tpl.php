@@ -171,25 +171,25 @@
                     <td align="right" id="returnRate_<?php echo $i ?>"><?php echo $item_rate ?></td>
                     <td align="right"><?php echo $return_qty ?></td>
                     <td id="returnValue_<?php echo $i ?>" align="right" class="itemReturnValue">
-                      <?php echo number_format($return_value,2) ?>
+                      <?php echo number_format($return_value,2,'.','') ?>
                     </td>                  
                   </tr>
                 <?php endforeach; ?>
                   <tr>
                     <td colspan="6" align="right">Total Amount</td>
                     <td id="totalAmount" align="right" class="totalAmount">
-                      <?php echo number_format($totalReturnAmount,2)?>                      
+                      <?php echo number_format($totalReturnAmount,2,'.','')?>                      
                     </td>
                   </tr>
                   <tr>
                     <td colspan="6" align="right">Round off</td>
                     <td id="totalAmount" align="right" class="roundOff">
-                      <?php echo number_format($totalReturnAmountRound,2)?>
+                      <?php echo number_format($totalReturnAmountRound,2,'.','')?>
                     </td>
                   </tr>
                   <tr>
                     <td colspan="6" align="right">Total Return Value</td>
-                    <td id="netPay" align="right" class="netPay"><?php echo number_format($returnAmount,2) ?></td>
+                    <td id="netPay" align="right" class="netPay"><?php echo number_format($returnAmount,2,'.','') ?></td>
                   </tr>                      
               </tbody>
             </table>

@@ -167,6 +167,8 @@
                       $item_name = $sale_item_details[$i]['itemName'];
                       $item_qty = $sale_item_details[$i]['itemQty'];
                       $lot_no = $sale_item_details[$i]['lotNo'];
+                      $return_key = $item_name.'__'.$lot_no;
+
                       $discount_amount = $sale_item_details[$i]['discountAmount'];
                       $mrp = $sale_item_details[$i]['mrp'];
 
@@ -182,16 +184,19 @@
                         $disabled = '';
                       }
 
-                      if(isset($tot_return_qtys[$item_code]) && $tot_return_qtys[$item_code]>0) {
-                        $return_ason_date = $tot_return_qtys[$item_code];
-                        $return_allowed_qty = $item_qty - $tot_return_qtys[$item_code];
-                      } elseif(isset($tot_return_qtys[$item_code]) && $tot_return_qtys[$item_code]<0) {
-                        $return_ason_date = $tot_return_qtys[$item_code];
+                      // dump($tot_return_qtys, $return_key);
+
+                      if(isset($tot_return_qtys[$return_key]) && $tot_return_qtys[$return_key]>0) {
+                        $return_ason_date = $tot_return_qtys[$return_key];
+                        $return_allowed_qty = $item_qty - $tot_return_qtys[$return_key];
+                      } elseif(isset($tot_return_qtys[$return_key]) && $tot_return_qtys[$return_key]<0) {
+                        $return_ason_date = $tot_return_qtys[$return_key];
                         $return_allowed_qty = 0;
                       } else {
                         $return_allowed_qty = $item_qty;
                         $return_ason_date = 0;
                       }
+
                       $return_qty_a = array_slice($qtys_a,0,($return_allowed_qty+1));
                       $return_value = $item_rate*$return_qty;
                 ?>
