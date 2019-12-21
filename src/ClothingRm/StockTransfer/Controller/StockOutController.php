@@ -230,7 +230,7 @@ class StockOutController
         Utilities::redirect('/stock-transfer/register');
       }
 
-      // dump($scanned_data);
+      // dump($scanned_data, $_SESSION);
       // exit;
 
       // hit api and save the scanned data.

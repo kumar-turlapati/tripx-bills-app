@@ -335,12 +335,23 @@ class AsyncController {
           // echo json_encode($_SESSION[$transfer_code]);
           // exit;
 
+          // var_dump($allowed_qty_item, $scanned_qty_item, $total_scanned);
+
           if($scanned_qty_item < $allowed_qty_item) {
-            $scanned_qty_item += $response['response']['mOq'];
+
+            // this will control when the transfer qty is less than 
+            // mOQ. If it is less than mOQ allowed qty. is taken.
+            if($allowed_qty_item < $response['response']['mOq']) {
+              $scanned_qty_item += $allowed_qty_item;
+            } else {
+              $scanned_qty_item += $response['response']['mOq'];
+            }
+
             $_SESSION[$transfer_code][$session_key]['scanned'] = $scanned_qty_item;
-            $total_scanned += $response['response']['mOq'];
+            $total_scanned +=  $allowed_qty_item < $response['response']['mOq'] ? $allowed_qty_item : $response['response']['mOq'];
 
             $_SESSION[$transfer_code]['total_scanned'] = $total_scanned;
+
             $output = ['status' => 'success', 'qty' => $total_scanned];
           } else {
             $output = ['status' => 'failed', 'error' => 'Transferred Qty for this Barcode already reached. Further scanning is not allowed. / ఈ బార్ కోడ్  యొక్క స్కానింగ్ ముగిసింది. మరల ఈ బార్ కోడ్ స్కాన్ చేయబడదు.']; 
