@@ -175,6 +175,16 @@
               </thead>
             </table>
           </div>
+
+          <div class="table-responsive">
+            <table class="table font12" style="border:none;">
+                <tr>
+                  <td style="border-top:none; border-left:none; border-right:none; border-bottom:none; text-align: right; width: 40%; color: #225992; font-weight: bold; font-size: 14px; vertical-align: middle;">Last item scanned:</td>
+                  <td  style="border-top:none; border-left:none; border-right:none; border-bottom: 2px dotted; text-align: left; width: 60%; color: #4ab033; font-weight: bold; font-size: 16px; vertical-align: middle;" id="lastScannedSaleItem">&nbsp;</td>
+                </tr>
+            </table>
+          </div>
+
           <div class="table-responsive">
             <table <?php echo $ow_items_class ?> class="table table-striped table-hover font12" id="owItemsTable">
               <thead>

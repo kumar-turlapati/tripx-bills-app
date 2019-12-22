@@ -633,11 +633,19 @@ function initializeJS() {
                 jQuery.each(itemDetails.response, function (index, lotNoDetails) {
                   lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
                 });
+                var barCodeItem = '[ '+barcode+' ] '+itemDetails.response.bcDetails.itemName;
+                if(itemDetails.response.bcDetails.cno !== '') {
+                  barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+itemDetails.response.bcDetails.cno+'</span>';
+                }
+                $('#lastScannedSaleItem').html(barCodeItem);
                 __injectOutwardItemRow(itemDetails.response.bcDetails, barcode);
                 $('#owBarcode').val('');
               } else {
                 alert('Barcode not found');                
               }
+            } else {
+              alert('[ '+barcode + ' ] Barcode is not available or out of stock.');
+              $('#owBarcode').val('');
             }
           },
           error: function(e) {

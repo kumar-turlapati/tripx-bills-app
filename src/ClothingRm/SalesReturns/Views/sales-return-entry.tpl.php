@@ -1,7 +1,9 @@
 <?php
 
   use Atawa\Utilities;
-  
+
+  // dump($sale_details);
+
   if(isset($submitted_data['returnDate']) && $submitted_data['returnDate']!=='') {
     $current_date = date("d-m-Y", strtotime($submitted_data['returnDate']));
   } else {
@@ -86,7 +88,15 @@
                 <td class="text-right sr-value-style valign-middle" style="color:red; font-size: 18px;"><?php echo number_format($sale_details['netPay'], 2, '.', '') ?></td>
                 <td class="text-right sr-value-style valign-middle"><?php echo number_format($sale_details['totalAmount'], 2, '.', '') ?></td>
                 <td class="text-right sr-value-style valign-middle"><?php echo number_format($sale_details['taxAmount'], 2, '.', '') ?></td>
-              </tr>              
+              </tr>
+              <tr>
+                <td colspan="5" class="text-center sr-heading-style valign-middle">Remarks</td>
+                <td colspan="4" class="text-center sr-heading-style valign-middle">Customer name</td>
+              </tr>
+              <tr>
+                <td colspan="5" class="text-center sr-value-style valign-middle"><?php echo $sale_details['remarksInvoice'] ?></td>
+                <td colspan="4" class="text-center sr-value-style valign-middle"><?php echo $sale_details['customerName'] !== '' ? $sale_details['customerName'] : $sale_details['tmpCustName'] ?></td>                
+              </tr>
             </table>
           </div> 
 

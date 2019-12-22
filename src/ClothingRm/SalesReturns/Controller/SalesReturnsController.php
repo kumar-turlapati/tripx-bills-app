@@ -24,7 +24,7 @@ class SalesReturnsController {
 
     $errors = $sale_details = $sale_item_details = [];
     $submitted_data = $return_item_details = [];
-    $return_items_a = $return_details = [];
+    $return_items_a = $return_details = $tot_return_qtys = [];
 
     $page_error = $page_success = '';
     $path_info = $request->getpathInfo();
@@ -44,17 +44,16 @@ class SalesReturnsController {
       $sales_response = $sales->get_sales_details($sales_code);
       if($sales_response['status']) {
         $sale_details = $sales_response['saleDetails'];
-        // dump($sale_details);
-        // exit;
         $sale_date = date("Y-m-d", strtotime($sale_details['invoiceDate']));
         $date_diff = time()-strtotime($sale_date);
         $total_days = floor($date_diff / (60 * 60 * 24));
 
+        /*
         # for business owner we void this rule.
         if( $total_days>30 && isset($_SESSION['utype']) && $_SESSION['utype']>3 ) {
           $flash->set_flash_message('Returns are not accepted after 30 days from sale date.',1);
           Utilities::redirect('/sales/list');
-        }
+        }*/
 
         if(count($sale_details['itemDetails'])>0) {
           $sale_item_details = $sale_details['itemDetails'];
