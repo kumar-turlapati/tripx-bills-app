@@ -230,7 +230,7 @@ class SalesReportsController {
       $pdf->Ln();
       $record_cntr++;
       if($record_cntr === 23) {
-        $pdf->AddPage('L','A4');
+        $pdf->AddPage('P','A4');
         $this->_add_b2b_invoice_header($pdf, $customer_info, $item_widths);
         $record_cntr = 0;
       }
@@ -2931,7 +2931,7 @@ class SalesReportsController {
     $pdf->Cell(70,6,'GST Invoice No.','LBT',0,'C',true);
     $pdf->Cell(25,6,'Invoice Date','BT',0,'C',true);
     $pdf->Cell(95,6,'Internal Tracking Number','RBT',0,'C',true);
-    $pdf->SetFillColor(976,245,458);
+    $pdf->SetFillColor(0,0,0);
     $pdf->Ln();
     $pdf->SetTextColor(0,0,0);
 
