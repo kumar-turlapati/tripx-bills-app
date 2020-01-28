@@ -106,10 +106,14 @@ class SalesReportsController {
     ];
 
     // igst or (cgst and sgst)
-    if((int)$sale_details['stateID'] === (int)$sale_details['locStateID']) {
-      $gst_tax_type = 'intra';
+    if((int)$sale_details['stateID'] > 0 && (int)$sale_details['locStateID'] > 0) {
+      if((int)$sale_details['stateID'] === (int)$sale_details['locStateID']) {
+        $gst_tax_type = 'intra';
+      } else {
+        $gst_tax_type = 'inter';
+      }
     } else {
-      $gst_tax_type = 'inter';
+      $gst_tax_type = 'intra';
     }
 
     // customer array
