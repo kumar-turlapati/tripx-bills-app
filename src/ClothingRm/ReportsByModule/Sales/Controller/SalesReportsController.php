@@ -1738,6 +1738,7 @@ class SalesReportsController {
             $igst_amount = number_format($gst_summary_details['igst'],2,'.','');
             $igst_percent = number_format($key,2);
             $cgst_amount = $sgst_amount = '';
+            $cgst_percent = $sgst_percent = '';
           } else {
             $cgst_amount = number_format($gst_summary_details['cgst'],2,'.','');
             $sgst_amount = number_format($gst_summary_details['sgst'],2,'.','');
