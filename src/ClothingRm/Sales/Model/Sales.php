@@ -165,7 +165,7 @@ class Sales {
 	}	
 
 	// get sales summary by day
-	public function get_sales_summary_byday($search_params) {
+	public function get_sales_summary_byday($search_params=[]) {
 		$client_id = Utilities::get_current_client_id();
 		$end_point = 'reports/daily-sales/'.$client_id;
 
@@ -186,7 +186,7 @@ class Sales {
 	}
 
 	// get itemwise sales report
-	public function get_itemwise_sales_report($search_params=array()) {
+	public function get_itemwise_sales_report($search_params=[]) {
 		$client_id = Utilities::get_current_client_id();
 		$end_point = 'reports/daily-item-sales/'.$client_id;
 
@@ -239,6 +239,7 @@ class Sales {
 		}
 	}
 
+	// updating shipping
 	public function update_shipping_info($cleaned_params=[], $sales_code='') {
 		// call api.
 		$api_caller = new ApiCaller();
@@ -250,6 +251,24 @@ class Sales {
 				'shippingStatusInfo' => $response['response']['shippingStatusInfo'], 
 				'smsStatus' => isset($response['response']['smsStatus']) ? $response['response']['smsStatus'] : null,
 				'smsFlag' => $response['response']['smsFlag'],
+			);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
+
+	// sales dispatch register
+	public function get_sales_dispatch_register($search_params=[]) {
+		$end_point = 'reports/sales-dispatch-register';
+
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$end_point,$search_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,
+				'dispatches' => $response['response']
 			);
 		} elseif($status === 'failed') {
 			return array('status' => false, 'apierror' => $response['reason']);

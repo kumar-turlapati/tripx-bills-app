@@ -63,6 +63,7 @@
               <li><a href="/fin/payment-voucher/create"><i class="fa fa-question"></i> Payment</a></li>
               <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
               <li><a href="/fin/cash-voucher/create"><i class="fa fa-sticky-note-o"></i> Cash</a></li>
+              <li><a href="/fin/credit-note/create"><i class="fa fa-sign-out"></i> Credit note</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -299,6 +300,7 @@
               <li><a href="/reports/day-sales"><i class="fa fa-angle-right"></i> Sales by Day</a></li>
               <li><a href="/reports/sales-by-tax-rate"><i class="fa fa-angle-right"></i> Sales by Tax Rate</a></li>
               <li><a href="/reports/sales-by-hsn-sac-code"><i class="fa fa-angle-right"></i> Sales by HSN Codewise</a></li>
+              <li><a href="/reports/sales-dispatch-register"><i class="fa fa-angle-right"></i> Sales Dispatch Register</a></li>
             </ul>
           </li>
           <li class="sub-menu">

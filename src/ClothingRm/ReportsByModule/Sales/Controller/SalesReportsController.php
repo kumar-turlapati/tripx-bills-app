@@ -2123,6 +2123,164 @@ class SalesReportsController {
     return [$this->template->render_view('sales-by-hsn-code', $template_vars), $controller_vars];    
   }
 
+  public function salesDispatchRegister(Request $request) {
+    $default_location = $_SESSION['lc'];
+    $client_locations = Utilities::get_client_locations();
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_dispatch_register($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-dispatch-register');        
+      }
+
+      //hit api
+      $sales_api_response = $this->sales_model->get_sales_dispatch_register($form_data);
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-dispatch-register');
+      } else {
+        $total_records = $sales_api_response['dispatches']['dispatches'];
+        $total_pages = $sales_api_response['dispatches']['total_pages'];
+        if($total_pages>1) {
+          for($i=2;$i<=$total_pages;$i++) {
+            $form_data['pageNo'] = $i;
+            $sales_api_response = $this->sales_model->get_sales_dispatch_register($form_data);
+            if($sales_api_response['status']) {
+              $total_records = array_merge($total_records,$sales_api_response['dispatches']['dispatches']);
+            }
+          }
+        }
+
+        // dump($sales_api_response);
+        // dump($total_records);
+        // exit;        
+
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+        if($form_data['agentCode'] !== '' && isset($agents_a[$form_data['agentCode']])) {
+          $agent_name = $agents_a[$form_data['agentCode']];
+        } else {
+          $agent_name = '';
+        }
+
+        $heading1 = 'Sales Dispatches Register';
+        $heading2 = '( from '.$form_data['fromDate'].' to '.$form_data['toDate'].' )';
+        if($location_name !== '') {
+          $heading1 .= ' - '.$location_name;
+        }
+        if($agent_name !== '') {
+          $heading2 .= ' Agent: '.$agent_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2] ];
+
+        $format = $form_data['format'];
+        if($format === 'csv') {
+          $total_records = $this->_format_dispatch_register_for_csv($total_records);
+          Utilities::download_as_CSV_attachment('DispatchRegister', $csv_headings, $total_records);
+          return;
+        }
+
+        // start PDF printing.
+        $item_widths = array(10,47,25,25,18,20,25,21,23,25,40);
+                          //  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10
+        $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+        $slno = 0;
+
+        $pdf = PDF::getInstance();
+        $pdf->AliasNbPages();
+        $pdf->AddPage('L','A4');
+
+        // Print Bill Information.
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(0,0,$heading1,'',1,'C');
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Ln(5);
+        $pdf->Cell(0,0,$heading2,'',1,'C');
+
+        $pdf->SetFont('Arial','B',8);
+        $pdf->Ln(5);
+        $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+        $pdf->Cell($item_widths[1],6,'Customer name','RTB',0,'C');
+        $pdf->Cell($item_widths[2],6,'GST Inv. No.','RTB',0,'C');
+        $pdf->Cell($item_widths[3],6,'Internal Inv. No.','RTB',0,'C');
+        $pdf->Cell($item_widths[4],6,'Invoice Date','RTB',0,'C');
+        $pdf->Cell($item_widths[5],6,'Amount (Rs.)','RTB',0,'C');
+        $pdf->Cell($item_widths[6],6,'City name','RTB',0,'C');  
+        $pdf->Cell($item_widths[7],6,'State name','RTB',0,'C');
+        $pdf->Cell($item_widths[8],6,'WayBill No.','RTB',0,'C');
+        $pdf->Cell($item_widths[9],6,'LR No.','RTB',0,'C');
+        $pdf->Cell($item_widths[10],6,'Carrier Name','RTB',0,'C');
+        $pdf->SetFont('Arial','',8);
+
+        $tot_amount = $slno = 0;
+        foreach($total_records as $record_details) {
+          $slno++;
+          $tot_amount += $record_details['netpay'];
+
+          $pdf->Ln();
+          $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+          $pdf->Cell($item_widths[1],6,substr($record_details['customerName'],0,25),'RTB',0,'L');
+          $pdf->Cell($item_widths[2],6,$record_details['gstInvoiceNo'],'RTB',0,'L');
+          $pdf->Cell($item_widths[3],6,$record_details['qbInvoiceNo'],'RTB',0,'L');            
+          $pdf->Cell($item_widths[4],6,date('d/m/Y', strtotime($record_details['invoiceDate'])),'RTB',0,'R');
+          $pdf->Cell($item_widths[5],6,number_format($record_details['netpay'],2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[6],6,ucwords(strtolower(substr($record_details['cityName'],0,14))),'RTB',0,'L');
+          $pdf->Cell($item_widths[7],6,Utilities::get_location_state_name($record_details['stateID']),'RTB',0,'L');
+          $pdf->Cell($item_widths[8],6,$record_details['wayBillNo'],'RTB',0,'L');  
+          $pdf->Cell($item_widths[9],6,substr($record_details['lrNo'],0,16),'RTB',0,'L');  
+          $pdf->Cell($item_widths[10],6,ucwords(strtolower( substr($record_details['transporterName'],0,26) )),'RTB',0,'L');  
+        }
+
+        $pdf->Ln();
+        $pdf->SetFont('Arial','B',9);    
+        $pdf->Cell($totals_width,6,'Total Dispatches','LB',0,'R');
+        $pdf->Cell($item_widths[5],6,number_format($tot_amount,2,'.',''),'B',0,'R');   
+        $pdf->Cell($item_widths[6]+$item_widths[7]+$item_widths[8]+$item_widths[9]+$item_widths[10],6,'','RB',0,'R');   
+
+        $pdf->Output();
+      }
+    }
+
+
+    // controller variables.
+    $controller_vars = array(
+      'page_title' => 'Sales Dispatch Register',
+      'icon_name' => 'fa fa-truck',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'agents' => ['' => 'All Agents'] + $agents_a,
+    );
+
+    // render template
+    return [$this->template->render_view('sales-dispatch-register', $template_vars), $controller_vars];
+  }
+
   private function _get_sales_executives() {
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
@@ -2267,6 +2425,35 @@ class SalesReportsController {
     } else {
       return ['status' => true, 'cleaned_params' => $cleaned_params];
     }
+  }
+
+  private function _validate_form_data_dispatch_register($form_data = []) {
+    $cleaned_params = $form_errors = [];
+    if($form_data['locationCode'] !== '') {
+      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    } else {
+      $form_errors['StoreName'] = 'Invalid Store Name.';
+    }
+    if($form_data['fromDate'] !== '') {
+      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
+    } else {
+      $cleaned_params['fromDate'] = '01-'.date("m-Y");
+    }
+    if($form_data['toDate'] !== '') {
+      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
+    } else {
+      $cleaned_params['toDate'] = date("d-m-Y");
+    }
+    $cleaned_params['customerName'] = Utilities::clean_string($form_data['customerName']);
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+    $cleaned_params['agentCode'] = Utilities::clean_string($form_data['agentCode']);
+    $cleaned_params['perPage'] = 300;
+
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }    
   }
 
   private function _format_sales_register_for_csv($total_records = []) {
@@ -2918,6 +3105,43 @@ class SalesReportsController {
     ];
 
     return $cleaned_params;
+  }
+
+  private function _format_dispatch_register_for_csv($total_records = []) {
+    $tot_amount = 0;
+    $slno = 0;
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $tot_amount += $record_details['netpay'];
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Customer Name' => $record_details['customerName'],
+        'GST Invoice No.' => $record_details['gstInvoiceNo'],
+        'Internal Tracking No.' => $record_details['qbInvoiceNo'],
+        'Invoice Date' => date('d/m/Y', strtotime($record_details['invoiceDate'])), 
+        'Amount' => number_format($record_details['netpay'],2,'.',''),
+        'City Name' => ucwords(strtolower($record_details['cityName'])),
+        'State Name' => Utilities::get_location_state_name($record_details['stateID']),
+        'Waybill No.' => $record_details['wayBillNo'],
+        'LR No.' => $record_details['lrNo'],
+        'Carrier Name' => $record_details['transporterName'],
+      ];
+    }
+    $cleaned_params[count($cleaned_params)] = [
+      'SNo.' => '' ,
+      'Customer Name' => 'T O T A L S',
+      'GST Invoice No.' => '',
+      'Internal Tracking No.' => '',
+      'Invoice Date' => '', 
+      'Amount' => number_format($tot_amount,2,'.',''),
+      'City Name' => '',
+      'State Name' => '',
+      'Waybill No.' => '',
+      'LR No.' => '',
+      'Carrier Name' => '',
+    ];
+    
+    return $cleaned_params;    
   }
 
   private function _add_b2b_invoice_header(&$pdf=null, $customer_info=[], $item_widths=[]) {

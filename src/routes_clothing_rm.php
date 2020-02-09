@@ -797,6 +797,9 @@ $routes->add('report_hsnsac_sales', new Routing\Route('/reports/sales-by-hsn-sac
 $routes->add('report_sales_billwise_itemwise', new Routing\Route('/reports/sales-billwise-itemwise', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesBillwiseItemwise',
 )));
+$routes->add('report_dispatch_register', new Routing\Route('/reports/sales-dispatch-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesDispatchRegister',
+)));
 $routes->add('report_billitemwise_report', new Routing\Route('/reports/sales-billwise-itemwise-casewise', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesBillwiseItemwiseCasewise',
 )));
