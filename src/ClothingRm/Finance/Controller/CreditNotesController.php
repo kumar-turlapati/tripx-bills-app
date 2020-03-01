@@ -27,7 +27,7 @@ class CreditNotesController
 
   // create credit note.
   public function cnCreateAction(Request $request) {
-    $form_data = $form_errors = [];
+    $form_data = $form_errors = $taxes = [];
     $api_error = '';
 
     $cn_types_a = Utilities::get_credit_note_types();
