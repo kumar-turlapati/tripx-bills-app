@@ -10,15 +10,19 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Finance\Model\CreditNote;
+use ClothingRm\Taxes\Model\Taxes;
+use ClothingRm\Inventory\Model\Inventory;
 
 class CreditNotesController
 {
-	protected $views_path,$finmodel;
+	protected $views_path,$finmodel,$taxes_model;
 
 	public function __construct() {
 		$this->views_path = __DIR__.'/../Views/';
     $this->cv_model = new CreditNote;
     $this->flash = new Flash;
+    $this->taxes_model = new Taxes;
+    $this->inven_api = new Inventory;
 	}
 
   // create credit note.
@@ -27,6 +31,23 @@ class CreditNotesController
     $api_error = '';
 
     $cn_types_a = Utilities::get_credit_note_types();
+
+    // ---------- get tax percents from api ----------------------
+    $taxes_a = $this->taxes_model->list_taxes();
+    if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
+      $taxes_raw = $taxes_a['taxes'];
+      foreach($taxes_a['taxes'] as $tax_details) {
+        $taxes[$tax_details['taxCode']] = $tax_details['taxPercent'];
+      }
+    }
+
+    // ---- adj reasons -------------------------------------------
+    $api_response = $this->inven_api->get_inventory_adj_reasons();
+    if($api_response['status']===true) {
+      $adj_reasons = array(''=>'Choose') + $api_response['results'];
+    } else {
+      $adj_reasons = array(''=>'Choose');
+    }    
 
     # ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations();
@@ -38,7 +59,9 @@ class CreditNotesController
         $form_errors = $validation['errors'];
         $this->flash->set_flash_message('You have errors in this Form. Please fix them before saving this voucher.',1);
       } else {
-        # hit api and process sales transaction.
+        // dump($validation['cleaned_params']);
+        // exit;
+        // hit api and process sales transaction.
         $cleaned_params = $validation['cleaned_params'];
         $api_response = $this->cv_model->create_credit_note($cleaned_params);
         if($api_response['status']) {
@@ -53,7 +76,7 @@ class CreditNotesController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Finance Management - Credit Notes',
+      'page_title' => 'Finance Management - Create Credit Note',
       'icon_name' => 'fa fa-inr',
     );
 
@@ -64,6 +87,9 @@ class CreditNotesController
       'form_data' => $form_data,
       'api_error' => $api_error,
       'client_locations' => $client_locations,
+      'taxes' => [-1 => 'Select'] + $taxes,
+      'taxcalc_opt_a' => array('e'=>'Exluding Item Rate', 'i' => 'Including Item Rate'),
+      'adj_reasons' => $adj_reasons,
     );    
 
     // render template
@@ -99,7 +125,7 @@ class CreditNotesController
       if($status === false) {
         $this->flash->set_flash_message($api_response['apierror'], 1);
       } else {
-        $this->flash->set_flash_message('Voucher with No. <b>'.$voc_no. '</b> deleted successfully.');
+        $this->flash->set_flash_message('<i class="fa fa-check aria-hidden="true"></i>&nbsp;Credit note no. <b>'.$cn_no. '</b> deleted successfully.');
       }
     } else {
       $this->flash->set_flash_message('Please choose a Voucher number to delete.');
@@ -200,43 +226,81 @@ class CreditNotesController
 
   private function _validate_form_data($form_data=array()) {
     $form_errors = $cleaned_params = [];
-    $cn_types_a = array_keys(Utilities::get_credit_note_types());
 
     $location_code = Utilities::clean_string($form_data['locationCode']);
-    $cn_type = Utilities::clean_string($form_data['cnType']);
-    $ref_no = Utilities::clean_string($form_data['refNo']);
+    $customer_name = Utilities::clean_string($form_data['customerName']);
     $cn_value = Utilities::clean_string($form_data['cnValue']);
+    $tax_calc_option = Utilities::clean_string($form_data['taxCalcOption']);
+    $adj_reason_code = Utilities::clean_string($form_data['adjReasonCode']);
+    $m_cn_type = Utilities::clean_string($form_data['mCreditNoteType']);
+    $item_details = $form_data['itemDetails'];
 
     if( isset($location_code) && ctype_alnum($location_code) ) {
       $cleaned_params['locationCode'] = $location_code;
     } else {
       $form_errors['locationCode'] = 'Invalid location code.';
     }
-
-    if(in_array($cn_type, $cn_types_a)) {
-      $cleaned_params['cnType'] = $cn_type;
-      # validate ref. no here itself.
-      if($cn_type === 'lo') {
-        if(is_numeric($ref_no)) {
-          $cleaned_params['refNo'] = $ref_no;
-        } else {
-          $form_errors['refNo'] = 'Invalid Card No. Must be less than or equal to 6 digits.';
-        }
-      } elseif($cn_type === 'ge') {
-        if(is_numeric($ref_no) && strlen($ref_no)===10) {
-          $cleaned_params['refNo'] = $ref_no;
-        } else {
-          $form_errors['refNo'] = 'Invalid Mobile No. Must be less 10 digits.';
-        }
-      }
-    } else {
-      $form_errors['cnType'] = 'Invalid credit note type.';
-    }
-
     if(is_numeric($cn_value) && $cn_value>0) {
       $cleaned_params['cnValue'] = $cn_value;
     } else {
-      $form_errors['cnValue'] = 'Invalid credit note value.';
+      $form_errors['cnValue'] = 'Invalid Credit note value.';
+    }
+    if($customer_name !== '') {
+      $cleaned_params['customerName'] = $customer_name;
+    } else {
+      $form_errors['customerName'] = 'Invalid Customer name.';
+    }
+    $cleaned_params['taxCalcOption'] = $tax_calc_option;
+    $cleaned_params['adjReasonCode'] = $adj_reason_code;
+    $cleaned_params['mCreditNoteType'] = $m_cn_type;
+
+    for($item_key=0;$item_key<10;$item_key++) {
+      if($item_details['itemName'][$item_key] !== '') {
+        $one_item_found = true;
+
+        $item_name = Utilities::clean_string($item_details['itemName'][$item_key]);
+        $item_sold_qty = $item_details['itemSoldQty'][$item_key] !== '' ? Utilities::clean_string($item_details['itemSoldQty'][$item_key]) : 0;
+        $item_rate = $item_details['itemRate'][$item_key] !== '' ? Utilities::clean_string($item_details['itemRate'][$item_key]) : 0;
+        $item_tax_percent = $item_details['itemTaxPercent'][$item_key] !== '' ? Utilities::clean_string($item_details['itemTaxPercent'][$item_key]) : 0;
+        $purchase_rate = $item_details['purchaseRate'][$item_key] !== '' ? Utilities::clean_string($item_details['purchaseRate'][$item_key]) : 0;
+
+        $cleaned_params['itemDetails']['itemName'][$item_key] = $item_name;
+
+        $item_total = round($item_sold_qty*$item_rate, 2);
+        if($tax_calc_option === 'i') {
+          $item_tax_amount = 0;
+        } else {
+          $item_tax_amount = round(($item_total*$item_tax_percent)/100, 2);
+        }
+
+        // validate return qty.
+        if( !is_numeric($item_sold_qty) || $item_sold_qty <= 0) {
+          $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid return qty.';
+        } else {
+          $cleaned_params['itemDetails']['itemSoldQty'][$item_key] = $item_sold_qty;
+        }
+
+        // validate item rate.
+        if( !is_numeric($item_rate) || $item_rate <= 0) {
+          $form_errors['itemDetails']['itemRate'][$item_key] = 'Invalid item rate.';
+        } else {
+          $cleaned_params['itemDetails']['itemRate'][$item_key] = $item_rate;
+        }
+
+        // validate item tax.
+        if(!is_numeric($item_tax_percent) || $item_tax_percent<0) {
+          $form_errors['itemDetails']['itemTaxPercent'][$item_key] = 'Invalid tax rate.';
+        } else {
+          $cleaned_params['itemDetails']['itemTaxPercent'][$item_key] = $item_tax_percent;
+        }
+
+        // purchase rate
+        if( is_numeric($purchase_rate) && $purchase_rate > 0) {
+          $cleaned_params['itemDetails']['purchaseRate'][$item_key] = $purchase_rate;
+        } else {
+          $cleaned_params['itemDetails']['purchaseRate'][$item_key] = $item_rate;
+        }
+      }
     }
 
     if(count($form_errors)>0) {

@@ -1365,6 +1365,20 @@ function initializeJS() {
     });
   }
 
+  if( $('.delCNote').length>0 ) {
+    jQuery('.delCNote').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Credit Note?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }  
+
   // add item to catalog
   if($('.addItemToCatalog').length > 0) {
     $('.addItemToCatalog').on('click', function(e){
@@ -2361,6 +2375,106 @@ function initializeJS() {
       $('#netPayTop').val(roundedNetPay.toFixed(2));
       $('#netPayBottom').text(roundedNetPay.toFixed(2));
       $('#totalItems').text(totalQty.toFixed(2));
+    }
+  }
+
+  // manual credit note Form
+  if( $('#manCreditNoteForm').length>0 ) {
+    $('#manCreditNoteForm').on('change', '.saleItemQty', function() {
+      var itemIndex = jQuery(this).attr('index');
+      updateManualCreditNoteFormRow(itemIndex);
+    });
+    $('#manCreditNoteForm').on('change', '.mrp', function() {
+      var itemIndex = jQuery(this).attr('index');
+      updateManualCreditNoteFormRow(itemIndex);
+    });
+    $('#manCreditNoteForm').on('change', '.saItemTax', function() {
+      var itemIndex = jQuery(this).attr('index');
+      updateManualCreditNoteFormRow(itemIndex);
+    });
+    $('#manCreditNoteForm').on('change', '#taxCalcOption', function(){
+      var totalsTaxable = totalsGST = totalsItems = 0;
+      var taxCalcOption = $(this).val();
+      $('#manCreditNoteForm .saleItemQty').each(function(index) {
+        var rowId = index+1;
+        var itemQty = returnNumber(parseFloat($('#qty_'+rowId).val()));
+        var mrp = returnNumber(parseFloat($('#mrp_'+rowId).val()));
+        var gstPercent = returnNumber(parseFloat($('#saItemTax_'+rowId).val()));
+        if(taxCalcOption === 'i') {
+          var taxableAmount = Math.round(itemQty*mrp, 2);
+          var totalAmount = taxableAmount;
+          var gstValue = 0;
+        } else {
+          var taxableAmount = Math.round(itemQty*mrp, 2);
+          var gstValue = Math.round(taxableAmount*gstPercent/100, 2);
+          var totalAmount = taxableAmount+gstValue;
+        }
+        if(itemQty > 0 && mrp > 0) {
+          $('#taxable_'+rowId).text(taxableAmount.toFixed(2));
+          $('#taxAmount_'+rowId).text(gstValue.toFixed(2));
+          $('#totalAmount_'+rowId).text(totalAmount.toFixed(2));
+        }
+      });
+
+      updateManualCreditNoteFormTotals();
+    });
+    $('#manCreditNoteForm').on('change', '.mCreditNoteType', function() {
+      var mCreditNoteType = jQuery(this).val();
+      if(mCreditNoteType === 'wo') {
+        $('#mCnOptionalFields').hide();
+        $('#mCnItems').hide();
+        $('#cnValue').val('');
+        for(i=0;i<10;i++) {
+          var index = i+1;
+          $('#iname_'+index).val('');
+          $('#qty_'+index).val('');
+          $('#mrp_'+index).val('');
+          $('#purchaseRate_'+index).val('');
+          $('#saItemTax_'+index).val('');
+          $('#taxable_'+index).text('');
+          $('#taxAmount_'+index).text('');
+          $('#totalAmount_'+index).text('');
+        }
+        $('.totalTaxable, .totalGST, .totalAmount').text('');
+      } else {
+        $('#mCnOptionalFields').show();
+        $('#mCnItems').show();
+      }
+    });
+    function updateManualCreditNoteFormRow(rowId) {
+      var itemQty = returnNumber(parseFloat($('#qty_'+rowId).val()));
+      var mrp = returnNumber(parseFloat($('#mrp_'+rowId).val()));
+      var gstPercent = returnNumber(parseFloat($('#saItemTax_'+rowId).val()));
+      var taxCalcOption = $('#taxCalcOption').val();
+      if(taxCalcOption === 'i') {
+        var taxableAmount = Math.round(itemQty*mrp, 2);
+        var totalAmount = taxableAmount;
+        var gstValue = 0;
+      } else {
+        var taxableAmount = Math.round(itemQty*mrp, 2);
+        var gstValue = Math.round(taxableAmount*gstPercent/100, 2);
+        var totalAmount = taxableAmount+gstValue;
+      }
+
+      $('#taxable_'+rowId).text(taxableAmount.toFixed(2));
+      $('#taxAmount_'+rowId).text(gstValue.toFixed(2));
+      $('#totalAmount_'+rowId).text(totalAmount.toFixed(2));
+      updateManualCreditNoteFormTotals();
+    }
+    function updateManualCreditNoteFormTotals() {
+      var totalTaxable = totalGST = totalAmount = 0;
+      jQuery('.rowTaxable').each(function(i, obj) {
+        var taxable = jQuery(this).text();
+        var gst = $('#taxAmount_'+i).text();
+        var amount = $('#totalAmount_'+i).text();
+        totalTaxable += returnNumber(parseFloat(taxable));
+        totalGST += returnNumber(parseFloat(gst));
+        totalAmount += returnNumber(parseFloat(amount));
+      });
+      $('.totalTaxable').text(totalTaxable.toFixed(2));
+      $('.totalGST').text(totalGST.toFixed(2));
+      $('.totalAmount').text(totalAmount.toFixed(2));
+      $('#cnValue').val(totalAmount.toFixed(2));
     }
   }
 

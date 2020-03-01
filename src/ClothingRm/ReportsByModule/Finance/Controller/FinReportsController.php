@@ -474,7 +474,7 @@ class FinReportsController {
         $total_bill_amount += $record_details['billAmount'];
         $total_credits += $record_details['recAmount'];
         $total_balance += $record_details['balAmount'];
-        $total_returns += $record_details['returnAmount'];
+        $total_returns += ($record_details['returnAmount']+$record_details['credits']);
 
         $slno++;
         $pdf->Ln();
@@ -484,10 +484,10 @@ class FinReportsController {
         $pdf->Cell($item_widths[3],6,substr($record_details['billNo'],0,17),'RTB',0,'L');
         $pdf->Cell($item_widths[4],6,date("d-m-Y", strtotime($record_details['billDate'])),'RTB',0,'R');
         $pdf->Cell($item_widths[5],6,$record_details['creditDays'],'RTB',0,'R');      
-        $pdf->Cell($item_widths[6],6,$record_details['billAmount'],'RTB',0,'R');      
+        $pdf->Cell($item_widths[6],6,number_format($record_details['billAmount'],2,'.',''),'RTB',0,'R');      
         $pdf->Cell($item_widths[7],6,$record_details['recAmount'],'RTB',0,'R');
-        $pdf->Cell($item_widths[2],6,$record_details['returnAmount'],'RTB',0,'R');
-        $pdf->Cell($item_widths[8],6,$record_details['balAmount'],'RTB',0,'R');
+        $pdf->Cell($item_widths[2],6,number_format($record_details['returnAmount']+$record_details['credits'],2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,number_format($record_details['balAmount'],2,'.',''),'RTB',0,'R');
         $pdf->Cell($item_widths[9],6,$record_details['aging1'] > 0 ? $record_details['aging1'] : '','RTB',0,'R');
         $pdf->Cell($item_widths[10],6,$record_details['aging2'] > 0 ? $record_details['aging2'] : '','RTB',0,'R');
         $pdf->Cell($item_widths[11],6,$record_details['aging3'] > 0 ? $record_details['aging3'] : '','RTB',0,'R');

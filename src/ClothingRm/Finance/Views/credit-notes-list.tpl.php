@@ -105,10 +105,10 @@
                 <th width="10%" class="text-center">Invoice date</th>                
                 <th width="10%" class="text-center">Invoice no.</th>
                 <th width="10%" class="text-center">Credit Note no.</th>
-                <th width="10%" class="text-center">Credit Note date</th>
-                <th width="10%" class="text-center">Credit Note value</span></th>
-                <th width="10%" class="text-center">Consumed Invoice/Cash Voc. No.</th>
-                <th width="10%" class="text-center">Balance value</span></th>                
+                <th width="10%" class="text-center">Credit note date</th>
+                <th width="10%" class="text-center">Credit note value<br />( in Rs. )</th>
+                <th width="10%" class="text-center">Consumed Invoice / <br />Cash voc. no.</th>
+                <th width="10%" class="text-center">Balance value<br />( in Rs. )</th>                
                 <th width="15%" class="text-center">Store name</th>
                 <th width="15%" class="text-center">Actions</th>
               </tr>
@@ -141,10 +141,14 @@
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="center" class="valign-middle"><?php echo $invoice_date ?></td>
                   <td align="right" class="valign-middle">
-                    <i class="fa fa-external-link" aria-hidden="true"></i>&nbsp;
-                    <a href="/sales/view-invoice/<?php echo $invoice_code ?>" target="_blank" class="hyperlink">
-                      <?php echo $bill_no ?>
-                    </a>
+                    <?php if($invoice_code): ?>
+                      <i class="fa fa-external-link" aria-hidden="true"></i>&nbsp;
+                      <a href="/sales/view-invoice/<?php echo $invoice_code ?>" target="_blank" class="hyperlink">
+                        <?php echo $bill_no ?>
+                      </a>
+                    <?php else: ?>
+                      <span style="text-align: center;">-</span>
+                    <?php endif; ?>
                   </td> 
                   <td align="right" class="valign-middle"><?php echo $voucher_no ?></td>
                   <td class="valign-middle"><?php echo $voucher_date ?></td>
