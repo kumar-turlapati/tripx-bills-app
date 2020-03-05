@@ -155,6 +155,15 @@ class Constants
     'itemname' => 'Item Name',
   ];
 
+  public static $CUSTOMER_RATING = [
+    0 => 'No Rating',
+    5 => '5 Star',
+    4 => '4 Star',
+    3 => '3 Star',
+    2 => '2 Star',
+    1 => '1 Star',
+  ];
+
   public static $GET_SESSION_INACTIVE_PERIOD = 3600;
 
   public static $REPORTS_ERROR_MESSAGE = '<i class="fa fa-exclamation-triangle"></i> No data is available. Change report filters and try again.';
