@@ -87,12 +87,12 @@ class Constants
 
   public static $WALLETS = array(
     4 => 'Bajaj Card',
-    7 => 'Google TeZ',
+    7 => 'Google Pay',
     1 => 'Paytm',
     2 => 'PayUMoney',
     3 => 'Mobikwik',
     5 => 'PhonePe',
-    6 => 'UPI',
+    6 => 'BHIM',
     8 => 'Amazon Pay'
   );
 

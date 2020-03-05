@@ -22,7 +22,7 @@ class CustomersController
     $this->customer_api_call = new Customers;
     $this->flash_obj = new Flash;
     $this->user_model = new User;
-    $this->bu_model = new BusinessUsers;    
+    $this->bu_model = new BusinessUsers;
 	}
 
   public function customerCreateAction(Request $request) {
@@ -30,6 +30,7 @@ class CustomersController
     $page_error = $page_success = $cust_code = '';
     $redirect_url = '/customers/create';
     $agents_a = $ma_executives = [];
+    $customer_ratings = Constants::$CUSTOMER_RATING;
 
     $states_a = Constants::$LOCATION_STATES;
     asort($states_a);
@@ -107,6 +108,7 @@ class CustomersController
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'ma_executives' => ['' => 'Choose'] + $ma_executives,
       'agents' => ['' => 'Choose'] + $agents_a,
+      'customer_ratings' => $customer_ratings
     );
       
     # build variables
@@ -123,6 +125,7 @@ class CustomersController
     $form_errors = $submitted_data = $customer_details = $users = [];
     $page_error = $page_success = $cust_code = '';
     $agents_a = $ma_executives = [];
+    $customer_ratings = Constants::$CUSTOMER_RATING;
 
     $redirect_url = '/customers/list';
 
@@ -221,6 +224,7 @@ class CustomersController
       'location_codes' => $location_codes,
       'ma_executives' => ['' => 'Choose'] + $ma_executives,
       'agents' => ['' => 'Choose'] + $agents_a,
+      'customer_ratings' => $customer_ratings
     );
 
     # build variables
@@ -350,6 +354,7 @@ class CustomersController
     $gst_no = Utilities::clean_string($form_data['gstNo']);
     $agent_code = Utilities::clean_string($form_data['agentCode']);
     $ma_exe_code = Utilities::clean_string($form_data['maExecutive']);
+    $customer_rating = Utilities::clean_string($form_data['customerRating']);
 
     $age = Utilities::clean_string($form_data['age']);
     $age_category = Utilities::clean_string($form_data['ageCategory']);
@@ -411,6 +416,7 @@ class CustomersController
     $cleaned_params['gender'] = $gender;
     $cleaned_params['agentCode'] = $agent_code;
     $cleaned_params['maExecutive'] = $ma_exe_code;
+    $cleaned_params['customerRating'] = $customer_rating;
 
     if(count($form_errors)>0) {
       return [

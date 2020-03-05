@@ -2281,6 +2281,163 @@ class SalesReportsController {
     return [$this->template->render_view('sales-dispatch-register', $template_vars), $controller_vars];
   }
 
+  public function salesUpiPaymentsRegister(Request $request) {
+
+    $wallets = Constants::$WALLETS;
+    $client_locations = Utilities::get_client_locations();
+    $default_location = $_SESSION['lc'];
+    $per_page = 300;
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_form_data_sales_upi_payments_register($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/day-sales');        
+      }
+
+      $form_data['perPage'] = $per_page;
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_sales_upi_payments_register($form_data);
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-upi-register');
+      } else {
+        $total_records = $sales_api_response['walletPayments']['sales'];
+        $total_pages = $sales_api_response['walletPayments']['total_pages'];
+        if($total_pages>1) {
+          for($i=2;$i<=$total_pages;$i++) {
+            $form_data['pageNo'] = $i;
+            $sales_api_response = $this->sales_model->get_sales_upi_payments_register($form_data);
+            if($sales_api_response['status']) {
+              $total_records = array_merge($total_records,$sales_api_response['walletPayments']['sales']);
+            }
+          }
+        }
+
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+
+        $heading1 = 'Sales by UPI/EMI-Cards';
+        $heading2 = 'from '.$form_data['fromDate'].' to '.$form_data['toDate'];
+        if($location_name !== '') {
+          $heading1 .= ' - '.$location_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2] ];
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        $total_records = $this->_format_sales_upi_register_csv($total_records);
+        Utilities::download_as_CSV_attachment('SalesUPIRegister', $csv_headings, $total_records);
+        return;
+      }
+
+      // dump($total_records);
+      // exit;
+
+      // PDF Printing
+      $item_widths = array(10,47,25,25,18,20,25,21,23,25,40);
+                        //  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
+      $slno = 0;
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->AddPage('P','A4');
+      $pdf->SetAutoPageBreak(false);
+
+      // Print Bill Information.
+      $this->_add_page_heading_for_sales_upi_payments_register($pdf, $item_widths, $heading1, $heading2);
+
+      $tot_amount = $slno = 0;
+      $row_cntr = 0;
+      foreach($total_records as $record_details) {
+        $slno++;
+        $tot_amount += $record_details['netPay'];
+        $row_cntr++;
+
+        $customer_name = $record_details['customerName'] !== '' ? $record_details['customerName'] : $record_details['cnameTemp'];
+        $mobile_no = $record_details['customerMobileNo'];
+        $bill_no = $record_details['billNo'];
+        $bill_date = date("d/m/Y", strtotime($record_details['billDate']));
+        $amount = number_format($record_details['netPay'], 2, '.', '');
+        $wallet_name = isset($wallets[$record_details['walletID']]) ? $wallets[$record_details['walletID']] : '-';
+        $wallet_ref_no = $record_details['walletRefNo'];
+
+        $pdf->Ln();
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,substr($customer_name,0,25),'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,$mobile_no,'RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,$bill_no,'RTB',0,'L');            
+        $pdf->Cell($item_widths[4],6,$bill_date,'RTB',0,'R');
+        $pdf->Cell($item_widths[5],6,$amount,'RTB',0,'R');
+        $pdf->Cell($item_widths[6],6,$wallet_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[7],6,$wallet_ref_no,'RTB',0,'L');
+        if($row_cntr === 39) {
+          $pdf->AddPage('P','A4');
+          $this->_add_page_heading_for_sales_upi_payments_register($pdf, $item_widths, $heading1, $heading2);
+          $row_cntr = 0;
+        }
+      }
+
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',9);    
+      $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+$item_widths[3]+$item_widths[4],6,'Totals','LBR',0,'R');
+      $pdf->Cell($item_widths[5],6,number_format($tot_amount,2,'.',''),'B',0,'R');
+      $pdf->Cell($item_widths[6]+$item_widths[7],6,'','RTB',0,'L');
+
+      $pdf->Output();
+    }    
+
+    // controller variables.
+    $controller_vars = array(
+      'page_title' => 'Sales UPI/EMI-Card Payments Register',
+      'icon_name' => 'fa fa-money',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'wallets' => ['' => 'All Wallets/EMI-Cards'] + $wallets,
+    );
+
+    // render template
+    return [$this->template->render_view('sales-upi-payments-register', $template_vars), $controller_vars];
+  }
+
+  private function _add_page_heading_for_sales_upi_payments_register(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Customer name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Mobile No.','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Invoice No.','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Invoice Date','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Amount (Rs.)','RTB',0,'C');
+    $pdf->Cell($item_widths[6],6,'UPI/EMICard','RTB',0,'C');
+    $pdf->Cell($item_widths[7],6,'Ref. No.','RTB',0,'C');
+    $pdf->SetFont('Arial','',8);
+  }
+
+
   private function _get_sales_executives() {
     if($_SESSION['__utype'] !== 3) {
       $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
@@ -2350,6 +2507,34 @@ class SalesReportsController {
     } else {
       return ['status' => true, 'cleaned_params' => $cleaned_params];
     }    
+  }
+
+  private function _validate_form_data_sales_upi_payments_register($form_data=[]) {
+    $cleaned_params = $form_errors = [];
+    if($form_data['locationCode'] !== '') {
+      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    } else {
+      $form_errors['StoreName'] = 'Invalid Store Name.';
+    }
+    if($form_data['fromDate'] !== '') {
+      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
+    } else {
+      $form_errors['FromDate'] = 'Invalid From Date.';
+    }
+    if($form_data['toDate'] !== '') {
+      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
+    } else {
+      $form_errors['ToDate'] = 'Invalid To Date.';
+    }
+
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+    $cleaned_params['walletID'] = Utilities::clean_string($form_data['walletID']);
+
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    } 
   }
 
   private function _validate_form_data_day_sales($form_data = []) {
@@ -2455,6 +2640,46 @@ class SalesReportsController {
       return ['status' => true, 'cleaned_params' => $cleaned_params];
     }    
   }
+
+  private function _format_sales_upi_register_csv($total_records=[]) {
+    $tot_amount = 0;
+    $slno = 0;
+    $wallets = Constants::$WALLETS;
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $tot_amount += $record_details['netPay'];
+      $customer_name = $record_details['customerName'] !== '' ? $record_details['customerName'] : $record_details['cnameTemp'];
+      $mobile_no = $record_details['customerMobileNo'];
+      $bill_no = $record_details['billNo'];
+      $bill_date = date("d/m/Y", strtotime($record_details['billDate']));
+      $amount = number_format($record_details['netPay'], 2, '.', '');
+      $wallet_name = isset($wallets[$record_details['walletID']]) ? $wallets[$record_details['walletID']] : '-';
+      $wallet_ref_no = $record_details['walletRefNo'];
+
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Customer Name' => $customer_name,
+        'Mobile No.' => $mobile_no,
+        'Invoice No.' => $bill_no,
+        'Invoice Date' => $bill_date, 
+        'Amount' => $amount,
+        'UPI/EMICard' => $wallet_name,
+        'Ref.No.' => $wallet_ref_no,
+      ];
+    }
+    $cleaned_params[count($cleaned_params)] = [
+      'SNo.' => '' ,
+      'Customer Name' => 'T O T A L S',
+      'Mobile No.' => '',
+      'Invoice No.' => '',
+      'Invoice Date' => '', 
+      'Amount' => number_format($tot_amount,2,'.',''),
+      'UPI/EMI Card' => '',
+      'Ref No.' => '',
+    ];
+    
+    return $cleaned_params; 
+  } 
 
   private function _format_sales_register_for_csv($total_records = []) {
     $cleaned_params = [];
@@ -3231,9 +3456,6 @@ class SalesReportsController {
     } else {
       $shipping_state_name = $customer_info['shipping']['state_name'].' [ ]';
     }
-
-//    $pdf->Ln();
-
     $x = $pdf->getX();
     $y = $pdf->getY();
     $pdf->Multicell(95,4,$billing_address,'L','L');

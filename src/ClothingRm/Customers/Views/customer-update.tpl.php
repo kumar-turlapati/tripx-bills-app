@@ -68,7 +68,8 @@
     $agent_code = $submitted_data['agentCode'];
   } else {
     $agent_code = '';
-  }  
+  }
+  $customer_rating = isset($submitted_data['customerRating']) ? $submitted_data['customerRating'] : 0;
 
   # bio details
   if(isset($submitted_data['age']) && $submitted_data['age'] !== '' ) {
@@ -318,6 +319,30 @@
                 </select>
               </div>
             </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Customer rating</label>
+              <div class="select-wrap">                        
+                <select 
+                  class="form-control"
+                  id="customerRating" 
+                  name="customerRating"
+                  style="font-size:12px;"
+                >
+                  <?php
+                    foreach($customer_ratings as $key => $value):
+                      if($key === (int)$customer_rating) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>                            
+                </select>
+              </div>
+            </div>             
           </div>          
           <div id="bioContainer" <?php echo $bio_container_style ?>>
             <h3 class="hdg-reports text-center">Personal Details</h3>

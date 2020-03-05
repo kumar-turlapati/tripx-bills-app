@@ -803,6 +803,9 @@ $routes->add('report_dispatch_register', new Routing\Route('/reports/sales-dispa
 $routes->add('report_billitemwise_report', new Routing\Route('/reports/sales-billwise-itemwise-casewise', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesBillwiseItemwiseCasewise',
 )));
+$routes->add('report_sales_upi', new Routing\Route('/reports/sales-upi-register', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesUpiPaymentsRegister',
+)));
 
 // reports - inventory
 $routes->add('report_stock', new Routing\Route('/reports/stock-report', array(
@@ -952,6 +955,7 @@ $routes->add('report_indentRegister', new Routing\Route('/indent-register', arra
 $routes->add('report_dispatchSummary', new Routing\Route('/indent-dispatch-summary', array(
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentDispatchSummary',
 )));
+
 
 //Ecommerce routes.
 $routes->add('gallery_create', new Routing\Route('/gallery/create', array(
