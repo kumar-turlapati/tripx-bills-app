@@ -73,7 +73,8 @@
               <li><a href="/reports/itemwise-sales-register"><i class="fa fa-angle-right"></i> Itemwise Sales Register</a></li>
               <li><a href="/reports/sales-billwise-itemwise-casewise"><i class="fa fa-angle-right"></i> Casewise Sales Register</a></li>              
               <li><a href="/reports/sales-billwise-itemwise"><i class="fa fa-angle-right"></i> Bill&amp;Item wise Sales</a></li>
-              <li><a href="/reports/sales-dispatch-register"><i class="fa fa-angle-right"></i> Sales Dispatch Register</a></              
+              <li><a href="/reports/sales-dispatch-register"><i class="fa fa-angle-right"></i> Sales Dispatch Register</a></li>
+              <li><a href="/reports/sales-upi-register"><i class="fa fa-angle-right"></i> Sales UPI/EMI Payments Register</a></li>
             </ul>
           </li>
           <li class="sub-menu">

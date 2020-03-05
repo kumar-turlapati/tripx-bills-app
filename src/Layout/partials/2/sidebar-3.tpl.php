@@ -301,6 +301,7 @@
               <li><a href="/reports/sales-by-tax-rate"><i class="fa fa-angle-right"></i> Sales by Tax Rate</a></li>
               <li><a href="/reports/sales-by-hsn-sac-code"><i class="fa fa-angle-right"></i> Sales by HSN Codewise</a></li>
               <li><a href="/reports/sales-dispatch-register"><i class="fa fa-angle-right"></i> Sales Dispatch Register</a></li>
+              <li><a href="/reports/sales-upi-register"><i class="fa fa-angle-right"></i>UPI/EMI Pmts Register</a></li>
             </ul>
           </li>
           <li class="sub-menu">
