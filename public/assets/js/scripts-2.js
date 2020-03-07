@@ -1305,6 +1305,8 @@ function initializeJS() {
       window.location.href = '/catalog/create';
     } else if(buttonId === 'catalogUpdateCancel') {
       window.location.href = '/catalog/list';
+    } else if(buttonId === 'manCreditNoteCancel') {
+      window.location.href = '/fin/credit-note/create';
     }
   });
 
@@ -2476,6 +2478,11 @@ function initializeJS() {
       $('.totalAmount').text(totalAmount.toFixed(2));
       $('#cnValue').val(totalAmount.toFixed(2));
     }
+    $('#manCreditNoteSubmit').on("click", function(e){
+      $(this).attr('disabled', true);
+      $('#manCreditNoteCancel').attr('disabled', true);
+      $('#manCreditNoteForm').submit();
+    });    
   }
 
   // sales return window.

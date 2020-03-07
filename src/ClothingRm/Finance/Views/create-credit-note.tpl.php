@@ -1,8 +1,8 @@
 <?php
-
   use Atawa\Utilities;
 
   $credit_note_types = ['wo' => 'Without Items', 'w' => 'With Items'];
+  $current_date = isset($form_data['cnDate']) && $form_data['cnDate']!=='' ? date("d-m-Y", strtotime($form_data['cnDate'])) : date("d-m-Y");
 
   $tax_calc_option = isset($form_data['taxCalcOption']) ? $form_data['taxCalcOption'] : 'i';
   $location_code = isset($form_data['locationCode']) && $form_data['locationCode'] !== '' ? $form_data['locationCode'] : '';
@@ -10,6 +10,7 @@
   $customer_name = isset($form_data['customerName']) && $form_data['customerName'] !== '' ? $form_data['customerName'] : '';
   $adj_reason_code = isset($form_data['adjReasonCode']) && $form_data['adjReasonCode'] !== '' ? $form_data['adjReasonCode'] : '';
   $m_cn_type = isset($form_data['mCreditNoteType']) && $form_data['mCreditNoteType'] !== '' ? $form_data['mCreditNoteType'] : 'wo';
+  $bill_no = isset($form_data['billNo']) ? $form_data['billNo'] : '';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -26,7 +27,7 @@
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="manCreditNoteForm">
           
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-2 col-lg-2">
               <label class="control-label labelStyle">Credit note type</label>
               <div class="select-wrap">
                 <select 
@@ -49,10 +50,46 @@
                 </select>
               </div>
             </div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-sm-12 col-md-2 col-lg-2">
+            <div class="col-lg-12 col-md-2 col-lg-2" style="padding-left:0px;">
+              <label class="control-label labelStyle">Date</label>
+              <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
+                <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="cnDate" id="cnDate" style="font-size: 13px;" />
+                <span class="add-on"><i class="fa fa-calendar"></i></span>
+              </div>
+              <?php if(isset($errors['cnDate'])): ?>
+                <span class="error"><?php echo $errors['cnDate'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3" style="padding-left:0px;">
+              <label class="control-label labelStyle">Customer name</label>
+              <input 
+                type="text"
+                id="customerName"
+                name="customerName"
+                style="font-weight:bold;font-size:14px;padding-left:5px;"
+                value="<?php echo $customer_name ?>"
+                class="form-control cnameAc noEnterKey"                    
+              />
+              <?php if(isset($form_errors['customerName'])): ?>
+                <span class="error"><?php echo $form_errors['customerName'] ?></span>
+              <?php endif; ?>                  
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2" style="padding-left:0px;">
+              <label class="control-label labelStyle">Bill no.</label>
+              <input 
+                type="text"
+                id="billNo"
+                name="billNo"
+                style="font-weight:bold;font-size:14px;padding-left:5px;"
+                value="<?php echo $bill_no ?>"
+                class="form-control noEnterKey"
+                maxlength="50"
+              />
+              <?php if(isset($form_errors['billNo'])): ?>
+                <span class="error"><?php echo $form_errors['billNo'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3" style="padding-left:0px;">
               <label class="control-label labelStyle">Store name</label>
               <div class="select-wrap">
                 <select 
@@ -79,20 +116,9 @@
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3">
-              <label class="control-label labelStyle">Customer name</label>
-              <input 
-                type="text"
-                id="customerName"
-                name="customerName"
-                style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
-                value="<?php echo $customer_name ?>"
-                class="form-control cnameAc"                    
-              />
-              <?php if(isset($form_errors['customerName'])): ?>
-                <span class="error"><?php echo $form_errors['customerName'] ?></span>
-              <?php endif; ?>                  
-            </div> 
+          </div>
+
+          <div class="form-group">
             <div class="col-sm-12 col-md-2 col-lg-2">
               <label class="control-label labelStyle">Credit note value (in Rs.)</label>
               <input 
@@ -107,8 +133,8 @@
                 <span class="error"><?php echo $form_errors['cnValue'] ?></span>
               <?php endif; ?>   
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3">
-              <label class="control-label labelStyle">Sales return / Adjustment reason</label>
+            <div class="col-sm-12 col-md-3 col-lg-3" style="padding-left:0px;">
+              <label class="control-label labelStyle">Reason</label>
               <div class="select-wrap">
                 <select
                   class="form-control"
@@ -137,7 +163,7 @@
               </div>
             </div>
             <div id="mCnOptionalFields" style="<?php echo $m_cn_type === 'wo' ? 'display: none;' : '' ?>">
-              <div class="col-sm-12 col-md-2 col-lg-2">
+              <div class="col-sm-12 col-md-2 col-lg-2" style="padding-left:0px;">
                 <label class="control-label labelStyle">Tax calculation method</label>
                 <div class="select-wrap">                        
                   <select 
@@ -189,7 +215,7 @@
                 <?php 
                   $tot_item_amount = $tot_taxable_amount = $tot_tax_amount = $tot_discount = 0;
                   $tot_bill_qty = $netpay = $netpay_actual = $round_off = 0;
-                  for($i=0;$i<10;$i++):
+                  for($i=0;$i<15;$i++):
                     $item_name = isset($form_data['itemDetails']['itemName'][$i]) ? $form_data['itemDetails']['itemName'][$i] : '';
                     $item_qty = isset($form_data['itemDetails']['itemSoldQty'][$i]) && is_numeric($form_data['itemDetails']['itemSoldQty'][$i]) ? $form_data['itemDetails']['itemSoldQty'][$i] : 0;
                     $purchase_rate = isset($form_data['itemDetails']['purchaseRate'][$i]) && is_numeric($form_data['itemDetails']['purchaseRate'][$i]) ? $form_data['itemDetails']['purchaseRate'][$i] : 0;
@@ -312,9 +338,12 @@
           </div>
           <br />
           <div class="text-center">
-            <button class="btn btn-success" id="Save">
+            <button class="btn btn-success cancelOp" id="manCreditNoteSubmit">
               <i class="fa fa-save"></i> Save
-            </button>
+            </button>&nbsp;&nbsp;
+            <button class="btn btn-danger cancelButton" id="manCreditNoteCancel">
+              <i class="fa fa-times"></i> Cancel
+            </button>            
           </div>
         </form>
       </div>

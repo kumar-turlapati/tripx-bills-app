@@ -109,7 +109,7 @@
                 <th width="10%" class="text-center">Credit note value<br />( in Rs. )</th>
                 <th width="10%" class="text-center">Consumed Invoice / <br />Cash voc. no.</th>
                 <th width="10%" class="text-center">Balance value<br />( in Rs. )</th>                
-                <th width="15%" class="text-center">Store name</th>
+                <th width="15%" class="text-center">Customer name</th>
                 <th width="15%" class="text-center">Actions</th>
               </tr>
             </thead>
@@ -125,7 +125,7 @@
                   $location_id = $voucher_details['locationID'];
                   $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
                   $voucher_amount = $voucher_details['cnValue'];
-                  $bill_no = $voucher_details['billNo'] > 0 ? $voucher_details['billNo'] : '-';
+                  $bill_no = $voucher_details['billNo'] !== '' ? $voucher_details['billNo'] : '-';
                   $cash_voc_no = $voucher_details['cashVocNo'] > 0 ? $voucher_details['cashVocNo'] : 0;
                   $invoice_date = !is_null($voucher_details['invoiceDate']) ? date('d-M-Y', strtotime($voucher_details['invoiceDate'])) : '-';
                   $balance_value = $voucher_details['balanceValue'];
@@ -133,6 +133,7 @@
                   $invoice_code = $voucher_details['invoiceCode'];
                   $consumed_invoice_no = $voucher_details['consumedInvoiceNo'];
                   $consumed_invoice_code =  $voucher_details['consumedInvoiceCode'];
+                  $customer_name = $voucher_details['customerName'] ? $voucher_details['customerName'] : '';
 
                   $total += $voucher_amount;
                   $balance_total += $balance_value;
@@ -146,6 +147,8 @@
                       <a href="/sales/view-invoice/<?php echo $invoice_code ?>" target="_blank" class="hyperlink">
                         <?php echo $bill_no ?>
                       </a>
+                    <?php elseif($bill_no !== '') : ?>
+                      <?php echo $bill_no ?>
                     <?php else: ?>
                       <span style="text-align: center;">-</span>
                     <?php endif; ?>
@@ -165,7 +168,7 @@
                     <?php endif; ?>                    
                   </td>
                   <td align="right" class="valign-middle"><?php echo number_format($balance_value,2,'.','') ?></td>                  
-                  <td class="valign-middle"><?php echo $location_name ?></td>
+                  <td class="valign-middle"><?php echo $customer_name ?></td>
                   <td class="valign-middle">
                     <div class="btn-actions-group" align="right">
                       <?php if($user_type === 3 || $user_type === 9): ?>

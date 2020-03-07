@@ -505,12 +505,12 @@ class Utilities
   }
 
   public static function acls($role_id='', $path='') {
-    $path_a = explode('/', $path);
-    if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn') {
-      $path = '/'.$path_a[1].'/'.$path_a[2];
-    } elseif(is_array($path_a)) {
-      $path = '/'.$path_a[1];
-    }
+    // $path_a = explode('/', $path);
+    // if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn') {
+    //   $path = '/'.$path_a[1].'/'.$path_a[2];
+    // } elseif(is_array($path_a)) {
+    //   $path = '/'.$path_a[1];
+    // }
     // dump($path_a, $path);
     // exit;
 
@@ -601,7 +601,7 @@ class Utilities
 
         '/customers/create', '/customers/update', '/customers/view', '/customers/list', 
 
-        '/fin/pc-voucher', '/fin/pc-vouchers', '/fin/petty-cash-book', 
+        '/fin/pc-voucher', '/fin/pc-vouchers', '/fin/petty-cash-book', '/fin/credit-note/create', '/fin/credit-notes',
 
         '/taxes/list', 
 
@@ -615,7 +615,7 @@ class Utilities
         '/barcodes/list', '/barcodes/print', '/barcode/opbal',
 
         '/reports/sales-register', '/reports/itemwise-sales-register', '/reports/day-sales', '/reports/sales-summary-by-month', 
-        '/reports/sales-by-tax-rate', '/reports/sales-billwise-itemwise', 
+        '/reports/sales-by-tax-rate', '/reports/sales-billwise-itemwise', '/reports/sales-upi-register', '/reports/receivables',
         '/reports/sales-billwise-itemwise-casewise',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
@@ -693,6 +693,9 @@ class Utilities
         '/finy/switch',
       ],
     ];
+
+    // dump($path);
+    // exit;
 
     // validate permission
     if(array_key_exists($role_id, $allowed_pages) && (int)$role_id !== 3) {

@@ -233,6 +233,9 @@ class CreditNotesController
     $tax_calc_option = Utilities::clean_string($form_data['taxCalcOption']);
     $adj_reason_code = Utilities::clean_string($form_data['adjReasonCode']);
     $m_cn_type = Utilities::clean_string($form_data['mCreditNoteType']);
+    $cn_date = Utilities::clean_string($form_data['cnDate']);
+    $bill_no = Utilities::clean_string($form_data['billNo']);
+
     $item_details = $form_data['itemDetails'];
 
     if( isset($location_code) && ctype_alnum($location_code) ) {
@@ -253,8 +256,10 @@ class CreditNotesController
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
     $cleaned_params['adjReasonCode'] = $adj_reason_code;
     $cleaned_params['mCreditNoteType'] = $m_cn_type;
+    $cleaned_params['cnDate'] = $cn_date;
+    $cleaned_params['billNo'] = $bill_no;
 
-    for($item_key=0;$item_key<10;$item_key++) {
+    for($item_key=0;$item_key<15;$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
         $one_item_found = true;
 

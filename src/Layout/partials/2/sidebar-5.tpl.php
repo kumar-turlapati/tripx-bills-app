@@ -26,7 +26,8 @@
           <li><a href="/sales-entry/combos"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Sales Entry - Combos</a></li>
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
           <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Cash Voucher</a></li>
-          <li><a href="/stock-audit/create"><i class="fa fa-check"></i> Phy. Stock Audit</a></li>          
+          <li><a href="/stock-audit/create"><i class="fa fa-check"></i> Phy. Stock Audit</a></li>
+          <li><a href="/fin/credit-note/create"><i class="fa fa-sign-out"></i> Credit note</a></li>
         </ul>
       </li>
       <li class="sub-menu">
@@ -74,7 +75,7 @@
               <li><a href="/reports/sales-billwise-itemwise-casewise"><i class="fa fa-angle-right"></i> Casewise Sales Register</a></li>              
               <li><a href="/reports/sales-billwise-itemwise"><i class="fa fa-angle-right"></i> Bill&amp;Item wise Sales</a></li>
               <li><a href="/reports/sales-dispatch-register"><i class="fa fa-angle-right"></i> Sales Dispatch Register</a></li>
-              <li><a href="/reports/sales-upi-register"><i class="fa fa-angle-right"></i> Sales UPI/EMI Payments Register</a></li>
+              <li><a href="/reports/sales-upi-register"><i class="fa fa-angle-right"></i>UPI/EMI Pmts Register</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -85,6 +86,14 @@
               <li><a href="/reports/stock-transfer-register"><i class="fa fa-angle-right"></i> Stock Transfer</a></li>
               <li><a href="/reports/stock-adjustment-register"><i class="fa fa-angle-right"></i> Stock Adjustments</a></li>              
             </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:">
+              <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span> 
+            </a>
+            <ul class="sub">
+              <li><a href="/reports/receivables"><i class="fa fa-angle-right"></i> Receivables</a></li>              
+            </ul>            
           </li>          
         </ul>
       </li>
