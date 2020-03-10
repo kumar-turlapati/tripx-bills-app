@@ -598,6 +598,7 @@ function initializeJS() {
    }
 
   if( $('#owBarcode').length>0 ) {
+
     $('#customerType').on('change', function(e){
       if($('#tBodyowItems tr').length > 0) {
         var customerType = $(this).val();
@@ -617,6 +618,25 @@ function initializeJS() {
       }
     });
 
+    $(document).on('click', '#selectedDualLotNo', function(){
+      $('#dualLotModal').modal('hide');
+      var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
+      var barcode = $('#owBarcode').val();
+      var selectedLotNoDetails = lotNosResponse[selectedLotNo];
+      var barCodeItem = '[ '+barcode+' ] '+selectedLotNoDetails.itemName;
+      if(selectedLotNoDetails.cno !== '') {
+        barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+selectedLotNoDetails.cno+'</span>';
+      }
+      $('#lastScannedSaleItem').html(barCodeItem);
+      __injectOutwardItemRow(selectedLotNoDetails, barcode);
+      $('#owBarcode').val('');
+    });
+
+    $(document).on('click', '#selectedDualLotNoCancel', function(){
+      $('#dualLotModal').modal('hide');
+      $('#owBarcode').focus().val('');
+    });    
+
     $('#owBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
        var barcode = $(this).val();
@@ -630,16 +650,54 @@ function initializeJS() {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
               if(objLength > 0) {
-                jQuery.each(itemDetails.response, function (index, lotNoDetails) {
+                var itemName = '';
+                jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
                   lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                  itemName = lotNoDetails.itemName;
                 });
-                var barCodeItem = '[ '+barcode+' ] '+itemDetails.response.bcDetails.itemName;
-                if(itemDetails.response.bcDetails.cno !== '') {
-                  barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+itemDetails.response.bcDetails.cno+'</span>';
+                if(objLength === 1) {
+                  var selectedLotNoDetails = itemDetails.response.bcDetails[0];
+                  var barCodeItem = '[ '+barcode+' ] '+itemName;
+                  if(selectedLotNoDetails.cno !== '') {
+                    barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+selectedLotNoDetails.cno+'</span>';
+                  }
+                  $('#lastScannedSaleItem').html(barCodeItem);
+                  __injectOutwardItemRow(selectedLotNoDetails, barcode);
+                  $('#owBarcode').val('');
+                } else {
+                  $('#dualLotNosTitle').text(itemName);
+                  var dualBarcodesHtml = '<form>';
+                  dualBarcodesHtml += '<div class="table-responsive">';
+                  dualBarcodesHtml += '<table class="table table-striped table-hover font12" id="dualLotNosTable" style="margin-bottom:0px;">';
+                  dualBarcodesHtml += '<thead><tr>';
+                  dualBarcodesHtml += '<th>&nbsp;</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Lot No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Batch No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Cno/Box No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Available</th>';
+                  dualBarcodesHtml += '</tr></thead>';
+                  dualBarcodesHtml += '<tbody>';
+                  jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                    var lotNo = lotNoDetails.lotNo;
+                    var batchNo = lotNoDetails.batchNo;
+                    var availableQty = lotNoDetails.availableQty;
+                    var cno = lotNoDetails.cno;
+                    dualBarcodesHtml += '<tr>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
+                    dualBarcodesHtml += '<input type="radio" name="dualLotRadios" value="'+lotNo+'" style="visibility: visible; margin-top:0px;" />';
+                    dualBarcodesHtml += '</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+lotNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+batchNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+cno+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+availableQty+'</td>';
+                    dualBarcodesHtml += '</tr>';
+                  });
+                  dualBarcodesHtml += '</tbody>';
+                  dualBarcodesHtml += '</table>';
+                  dualBarcodesHtml += '</div>';
+                  $('#dualLots').html(dualBarcodesHtml);
+                  $('#dualLotModal').modal('show');
                 }
-                $('#lastScannedSaleItem').html(barCodeItem);
-                __injectOutwardItemRow(itemDetails.response.bcDetails, barcode);
-                $('#owBarcode').val('');
               } else {
                 alert('Barcode not found');                
               }
@@ -655,13 +713,14 @@ function initializeJS() {
        e.preventDefault();
      }
     });
+    
     $('#tBodyowItems').on('click', "a.deleteOwItem", function(e){
       var hlIndexId = $(this).attr("id");
       bootbox.confirm("Are you sure. You want to remove this item?", function(result) {
         if(result === true) {
           if(hlIndexId !== '') {
-            var hlIndex = hlIndexId.split('_')[1];
-            var trRowContainer = $('#tr_'+hlIndex);
+            var hlIndex = hlIndexId.split('_');
+            var trRowContainer = $('#tr_'+hlIndex[1]+'_'+hlIndex[2]);
             if(trRowContainer.length > 0) {
               trRowContainer.remove();
               if($('#tBodyowItems tr').length > 0) {
@@ -683,6 +742,7 @@ function initializeJS() {
         }
       });
     });
+
     function __injectOutwardItemRow(itemDetails, barcode) {
       var itemName = itemDetails.itemName;
       var nextIndex = 0;
@@ -690,7 +750,6 @@ function initializeJS() {
       var mrp = itemDetails.mrp;
       var taxPercent = itemDetails.taxPercent;
       var availableQty = itemDetails.availableQty;
-      var totalRows = $('#tBodyowItems tr').length;
       var upp = itemDetails.upp;
       var moq = itemDetails.mOq;
       var cno = itemDetails.cno;
@@ -698,6 +757,8 @@ function initializeJS() {
       var discountAmount = itemDetails.discountAmount;
       var orderQty = (parseFloat(moq)*1).toFixed(2);
       var customerType = $('#customerType').val();
+      var totalRows = $('#tBodyowItems tr').length;
+
       if( $('#editKey').length>0 ) {
         var editableMrps = $('#editKey').val();
       } else {
@@ -717,11 +778,12 @@ function initializeJS() {
         $('#siOtherInfoWindow').hide();        
       }
       
-      if( $('#tr_'+barcode).length > 0) {
-        var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
+      if( $('#tr_'+barcode+'_'+lotNo).length > 0) {
+        var trIdWithLotNo = '#tr_'+barcode+'_'+lotNo;
+        var trExistingQty = $(trIdWithLotNo+' .saleItemQty').val();
         var trAddedQty = parseFloat(trExistingQty)+parseFloat(orderQty);
-        var thisId = $('#tr_'+barcode).attr('index');
-        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty.toFixed(2));
+        var thisId = $(trIdWithLotNo).attr('index');
+        $(trIdWithLotNo+' .saleItemQty').val(trAddedQty.toFixed(2));
         updateSaleItemRow(thisId);
       } else {
         if(totalRows == 0) {
@@ -730,7 +792,7 @@ function initializeJS() {
           nextIndex = totalRows + 1;
         }
         var grossAmount = taxableAmount = parseFloat(mrp*1).toFixed(2);
-        var tableRowBegin = '<tr id="tr_'+barcode+'" class="bcRow" index="' + nextIndex + '">';
+        var tableRowBegin = '<tr id="tr_'+barcode+'_'+lotNo+'" class="bcRow" index="' + nextIndex + '">';
         var itemSlno = '<td align="right" style="vertical-align:middle;" class="itemSlno">' + nextIndex + '</td>';
         var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
         var lotNoInput = '<td style="vertical-align:middle;">'+
@@ -1023,9 +1085,6 @@ function initializeJS() {
                   $('#stBarcode').attr('disabled', true);
                   var message = "Scanned Qty. is more than actual Transfer Qty. and it is invalid. Please Rescan Again / స్కాన్ చేసిన సరుకు అసలు ట్రాన్స్ఫర్ చేయబడిన సరుకు కన్నా ఎక్కువగా ఉన్నది. ఇది చెల్లదు. మీరు మరల సరి చూసుకొని స్కాన్ చేయ గలరు.";
                   alert(message);
-/*                $('#stBarcode').val('');
-                  $('#trScannedQty').text(scannedQty.toFixed(2));
-                  $('#trDiff').text(diffQty.toFixed(2));*/
                   if($('#transferCode').length>0) {
                     window.location.href = "/stock-transfer/validate/"+$('#transferCode').val();
                   } else {
@@ -1067,6 +1126,7 @@ function initializeJS() {
   }  
 
   if( $('#indentBarcode').length>0 ) {
+    var lotNosResponse = [];
 
     function updateIndentFormTotals() {
       var totalQty = totalAmount = 0;
@@ -1082,9 +1142,29 @@ function initializeJS() {
       $('#grossAmount').text(totalAmount);
     }
 
+    $(document).on('click', '#selectedDualLotNoIndentCancel', function(){
+      $('#dualLotModalIndent').modal('hide');
+      $('#indentBarcode').focus().val('');
+    });
+
+    $(document).on('click', '#selectedDualLotNoIndent', function(){
+      $('#dualLotModalIndent').modal('hide');
+      var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
+      var barcode = $('#indentBarcode').val();
+      var selectedLotNoDetails = lotNosResponse[selectedLotNo];
+      var barCodeItem = '[ '+barcode+' ] '+selectedLotNoDetails.itemName;
+      if(selectedLotNoDetails.cno !== '') {
+        barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+selectedLotNoDetails.cno+'</span>';
+      }
+      $('#lastScannedSaleItem').html(barCodeItem);
+      __injectIndentItemRow(selectedLotNoDetails, barcode);
+      $('#indentBarcode').focus().val('');
+    });    
+
     if( $('.messageContainer').length>0 ) {
       $('.messageContainer').fadeOut(5000);
     }
+
     $('#indentBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
        var barcode = parseInt($(this).val());
@@ -1098,14 +1178,61 @@ function initializeJS() {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
               if(objLength > 0) {
-                if(itemDetails.response.bcDetails.availableQty <= 0) {
-                  alert("Qty. not available");
-                  $('#indentBarcode').focus();
-                  $('#indentBarcode').val('');                  
-                  return false;
+                var itemName = '';
+                jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                  lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                  itemName = lotNoDetails.itemName;
+                });
+                if(objLength === 1) {
+                  var selectedLotNoDetails = itemDetails.response.bcDetails[0];
+                  var barCodeItem = '[ '+barcode+' ] '+itemName;
+                  if(selectedLotNoDetails.cno !== '') {
+                    barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+selectedLotNoDetails.cno+'</span>';
+                  }
+                  $('#lastScannedSaleItem').html(barCodeItem);
+                  __injectIndentItemRow(selectedLotNoDetails, barcode);
+                  $('#indentBarcode').val('');
+                } else {
+                  $('#dualLotNosTitleIndent').text(itemName);
+                  var dualBarcodesHtml = '<form>';
+                  dualBarcodesHtml += '<div class="table-responsive">';
+                  dualBarcodesHtml += '<table class="table table-striped table-hover font12" id="dualLotNosTable" style="margin-bottom:0px;">';
+                  dualBarcodesHtml += '<thead><tr>';
+                  dualBarcodesHtml += '<th>&nbsp;</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Lot No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Batch No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Cno/Box No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Available</th>';
+                  dualBarcodesHtml += '</tr></thead>';
+                  dualBarcodesHtml += '<tbody>';
+                  jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                    var lotNo = lotNoDetails.lotNo;
+                    var batchNo = lotNoDetails.batchNo;
+                    var availableQty = lotNoDetails.availableQty;
+                    var cno = lotNoDetails.cno;
+                    dualBarcodesHtml += '<tr>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
+                    dualBarcodesHtml += '<input type="radio" name="dualLotRadios" value="'+lotNo+'" style="visibility: visible; margin-top:0px;" />';
+                    dualBarcodesHtml += '</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+lotNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+batchNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+cno+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+availableQty+'</td>';
+                    dualBarcodesHtml += '</tr>';
+                  });
+                  dualBarcodesHtml += '</tbody>';
+                  dualBarcodesHtml += '</table>';
+                  dualBarcodesHtml += '</div>';
+                  $('#dualLotsIndent').html(dualBarcodesHtml);
+                  $('#dualLotModalIndent').modal('show');
                 }
-                __injectIndentItemRow(itemDetails.response.bcDetails, barcode);
-                $('#indentBarcode').val('');
+                // if(itemDetails.response.bcDetails.availableQty <= 0) {
+                //   alert("Qty. not available");
+                //   $('#indentBarcode').focus();
+                //   $('#indentBarcode').val('');                  
+                //   return false;
+                // }
+                // __injectIndentItemRow(itemDetails.response.bcDetails, barcode);
               } else {
                 alert('Barcode not found');
               }
@@ -1123,13 +1250,14 @@ function initializeJS() {
        e.preventDefault();
      }
     });
+
     $('#tBodyowItems').on('click', "a.deleteOwItem", function(e){
       var hlIndexId = $(this).attr("id");
       bootbox.confirm("Are you sure. You want to remove this item?", function(result) {
         if(result === true) {
           if(hlIndexId !== '') {
-            var hlIndex = hlIndexId.split('_')[1];
-            var trRowContainer = $('#tr_'+hlIndex);
+            var hlIndex = hlIndexId.split('_');
+            var trRowContainer = $('#tr_'+hlIndex[1]+'_'+hlIndex[2]);
             if(trRowContainer.length > 0) {
               trRowContainer.remove();
               if($('#tBodyowItems tr').length > 0) {
@@ -1172,12 +1300,13 @@ function initializeJS() {
 
       $('#customerWindow, #owItemsTable, #saveWindow, #tFootowItems').show();
       
-      if( $('#tr_'+barcode).length > 0) {
-        var trIndex = $('#tr_'+barcode).attr('index');
-        var trExistingQty = $('#tr_'+barcode+' .saleItemQty').val();
+      if( $('#tr_'+barcode+'_'+lotNo).length > 0) {
+        var trIdWithLotNo = '#tr_'+barcode+'_'+lotNo;
+        var trIndex = $(trIdWithLotNo).attr('index');
+        var trExistingQty = $(trIdWithLotNo+' .saleItemQty').val();
         var trAddedQty = parseFloat(trExistingQty) + parseFloat(orderQty);
         var grossAmount = parseFloat(parseFloat(trAddedQty)*parseFloat(mrp)).toFixed(2);
-        $('#tr_'+barcode+' .saleItemQty').val(trAddedQty); 
+        $(trIdWithLotNo+' .saleItemQty').val(trAddedQty); 
         $('#grossAmount_'+trIndex).text(grossAmount);
       } else {
         if(totalRows == 0) {
@@ -1186,7 +1315,7 @@ function initializeJS() {
           nextIndex = totalRows + 1;
         }
         var grossAmount = taxableAmount = parseFloat(mrp*moq).toFixed(2);
-        var tableRowBegin = '<tr id="tr_'+barcode+'" class="bcRow" index="' + nextIndex + '">';
+        var tableRowBegin = '<tr id="tr_'+barcode+'_'+lotNo+'" class="bcRow" index="' + nextIndex + '">';
         var itemSlno = '<td align="right" style="vertical-align:middle;" class="itemSlno">' + nextIndex + '</td>';
         var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" size="30" readonly/></td>';
         var lotNoInput = '<td style="vertical-align:middle;"><input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly /></td>';
@@ -1307,6 +1436,8 @@ function initializeJS() {
       window.location.href = '/catalog/list';
     } else if(buttonId === 'manCreditNoteCancel') {
       window.location.href = '/fin/credit-note/create';
+    } else if(buttonId === 'arIndentStatus') {
+      window.location.href = '/sales-indents/list';      
     }
   });
 

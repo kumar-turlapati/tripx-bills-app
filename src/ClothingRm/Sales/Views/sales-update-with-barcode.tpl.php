@@ -122,7 +122,7 @@
         </div>        
         <form id="outwardEntryForm" method="POST" action="<?php echo $form_submit_url ?>">
           <div class="table-responsive">
-            <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
+            <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;margin-bottom: 0px;">
               <thead>
                 <tr>
                   <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Scan Barcode</td>
@@ -232,7 +232,7 @@
                         $tax_amount = '';
                       }
                   ?>
-                  <tr id="tr_<?php echo $barcode ?>">
+                  <tr id="tr_<?php echo $barcode.'_'.$lot_no ?>">
                     <td align="right" style="vertical-align:middle;" class="itemSlno"><?php echo $i+1 ?></td>
                     <td style="vertical-align:middle;">
                       <input 
@@ -355,7 +355,7 @@
                     </td>
                     <td style="vertical-align:middle;text-align:center;">
                       <div class="btn-actions-group">
-                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode ?>">
+                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode.'_'.$lot_no ?>">
                           <i class="fa fa-times"></i>
                         </a>
                       </div>
@@ -914,6 +914,21 @@
   </div>
 </div>
 
+<div class="modal fade" id="dualLotModal" tabindex="-1" role="dialog" aria-labelledby="dualLotModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" align="center">
+        <h5 class="modal-title" id="dualLotNosTitle" style="font-size: 18px; font-weight: bold; color: #225992;"></h5>
+      </div>
+      <p style="margin: 0;text-align: center;color: red;font-weight: bold;font-size: 16px;">Multiple entries found. Select Lot No. to continue</p>
+      <div class="modal-body" id="dualLots" style="padding:0px;"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="selectedDualLotNoCancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="selectedDualLotNo">Select</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <?php if($bill_to_print !== '' && $print_format === 'bill'): ?>
   <script>

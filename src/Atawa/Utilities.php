@@ -505,12 +505,12 @@ class Utilities
   }
 
   public static function acls($role_id='', $path='') {
-    // $path_a = explode('/', $path);
-    // if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn') {
-    //   $path = '/'.$path_a[1].'/'.$path_a[2];
-    // } elseif(is_array($path_a)) {
-    //   $path = '/'.$path_a[1];
-    // }
+    $path_a = explode('/', $path);
+    if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn' ) {
+      $path = '/'.$path_a[1].'/'.$path_a[2];
+    } elseif(is_array($path_a)) {
+      $path = '/'.$path_a[1];
+    }
     // dump($path_a, $path);
     // exit;
 
@@ -601,7 +601,7 @@ class Utilities
 
         '/customers/create', '/customers/update', '/customers/view', '/customers/list', 
 
-        '/fin/pc-voucher', '/fin/pc-vouchers', '/fin/petty-cash-book', '/fin/credit-note/create', '/fin/credit-notes',
+        '/fin/pc-voucher', '/fin/pc-vouchers', '/fin/petty-cash-book', '/fin/credit-note', '/fin/credit-notes',
 
         '/taxes/list', 
 

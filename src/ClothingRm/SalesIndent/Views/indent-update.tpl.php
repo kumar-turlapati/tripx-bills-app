@@ -46,7 +46,7 @@
         </div>        
         <form id="outwardEntryForm" method="POST">
           <div class="table-responsive">
-            <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;">
+            <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid; margin-bottom: 0px;">
               <thead>
                 <tr>
                   <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:8%;padding-left:5px;">Scan Barcode</td>
@@ -84,6 +84,14 @@
             </table>
           </div>
           <div class="table-responsive">
+            <table class="table font12" style="border:none;">
+              <tr>
+                <td style="border-top:none; border-left:none; border-right:none; border-bottom:none; text-align: right; width: 40%; color: #225992; font-weight: bold; font-size: 14px; vertical-align: middle;">Last item scanned:</td>
+                <td  style="border-top:none; border-left:none; border-right:none; border-bottom: 2px dotted; text-align: left; width: 60%; color: #4ab033; font-weight: bold; font-size: 16px; vertical-align: middle;" id="lastScannedSaleItem">&nbsp;</td>
+              </tr>
+            </table>
+          </div>          
+          <div class="table-responsive">
             <table <?php echo $ow_items_class ?> class="table table-striped table-hover font12" id="owItemsTable">
               <thead>
                 <tr>
@@ -116,7 +124,7 @@
                         $item_amount = '';
                       }
                   ?>
-                  <tr id="tr_<?php echo $barcode ?>" class="bcrow" index="<?php echo $i ?>">
+                  <tr id="tr_<?php echo $barcode.'_'.$lot_no ?>" class="bcrow" index="<?php echo $i ?>">
                     <td align="right" style="vertical-align:middle;" class="itemSlno"><?php echo $i+1 ?></td>
                     <td style="vertical-align:middle;">
                       <input 
@@ -167,7 +175,7 @@
                     </td>
                     <td style="vertical-align:middle;text-align:center;">
                       <div class="btn-actions-group">
-                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode ?>">
+                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode.'_'.$lot_no ?>">
                           <i class="fa fa-times"></i>
                         </a>
                       </div>
@@ -344,6 +352,23 @@
     </section>
   </div>
 </div>
+
+<div class="modal fade" id="dualLotModalIndent" tabindex="-1" role="dialog" aria-labelledby="dualLotModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" align="center">
+        <h5 class="modal-title" id="dualLotNosTitleIndent" style="font-size: 18px; font-weight: bold; color: #225992;"></h5>
+      </div>
+      <p style="margin: 0;text-align: center;color: red;font-weight: bold;font-size: 16px;">Multiple entries found. Select Lot No. to continue</p>
+      <div class="modal-body" id="dualLotsIndent" style="padding:0px;"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="selectedDualLotNoIndentCancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="selectedDualLotNoIndent">Select</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php if($last_indent_no>0) : ?>
   <script>
     (function() {
