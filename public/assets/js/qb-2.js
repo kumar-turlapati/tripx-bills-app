@@ -948,6 +948,24 @@ function initializeJS() {
   }
 
   if( $('.transBarcode').length > 0) {
+    var lotNosResponse = [];
+    var selectedLotNoDetails = null;
+    var barcode = '';
+    var barcodeId = '';
+    var rowId = '';
+
+    $(document).on('click', '#modalStockTransferSelect', function(){
+      $('#modalStockTransfer').modal('hide');
+      var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
+      selectedLotNoDetails = lotNosResponse[selectedLotNo];
+      updateTrasferRowFromBarcode(selectedLotNoDetails);
+    });
+
+    $(document).on('click', '#modalStockTransferCancel', function(){
+      $('#dualLotModal').modal('hide');
+      $('#owBarcode').focus().val('');
+    });    
+
     $('.transBarcode').on('blur', function(e){
       var barcode = $(this).val();
       var barcodeId = $(this).attr('id');
@@ -957,83 +975,126 @@ function initializeJS() {
       }
     });
 
+    function updateTrasferRowFromBarcode(selectedLotNoDetails) {
+      var isLotExists = false;
+      var itemName = selectedLotNoDetails.itemName;
+      var availableQty = parseFloat(selectedLotNoDetails.availableQty).toFixed(2);
+      var lotNo = selectedLotNoDetails.lotNo;
+      var cno = selectedLotNoDetails.cno;
+      var mOq = parseFloat(selectedLotNoDetails.mOq).toFixed(2);
+      var taxPercent = parseFloat(selectedLotNoDetails.taxPercent).toFixed(2);
+      var mrp = parseFloat(selectedLotNoDetails.mrp).toFixed(2);
+      var transferQty = parseFloat(mOq*1).toFixed(2);
+      var itemAmount = parseFloat(mrp*transferQty).toFixed(2);
+      var lotNoRef = $('#lotNo_'+rowId);
+      var isLotExists = false;
+      var existingLotId = null;
+      var selectedLotId = selectedLotNo = null;
+
+      /* check if lot no is already selected. */
+      jQuery('.lotNo').each(function(i, obj) {
+        selectedLotNo = $(this).val();
+        selectedLotId = $(this).attr('id');
+        if(selectedLotNo === lotNo && rowId !== i) {
+          isLotExists = true;
+          existingLotId = i;
+        }
+      });
+
+      if(isLotExists) {
+        $('#barcode_'+rowId).focus().val('');
+        var selectedLotIndex = existingLotId;
+        var selectedLotQty = parseFloat($('#qty_'+selectedLotIndex).val());
+        var newTransferQty = parseFloat(transferQty)+parseFloat(selectedLotQty); 
+        var itemAmount = parseFloat(mrp*newTransferQty).toFixed(2);
+        var availQty = parseFloat($('#qtyava_'+selectedLotIndex).val());
+        if(newTransferQty <= availableQty) {
+          $('#qty_'+selectedLotIndex).val(newTransferQty);
+          $('#grossAmount_'+selectedLotIndex).text(itemAmount);
+          updateTransferOutItemRow(selectedLotIndex);
+        } else {
+          alert('Available  Qty. is less than Transfer Qty!! Please check.');
+          return false;
+        }
+      } else {
+        $('#iname_'+rowId).attr('readonly', 'readonly');
+        $('#iname_'+rowId).val(itemName);
+        $('#qtyava_'+rowId).val(availableQty);
+        $('#cno_'+rowId).text(cno);
+        $('#qty_'+rowId).val(transferQty);
+        $('#mrp_'+rowId).val(mrp);
+        $('#grossAmount_'+rowId).text(itemAmount);
+        $('#saItemTax_'+rowId+' option[value="'+taxPercent+'"]').attr('selected', 'selected');
+        
+        $('#qtyava_'+rowId).attr('readonly', 'readonly');
+        $('#mrp_'+rowId).attr('readonly', 'readonly');
+        jQuery(lotNoRef).html(
+          jQuery("<option></option>").
+          attr("value",lotNo).
+          text(lotNo)
+        );
+        updateTransferOutItemRow(rowId);
+        var nextRowId = rowId+1;
+        $('#barcode_'+nextRowId).focus();
+      }
+    }
+
     $('.transBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
-       var barcode = $(this).val();
-       var barcodeId = $(this).attr('id');
-       var rowId = parseInt(barcodeId.split('_')[1]);
-       if(barcode.length !== 13) {
-        alert('Invalid barcode');
-        return false;
-       }
+          barcode = $(this).val();
+          barcodeId = $(this).attr('id');
+          rowId = parseInt(barcodeId.split('_')[1]);
+       // if(barcode.length !== 13) {
+       //  alert('Invalid barcode');
+       //  return false;
+       // }
        var locationCode = $('#fromLocation').val();
        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
           success: function(itemDetails) {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
               if(objLength > 0) {
-                var itemName = itemDetails.response.bcDetails.itemName;
-                var availableQty = parseFloat(itemDetails.response.bcDetails.availableQty).toFixed(2);
-                var lotNo = itemDetails.response.bcDetails.lotNo;
-                var cno = itemDetails.response.bcDetails.cno;
-                var mOq = parseFloat(itemDetails.response.bcDetails.mOq).toFixed(2);
-                var taxPercent = parseFloat(itemDetails.response.bcDetails.taxPercent).toFixed(2);
-                var mrp = parseFloat(itemDetails.response.bcDetails.mrp).toFixed(2);
-                var transferQty = parseFloat(mOq*1).toFixed(2);
-                var itemAmount = parseFloat(mrp*transferQty).toFixed(2);
-                var lotNoRef = $('#lotNo_'+rowId);
-                var isLotExists = false;
-                var existingLotId = null;
-
-                var selectedLotId = selectedLotNo = null;
-
-                /* check if lot no is already selected. */
-                jQuery('.lotNo').each(function(i, obj) {
-                  selectedLotNo = $(this).val();
-                  selectedLotId = $(this).attr('id');
-                  if(selectedLotNo === lotNo && rowId !== i) {
-                    isLotExists = true;
-                    existingLotId = i;
-                  }
+                var itemName = '';
+                jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                  lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                  itemName = lotNoDetails.itemName;
                 });
-
-                // console.log(selectedLotNo, selectedLotId, isLotExists);
-
-                if(isLotExists) {
-                  $('#barcode_'+rowId).focus().val('');
-                  var selectedLotIndex = existingLotId;
-                  var selectedLotQty = parseFloat($('#qty_'+selectedLotIndex).val());
-                  var newTransferQty = parseFloat(transferQty)+parseFloat(selectedLotQty); 
-                  var itemAmount = parseFloat(mrp*newTransferQty).toFixed(2);
-                  var availQty = parseFloat($('#qtyava_'+selectedLotIndex).val());
-                  if(newTransferQty <= availableQty) {
-                    $('#qty_'+selectedLotIndex).val(newTransferQty);
-                    $('#grossAmount_'+selectedLotIndex).text(itemAmount);
-                    updateTransferOutItemRow(selectedLotIndex);
-                  } else {
-                    alert('Available  Qty. is less than Transfer Qty!! Please check.');
-                    return false;
-                  }
+                if(objLength === 1) {
+                  selectedLotNoDetails = itemDetails.response.bcDetails[0];
+                  updateTrasferRowFromBarcode(selectedLotNoDetails);
                 } else {
-                  $('#iname_'+rowId).attr('readonly', 'readonly');
-                  $('#iname_'+rowId).val(itemName);
-                  $('#qtyava_'+rowId).val(availableQty);
-                  $('#cno_'+rowId).text(cno);
-                  $('#qty_'+rowId).val(transferQty);
-                  $('#mrp_'+rowId).val(mrp);
-                  $('#grossAmount_'+rowId).text(itemAmount);
-                  $('#saItemTax_'+rowId+' option[value="'+taxPercent+'"]').attr('selected', 'selected');
-                  
-                  $('#qtyava_'+rowId).attr('readonly', 'readonly');
-                  $('#mrp_'+rowId).attr('readonly', 'readonly');
-                  jQuery(lotNoRef).html(
-                    jQuery("<option></option>").
-                    attr("value",lotNo).
-                    text(lotNo)
-                  );
-                  updateTransferOutItemRow(rowId);
-                  var nextRowId = rowId+1;
-                  $('#barcode_'+nextRowId).focus();
+                  $('#dualLotNosTitle').text(itemName);
+                  var dualBarcodesHtml = '<form>';
+                  dualBarcodesHtml += '<div class="table-responsive">';
+                  dualBarcodesHtml += '<table class="table table-striped table-hover font12" id="dualLotNosTable" style="margin-bottom:0px;">';
+                  dualBarcodesHtml += '<thead><tr>';
+                  dualBarcodesHtml += '<th>&nbsp;</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Lot No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Batch No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Cno/Box No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Available</th>';
+                  dualBarcodesHtml += '</tr></thead>';
+                  dualBarcodesHtml += '<tbody>';
+                  jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                    var lotNo = lotNoDetails.lotNo;
+                    var batchNo = lotNoDetails.batchNo;
+                    var availableQty = lotNoDetails.availableQty;
+                    var cno = lotNoDetails.cno;
+                    dualBarcodesHtml += '<tr>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
+                    dualBarcodesHtml += '<input type="radio" name="dualLotRadios" value="'+lotNo+'" style="visibility: visible; margin-top:0px;" />';
+                    dualBarcodesHtml += '</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+lotNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+batchNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+cno+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+availableQty+'</td>';
+                    dualBarcodesHtml += '</tr>';
+                  });
+                  dualBarcodesHtml += '</tbody>';
+                  dualBarcodesHtml += '</table>';
+                  dualBarcodesHtml += '</div>';
+                  $('#modalStockTransferLotNos').html(dualBarcodesHtml);
+                  $('#modalStockTransfer').modal('show');
                 }
               } else {
                 alert('Barcode not found');                
@@ -1053,10 +1114,10 @@ function initializeJS() {
     $('#stBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
        var barcode = $(this).val();
-       if(barcode.length !== 13) {
-        alert('Invalid barcode');
-        return false;
-       }
+       // if(barcode.length !== 13) {
+       //  alert('Invalid barcode');
+       //  return false;
+       // }
        var locationCode = $('#locationCode').val();
        var transferCode = $('#transferCode').val();
        var scannedQty = 0;
