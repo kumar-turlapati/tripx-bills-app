@@ -340,6 +340,23 @@
   </div>
 </div>
 
+<div class="modal fade" id="modalStockTransfer" tabindex="-1" role="dialog" aria-labelledby="dualLotModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" align="center">
+        <h5 class="modal-title" id="dualLotNosTitle" style="font-size: 18px; font-weight: bold; color: #225992;"></h5>
+      </div>
+      <p style="margin: 0;text-align: center;color: red;font-weight: bold;font-size: 16px;">Multiple entries found. Select Lot No. to continue</p>
+      <div class="modal-body" id="modalStockTransferLotNos" style="padding:0px;"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modalStockTransferCancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="modalStockTransferSelect">Select</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <?php /*
                   <tr>
                     <td colspan="9" style="vertical-align:middle;font-weight:bold;font-size:16px;text-align:right;">Gross Amount</td>
