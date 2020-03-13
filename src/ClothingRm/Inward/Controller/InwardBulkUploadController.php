@@ -268,20 +268,25 @@ class InwardBulkUploadController
             $item_size = isset($item_details['ItemSize']) ? Utilities::clean_string($item_details['ItemSize']) : '';
             $item_color = isset($item_details['ItemColor']) ? Utilities::clean_string($item_details['ItemColor']) : '';
             $item_sleeve = isset($item_details['ItemSleeve']) ? Utilities::clean_string($item_details['ItemSleeve']) : '';
+            $batch_no = isset($item_details['BatchNo']) ? Utilities::clean_string($item_details['BatchNo']) : '';
+            $expiry_date = isset($item_details['ExpiryDate']) ? Utilities::clean_string($item_details['ExpiryDate']) : ''; 
+            $wholesale_price = isset($item_details['WholesalePrice']) ? Utilities::clean_string($item_details['WholesalePrice']) : 0;
+            $online_price = isset($item_details['OnlinePrice']) ? Utilities::clean_string($item_details['OnlinePrice']) : 0; 
 
-            $imported_records[$key]['cno'] = $cno;
-            $imported_records[$key]['uomName'] = $uom_name;
-            $imported_records[$key]['barcode'] = $barcode;
-            $imported_records[$key]['itemSku'] = $item_sku;
-            $imported_records[$key]['itemStyleCode'] = $item_style_code;
-            $imported_records[$key]['itemSize'] = $item_size;
-            $imported_records[$key]['itemColor'] = $item_color;
+            $imported_records[$key]['ContainerOrCaseNo'] = $cno;
+            $imported_records[$key]['UomName'] = $uom_name;
+            $imported_records[$key]['Barcode'] = $barcode;
+            $imported_records[$key]['ItemSku'] = $item_sku;
+            $imported_records[$key]['ItemStyleCode'] = $item_style_code;
+            $imported_records[$key]['ItemSize'] = $item_size;
+            $imported_records[$key]['ItemColor'] = $item_color;
             $imported_records[$key]['ItemSleeve'] = $item_sleeve;
+            $imported_records[$key]['BatchNo'] = $batch_no;
 
             if($item_name === '') {
-              $form_errors['itemDetails'][$key]['itemName'] = 'Matched item name is required.';
+              $form_errors['itemDetails'][$key]['MatchedItemName'] = 'Matched item name is required.';
             } else {
-              $imported_records[$key]['itemName'] = $item_name;
+              $imported_records[$key]['MatchedItemName'] = $item_name;
             }
             if($qty <= 0) {
               $form_errors['itemDetails'][$key]['ItemQty'] = 'Invalid item qty.';
@@ -346,6 +351,28 @@ class InwardBulkUploadController
             } else {
               $imported_records[$key]['BrandName'] = '';
             }
+            if($expiry_date !== '') {
+              $expiry_date_cleaned = str_replace('D', '', $expiry_date);
+              echo $expiry_date_cleaned;
+              $exp_date_a = explode('-', $expiry_date_cleaned);
+              if(is_array($exp_date_a) && count($exp_date_a) === 3 && checkdate($exp_date_a[1], $exp_date_a[0], $exp_date_a[2])) {
+                $imported_records[$key]['ExpiryDate'] = $expiry_date_cleaned;
+              }
+            }
+            if($wholesale_price !== '') {
+              if($wholesale_price <= 0) {
+                $form_errors['itemDetails'][$key]['WholesalePrice'] = 'Invalid wholesale price.';
+              } else {
+                $imported_records[$key]['WholesalePrice'] = $wholesale_price;
+              }
+            }
+            if($online_price !== '') {
+              if($online_price <= 0) {
+                $form_errors['itemDetails'][$key]['OnlinePrice'] = 'Invalid online price.';
+              } else {
+                $imported_records[$key]['OnlinePrice'] = $online_price;
+              }
+            }
           }
           $cleaned_params['itemDetails'] = $imported_records;
         }
@@ -355,6 +382,9 @@ class InwardBulkUploadController
         $form_errors['fileName'] = 'Unable to retrieve rows.';        
       }
     }
+
+    // dump($cleaned_params);
+    // exit;
 
     if(count($form_errors)>0) {
       return [

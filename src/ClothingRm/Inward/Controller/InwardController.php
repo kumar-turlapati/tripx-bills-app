@@ -57,15 +57,6 @@ class InwardController
     // get client details
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];
-
-    // get client locations
-/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
-    if($client_locations_resp['status']) {
-      foreach($client_locations_resp['clientLocations'] as $loc_details) {
-        $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
-      }
-    }*/
-
     $client_locations = Utilities::get_client_locations(false, false, true);    
 
     // check if form is submitted.
@@ -167,14 +158,6 @@ class InwardController
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];
 
-    # get client locations
-/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
-    if($client_locations_resp['status']) {
-      foreach($client_locations_resp['clientLocations'] as $loc_details) {
-        $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
-      }
-    }*/
-
     $client_locations = Utilities::get_client_locations(false, false, true);    
 
     # validate purchase code.
@@ -215,6 +198,10 @@ class InwardController
         $itemSizes = array_column($purchase_details['itemDetails'], 'itemSize');
         $itemColors = array_column($purchase_details['itemDetails'], 'itemColor');
         $itemSleeves = array_column($purchase_details['itemDetails'], 'itemSleeve');
+        $expiryDates = array_column($purchase_details['itemDetails'], 'expiryDate');
+        $wholesalePrices = array_column($purchase_details['itemDetails'], 'wholesalePrice');
+        $onlinePrices = array_column($purchase_details['itemDetails'], 'onlinePrice');
+        $batchNos = array_column($purchase_details['itemDetails'], 'batchNo');
 
         if(count($item_names)>50) {
           $total_item_rows = count($item_names);
@@ -250,6 +237,10 @@ class InwardController
         $form_data['itemSize'] = $itemSizes;
         $form_data['itemColor'] = $itemColors;
         $form_data['itemSleeve'] = $itemSleeves;
+        $form_data['expiryDate'] = $expiryDates;
+        $form_data['batchNo'] = $batchNos;
+        $form_data['onlinePrice'] = $onlinePrices;
+        $form_data['wholesalePrice'] = $wholesalePrices;
 
         // use this variable to control in template.
         if($form_data['grnFlag'] === 'yes') {
@@ -362,12 +353,6 @@ class InwardController
     $client_business_state = $client_details['locState'];
 
     # get client locations
-/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
-    if($client_locations_resp['status']) {
-      foreach($client_locations_resp['clientLocations'] as $loc_details) {
-        $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
-      }
-    }*/
 
     $client_locations = Utilities::get_client_locations(false, false, true);    
 
@@ -645,15 +630,6 @@ class InwardController
     # get client details
     $client_details = Utilities::get_client_details();
     $client_business_state = $client_details['locState'];
-
-    # get client locations
-/*    $client_locations_resp = $this->user_model->get_client_locations(false, false, true);
-    if($client_locations_resp['status']) {
-      foreach($client_locations_resp['clientLocations'] as $loc_details) {
-        $client_locations[$loc_details['locationCode']] = $loc_details['locationName'];
-      }
-    }*/
-
     $client_locations = Utilities::get_client_locations(false, false, true);    
 
     # validate purchase code.
@@ -951,6 +927,14 @@ class InwardController
       $item_color_a = isset($form_data['itemColor']) ? $form_data['itemColor'] : [];
       $item_sleeve_a = isset($form_data['itemSleeve']) ? $form_data['itemSleeve'] : [];
 
+      $batchno_a = isset($form_data['batchNo']) ? $form_data['batchNo'] : [];
+      $expiry_date_a = isset($form_data['expiryDate']) ? $form_data['expiryDate'] : [];
+      $wholesale_price_a = isset($form_data['wholesalePrice']) ? $form_data['wholesalePrice'] : [];
+      $online_price_a = isset($form_data['onlinePrice']) ? $form_data['onlinePrice'] : [];
+
+      // dump($batchno_a, $expiry_date_a, $wholesale_price_a, $online_price_a);
+      // exit;
+
       foreach($item_names_a as $key=>$item_name) {
         if($item_name !== '') {
 
@@ -975,6 +959,10 @@ class InwardController
           $item_size = isset($item_size_a[$key]) ? Utilities::clean_string($item_size_a[$key]) : '';
           $item_color = isset($item_color_a[$key]) ? Utilities::clean_string($item_color_a[$key]) : '';
           $item_sleeve = isset($item_sleeve_a[$key]) ? Utilities::clean_string($item_sleeve_a[$key]) : '';
+          $batch_no = isset($batchno_a[$key]) ? Utilities::clean_string($batchno_a[$key]) : '';
+          $expiry_date = isset($expiry_date_a[$key]) ? Utilities::clean_string($expiry_date_a[$key]) : '';
+          $wholesale_price = isset($wholesale_price_a[$key]) ? Utilities::clean_string($wholesale_price_a[$key]) : '';
+          $online_price = isset($online_price_a[$key]) ? Utilities::clean_string($online_price_a[$key]) : '';
 
           $cleaned_params['itemDetails']['itemName'][] = $item_name;
           $cleaned_params['itemDetails']['categoryName'][] = $category_name;
@@ -986,6 +974,10 @@ class InwardController
           $cleaned_params['itemDetails']['itemSize'][] = $item_size;
           $cleaned_params['itemDetails']['itemColor'][] = $item_color;
           $cleaned_params['itemDetails']['itemSleeve'][] = $item_sleeve;
+          $cleaned_params['itemDetails']['batchNo'][] = $batch_no;
+          $cleaned_params['itemDetails']['expiryDate'][] = $expiry_date;
+          $cleaned_params['itemDetails']['wholesalePrice'][] = $wholesale_price;
+          $cleaned_params['itemDetails']['onlinePrice'][] = $online_price;
 
           if($barcode !== '') {
             if(is_numeric($barcode)) {
@@ -1163,14 +1155,18 @@ class InwardController
       $form_data['categoryName'][$key] = $item_details['CategoryName'];
       $form_data['rackNo'][$key] = $item_details['RackNo'];
       $form_data['brandName'][$key] = $item_details['BrandName'];
-      $form_data['cno'][$key] = $item_details['cno'];
-      $form_data['uomName'][$key] = $item_details['uomName'];
-      $form_data['barcode'][$key] = $item_details['barcode'];
-      $form_data['itemSku'][$key] = isset($item_details['itemSku']) ? $item_details['itemSku'] : '';
+      $form_data['cno'][$key] = $item_details['ContainerOrCaseNo'];
+      $form_data['uomName'][$key] = $item_details['UomName'];
+      $form_data['barcode'][$key] = $item_details['Barcode'];
+      $form_data['itemSku'][$key] = isset($item_details['ItemSku']) ? $item_details['ItemSku'] : '';
       $form_data['itemStyleCode'][$key] = isset($item_details['ItemStyleCode']) ? $item_details['ItemStyleCode'] : '';
       $form_data['itemSize'][$key] = isset($item_details['ItemSize']) ? $item_details['ItemSize'] : '';
       $form_data['itemColor'][$key] = isset($item_details['ItemColor']) ? $item_details['ItemColor'] : '';
       $form_data['itemSleeve'][$key] = isset($item_details['ItemSleeve']) ? $item_details['ItemSleeve'] : '';
+      $form_data['batchNo'][$key] = isset($item_details['BatchNo']) ? $item_details['BatchNo'] : '';
+      $form_data['expiryDate'][$key] = isset($item_details['ExpiryDate']) ? $item_details['ExpiryDate'] : '';
+      $form_data['wholesalePrice'][$key] = isset($item_details['WholesalePrice']) ? $item_details['WholesalePrice'] : '';
+      $form_data['onlinePrice'][$key] = isset($item_details['OnlinePrice']) ? $item_details['OnlinePrice'] : '';
     }
     return $form_data;
   }

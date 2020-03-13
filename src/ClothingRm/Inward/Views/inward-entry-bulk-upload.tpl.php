@@ -224,7 +224,7 @@
               <i class="fa fa-times"></i> Cancel
             </button>
             <button class="btn btn-primary" id="inwBulkUploadSave">
-              <i class="fa fa-download"></i> Import
+              <i class="fa fa-upload"></i> Upload
             </button>
           </div>
         </form>

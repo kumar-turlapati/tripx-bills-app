@@ -410,6 +410,10 @@
                   <th style="width:20px"   class="text-center">Size</th>
                   <th style="width:20px"   class="text-center">Color</th>
                   <th style="width:20px"   class="text-center">Sleeve<br />Type</th>
+                  <th style="width:20px"   class="text-center">BatchNo.</th>
+                  <th style="width:20px"   class="text-center">ExpiryDate</th>
+                  <th style="width:20px"   class="text-center">Wholesale<br />Price (in Rs.)</th>
+                  <th style="width:20px"   class="text-center">Online<br />Price (in Rs.)</th>
                 </tr>
               </thead>
               <tbody>
@@ -517,7 +521,26 @@
                   } else {
                     $item_sleeve = '';
                   }
-
+                  if( isset($form_data['batchNo'][$i-1]) && $form_data['batchNo'][$i-1] !== '' ) {
+                    $batch_no = $form_data['batchNo'][$i-1];
+                  } else {
+                    $batch_no = '';
+                  }
+                  if( isset($form_data['expiryDate'][$i-1]) && $form_data['expiryDate'][$i-1] !== '' ) {
+                    $expiry_date = $form_data['expiryDate'][$i-1];
+                  } else {
+                    $expiry_date = '';
+                  }
+                  if( isset($form_data['wholesalePrice'][$i-1]) && $form_data['wholesalePrice'][$i-1] !== '' ) {
+                    $wholesale_price = $form_data['wholesalePrice'][$i-1];
+                  } else {
+                    $wholesale_price = '';
+                  }
+                  if( isset($form_data['onlinePrice'][$i-1]) && $form_data['onlinePrice'][$i-1] !== '' ) {
+                    $online_price = $form_data['onlinePrice'][$i-1];
+                  } else {
+                    $online_price = '';
+                  }
                   $billed_qty = $inward_qty-$free_qty;
                   if(is_numeric($packed_qty) && $packed_qty>0) {
                     $gross_amount = $billed_qty*$item_rate*$packed_qty;
@@ -850,6 +873,66 @@
                       <span class="error">Invalid</span>
                     <?php endif; ?>
                   </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="batchNo[]"
+                      id="batchNo_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Batch No."
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $batch_no ?>"
+                      title="Add Batch No. if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['batchNo']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="expiryDate[]"
+                      id="expiryDate_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Expiry Date"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $expiry_date ?>"
+                      title="Add Expiry Date if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['expiryDate']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="wholesalePrice[]"
+                      id="wholesalePrice_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Wholesale Price"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $wholesale_price ?>"
+                      title="Add Wholesale Price if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['wholesalePrice']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
+                  <td style="width:20px; vertical-align:middle;">
+                    <input
+                      type="text"
+                      name="onlinePrice[]"
+                      id="onlinePrice_<?php echo $i ?>"
+                      class="form-control"
+                      placeholder="Online Price"
+                      style="width:70px;font-size:12px;"
+                      value="<?php echo $online_price ?>"
+                      title="Add Online Price if available"
+                    />
+                    <?php if( isset($form_errors['itemDetails'][$i-1]['onlinePrice']) ) :?>
+                      <span class="error">Invalid</span>
+                    <?php endif; ?>
+                  </td>
                   <input
                     type="hidden" 
                     id="inwItemTaxAmt_<?php echo $i ?>"
@@ -867,24 +950,24 @@
                 $net_pay = round($grand_total);
               ?>
                 <tr>
-                  <td colspan="21" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
+                  <td colspan="25" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">Total Taxable Value</td>
                   <td id="inwItemsTotal" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($items_total, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="21" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
+                  <td colspan="25" align="right" style="vertical-align:middle;font-weight:bold;font-size:14px;">(+) G.S.T</td>
                   <td align="right" id="inwItemTaxAmount" class="taxAmounts" style="vertical-align:middle;font-weight:bold;font-size:14px;"><?php echo number_format(round($total_tax_amount, 2), 2, '.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="21" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
+                  <td colspan="25" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">(+ or -) Round off</td>
                   <td style="vertical-align:middle;text-align:right;font-size:14px;" id="roundOff"><?php echo number_format($round_off,2,'.','') ?></td>
                 </tr>
                 <tr>
-                  <td colspan="21" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
+                  <td colspan="25" style="vertical-align:middle;font-weight:bold;font-size:14px;" align="right">Total Amount</td>
                   <td style="vertical-align:middle;text-align:right;font-size:18px;" id="inwNetPay"><?php echo number_format(round($net_pay,2),2,'.','') ?></td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="21">
+                  <td style="vertical-align:middle;text-align:right;" colspan="25">
                     <textarea
                       class="form-control noEnterKey"
                       rows="3"
@@ -895,10 +978,10 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="22" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
+                  <td colspan="26" style="text-align:center;font-weight:bold;font-size:16px;">GST Summary</td>
                 </tr>
                 <tr style="padding:0px;margin:0px;">
-                  <td colspan="22" style="padding:0px;margin:0px;">
+                  <td colspan="26" style="padding:0px;margin:0px;">
                     <table class="table table-striped table-hover font12 valign-middle">
                       <thead>
                         <th style="text-align:center;">GST Rate (in %)</th>
