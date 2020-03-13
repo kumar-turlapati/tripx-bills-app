@@ -270,8 +270,8 @@ class InwardBulkUploadController
             $item_sleeve = isset($item_details['ItemSleeve']) ? Utilities::clean_string($item_details['ItemSleeve']) : '';
             $batch_no = isset($item_details['BatchNo']) ? Utilities::clean_string($item_details['BatchNo']) : '';
             $expiry_date = isset($item_details['ExpiryDate']) ? Utilities::clean_string($item_details['ExpiryDate']) : ''; 
-            $wholesale_price = isset($item_details['WholesalePrice']) ? Utilities::clean_string($item_details['WholesalePrice']) : 0;
-            $online_price = isset($item_details['OnlinePrice']) ? Utilities::clean_string($item_details['OnlinePrice']) : 0; 
+            $wholesale_price = isset($item_details['WholesalePrice']) && is_numeric($item_details['WholesalePrice']) ? Utilities::clean_string($item_details['WholesalePrice']) : '';
+            $online_price = isset($item_details['OnlinePrice']) && is_numeric($item_details['OnlinePrice'])? Utilities::clean_string($item_details['OnlinePrice']) : ''; 
 
             $imported_records[$key]['ContainerOrCaseNo'] = $cno;
             $imported_records[$key]['UomName'] = $uom_name;
@@ -365,6 +365,8 @@ class InwardBulkUploadController
               } else {
                 $imported_records[$key]['WholesalePrice'] = $wholesale_price;
               }
+            } else {
+              $imported_records[$key]['WholesalePrice'] = 0;
             }
             if($online_price !== '') {
               if($online_price <= 0) {
@@ -372,6 +374,8 @@ class InwardBulkUploadController
               } else {
                 $imported_records[$key]['OnlinePrice'] = $online_price;
               }
+            } else {
+              $imported_records[$key]['OnlinePrice'] = 0;
             }
           }
           $cleaned_params['itemDetails'] = $imported_records;
