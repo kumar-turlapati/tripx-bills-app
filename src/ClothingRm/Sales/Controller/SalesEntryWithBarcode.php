@@ -981,14 +981,17 @@ class salesEntryWithBarcode {
     $form_data['name'] = $tran_details['customerName'];
     $form_data['mobileNo'] = $tran_details['primaryMobileNo'];
     $form_data['indentNo'] = $tran_details['indentNo'];
+    $form_data['customerType'] = 'b2b';
+    $form_data['taxCalcOption'] = 'e';
     foreach($indent_items as $key => $item_details) {
       $form_data['itemDetails']['itemName'][$key] = $item_details['itemName'];
       $form_data['itemDetails']['itemSoldQty'][$key] = $item_details['itemQty'];
       $form_data['itemDetails']['itemRate'][$key] = $item_details['itemRate'];
-      $form_data['itemDetails']['taxPercent'][$key] = $item_details['taxPercent'];
+      $form_data['itemDetails']['itemTaxPercent'][$key] = $item_details['taxPercent'];
       $form_data['itemDetails']['itemAvailQty'][$key] = $item_details['closingQty'];
       $form_data['itemDetails']['lotNo'][$key] = $item_details['lotNo'];
       $form_data['itemDetails']['barcode'][$key] = $item_details['barcode'];
+      $form_data['itemDetails']['itemDiscount'][$key] = 0;
     }
     return $form_data;
   }

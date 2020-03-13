@@ -179,6 +179,7 @@
                       $tax_percent = isset($form_data['itemDetails']['itemTaxPercent'][$i]) ? $form_data['itemDetails']['itemTaxPercent'][$i] : '';
                       $lot_no = isset($form_data['itemDetails']['lotNo'][$i]) ? $form_data['itemDetails']['lotNo'][$i] : '';
                       $barcode = isset($form_data['itemDetails']['barcode'][$i]) ? $form_data['itemDetails']['barcode'][$i] : '';                      
+
                       if($item_qty > 0 && $item_rate > 0) {
                         $item_amount = $item_qty * $item_rate;
                         $taxable_amount = $item_amount - $item_discount;
