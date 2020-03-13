@@ -10,7 +10,9 @@
   }
 
   $generator = new \Picqer\Barcode\BarcodeGeneratorPNG;
-  $print_info = $_SESSION['printBarCodes'];  
+  $print_info = $_SESSION['printBarCodes'];
+  // dump($print_info);
+  // exit;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +94,13 @@
         $printable_qty = 65;
         $print_qty = $balance_qty = $print_qty_details[0];
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
-        $print_item_mrp = number_format($print_qty_details[2],2,'.','');
+        if($rate_type === 'wholesale') {
+          $print_item_mrp = number_format($print_qty_details[8],2,'.','');
+        } elseif($rate_type === 'online') {
+          $print_item_mrp = number_format($print_qty_details[9],2,'.','');
+        } else {
+          $print_item_mrp = number_format($print_qty_details[2],2,'.','');
+        }
         $mfg_date = date("m/y", strtotime($print_qty_details[3]));
         $no_of_pages = (int)ceil($print_qty/$printable_qty);
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));

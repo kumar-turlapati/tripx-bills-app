@@ -35,6 +35,7 @@ class BarcodeController
     $purchase_details = $suppliers_a = $form_data = $location_ids = [];
     $location_codes = $form_errors = [];
     $taxes = $taxes_raw = [];
+    $rate_types = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale Price', 'online' => 'Online Price'];
 
     $page_error = $inward_entry_no = $mfg_date = $po_location_code = '';
 
@@ -108,6 +109,9 @@ class BarcodeController
         $barcodes = array_column($purchase_details['itemDetails'],'barcode');
         $packed_qtys = array_column($purchase_details['itemDetails'],'packedQty');
         $uom_names = array_column($purchase_details['itemDetails'],'uomName');
+        $wholesale_prices = array_column($purchase_details['itemDetails'],'wholesalePrice');
+        $online_prices = array_column($purchase_details['itemDetails'],'onlinePrice');
+
 
         $submitted_item_details = $purchase_details['itemDetails'];
         $po_store_name = array_key_exists($purchase_response['purchaseDetails']['locationIDNumeric'], $location_ids) ? $location_ids[$purchase_response['purchaseDetails']['locationIDNumeric']] : 'Invalid Store';
@@ -121,6 +125,8 @@ class BarcodeController
           $uom_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['uomName'];
           $cno_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] =  $purchase_items['cno'];
           $mfg_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['mfgName'];
+          $online_prices_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['onlinePrice'];
+          $wholesale_prices_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['wholesalePrice'];
         }
         unset($purchase_details['itemDetails']);
 
@@ -139,13 +145,15 @@ class BarcodeController
         $form_data['barcode'] = $barcodes;
         $form_data['packedQty'] = $packed_qtys;
         $form_data['uomNames'] = $uom_names;
+        $form_data['wholesalePrices'] = $wholesale_prices;
+        $form_data['onlinePrices'] = $online_prices;
       }
     }
 
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
 
-      # validate form data using checkboxes.
+      // validate form data using checkboxes.
       if(isset($form_data['requestedItems']) && count($form_data['requestedItems']) > 0) {
         foreach($form_data['stickerQty'] as $key => $value) {
           if(in_array($key, $form_data['requestedItems']) === false) {
@@ -171,6 +179,7 @@ class BarcodeController
       }
 
       // dump($new_barcodes, $print_barcodes, $cleaned_params);
+      // exit;
 
       if(is_array($new_barcodes['items']) && count($new_barcodes['items']) > 0) {
         # hit api and create barcodes.
@@ -179,7 +188,7 @@ class BarcodeController
           $print_array = [];
           foreach($cleaned_params as $key => $print_qty) {
             if($print_qty > 0) {
-              $print_array[$api_response['barcodes'][$key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key]];
+              $print_array[$api_response['barcodes'][$key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key], $wholesale_prices_a[$key], $online_prices_a[$key]];
             }
           }
         } else {
@@ -192,7 +201,7 @@ class BarcodeController
         $index_key = 0;
         foreach($cleaned_params as $key => $print_qty) {
           if($print_qty > 0) {
-            $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key]];
+            $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key], $wholesale_prices_a[$key], $online_prices_a[$key]];
             $index_key++;
           }
         }
@@ -202,13 +211,14 @@ class BarcodeController
       // exit;
 
       $format = $form_processing['format'];
+      $rate_type = $form_processing['r'];
 
       if(count($print_array)>0) {
         if(isset($_SESSION['printBarCodes'])) {
           unset($_SESSION['printBarCodes']);
         }
         $_SESSION['printBarCodes'] = $print_array;
-        Utilities::redirect('/barcodes/print?format='.$format);
+        Utilities::redirect('/barcodes/print?format='.$format.'&r='.$rate_type);
       }
     }
 
@@ -228,6 +238,7 @@ class BarcodeController
       'supply_type_a' => array('' => 'Choose', 'inter' => 'Interstate', 'intra' => 'Intrastate'),
       'client_business_state' => $client_business_state,
       'sticker_print_type_a' => ['' => 'Choose'] + Utilities::get_barcode_sticker_print_formats(),
+      'rate_types' => $rate_types,
     );
 
     // build variables
@@ -247,6 +258,7 @@ class BarcodeController
     }
 
     $print_format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'indent';
+    $rate_type = !is_null($request->get('r')) && $request->get('r') !== '' ? Utilities::clean_string($request->get('r')) : 'mrp';
     switch ($print_format) {
       case 'indent':
         $print_tpl = 'barcode-print-stickers-html';
@@ -269,7 +281,7 @@ class BarcodeController
     );
 
     // render template
-    return array($this->template->render_view($print_tpl, []), $controller_vars);     
+    return array($this->template->render_view($print_tpl, ['rate_type' => $rate_type]), $controller_vars);     
   }
 
   public function barcodesListAction(Request $request) {
@@ -598,6 +610,7 @@ class BarcodeController
     $new_barcodes = $form_errors = $print_barcodes = [];
     $sticker_format_types = array_keys(Utilities::get_barcode_sticker_print_formats());
     $print_format = isset($form_data['format']) ? Utilities::clean_string($form_data['format']) : '';
+    $rate_type = isset($form_data['rateType']) ? Utilities::clean_string($form_data['rateType']) : '';
 
     if($print_format === '' || !in_array($print_format, $sticker_format_types)) {
       $form_errors['format'] = 'Please choose a sticker print format';
@@ -634,7 +647,7 @@ class BarcodeController
       }
     }
 
-    return ['status' => true, 'new_barcodes' => ['items' => $new_barcodes], 'print_barcodes' => $print_barcodes, 'cleaned_params' => $cleaned_params, 'format' => $print_format];
+    return ['status' => true, 'new_barcodes' => ['items' => $new_barcodes], 'print_barcodes' => $print_barcodes, 'cleaned_params' => $cleaned_params, 'format' => $print_format, 'r' => $rate_type];
   }
 
   private function _validate_op_barcode_form($form_data = []) {

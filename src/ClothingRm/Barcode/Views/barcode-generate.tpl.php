@@ -447,6 +447,19 @@
                     <span class="error"><?php echo $form_errors['format'] ?></span>
                   <?php endif; ?>                  
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <label class="control-label">Rate tobe printed</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="rateType" id="rateType">
+                      <?php foreach($rate_types as $key=>$value): ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <?php if(isset($form_errors['rateType'])): ?>
+                    <span class="error"><?php echo $form_errors['rateType'] ?></span>
+                  <?php endif; ?>                  
+                </div>                
               </div>
             </div>
           </div>

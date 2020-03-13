@@ -107,8 +107,13 @@
         $barcode = $print_qty_details['barcode'];
         $print_qty = $print_qty_details[0];
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
-        $print_item_mrp = number_format($print_qty_details[2],2,'.','');
-        $mfg_date = date("m/y", strtotime($print_qty_details[3]));
+        if($rate_type === 'wholesale') {
+          $print_item_mrp = number_format($print_qty_details[8],2,'.','');
+        } elseif($rate_type === 'online') {
+          $print_item_mrp = number_format($print_qty_details[9],2,'.','');
+        } else {
+          $print_item_mrp = number_format($print_qty_details[2],2,'.','');
+        }        $mfg_date = date("m/y", strtotime($print_qty_details[3]));
         $packed_qty = $print_qty_details[4];
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
     ?>

@@ -106,8 +106,13 @@
         $barcode = $print_qty_details['barcode'];
         $print_qty = $print_qty_details[0];
         $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
-        $print_item_mrp = number_format($print_qty_details[2],2,'.','');
-        $cno = $print_qty_details[5];
+        if($rate_type === 'wholesale') {
+          $print_item_mrp = number_format($print_qty_details[8],2,'.','');
+        } elseif($rate_type === 'online') {
+          $print_item_mrp = number_format($print_qty_details[9],2,'.','');
+        } else {
+          $print_item_mrp = number_format($print_qty_details[2],2,'.','');
+        }        $cno = $print_qty_details[5];
         $mfg_name = substr(strtoupper($print_qty_details[6]), 0, 12);
         $packed_qty = $print_qty_details[4];
         $uom_name = strtoupper(substr($print_qty_details[7],0,5));
