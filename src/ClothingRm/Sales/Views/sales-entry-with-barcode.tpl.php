@@ -71,6 +71,9 @@
   // dump($_SESSION);
   $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
   $editable_disc = isset($_SESSION['allow_man_discount']) ? $_SESSION['allow_man_discount'] : 1;
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
+  $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
+  $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -88,7 +91,7 @@
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;margin-bottom: 0px;">
               <thead>
                 <tr>
-                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Scan Barcode</td>
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Scan Barcode</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:10%;">
                     <input
                       type="text"
@@ -99,7 +102,7 @@
                     />
                   </td>
 
-                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;">Store Name</td>
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;">Store Name</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
@@ -117,7 +120,7 @@
                     </select>                    
                   </td>
 
-                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Customer Type</td>
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Customer Type</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <select class="form-control" name="customerType" id="customerType">
                       <?php 
@@ -133,7 +136,31 @@
                         </option>
                       <?php endforeach; ?>
                     </select>
-                  </td>                  
+                  </td>
+
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Billing rate</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
+                    <?php if($from_indent): ?>
+                      <span style="font-size:14px;font-weight: bold;"><?php echo ucwords($billing_rate) ?></span>
+                      <input type="hidden" value="<?php echo $billing_rate ?>" name="billingRate" />
+                    <?php else: ?>
+                      <select class="form-control" name="billingRate" id="billingRate">
+                        <?php 
+                          foreach($billing_rates as $key=>$value):
+                            if($key === $billing_rate) {
+                              $selected = 'selected="selected"';
+                            } else {
+                              $selected = '';
+                            }
+                        ?>
+                         <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                            <?php echo $value ?>
+                          </option>
+                        <?php endforeach; ?>
+                      </select>
+                    <?php endif; ?>
+                  </td>
+                  
                 </tr>
               </thead>
             </table>
@@ -196,7 +223,7 @@
                         $tax_amount = '';
                       }
                   ?>
-                  <tr id="tr_<?php echo $barcode ?>">
+                  <tr id="tr_<?php echo $barcode.'_'.$lot_no ?>">
                     <td align="right" style="vertical-align:middle;" class="itemSlno"><?php echo $i+1 ?></td>
                     <td style="vertical-align:middle;">
                       <input 
@@ -319,7 +346,7 @@
                     </td>
                     <td style="vertical-align:middle;text-align:center;">
                       <div class="btn-actions-group">
-                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode ?>">
+                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode.'_'.$lot_no ?>">
                           <i class="fa fa-times"></i>
                         </a>
                       </div>
@@ -362,6 +389,7 @@
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
             <input type="hidden" name="editKey" id="editKey" value="<?php echo $editable_mrps ?>" />
             <input type="hidden" name="dKey" id="dKey" value="<?php echo $editable_disc ?>" />
+            <input type="hidden" name="ic" id="ic" value="<?php echo $ic ?>" />
           </div>
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0  && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">
@@ -796,7 +824,7 @@
           <div class="panel" style="margin-bottom:10px;<?php echo $tot_products > 0 ? '' : 'display:none;' ?>" id="remarksWindow">
             <div class="panel-body" style="border: 2px dashed;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-8 col-lg-6">
+                <div class="col-sm-12 col-md-6 col-lg-5">
                   <label class="control-label labelStyle">Remarks / Notes (200 characters maximum)</label>
                   <input type="text" class="form-control noEnterKey" name="remarksInvoice" id="remarksInvoice" maxlength="200" value="<?php echo $remarks_invoice ?>">
                   <?php if(isset($errors['remarksInvoice'])): ?>
@@ -804,6 +832,13 @@
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-3">
+                  <label class="control-label labelStyle">Indent no.</label>
+                  <input type="text" class="form-control noEnterKey" name="indentNo" id="indentNo" maxlength="20" value="<?php echo $indent_no ?>">
+                  <?php if(isset($errors['indentNo'])): ?>
+                    <span class="error"><?php echo $errors['indentNo'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-2">
                   <label class="control-label labelStyle">Sales category</label>
                   <div class="select-wrap">                
                     <select class="form-control" name="salesCategory" id="salesCategory">
@@ -822,7 +857,7 @@
                     </select>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-3">
+                <div class="col-sm-12 col-md-3 col-lg-2">
                   <label class="control-label labelStyle">Agent name</label>
                   <div class="select-wrap">                
                     <select class="form-control" name="agentCode" id="agentCode">

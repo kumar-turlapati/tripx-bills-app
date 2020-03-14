@@ -491,7 +491,10 @@ class salesEntryWithBarcode {
     $customer_type = $form_data['customerType'];
     $credit_days = isset($form_data['saCreditDays']) ? Utilities::clean_string($form_data['saCreditDays']) : 0;
     $remarks_invoice = isset($form_data['remarksInvoice']) ? Utilities::clean_string($form_data['remarksInvoice']) : '';
-    $sales_category =  isset($form_data['salesCategory']) ? Utilities::clean_string($form_data['salesCategory']) : '';
+    $sales_category = isset($form_data['salesCategory']) ? Utilities::clean_string($form_data['salesCategory']) : '';
+    $billing_rate = isset($form_data['billingRate']) ? Utilities::clean_string($form_data['billingRate']) : 'mrp';
+    $ic = isset($form_data['ic']) ? Utilities::clean_string($form_data['ic']) : '';
+    $indent_no = isset($form_data['indentNo']) ? Utilities::clean_string($form_data['indentNo']) : '';
 
     $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
     $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
@@ -501,9 +504,7 @@ class salesEntryWithBarcode {
     $lr_no = Utilities::clean_string($form_data['lrNos']);
     $lr_date = Utilities::clean_string($form_data['lrDate']);
     $chalan_no = Utilities::clean_string($form_data['challanNo']);
-
     $agent_code = Utilities::clean_string($form_data['agentCode']);
-
 
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
@@ -769,6 +770,9 @@ class salesEntryWithBarcode {
     $cleaned_params['salesCategory'] = $sales_category;
     $cleaned_params['isComboBill'] = $is_combo_bill;
     $cleaned_params['agentCode'] = $agent_code;
+    $cleaned_params['billingRate'] = $billing_rate;
+    $cleaned_params['indentCode'] = $ic;
+    $cleaned_params['indentNo'] = $indent_no;
 
     # return response.
     if(count($form_errors)>0) {
@@ -983,6 +987,7 @@ class salesEntryWithBarcode {
     $form_data['indentNo'] = $tran_details['indentNo'];
     $form_data['customerType'] = 'b2b';
     $form_data['taxCalcOption'] = 'e';
+    $form_data['billingRate'] = $tran_details['billingRate'];
     foreach($indent_items as $key => $item_details) {
       $form_data['itemDetails']['itemName'][$key] = $item_details['itemName'];
       $form_data['itemDetails']['itemSoldQty'][$key] = $item_details['itemQty'];
@@ -993,6 +998,7 @@ class salesEntryWithBarcode {
       $form_data['itemDetails']['barcode'][$key] = $item_details['barcode'];
       $form_data['itemDetails']['itemDiscount'][$key] = 0;
     }
+
     return $form_data;
   }
 

@@ -991,6 +991,9 @@ class SalesEntryWoBarcode {
     $credit_days = isset($form_data['saCreditDays']) ? Utilities::clean_string($form_data['saCreditDays']) : 0;
     $remarks_invoice = isset($form_data['remarksInvoice']) ? Utilities::clean_string($form_data['remarksInvoice']) : '';
     $sales_category =  isset($form_data['salesCategory']) ? Utilities::clean_string($form_data['salesCategory']) : '';
+    $billing_rate = isset($form_data['billingRate']) ? Utilities::clean_string($form_data['billingRate']) : 'mrp';
+    $ic = isset($form_data['ic']) ? Utilities::clean_string($form_data['ic']) : '';
+    $indent_no = isset($form_data['indentNo']) ? Utilities::clean_string($form_data['indentNo']) : '';
 
     $packing_charges =  Utilities::clean_string($form_data['packingCharges']);
     $shipping_charges = Utilities::clean_string($form_data['shippingCharges']);
@@ -1260,6 +1263,9 @@ class SalesEntryWoBarcode {
     $cleaned_params['salesCategory'] = $sales_category;
     $cleaned_params['isComboBill'] = $is_combo_bill;
     $cleaned_params['agentCode'] = $agent_code;
+    $cleaned_params['billingRate'] = $billing_rate;
+    $cleaned_params['indentCode'] = $ic;
+    $cleaned_params['indentNo'] = $indent_no;
 
     # return response.
     if(count($form_errors)>0) {

@@ -818,7 +818,7 @@ function initializeJS() {
         discounInput += ' /></td>';
         var taxableInput = '<td class="taxableAmt text-right" id="taxableAmt_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+taxableAmount+'</td>';
         var gstInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemTaxPercent][]" id="saItemTax_' + nextIndex + '" size="10" class="form-control saItemTax noEnterKey"  index="'+ nextIndex +'" value="'+taxPercent+'"  />'+'</td>';
-        var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'"><i class="fa fa-times"></i></a></div></td>'; 
+        var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'_'+lotNo+'"><i class="fa fa-times"></i></a></div></td>'; 
         var hiddenGrossAmountRow = '<input type="hidden" class="taxAmount" id="taxAmount_'+nextIndex+'" value="" />'; 
         var hiddenItemTypeRow = '<input type="hidden" class="itemType" id="itemType_'+nextIndex+'" value="" />';       
         var hiddenHsnSacRow = '<input type="hidden" class="hsnSacCode" id="hsnSac_'+nextIndex+'" value="'+hsnSacCode+'" />';       
@@ -1210,6 +1210,7 @@ function initializeJS() {
 
     $(document).on('click', '#selectedDualLotNoIndent', function(){
       $('#dualLotModalIndent').modal('hide');
+      var billingRate = $('#billingRate').val();
       var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
       var barcode = $('#indentBarcode').val();
       var selectedLotNoDetails = lotNosResponse[selectedLotNo];
@@ -1218,13 +1219,19 @@ function initializeJS() {
         barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+selectedLotNoDetails.cno+'</span>';
       }
       $('#lastScannedSaleItem').html(barCodeItem);
-      __injectIndentItemRow(selectedLotNoDetails, barcode);
+      __injectIndentItemRow(selectedLotNoDetails, barcode, billingRate);
       $('#indentBarcode').focus().val('');
-    });    
+    });
 
     if( $('.messageContainer').length>0 ) {
       $('.messageContainer').fadeOut(5000);
     }
+
+    if( $('#billingRate').length>0 ) {
+      $('#billingRate').on('change', function(){
+        window.location.href = '/sales-indent/create?br='+$('#billingRate').val();
+      });
+    }    
 
     $('#indentBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
@@ -1234,6 +1241,7 @@ function initializeJS() {
         return false;
        }
        var locationCode = $('#locationCode').val();
+       var billingRate = $('#billingRate').val();
        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&sl=true&ind=true', {
           success: function(itemDetails) {
             if(itemDetails.status === 'success') {
@@ -1251,7 +1259,7 @@ function initializeJS() {
                     barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+selectedLotNoDetails.cno+'</span>';
                   }
                   $('#lastScannedSaleItem').html(barCodeItem);
-                  __injectIndentItemRow(selectedLotNoDetails, barcode);
+                  __injectIndentItemRow(selectedLotNoDetails, barcode, billingRate);
                   $('#indentBarcode').val('');
                 } else {
                   $('#dualLotNosTitleIndent').text(itemName);
@@ -1332,6 +1340,7 @@ function initializeJS() {
                 $('#totalItems, #grossAmount, #totDiscount, #taxableAmount, #gstAmount, #roundOff, #netPayBottom').text('');
                 $('#paymentMethodWindow, #customerWindow, #splitPaymentWindow, #saveWindow, #owItemsTable').hide();
                 $('#owBarcode').val('');
+                $('#indentScannedQty, #lastScannedSaleItem').text('');                
               }
             }
           }
@@ -1341,11 +1350,10 @@ function initializeJS() {
       });
     });
 
-    function __injectIndentItemRow(itemDetails, barcode) {
+    function __injectIndentItemRow(itemDetails, barcode, billingRate) {
       var itemName = itemDetails.itemName;
       var nextIndex = 0;
       var lotNo = itemDetails.lotNo;
-      var mrp = itemDetails.mrp;
       var taxPercent = itemDetails.taxPercent;
       var locationNumber = itemDetails.lc;
       var upp = itemDetails.upp;
@@ -1358,6 +1366,14 @@ function initializeJS() {
       }
       var availableQty = itemDetails.availableQty;
       var totalRows = $('#tBodyowItems tr').length;
+
+      if(billingRate === 'wholesale') {
+        var mrp = itemDetails.wholesalePrice;
+      } else if(billingRate === 'online') {
+        var mrp = itemDetails.onlinePrice;
+      } else {
+        var mrp = itemDetails.mrp;
+      }
 
       $('#customerWindow, #owItemsTable, #saveWindow, #tFootowItems').show();
       
@@ -1383,7 +1399,7 @@ function initializeJS() {
         var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="'+orderQty+'" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" readonly="readonly" /></td>';
         var mrpInput = '<td style="vertical-align:middle;text-align:center;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10" /></td>';
         var grossAmount = '<td class="grossAmount" id="grossAmount_'+nextIndex+'" index="'+nextIndex+'" style="vertical-align:middle;text-align:right;">'+grossAmount+'</td>';
-        var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'"><i class="fa fa-times"></i></a></div></td>';
+        var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'_'+lotNo+'"><i class="fa fa-times"></i></a></div></td>';
         var barcodeInput = '<input type="hidden" class="noEnterKey" name="itemDetails[barcode][]" id="barcode_' + nextIndex + '" index="' + nextIndex + '" value="'+barcode+'" size="13" />';        
         var tableRowEnd = '</tr>';
         var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyOrderedInput + mrpInput + grossAmount + deleteRow + barcodeInput + tableRowEnd;

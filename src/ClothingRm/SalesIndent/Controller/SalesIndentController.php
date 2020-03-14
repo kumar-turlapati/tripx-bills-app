@@ -92,6 +92,12 @@ class SalesIndentController {
       $indent_print_option = false;
     }
 
+    if(!is_null($request->get('br'))) {
+      $def_billing_rate = $request->get('br');
+    } else {
+      $def_billing_rate = 'mrp';
+    }    
+
     # ------------------------------------- check for form Submission --------------------------------
     # ------------------------------------------------------------------------------------------------
     if(count($request->request->all()) > 0) {
@@ -138,6 +144,7 @@ class SalesIndentController {
       'campaigns' => ['' => 'Choose'] + $campaigns_a,
       'last_indent_no' => $last_indent_no,
       'indent_print_option' => $indent_print_option,
+      'def_billing_rate' => $def_billing_rate,
     );
 
     return array($this->template->render_view('indent-create', $template_vars),$controller_vars);
@@ -610,6 +617,8 @@ class SalesIndentController {
     $executive_code = isset($form_data['executiveCode']) ? Utilities::clean_string($form_data['executiveCode']) : '';
     $campaign_code = isset($form_data['campaignCode']) ? Utilities::clean_string($form_data['campaignCode']) : '';
     $remarks = isset($form_data['remarks']) ? Utilities::clean_string($form_data['remarks']) : '';
+    $billing_rate = isset($form_data['billingRate']) ? Utilities::clean_string($form_data['billingRate']) : '';
+
     $item_details = $form_data['itemDetails'];
 
     # this code is not mandatory. it will change per each item.
@@ -687,6 +696,7 @@ class SalesIndentController {
     $cleaned_params['agentCode'] = $agent_code;
     $cleaned_params['executiveCode'] = $executive_code;
     $cleaned_params['remarks'] = $remarks;
+    $cleaned_params['billing_rate'] = $billing_rate;
 
     # return response.
     if(count($form_errors)>0) {

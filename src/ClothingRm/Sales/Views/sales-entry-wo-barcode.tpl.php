@@ -63,6 +63,10 @@
   $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
   $form_submit_url = '/sales/entry';
+
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
+  $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
+  $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 ?>
 
 <div class="row">
@@ -83,7 +87,7 @@
           <div class="panel" style="margin-bottom:0px;padding-top:10px;padding-bottom:10px;">
             <div class="panel-body" style="border: 2px dotted;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label">Date of sale (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <?php if(Utilities::is_admin()): ?>
@@ -104,7 +108,7 @@
                     <?php endif; ?>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label">Store name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
@@ -126,7 +130,7 @@
                     <span class="error"><?php echo $form_errors['locationCode'] ?></span>
                   <?php endif; ?>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label">Sales executive name</label>
                   <div class="select-wrap">                        
                     <select 
@@ -147,6 +151,25 @@
                           <?php echo $value ?>
                         </option>
                       <?php endforeach; ?>                            
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">Billing rate</label>
+                  <div class="select-wrap">                        
+                    <select class="form-control" name="billingRate" id="billingRate">
+                      <?php 
+                        foreach($billing_rates as $key=>$value):
+                          if($key === $billing_rate) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
                     </select>
                   </div>
                 </div>                
@@ -823,6 +846,13 @@
                   <input type="text" class="form-control noEnterKey" name="remarksInvoice" id="remarksInvoice" maxlength="200" value="<?php echo $remarks_invoice ?>">
                   <?php if(isset($errors['remarksInvoice'])): ?>
                     <span class="error"><?php echo $errors['remarksInvoice'] ?></span>
+                  <?php endif; ?>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-3">
+                  <label class="control-label">Indent no.</label>
+                  <input type="text" class="form-control noEnterKey" name="indentNo" id="indentNo" maxlength="20" value="<?php echo $indent_no ?>">
+                  <?php if(isset($errors['indentNo'])): ?>
+                    <span class="error"><?php echo $errors['indentNo'] ?></span>
                   <?php endif; ?>
                 </div>
               </div>

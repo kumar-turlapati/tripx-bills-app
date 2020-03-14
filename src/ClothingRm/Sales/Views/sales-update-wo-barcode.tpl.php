@@ -110,6 +110,10 @@
   $is_combo_bill = isset($form_data['isComboBill']) ? $form_data['isComboBill'] : 0; 
   $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
+  $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
+  $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
+
   $form_submit_url = '/sales/update/'.$ic;
 ?>
 
@@ -131,7 +135,7 @@
           <div class="panel" style="margin-bottom:0px;padding-top:10px;padding-bottom:10px;">
             <div class="panel-body" style="border: 2px dotted;">
               <div class="form-group">
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label">Date of sale (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <div class="col-lg-12">
@@ -145,7 +149,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label">Store name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
@@ -167,7 +171,7 @@
                     <span class="error"><?php echo $form_errors['locationCode'] ?></span>
                   <?php endif; ?>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label">Sales executive name</label>
                   <div class="select-wrap">                        
                     <select 
@@ -190,7 +194,12 @@
                       <?php endforeach; ?>                            
                     </select>
                   </div>
-                </div>                
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label">Billing rate</label>
+                  <span style="font-size:14px;font-weight: bold;"><?php echo strtoupper($billing_rate) ?></span>
+                  <input type="hidden" value="<?php echo $billing_rate ?>" name="billingRate" />
+                </div>
               </div>
             </div>
           </div>          
@@ -926,6 +935,13 @@
                     <span class="error"><?php echo $errors['remarksInvoice'] ?></span>
                   <?php endif; ?>
                 </div>
+                <div class="col-sm-12 col-md-4 col-lg-3">
+                  <label class="control-label">Indent no.</label>
+                  <input type="text" class="form-control noEnterKey" name="indentNo" id="indentNo" maxlength="20" value="<?php echo $indent_no ?>">
+                  <?php if(isset($errors['indentNo'])): ?>
+                    <span class="error"><?php echo $errors['indentNo'] ?></span>
+                  <?php endif; ?>
+                </div>                
               </div>
             </div>
           </div>          
