@@ -114,6 +114,8 @@
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 
+  $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
+
   $form_submit_url = '/sales/update/'.$ic;
 ?>
 
@@ -319,6 +321,7 @@
                         size = "10"
                         value = "<?php echo $item_rate ?>"
                         name = "itemDetails[itemRate][]"
+                        <?php echo $editable_mrps ? '' : 'readonly' ?>
                       />
                     </td>
                     <td 
