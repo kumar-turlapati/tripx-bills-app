@@ -12,14 +12,15 @@
   $generator = new \Picqer\Barcode\BarcodeGeneratorPNG;
   $print_info = $_SESSION['printBarCodes'];
 
-  // dump($print_info);
-  // exit;
-
   foreach($print_info as $barcode => $print_qty_details) {
     $print_qty_details['barcode'] = $barcode;
     $print_qty = $print_qty_details[0];
     $printable_array = array_merge($printable_array, array_fill(0, $print_qty, $print_qty_details));
   }
+
+  // dump($printable_array);
+  // exit;
+
   if(count($printable_array)<=0) {
     die("Unable to print....");
   }
@@ -86,7 +87,9 @@
         padding-right: 10px;
       }
       .barCode {
-        font-size: 11px;
+        font-size: 12px;
+        font-weight: bold;
+        padding-left:50px;
       }
       .mfgDate {
         text-align: left;
@@ -113,7 +116,7 @@
       foreach($printable_array as $print_qty_details):
         $barcode = $print_qty_details['barcode'];
         $print_qty = $print_qty_details[0];
-        $print_item_name = strtoupper(substr($print_qty_details[1],0,20));
+        $print_item_name = strtoupper($print_qty_details[1]);
         if($rate_type === 'wholesale') {
           $print_item_mrp = number_format($print_qty_details[8],2,'.','');
         } elseif($rate_type === 'online') {
@@ -127,6 +130,7 @@
         $cno = $print_qty_details[5];
         $bno = $print_qty_details[10];
         $lot_no = $print_qty_details[11];
+        $mfg_name = $print_qty_details[12];
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
     ?>      
       <div>
@@ -134,12 +138,12 @@
           <div class="productName"><?php echo $print_item_name ?></div>
           <div>MRP: RS.<?php echo $print_item_mrp ?></div>
           <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" class="bimg" />
-          <div class="barCode"><?php $barcode ?></div>
+          <div class="barCode"><?php echo $barcode ?></div>
           <div class="mfgDate"><?php echo 'Case: '.$cno.' - '.$packed_qty.' '.$uom_name ?></div>
           <?php if($bno !== '' ) : ?> 
-            <div class="mfgDate" style="text-align: center;"><?php echo 'Batch No: '.$bno ?></div>
+            <div class="mfgDate" style="text-align: left;"><?php echo 'Batch No: '.$bno ?></div>
           <?php endif; ?>
-          <div class="mfgDate" style="text-align: left;font-size: 12px;"><?php echo 'Lot No: '.$lot_no ?></div>
+          <div class="mfgDate" style="text-align: left;font-size: 12px;"><?php echo $lot_no ?>&nbsp;<span style="padding-left:60px;"><?php echo $mfg_name ?></span></div>
         </div>
       </div>             
       <?php
