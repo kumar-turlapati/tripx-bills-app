@@ -136,7 +136,9 @@
           <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" class="bimg" />
           <div class="barCode"><?php $barcode ?></div>
           <div class="mfgDate"><?php echo 'Case: '.$cno.' - '.$packed_qty.' '.$uom_name ?></div>
-          <div class="mfgDate" style="text-align: center;"><?php echo 'Batch No: '.$bno ?></div>
+          <?php if($bno !== '' ) : ?> 
+            <div class="mfgDate" style="text-align: center;"><?php echo 'Batch No: '.$bno ?></div>
+          <?php endif; ?>
           <div class="mfgDate" style="text-align: left;font-size: 12px;"><?php echo 'Lot No: '.$lot_no ?></div>
         </div>
       </div>             
