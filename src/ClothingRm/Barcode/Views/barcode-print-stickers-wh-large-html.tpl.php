@@ -145,7 +145,7 @@
             <div class="mfgDate" style="text-align: left;"><?php echo 'Bale No: '.$bno ?></div>
           <?php endif; ?> */?>
           <?php /*<div class="mfgDate" style="text-align: left;font-size: 12px;"><?php echo $lot_no ?>&nbsp;<span style="padding-left:60px;"><?php echo $mfg_name ?></span></div>*/?>
-          <div class="mfgDate" style="text-align: center;font-size: 12px;font-weight: bold;"><?php echo $mfg_name ?></div>
+          <div class="mfgDate" style="text-align: center;font-size: 16px;font-weight: bold;"><?php echo $mfg_name ?></div>
         </div>
       </div>             
       <?php
