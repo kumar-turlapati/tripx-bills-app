@@ -1032,6 +1032,7 @@ class Utilities
       'mrp' => 'MRP Sticker',
       'worate' => 'Sticker Without Rate',
       'sku-small' => 'Warehouse Sticker with Case/Container/Box No.',
+      'wh-large' => 'Warehouse Sticker - Large',
     ];
   }
 

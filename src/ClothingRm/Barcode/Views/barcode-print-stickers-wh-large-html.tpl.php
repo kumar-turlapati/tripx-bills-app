@@ -31,7 +31,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Print Barcodes</title>
+    <title>Barcode Print</title>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -39,16 +39,17 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style type="text/css">
-      @page { margin: 0; }
+      @page { margin: 26.4566929px 0; }
       body {
         margin: 0px;
         font-family: arial,sans-serif;
-        line-height: 10px;
+        line-height: 11px;
+        background-color: #ccc;
       }
       * {
-        -webkit-box-sizing: border-box;
-           -moz-box-sizing: border-box;
-                box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+              box-sizing: border-box;
       }
       *:before,
       *:after {
@@ -59,43 +60,49 @@
       .labelSheet {
         max-width:794px;
         margin:auto;
-        padding:45.354336px 18.8976px;
+        padding: 0 11.343px;
         display: table;
         width: 100%;
       }
       .labelSheet >div {
-        width: 143.5px;
-        height: 79.3px;
+        width: 377.95275591px;
+        background-color: #fff;
+        height: 166.2992126px;
         float: left;
-        margin-left: 3.7px;
-        margin-right: 3.7px;
-        border-radius: 3px;
-        padding: 3px 8px 5px 8px;
-        font-size: 10px;
+        margin-left: 3.775px;
+        margin-right: 3.775px;
+        margin-bottom: 5.6692913386px;
+        margin-top: 5.6692913386px;
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 14px;
       }
       .labelSheet >div img {
         max-width: 100%;
       }
       .productName {
-        text-align: center;
-        padding-bottom: 0px;
+        text-align: right;
+        padding-bottom: 3px;
+        padding-right: 10px;
       }
       .barCode {
-        text-align: center;
         font-size: 11px;
       }
-      .rate {
-        text-align: center;
-        font-size: 10px;
-      }
       .mfgDate {
-        text-align: center;
+        text-align: left;
+        padding-top: 10px;
       }
-      @media all {
-        .page-break { display: none; }
+      .overflowText {
+        overflow: hidden;
+        height: 100%;
+      }
+      .bimg {
+        padding-top: 5px;
       }
       @media print {
-        .page-break { display: block; page-break-before: always; }
+        .lableSheet {
+          page-break-before: always;
+        }
       }
     </style>
   </head>
@@ -116,18 +123,26 @@
         }        
         $mfg_date = date("m/y", strtotime($print_qty_details[3]));
         $packed_qty = $print_qty_details[4];
+        $uom_name = strtoupper(substr($print_qty_details[7],0,5));
+        $cno = $print_qty_details[5];
+        $bno = $print_qty_details[10];
+        $lot_no = $print_qty_details[11];
         $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
-    ?>
+    ?>      
       <div>
-        <div class="productName"><?php echo $print_item_name ?></div>
-        <div class="rate">Qty.: <?php echo $packed_qty.' mtrs.' ?></div>
-        <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
-        <div class="barCode"><?php echo $barcode ?></div>
-        <div class="mfgDate"><?php echo 'Mfg. Date: '.$mfg_date ?></div>
-      </div>
+        <div class="overflowText">
+          <div class="productName"><?php echo $print_item_name ?></div>
+          <div>MRP: RS.<?php echo $print_item_mrp ?></div>
+          <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" class="bimg" />
+          <div class="barCode"><?php $barcode ?></div>
+          <div class="mfgDate"><?php echo 'Case: '.$cno.' - '.$packed_qty.' '.$uom_name ?></div>
+          <div class="mfgDate" style="text-align: center;"><?php echo 'Batch No: '.$bno ?></div>
+          <div class="mfgDate" style="text-align: left;font-size: 12px;"><?php echo 'Lot No: '.$lot_no ?></div>
+        </div>
+      </div>             
       <?php
         $tot_sticker_count++;
-        if($tot_sticker_count === 65) {
+        if($tot_sticker_count === 12) {
           $tot_sticker_count = 0;
           echo '</div>'.'<div class="labelSheet">';
         }

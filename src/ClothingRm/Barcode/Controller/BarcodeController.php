@@ -111,6 +111,7 @@ class BarcodeController
         $uom_names = array_column($purchase_details['itemDetails'],'uomName');
         $wholesale_prices = array_column($purchase_details['itemDetails'],'wholesalePrice');
         $online_prices = array_column($purchase_details['itemDetails'],'onlinePrice');
+        $batch_nos = array_column($purchase_details['itemDetails'], 'batchNo');
 
 
         $submitted_item_details = $purchase_details['itemDetails'];
@@ -127,6 +128,8 @@ class BarcodeController
           $mfg_names_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['mfgName'];
           $online_prices_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['onlinePrice'];
           $wholesale_prices_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['wholesalePrice'];
+          $batch_no_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['batchNo'];
+          $lot_no_a[$purchase_items['itemCode'].'__'.$purchase_items['lotNo']] = $purchase_items['lotNo'];
         }
         unset($purchase_details['itemDetails']);
 
@@ -188,7 +191,7 @@ class BarcodeController
           $print_array = [];
           foreach($cleaned_params as $key => $print_qty) {
             if($print_qty > 0) {
-              $print_array[$api_response['barcodes'][$key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key], $wholesale_prices_a[$key], $online_prices_a[$key]];
+              $print_array[$api_response['barcodes'][$key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key], $wholesale_prices_a[$key], $online_prices_a[$key], $batch_no_a[$key], $lot_no_a[$key]];
             }
           }
         } else {
@@ -201,7 +204,7 @@ class BarcodeController
         $index_key = 0;
         foreach($cleaned_params as $key => $print_qty) {
           if($print_qty > 0) {
-            $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key], $wholesale_prices_a[$key], $online_prices_a[$key]];
+            $print_array[$print_barcodes[$index_key]] = [$print_qty, $item_names_a[$key], $mrps_a[$key], $mfg_date, $packed_qtys_a[$key], $cno_a[$key], $mfg_names_a[$key], $uom_names_a[$key], $wholesale_prices_a[$key], $online_prices_a[$key], $batch_no_a[$key], $lot_no_a[$key]];
             $index_key++;
           }
         }
@@ -271,6 +274,9 @@ class BarcodeController
         break;
       case 'sku-small':
         $print_tpl = 'barcode-print-stickers-sku-small-html';
+        break;        
+      case 'wh-large':
+        $print_tpl = 'barcode-print-stickers-wh-large-html';
         break;        
     }
 
