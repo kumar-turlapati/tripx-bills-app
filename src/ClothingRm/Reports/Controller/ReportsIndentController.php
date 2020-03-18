@@ -211,7 +211,7 @@ class ReportsIndentController {
 
     $indent_info_widths = [30,20,85,55];
     $customer_info_widths = [95,95];
-    $item_widths = [10,60,35,30,30,25];
+    $item_widths = [10,20,60,25,27,24,24];
     $final_tot_width = [23,23,23,25,20,30,23,23];
 
     $indent_details = $this->indent_model->get_indent_details($indent_no);
@@ -276,11 +276,12 @@ class ReportsIndentController {
     $pdf->Ln();
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
-    $pdf->Cell($item_widths[1],6,'Product Name','RTB',0,'C');
-    $pdf->Cell($item_widths[2],6,'Brand Name','RTB',0,'C');    
-    $pdf->Cell($item_widths[3],6,'HSN/SAC Code','RTB',0,'C');
-    $pdf->Cell($item_widths[4],6,'Qty.','RTB',0,'C');
-    $pdf->Cell($item_widths[5],6,'Rate/Unit','RTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'GDR No.','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Product Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Brand Name','RTB',0,'C');    
+    $pdf->Cell($item_widths[4],6,'HSN/SAC Code','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[6],6,'Rate/Unit','RTB',0,'C');
     $pdf->SetFont('Arial','',9);
     $pdf->Ln();
 
@@ -300,18 +301,19 @@ class ReportsIndentController {
       $tot_items_qty += $order_qty;
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
-      $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,25),'RTB',0,'L');
-      $pdf->Cell($item_widths[2],6,substr($item_details['brandName'],0,25),'RTB',0,'L');      
-      $pdf->Cell($item_widths[3],6,'','RTB',0,'L');
-      $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
-      $pdf->Cell($item_widths[5],6,$item_details['itemRate'],'RTB',0,'R');
+      $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,substr($item_details['itemName'],0,25),'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,substr($item_details['brandName'],0,25),'RTB',0,'L');      
+      $pdf->Cell($item_widths[4],6,$item_details['hsnSacCode'],'RTB',0,'L');
+      $pdf->Cell($item_widths[5],6,$order_qty,'RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,$item_details['itemRate'],'RTB',0,'R');
       $pdf->Ln();
     }
     
     $pdf->SetFont('Arial','B',11);
-    $pdf->Cell(135,6,'TOTALS','LRTB',0,'R');
-    $pdf->Cell(30,6,number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
-    $pdf->Cell(25,6,'','LRTB',0,'R');    
+    $pdf->Cell(142,6,'Total Qty.','LRTB',0,'R');
+    $pdf->Cell(24,6,number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(24,6,'','LRTB',0,'R');    
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
 
@@ -336,7 +338,7 @@ class ReportsIndentController {
 
     $indent_info_widths = [30,20,85,55];
     $customer_info_widths = [95,95];
-    $item_widths = [10,60,35,30,55,25];
+    $item_widths = [10,20,75,30,20,35,25];
     $final_tot_width = [23,23,23,25,20,30,23,23];    
 
     $indent_details = $this->indent_model->get_indent_details($indent_no);
@@ -399,10 +401,11 @@ class ReportsIndentController {
     $pdf->Ln();
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
-    $pdf->Cell($item_widths[1],6,'Product Name','RTB',0,'C');
-    $pdf->Cell($item_widths[2],6,'HSN/SAC Code','RTB',0,'C');
-    $pdf->Cell($item_widths[3],6,'Qty.','RTB',0,'C');
-    $pdf->Cell($item_widths[4],6,'Brand Name','RTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'GDR No.','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Product Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'HSN/SAC Code','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Brand Name','RTB',0,'C');
     $pdf->SetFont('Arial','',9);
     $pdf->Ln();
 
@@ -421,17 +424,18 @@ class ReportsIndentController {
       $tot_items_qty += $order_qty;
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
-      $pdf->Cell($item_widths[1],6,substr($item_details['itemName'],0,20),'RTB',0,'L');
-      $pdf->Cell($item_widths[2],6,'','RTB',0,'L');
-      $pdf->Cell($item_widths[3],6,$order_qty,'RTB',0,'R');
-      $pdf->Cell($item_widths[4],6,$item_details['brandName'],'RTB',0,'L');
+      $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
+      $pdf->Cell($item_widths[2],6,substr($item_details['itemName'],0,25),'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,$item_details['hsnSacCode'],'RTB',0,'L');
+      $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,$item_details['brandName'],'RTB',0,'L');
       $pdf->Ln();
     }
 
     $pdf->SetFont('Arial','B',11);
-    $pdf->Cell(105,6,'TOTALS','LR',0,'R');
-    $pdf->Cell(30,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
-    $pdf->Cell(55,6,'','R',0,'R');
+    $pdf->Cell(135,6,'Total Qty.','LR',0,'R');
+    $pdf->Cell(20,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
+    $pdf->Cell(70,6,'eeee','RL',0,'R');
     $pdf->SetFont('Arial','B',10);
     $pdf->Ln();
 

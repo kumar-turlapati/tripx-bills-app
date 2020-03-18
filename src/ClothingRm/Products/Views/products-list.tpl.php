@@ -109,14 +109,14 @@
               <tr class="font12">
                 <th width="5%" class="text-center">Sno.</th>
                 <th width="30%" class="text-left">Product / Service Name</th>
-                <th width="10%" class="text-center">Brand Name</th>               
+                <th width="10%" class="text-center">Brand/Mfg. Name</th>               
                 <th width="10%" class="text-center">Category</th>               
-                <th width="5%" class="text-center">Threshold<span class="brk">Qty.</span></th>                
+                <?php /*<th width="5%" class="text-center">Threshold<span class="brk">Qty.</span></th> */?>
                 <th width="5%" class="text-center">Units of /<span class="brk">Measurement</span></th>
-                <th width="5%" class="text-center">M.R.P <span class="brk">(in Rs.)</span></th>
+                <?php /*<th width="5%" class="text-center">M.R.P <span class="brk">(in Rs.)</span></th> */?>
                 <th width="8%" class="text-center">HSN/SAC<span class="brk">Code</span></th>
                 <th width="8%" class="text-center">Rack Number</th>
-                <th width="8%" class="text-center">SKU</th>                                                
+                <?php /*<th width="8%" class="text-center">SKU</th>*/?>
               </tr>
             </thead>
             <tbody>
@@ -173,12 +173,12 @@
                     </td>
                     <td class="text-left"><?php echo substr($brandName,0,20) ?></td>
                     <td class="text-left"><?php echo substr($category_name,0,20) ?></td>
-                    <td class="text-right"><?php echo $thr_qty ?></td>
+                    <?php /*<td class="text-right"><?php echo $thr_qty ?></td>*/ ?>
                     <td class="text-right"><?php echo $uom_name ?></td>
-                    <td class="text-bold"><?php echo $mrp ?></td>
+                    <?php /*<td class="text-bold"><?php echo $mrp ?></td>*/ ?>
                     <td class="text-right"><?php echo $hsnSacCode ?></td>
                     <td class="text-right"><?php echo $rack_no ?></td>
-                    <td class="text-right"><?php echo $item_sku ?></td>                    
+                    <?php /*<td class="text-right"><?php echo $item_sku ?></td>*/ ?>                    
                   </tr>
             <?php
               $cntr++;

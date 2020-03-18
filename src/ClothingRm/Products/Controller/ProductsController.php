@@ -101,9 +101,9 @@ class ProductsController {
         $flash->set_flash_message($page_success);
         Utilities::redirect($create_url);
       } else {
-        $page_success   = 'Product/Service `'.$submitted_data['itemName'].'` information updated successfully.';
+        $page_success   = '<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Product/Service `'.$submitted_data['itemName'].'` updated successfully.';
         $flash->set_flash_message($page_success);
-        Utilities::redirect($update_url.'/'.$item_code);
+        Utilities::redirect($update_url.'/'.$item_code.'?lc='.$submitted_data['locationCode']);
       }
     } else {
       $submitted_data = $product_details;

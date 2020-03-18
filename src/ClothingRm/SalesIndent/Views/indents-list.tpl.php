@@ -37,6 +37,11 @@
     $query_params[] = 'status='.$status;
   } else {
     $status = 99;
+  }
+  if(isset($search_params['custName']) && $search_params['custName'] !== '' ) {
+    $customer_name = $search_params['custName'];
+  } else {
+    $customer_name = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -67,7 +72,7 @@
     		  <div id="filters-form">
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
-                <div class="col-sm-12 col-md-1 col-lg-1 labelStyle" style="padding-top:9px;padding-left:36px;">Filter by</div>
+                <div class="col-sm-12 col-md-1 col-lg-1 labelStyle" style="padding-top:9px;">Filter by</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
@@ -80,6 +85,7 @@
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
+                <?php /*
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="campaignCode" id="campaignCode">
@@ -97,7 +103,17 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
-                </div>
+                </div>*/?>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input 
+                    placeholder="Customer name" 
+                    type="text" 
+                    name="custName" 
+                    id="custName" 
+                    class="form-control cnameAc" 
+                    value="<?php echo $customer_name ?>"
+                  />
+                </div>                
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="agentCode" id="agentCode">
@@ -117,20 +133,22 @@
                    </div>
                 </div>
                 <div class="col-sm-12 col-md-1 col-lg-1">
-                  <select class="form-control" name="status" id="status">
-                    <?php 
-                      foreach($status_a as $key => $value):
-                        if((int)$key === (int)$status) {
-                          $selected = 'selected="selected"';
-                        } else {
-                          $selected = '';
-                        }  
-                    ?>
-                     <option value="<?php echo $key ?>" <?php echo $selected ?>>
-                        <?php echo $value ?>
-                      </option>
-                    <?php endforeach; ?>
-                  </select>
+                  <div class="select-wrap">                  
+                    <select class="form-control" name="status" id="status">
+                      <?php 
+                        foreach($status_a as $key => $value):
+                          if((int)$key === (int)$status) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
                 </div>
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
@@ -200,7 +218,7 @@
                       <a class="btn btn-primary" href="/print-indent-wor?indentNo=<?php echo $indent_no ?>" title="Print Sales Indent without Rate" target="_blank">
                         <i class="fa fa-print"></i>
                       </a>&nbsp;
-                      <?php if($indent_status === 1): ?>
+                      <?php if($indent_status === 1 && isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 15): ?>
                         <a class="btn btn-danger" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
                           <i class="fa fa-inr"></i>
                         </a>

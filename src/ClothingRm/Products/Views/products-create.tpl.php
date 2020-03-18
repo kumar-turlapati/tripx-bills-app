@@ -67,7 +67,9 @@
     $combo_code = $submitted_data['comboCode'];
   } else {
     $combo_code = '';
-  }  
+  }
+
+  $readonly = isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 15 ? 'readonly' : '';
   // dump($errors);
   // dump($submitted_data, $location_ids, $location_codes);
 ?>
@@ -96,29 +98,34 @@
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Choose Product or Service</label>
-              <div class="select-wrap">
-                <select class="form-control" name="itemType" id="itemType">
-                  <?php 
-                    foreach($item_types_a as $key=>$value):
-                      if($item_type === $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['itemType'])): ?>
-                  <span class="error"><?php echo $errors['itemType'] ?></span>
-                <?php endif; ?>
-              </div>
+              <?php if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 15):  ?>
+                <?php echo $item_type === 'p' ? 'Product' : 'Service' ?>
+                <input type="hidden" id="itemType" name="itemType" value="<?php echo $item_type ?>">
+              <?php else: ?>
+                <div class="select-wrap">
+                  <select class="form-control" name="itemType" id="itemType" <?php echo $readonly ?>>
+                    <?php 
+                      foreach($item_types_a as $key=>$value):
+                        if($item_type === $key) {
+                          $selected = 'selected="selected"';
+                        } else {
+                          $selected = '';
+                        }                       
+                    ?>
+                      <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                  <?php if(isset($errors['itemType'])): ?>
+                    <span class="error"><?php echo $errors['itemType'] ?></span>
+                  <?php endif; ?>
+                </div>
+              <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Store name</label>
               <?php if($update_flag === false): ?>
                 <div class="select-wrap">
-                  <select class="form-control" name="locationCode" id="locationCode">
+                  <select class="form-control" name="locationCode" id="locationCode" <?php echo $readonly ?>>
                     <?php 
                       foreach($client_locations as $key=>$value): 
                         $location_key_a = explode('`', $key);
@@ -162,6 +169,7 @@
                 name="itemName" 
                 id="itemName" 
                 value="<?php echo $item_name ?>"
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['itemName'])): ?>
                 <span class="error"><?php echo $errors['itemName'] ?></span>
@@ -178,6 +186,7 @@
                 id="hsnSacCode" 
                 value="<?php echo $hsn_sac_code ?>"
                 maxlength=8
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['hsnSacCode'])): ?>
                 <span class="error"><?php echo $errors['hsnSacCode'] ?></span>
@@ -191,6 +200,7 @@
                 name="itemSku" 
                 id="itemSku" 
                 value="<?php echo $item_sku ?>"
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['itemSku'])): ?>
                 <span class="error"><?php echo $errors['itemSku'] ?></span>
@@ -205,6 +215,7 @@
                 id="uom"
                 value="<?php echo $uom ?>"
                 maxlength="5"
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['uom'])): ?>
                 <span class="error"><?php echo $errors['uom'] ?></span>
@@ -222,6 +233,7 @@
                 id="uomSub"
                 value="<?php echo $uom_sub ?>"
                 maxlength="5"
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['uomSub'])): ?>
                 <span class="error"><?php echo $errors['uomSub'] ?></span>
@@ -235,6 +247,7 @@
                 name="brandCode"
                 id="brandCode"
                 value="<?php echo $brand_code ?>"
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['brandCode'])): ?>
                 <span class="error"><?php echo $errors['brandCode'] ?></span>
@@ -248,6 +261,7 @@
                 name="categoryID"
                 id="categoryID"
                 value="<?php echo $cat_name ?>"
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['categoryID'])): ?>
                 <span class="error"><?php echo $errors['categoryID'] ?></span>
@@ -263,6 +277,7 @@
                 name="rackNo"
                 id="rackNo"
                 value="<?php echo $rack_no ?>"
+                maxlength="15"
               >
               <?php if(isset($errors['rack_no'])): ?>
                 <span class="error"><?php echo $errors['rack_no'] ?></span>
@@ -278,6 +293,7 @@
                 value="<?php echo $combo_code ?>"
                 maxlength="2"
                 title="This code is used in Combo Billing"
+                <?php echo $readonly ?>                
               >
               <?php if(isset($errors['comboCode'])): ?>
                 <span class="error"><?php echo $errors['comboCode'] ?></span>
@@ -285,20 +301,25 @@
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Status</label>
-              <div class="select-wrap">
-                <select class="form-control" name="itemStatus" id="itemStatus">
-                  <?php 
-                    foreach($status as $key=>$value): 
-                      if($sel_status === $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
+                <?php if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 15):  ?>
+                  <?php echo (int)$sel_status === 1 ? 'Active' : 'Inactive' ?>
+                  <input type="hidden" id="itemStatus" name="itemStatus" value="<?php echo $sel_status ?>">
+                <?php else: ?>
+                  <div class="select-wrap">
+                      <select class="form-control" name="itemStatus" id="itemStatus">
+                        <?php 
+                          foreach($status as $key=>$value): 
+                            if($sel_status === $key) {
+                              $selected = 'selected="selected"';
+                            } else {
+                              $selected = '';
+                            }                       
+                        ?>
+                          <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                  </div>
+                <?php endif; ?>
               <?php if(isset($errors['status'])): ?>
                 <span class="error"><?php echo $errors['status'] ?></span>
               <?php endif; ?>

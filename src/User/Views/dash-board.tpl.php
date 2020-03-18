@@ -200,4 +200,11 @@
       </h2>
     </div>
   <?php endif; ?>  
+  <?php if($user_type === 15): ?>
+    <div align="center" style="padding:100px;border:2px dotted #225992;">
+      <h2>
+        <span style="color:#FC4445;font-weight:bold;">Welcome to <?php echo ucwords(strtolower($_SESSION['cname'])) ?></span><br />
+      </h2>
+    </div>
+  <?php endif; ?>
 </div>

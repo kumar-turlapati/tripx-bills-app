@@ -371,8 +371,13 @@ class SalesIndentController {
     $locations = $vouchers = $search_params = $indents_a = $agents_a = [];
     $campaigns_a = [];
     $campaign_code = $page_error = $agent_code = '';
-    $status_a = [99 => 'Status', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
-
+    if(isset($_SESSION['utype']) && (int)$_SESSION['utype']===15) {
+      $status_a = [1=>'Approved'];
+      $def_indent_status = 1;
+    } else {
+      $status_a = [99 => 'Status', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
+      $def_indent_status = '';
+    }
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
@@ -403,7 +408,8 @@ class SalesIndentController {
     $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
     $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
-    $status = $request->get('status') !== null && (int)$request->get('status') !== 99 ? Utilities::clean_string($request->get('status')) : '';
+    $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
+    $status = $request->get('status') !== null && (int)$request->get('status') !== 99 ? Utilities::clean_string($request->get('status')) : $def_indent_status;
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -412,6 +418,7 @@ class SalesIndentController {
       'perPage' => $per_page,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
+      'custName' => $customer_name,
       'status' => $status,
     );
 

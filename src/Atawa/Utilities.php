@@ -470,6 +470,7 @@ class Utilities
       12 => 'Business head',
       13 => 'Dispatch clerk',
       14 => 'Sales Operator - Simple',
+      15 => 'Floor incharge (Godown ops)'
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
       return $user_types[$user_type];
@@ -692,6 +693,19 @@ class Utilities
 
         '/finy/switch',
       ],
+
+      15 => [
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
+        '/async/itemsAc', '/async/brandAc', '/async/custAc',        
+
+        '/sales-indents/list', '/campaigns/list', '/inventory/available-qty', '/products/list',
+        '/products/update',
+
+        '/finy/switch',
+
+        '/print-indent', '/print-indent-wor',
+      ],
+
     ];
 
     // dump($path);

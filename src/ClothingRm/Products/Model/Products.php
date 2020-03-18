@@ -71,13 +71,8 @@ class Products
 
 	public function get_product_details_with_name($product_name='', $location_code='') {
 		$api_caller = new ApiCaller();
-
 		$end_point = 'products/details-with-name';
-
-		$response = $api_caller->sendRequest('get',$end_point,['pn' => $product_name, 
-																													 'locationCode' => $location_code
-																													]
-																				);
+		$response = $api_caller->sendRequest('get',$end_point,['pn' => $product_name, 'locationCode' => $location_code]);
 		$status = $response['status'];
 		if ($status === 'success') {
 			return array(
