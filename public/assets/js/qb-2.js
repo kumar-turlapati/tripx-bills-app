@@ -846,14 +846,30 @@ function initializeJS() {
   }
 
   if( $('#addAdjEntryFrm').length > 0) {
+    var lotNosResponse = [];
+
+    $(document).on('click', '#modalAdjustmentSelect', function(){
+      $('#modalAdustment').modal('hide');
+      var billingRate = $('#billingRate').val();
+      var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
+      var barcode = $('#adjBarcode').val();
+      var selectedLotNoDetails = lotNosResponse[selectedLotNo];
+      $('#itemName').val(selectedLotNoDetails.itemName);
+      $('#lotNo').val(selectedLotNoDetails.lotNo);
+      $('#adjQty').val(parseFloat(selectedLotNoDetails.availableQty).toFixed(2));
+      $('#adjBarcode').val('');
+    });
+
+    $(document).on('click', '#modalAdjustmentCancel', function(){
+      $('#modalAdustment').modal('hide');
+      $('#adjBarcode').focus().val('');
+    });    
+
     $('#adjBarcode').on('keypress', function(e){
       if (e.keyCode == 13) {
         var barcode = $(this).val();
         var locationCode = $('#locationCode').val();
-        if(barcode.length !== 13) {
-          alert('Invalid barcode');
-          return false;
-        } else if(locationCode === '') {
+        if(locationCode === '') {
           alert('Choose a Store first.');
           return false;
         }
@@ -863,14 +879,52 @@ function initializeJS() {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
               if(objLength > 0) {
-                var itemName = itemDetails.response.bcDetails.itemName;
-                var availableQty = parseFloat(itemDetails.response.bcDetails.availableQty).toFixed(2);
-                var lotNo = itemDetails.response.bcDetails.lotNo;
-                $('#itemName').val(itemName);
-                $('#lotNo').val(lotNo);
-                $('#adjQty').val(availableQty);
-                $('#adjBarcode').val('');
-                $('#adjBarcode').focus();
+                var itemName = '';
+                jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                  lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                  itemName = lotNoDetails.itemName;
+                });
+                if(objLength === 1) {
+                  selectedLotNoDetails = itemDetails.response.bcDetails[0];
+                  $('#itemName').val(selectedLotNoDetails.itemName);
+                  $('#lotNo').val(selectedLotNoDetails.lotNo);
+                  $('#adjQty').val(parseFloat(selectedLotNoDetails.availableQty).toFixed(2));
+                  $('#adjBarcode').val('');
+                  $('#adjBarcode').focus();
+                } else {
+                  $('#dualLotNosTitle').text(itemName);
+                  var dualBarcodesHtml = '<form>';
+                  dualBarcodesHtml += '<div class="table-responsive">';
+                  dualBarcodesHtml += '<table class="table table-striped table-hover font12" id="dualLotNosTable" style="margin-bottom:0px;">';
+                  dualBarcodesHtml += '<thead><tr>';
+                  dualBarcodesHtml += '<th>&nbsp;</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Lot No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Batch No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Cno/Box No.</th>';
+                  dualBarcodesHtml += '<th style="text-align: center;">Available</th>';
+                  dualBarcodesHtml += '</tr></thead>';
+                  dualBarcodesHtml += '<tbody>';
+                  jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                    var lotNo = lotNoDetails.lotNo;
+                    var batchNo = lotNoDetails.batchNo;
+                    var availableQty = lotNoDetails.availableQty;
+                    var cno = lotNoDetails.cno;
+                    dualBarcodesHtml += '<tr>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
+                    dualBarcodesHtml += '<input type="radio" name="dualLotRadios" value="'+lotNo+'" style="visibility: visible; margin-top:0px;" />';
+                    dualBarcodesHtml += '</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+lotNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+batchNo+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+cno+'</td>';
+                    dualBarcodesHtml += '<td style="vertical-align: middle">'+availableQty+'</td>';
+                    dualBarcodesHtml += '</tr>';
+                  });
+                  dualBarcodesHtml += '</tbody>';
+                  dualBarcodesHtml += '</table>';
+                  dualBarcodesHtml += '</div>';
+                  $('#modalAdjustmentLotNos').html(dualBarcodesHtml);
+                  $('#modalAdustment').modal('show');
+                }
               } else {
                 alert('Barcode not found');                
               }
