@@ -271,6 +271,14 @@ $routes->add('sales_add_shipping_info', new Routing\Route('/sales/shipping-info/
   '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWoBarcode::salesShippingEntryAction',
   'salesCode' => null,
 )));
+$routes->add('indent_vs_sales', new Routing\Route('/indent-vs-sales/{pageNo}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::indentVsSales',
+  'pageNo' => null,
+)));
+$routes->add('indent_vs_sales_by_item', new Routing\Route('/indent-vs-sales-by-item/{pageNo}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::indentVsSalesByItem',
+  'pageNo' => null,
+)));
 
 // Sales Return routes
 $routes->add('sales_return_entry', new Routing\Route('/sales-return/entry/{salesCode}', array(

@@ -143,6 +143,8 @@
             </a>
             <ul class="sub">
               <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales Indent Register</a></li>
+              <li><a href="/indent-vs-sales"><i class="fa fa-compress"></i> Indent vs Sales</a></li>
+              <li><a href="/indent-vs-sales-by-item"><i class="fa fa-compress"></i> Indent vs Sales(Item)</a></li>
             </ul>
           </li>
         </ul>

@@ -482,6 +482,223 @@ class SalesIndentController {
     return array($this->template->render_view('indents-list', $template_vars), $controller_vars);
   }
 
+  public function indentVsSales(Request $request) {
+
+    $sales = $search_params = $sales_a = $agents_a = $campaigns_a = [];
+    $campaign_code = $page_error = $agent_code = '';
+
+    $total_pages = $total_records = $record_count = $page_no = 0 ;
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
+
+    # ---------- get business users ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
+
+    # ---------- get live campaigns ---------------------------------
+    $campaigns_response = $this->camp_model->list_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+
+    // parse request parameters.
+    $per_page = 100;
+    $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
+    $to_date = $request->get('toDate') !== null ? Utilities::clean_string($request->get('toDate')):date("d-m-Y");
+    $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
+    $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
+    $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
+    $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
+
+    $search_params = array(
+      'fromDate' => $from_date,
+      'toDate' => $to_date,
+      'pageNo' => $page_no,
+      'perPage' => $per_page,
+      'campaignCode' => $campaign_code,
+      'agentCode' => $agent_code,
+      'custName' => $customer_name,
+    );
+
+    $api_response = $this->sindent_model->indent_vs_sales($search_params);
+    // dump($api_response);
+    // exit;
+    if($api_response['status']) {
+      if(count($api_response['response']['sales'])>0) {
+        $slno = Utilities::get_slno_start(count($api_response['response']['sales']),$per_page,$page_no);
+        $to_sl_no = $slno+$per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
+        } else {
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;        
+        }
+        if($api_response['response']['total_pages'] < $page_links_to_end) {
+          $page_links_to_end = $api_response['response']['total_pages'];
+        }
+        if($api_response['response']['this_page'] < $per_page) {
+          $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
+        }
+        $sales_a = $api_response['response']['sales'];
+        $total_pages = $api_response['response']['total_pages'];
+        $total_records = $api_response['response']['total_records'];
+        $record_count = $api_response['response']['this_page'];
+      } else {
+        $page_error = $api_response['apierror'];
+      }
+    } else {
+      $page_error = $api_response['apierror'];
+    }
+
+     // prepare form variables.
+    $template_vars = array(
+      'page_error' => $page_error,
+      'sales' => $sales_a,
+      'total_pages' => $total_pages ,
+      'total_records' => $total_records,
+      'record_count' => $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'search_params' => $search_params,
+      'agents' => [''=>'Agent/Wholesaler'] + $agents_a,
+      'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
+      'campaignCode' => $campaign_code,
+      'agentCode' => $agent_code,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Indent vs Sales',
+      'icon_name' => 'fa fa-inr',
+    );
+
+    // render template
+    return array($this->template->render_view('indent-vs-sales', $template_vars), $controller_vars);
+  }
+
+  public function indentVsSalesByItem(Request $request) {
+
+    $sales = $search_params = $sales_a = $agents_a = $campaigns_a = [];
+    $campaign_code = $page_error = $agent_code = '';
+
+    $total_pages = $total_records = $record_count = $page_no = 0 ;
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
+
+    # ---------- get business users ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
+
+    # ---------- get live campaigns ---------------------------------
+    $campaigns_response = $this->camp_model->list_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+
+    // parse request parameters.
+    $per_page = 100;
+    $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
+    $to_date = $request->get('toDate') !== null ? Utilities::clean_string($request->get('toDate')):date("d-m-Y");
+    $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
+    $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
+    $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
+    $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
+
+    $search_params = array(
+      'fromDate' => $from_date,
+      'toDate' => $to_date,
+      'pageNo' => $page_no,
+      'perPage' => $per_page,
+      'campaignCode' => $campaign_code,
+      'agentCode' => $agent_code,
+      'custName' => $customer_name,
+      'infoType' => 'item',
+    );
+
+    $api_response = $this->sindent_model->indent_vs_sales($search_params);
+    // dump($api_response);
+    // exit;
+    if($api_response['status']) {
+      if(count($api_response['response']['sales'])>0) {
+        $slno = Utilities::get_slno_start(count($api_response['response']['sales']),$per_page,$page_no);
+        $to_sl_no = $slno+$per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
+        } else {
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;        
+        }
+        if($api_response['response']['total_pages'] < $page_links_to_end) {
+          $page_links_to_end = $api_response['response']['total_pages'];
+        }
+        if($api_response['response']['this_page'] < $per_page) {
+          $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
+        }
+        $sales_a = $api_response['response']['sales'];
+        $total_pages = $api_response['response']['total_pages'];
+        $total_records = $api_response['response']['total_records'];
+        $record_count = $api_response['response']['this_page'];
+      } else {
+        $page_error = $api_response['apierror'];
+      }
+    } else {
+      $page_error = $api_response['apierror'];
+    }
+
+     // prepare form variables.
+    $template_vars = array(
+      'page_error' => $page_error,
+      'sales' => $sales_a,
+      'total_pages' => $total_pages ,
+      'total_records' => $total_records,
+      'record_count' => $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'search_params' => $search_params,
+      'agents' => [''=>'Agent/Wholesaler'] + $agents_a,
+      'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
+      'campaignCode' => $campaign_code,
+      'agentCode' => $agent_code,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Indent vs Sales - Itemwise',
+      'icon_name' => 'fa fa-inr',
+    );
+
+    // render template
+    return array($this->template->render_view('indent-vs-sales-itemwise', $template_vars), $controller_vars);
+  }  
+
   // mobile indent form
   public function createIndentMobileView(Request $request) {
 

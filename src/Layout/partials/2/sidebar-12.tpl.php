@@ -96,6 +96,8 @@
               <li><a href="/reports/sales-billwise-itemwise"><i class="fa fa-angle-right"></i> Bill&amp;Item wise Sales</a></li>
               <li><a href="/reports/sales-dispatch-register"><i class="fa fa-angle-right"></i> Sales Dispatch Register</a></              
               <li><a href="/reports/sales-upi-register"><i class="fa fa-angle-right"></i>UPI/EMI Pmts Register</a></li>
+              <li><a href="/indent-vs-sales"><i class="fa fa-angle-right"></i> Indent Vs Sales</a></li>
+              <li><a href="/indent-vs-sales-by-item"><i class="fa fa-compress"></i> Indent vs Sales(Item)</a></li>
             </ul>
           </li>
           <li class="sub-menu">

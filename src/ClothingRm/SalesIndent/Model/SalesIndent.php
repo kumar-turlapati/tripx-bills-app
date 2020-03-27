@@ -127,4 +127,14 @@ class SalesIndent {
     }
   }
 
+  public function indent_vs_sales($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','reports/indent-vs-sale',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
+  }  
+
 }

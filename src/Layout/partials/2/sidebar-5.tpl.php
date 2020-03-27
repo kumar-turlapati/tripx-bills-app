@@ -44,6 +44,8 @@
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>          
           <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li>
           <li><a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Sales2CB Register</a></li>
+          <li><a href="/indent-vs-sales"><i class="fa fa-angle-right"></i> Indent Vs Sales</a></li>
+          <li><a href="/indent-vs-sales-by-item"><i class="fa fa-compress"></i> Indent vs Sales(Item)</a></li>
           <?php /*<li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li> */ ?>
         </ul>
       </li>

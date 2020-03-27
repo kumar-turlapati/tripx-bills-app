@@ -21,7 +21,9 @@
         </a>
         <ul class="sub">
           <li><a href="/sales-indents/list"><i class="fa fa-inr"></i> Sales indent register</a></li>
-          <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes register</a></li>          
+          <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes register</a></li>
+          <li><a href="/indent-vs-sales"><i class="fa fa-angle-right"></i> Indent Vs Sales</a></li>
+          <li><a href="/indent-vs-sales-by-item"><i class="fa fa-angle-right"></i> Indent Vs Sales</a></li>
         </ul>
       </li>
       <li class="sub-menu">

@@ -543,6 +543,8 @@ class Utilities
         '/reports/po-return-register',
 
         '/finy/switch', '/discount-manager',
+
+        '/indent-vs-sales', '/indent-vs-sales-by-item',
       ],
 
       // for Business head
@@ -573,6 +575,8 @@ class Utilities
         '/reports/po-return-register',
 
         '/finy/switch', '/discount-manager',
+
+        '/indent-vs-sales', '/indent-vs-sales-by-item',
       ],      
 
       // for Sales Operator
@@ -622,6 +626,8 @@ class Utilities
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
 
         '/finy/switch', '/discount-manager',
+
+        '/indent-vs-sales', '/indent-vs-sales-by-item',
       ],
 
       6  => [
@@ -682,6 +688,8 @@ class Utilities
 
         '/indent-item-avail', '/indent-itemwise', '/indent-agentwise', '/indent-statewise',
         '/print-indents-agentwise', '/indent-register', '/indent-dispatch-summary',
+
+        '/indent-vs-sales', '/indent-vs-sales-by-item',
       ],
 
       13 => [
