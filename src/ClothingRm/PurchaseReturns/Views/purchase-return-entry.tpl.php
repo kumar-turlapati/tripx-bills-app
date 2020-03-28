@@ -108,6 +108,7 @@
                 $items_total =  $total_tax_amount = $items_tot_after_discount = $total_disc_amount = 0;
                 $taxable_values = $taxable_gst_value = [];
                 $total_item_qty = 0;
+                $total_item_qty_service = 0;
 
                 for($i=1; $i <= $total_item_rows; $i++):
                   if( isset($form_data['itemCode'][$i-1]) && $form_data['itemCode'][$i-1] !== '' ) {
@@ -169,6 +170,11 @@
                     $packed_qty = $form_data['packedQty'][$i-1];
                   } else {
                     $packed_qty = '';
+                  }
+                  if( isset($form_data['itemType'][$i-1]) && $form_data['itemType'][$i-1] !== '' ) {
+                    $item_type = $form_data['itemType'][$i-1];
+                  } else {
+                    $item_type = 'p';
                   }                  
 
                   $billed_qty = $inward_qty - $free_qty;
@@ -183,7 +189,8 @@
                   $inward_qty1 = $inward_qty;
                   $inward_qty = $inward_qty * $packed_qty;
 
-                  $total_item_qty += $inward_qty;
+                  $total_item_qty += $item_type === 'p' ? $inward_qty : 0;
+                  $total_item_qty_service += $item_type === 's' ? $inward_qty : 0;
 
                   if(isset($taxable_values[$tax_percent])) {
                     $taxable = $taxable_values[$tax_percent] + $item_amount;
@@ -391,11 +398,22 @@
                   <td colspan="3" style="font-weight:bold;font-size:16px;text-align:center;">Net Pay (in Rs.)</td>
                 </tr>
                 <tr>
-                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo $total_item_qty ?></td>
-                  <td colspan="3" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($items_total, 2),'2','.','') ?></td>
-                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($total_tax_amount, 2),'2','.','') ?></td>
-                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992"><?php echo number_format(round($round_off, 2),'2','.','') ?></td>
-                  <td colspan="3" style="font-weight:bold;font-size:20px;text-align:center;color:#225992"><?php echo number_format(round($net_pay, 2),'2','.','') ?></td>                  
+                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992;padding: 0px;">
+                    <table class="table table-striped table-hover font12">
+                      <tr>
+                        <th width="50%" style="text-align: center;">Inventory</th>
+                        <th width="50%" style="text-align: center;">Services</th>
+                      </tr>
+                      <tr>
+                        <td style="font-size: 18px;"><?php echo $total_item_qty ?></td>
+                        <td style="font-size: 18px;"><?php echo $total_item_qty_service ?></td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td colspan="3" style="font-weight:bold;font-size:18px;text-align:center;color:#225992;vertical-align: middle;"><?php echo number_format(round($items_total, 2),'2','.','') ?></td>
+                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992;vertical-align: middle;"><?php echo number_format(round($total_tax_amount, 2),'2','.','') ?></td>
+                  <td colspan="2" style="font-weight:bold;font-size:18px;text-align:center;color:#225992;vertical-align: middle;"><?php echo number_format(round($round_off, 2),'2','.','') ?></td>
+                  <td colspan="3" style="font-weight:bold;font-size:20px;text-align:center;color:#225992;vertical-align: middle;"><?php echo number_format(round($net_pay, 2),'2','.','') ?></td>                  
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;font-weight:bold;font-size:14px;" align="center">Notes / Comments</td>

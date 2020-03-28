@@ -89,7 +89,8 @@ class PurchaseReturnsController
         $sgst_amounts = array_column($purchase_details['itemDetails'],'sgstAmount');
         $hsn_codes = array_column($purchase_details['itemDetails'],'hsnSacCode');
         $lot_nos = array_column($purchase_details['itemDetails'],'lotNo');
-        $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');        
+        $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
+        $item_types = array_column($purchase_details['itemDetails'], 'itemType');
 
         $total_item_rows = is_array($item_names) && count($item_names) > 0 ? count($item_names) : 30;
 
@@ -114,6 +115,7 @@ class PurchaseReturnsController
         $form_data['lotNos'] = $lot_nos;
         $form_data['itemCode'] = $item_codes;
         $form_data['packedQty'] = $packed_qtys;
+        $form_data['itemType'] = $item_types;
       } else {
         $this->flash->set_flash_message($purchase_response['apierror'], 1);
         Utilities::redirect('/purchase-return/entry');

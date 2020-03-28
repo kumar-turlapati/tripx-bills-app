@@ -324,6 +324,7 @@ class InventoryReportsController {
       'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
       'group_by_a' => $group_by_a,
       'neg_a' => $neg_a,
+      'inven_type_a' => ['' => 'Products and Services (Both)', 'product' => 'Products only', 'service' => 'Services only'],
     );
 
     // render template
@@ -841,7 +842,7 @@ class InventoryReportsController {
     // exit;
 
     $print_date_time = date("d-M-Y h:ia");
-    $slno = $total_qty = 0;
+    $slno = $total_qty = $total_items = 0;
 
     $grn_date       =    date('d-M-Y',strtotime($grn_details['grnDate']));
     $grn_no         =    $grn_details['grnNo'];
@@ -854,11 +855,12 @@ class InventoryReportsController {
     $remarks        =    $grn_details['remarks'];
     $grn_tax_amount =    $grn_details['taxAmount'];
     $grn_value      =    $grn_details['netPay'];
-    $total_items    =    (isset($grn_details['itemDetails']) && count($grn_details['itemDetails'])>0 ? count($grn_details['itemDetails']) : 'Invalid' );
+    // $total_items    =    (isset($grn_details['itemDetails']) && count($grn_details['itemDetails']) > 0 ? count($grn_details['itemDetails']) : 'Invalid' );
 
     if( isset($grn_details['itemDetails']) && count($grn_details['itemDetails']) > 0 ) {
       foreach($grn_details['itemDetails'] as $grn_qty_details) {
-        $total_qty += ($grn_qty_details['itemQty']*$grn_qty_details['packedQty']);
+        $total_qty += $grn_qty_details['itemType'] === 'p' ? ($grn_qty_details['itemQty']*$grn_qty_details['packedQty']) : 0;
+        $total_items += $grn_qty_details['itemType'] === 'p' ? 1 : 0;
       }
     }
 
@@ -936,7 +938,7 @@ class InventoryReportsController {
     $pdf->Cell($header_widths[2],6,'Insurance(Rs.)','RTB',0,'C');
     $pdf->Cell($header_widths[3],6,'OtherCharges','RTB',0,'C');
     $pdf->Cell($header_widths[4],6,'RoundOff(Rs.)','RTB',0,'C');
-    $pdf->Cell($header_widths[5],6,'Total Qty.','RTB',1,'C');
+    $pdf->Cell($header_widths[5],6,'Total Items&Qty (Inv.)','RTB',1,'C');
 
     $pdf->SetFont('Arial','B',14);
     $pdf->Cell($header_widths[0],6,number_format($grn_value,2,'.',''),'LRB',0,'C');
@@ -966,6 +968,7 @@ class InventoryReportsController {
     foreach($grn_details['itemDetails'] as $item_details) {
         $slno++;
         $item_name = substr($item_details['itemName'],0,35);
+        $item_type = $item_details['itemType'];
         $packed_qty = $item_details['packedQty'];
         $acc_qty = $item_details['itemQty']*$packed_qty;
         $item_qty = ($item_details['itemQty']-$item_details['freeQty']) * $packed_qty;
@@ -1737,6 +1740,7 @@ class InventoryReportsController {
     $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
     $cleaned_params['groupBy'] = $group_by_api;
     $cleaned_params['balanceType'] = Utilities::clean_string($form_data['balanceType']);
+    $cleaned_params['invenType'] = Utilities::clean_string($form_data['invenType']);
 
     if(count($form_errors) > 0) {
       return ['status' => false, 'form_errors' => $form_errors];

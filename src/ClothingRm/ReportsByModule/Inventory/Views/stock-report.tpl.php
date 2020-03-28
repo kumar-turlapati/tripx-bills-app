@@ -81,6 +81,15 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <div class="select-wrap">
+                    <select class="form-control" name="invenType" id="invenType">
+                      <?php foreach($inven_type_a as $key => $value): ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
       				</div>
               <div class="form-group text-center">
                 <?php include_once __DIR__."/../../../../Layout/helpers/filter-buttons-reports.helper.php" ?>

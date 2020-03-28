@@ -636,7 +636,12 @@ function initializeJS() {
     $(document).on('click', '#selectedDualLotNoCancel', function(){
       $('#dualLotModal').modal('hide');
       $('#owBarcode').focus().val('');
-    });    
+    });
+
+    var indentItems = [];
+    $('input[name="indentItems"]').each(function(i, e){
+      indentItems[i] = $(this).val();
+    })
 
     $('#owBarcode').on('keypress', function (e) {
        var billingRate = $('#billingRate').val();
@@ -657,6 +662,16 @@ function initializeJS() {
                     lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
                     itemName = lotNoDetails.itemName;
                   });
+
+                  // validate if indent and the scanned item is part of indent.
+                  if(indentItems.length > 0) {
+                    if(!indentItems.includes(itemName)) {
+                      alert('Scanned item [ '+itemName+' ] does not exists in the Indent.');
+                      $('#owBarcode').val('');
+                      return false;
+                    }
+                  }
+
                   if(objLength === 1) {
                     var selectedLotNoDetails = itemDetails.response.bcDetails[0];
                     var barCodeItem = '[ '+barcode+' ] '+itemName;

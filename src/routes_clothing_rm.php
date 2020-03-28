@@ -252,6 +252,10 @@ $routes->add('sales_update_wo_barcode', new Routing\Route('/sales/update/{salesC
 $routes->add('sales_entry_with_barcode', new Routing\Route('/sales/entry-with-barcode', array(
   '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWithBarcode::salesEntryAction',
 )));
+$routes->add('sales_entry_with_indent', new Routing\Route('/sales/entry-with-indent/{indentCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWithIndent::salesEntryAction',
+  'indentCode' => null,
+)));
 $routes->add('sales_update_with_barcode', new Routing\Route('/sales/update-with-barcode/{salesCode}', array(
   '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryWithBarcode::salesUpdateAction',
   'salesCode' => null,

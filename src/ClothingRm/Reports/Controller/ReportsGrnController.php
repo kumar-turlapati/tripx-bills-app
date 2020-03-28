@@ -175,6 +175,7 @@ class ReportsGrnController
     foreach($grn_details['itemDetails'] as $item_details) {
         $slno++;
         $item_name = $item_details['itemName'];
+        $item_type = $item_details['itemType'];
         $acc_qty = $item_details['itemQty'];
         $item_qty = $item_details['itemQty']-$item_details['freeQty'];
         $item_rate = $item_details['itemRate'];

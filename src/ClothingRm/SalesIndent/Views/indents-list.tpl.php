@@ -222,6 +222,9 @@
                         <a class="btn btn-danger" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
                           <i class="fa fa-inr"></i>
                         </a>
+                        <a class="btn btn-warning" href="/sales/entry-with-indent/<?php echo $indent_code ?>" title="Create Sales Order with Scan">
+                          <i class="fa fa-barcode"></i>
+                        </a>                        
                       <?php elseif($indent_status === 0): ?>
                         <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
                           <i class="fa fa-pencil"></i>
