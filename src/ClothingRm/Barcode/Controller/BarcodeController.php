@@ -16,9 +16,10 @@ use ClothingRm\Inward\Model\Inward;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Taxes\Model\Taxes;
 use ClothingRm\Openings\Model\Openings;
+use ClothingRm\Inventory\Model\Inventory;
 
-class BarcodeController
-{
+class BarcodeController {
+
   protected $views_path;
 
   public function __construct() {
@@ -29,6 +30,7 @@ class BarcodeController
     $this->supplier_model = new Supplier;
     $this->taxes_model = new Taxes;
     $this->openings_model = new Openings;
+    $this->inven_api = new Inventory;
   }
 
   public function generateBarcodeAction(Request $request) {
@@ -111,7 +113,6 @@ class BarcodeController
         $batch_nos = array_column($purchase_details['itemDetails'], 'batchNo');
         $mfg_names = array_column($purchase_details['itemDetails'], 'mfgName');
 
-
         $submitted_item_details = $purchase_details['itemDetails'];
         $po_store_name = array_key_exists($purchase_response['purchaseDetails']['locationIDNumeric'], $location_ids) ? $location_ids[$purchase_response['purchaseDetails']['locationIDNumeric']] : 'Invalid Store';
 
@@ -167,8 +168,7 @@ class BarcodeController
         Utilities::redirect('/barcode/generate/'.$purchase_code);         
       }
 
-
-      # process form data on submit
+      // process form data on submit
       $form_processing = $this->_process_submitted_data($form_data, $submitted_item_details);
       if($form_processing['status'] === false) {
         $form_errors = json_encode($form_processing['form_errors']);
@@ -400,7 +400,7 @@ class BarcodeController
     $client_locations = Utilities::get_client_locations(true);
 
     $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
-    $per_page = 100;
+    $per_page = 50;
     if( count($request->request->all()) > 0) {
       $form_data = $request->request->all();
       // dump($form_data);
@@ -417,6 +417,9 @@ class BarcodeController
         $indent_format = $form_data['indentFormat'];
         $mfg_names = $form_data['mfgNames'];
         $uom_names = $form_data['uomNames'];
+        $wholesale_prices = $form_data['wholesalePrices'];
+        $online_prices = $form_data['onlinePrices'];
+        $batch_nos = $form_data['bnos'];
 
         $form_validation = $this->_validate_op_barcode_form($form_data);
         if($form_validation['status']) {
@@ -456,9 +459,24 @@ class BarcodeController
                     $uom_name = $uom_names[$item_key];
                   } else {
                     $uom_name = '';
+                  } 
+                  if(isset($wholesale_prices[$item_key])) {
+                    $wholesale_price = $wholesale_prices[$item_key];
+                  } else {
+                    $wholesale_price = '';
+                  }
+                  if(isset($online_prices[$item_key])) {
+                    $online_price = $online_prices[$item_key];
+                  } else {
+                    $online_price = '';
                   }                  
+                  if(isset($batch_nos[$item_key])) {
+                    $batch_no = $batch_nos[$item_key];
+                  } else {
+                    $batch_no = '';
+                  }
                   $item_key_a = explode("__", $item_key);
-                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name]; 
+                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', '']; 
                 }
               }
             } else {
@@ -500,9 +518,24 @@ class BarcodeController
                 $uom_name = $uom_names[$item_key];
               } else {
                 $uom_name = '';
+              }
+              if(isset($wholesale_prices[$item_key])) {
+                $wholesale_price = $wholesale_prices[$item_key];
+              } else {
+                $wholesale_price = '';
+              }
+              if(isset($online_prices[$item_key])) {
+                $online_price = $online_prices[$item_key];
+              } else {
+                $online_price = '';
+              }                  
+              if(isset($batch_nos[$item_key])) {
+                $batch_no = $batch_nos[$item_key];
+              } else {
+                $batch_no = '';
               }              
               $item_key_a = explode("__", $item_key);
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name];
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', ''];
             }
           }
           if(count($print_array_final)>0) {
@@ -550,6 +583,7 @@ class BarcodeController
 
     $openings = $this->openings_model->opbal_list($search_params);
     // dump($openings);
+    // exit;
     // check api status
     if($openings['status']) {
       // check whether we got products or not.
@@ -609,6 +643,221 @@ class BarcodeController
 
     // render template
     return array($this->template->render_view('barcodes-list-openings', $template_vars), $controller_vars);
+  }
+
+  public function generateBarcodesClosingbalAction(Request $request) {
+    $search_params = $closing_balances = $print_array = [];
+    $print_array_final = $closings_a = [];
+
+    $total_pages = $total_records = $record_count = $page_no = 0 ;
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
+    $page_success = $page_error = '';
+    $categories_a = [''=>'Choose'];
+    $rate_types = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale Price', 'online' => 'Online Price'];
+
+    $client_locations = Utilities::get_client_locations(true);
+
+    $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
+    $per_page = 50;
+    $from_date = $to_date = date("d-m-Y");
+    $group_by = 'lot';
+    $balance_type = 'cbg0';
+    $inven_type = 'both';
+
+    if( count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
+      // check whether the form is submitted or filtered.
+      if(isset($form_data['op']) && $form_data['op'] === 'save') {
+        $location_code = $form_data['locationCode'];
+        $item_names = $form_data['itemNames'];
+        $cnos_list = $form_data['cno'];
+        $item_mfgs = $form_data['mfgNames'];
+        $item_rates = $form_data['itemRates'];
+        $barcodes_a = $form_data['opBarcode'];
+        $sticker_qtys = $form_data['stickerQty'];
+        $indent_format = $form_data['indentFormat'];
+        $mfg_names = $form_data['mfgNames'];
+        $uom_names = $form_data['uomNames'];
+        $wholesale_prices = $form_data['wholesalePrices'];
+        $online_prices = $form_data['onlinePrices'];
+        $batch_nos = $form_data['bnos'];
+
+        $form_validation = $this->_validate_op_barcode_form($form_data);
+        if($form_validation['status']) {
+          $existing_barcodes = $form_validation['cleaned_params']['print_barcodes'];
+          if(count($existing_barcodes)>0) {
+            $existing_barcodes_a = array_combine(array_column($existing_barcodes, 0), array_column($existing_barcodes, 1));
+            $print_array += $existing_barcodes_a;
+            foreach($print_array as $item_key => $print_qty) {
+              if(isset($item_names[$item_key])) {
+                $item_name = $item_names[$item_key];
+              } else {
+                $item_name = 'Invalid';
+              }
+              if(isset($item_rates[$item_key])) {
+                $item_rate = $item_rates[$item_key];
+              } else {
+                $item_rate = 'Invalid';
+              }
+              if(isset($barcodes_a[$item_key])) {
+                $barcode = $barcodes_a[$item_key];
+              } else {
+                $barcode = 'Invalid';
+              }
+              if(isset($cnos_list[$item_key])) {
+                $cno = $cnos_list[$item_key];
+              } else {
+                $cno = '';
+              }
+              if(isset($mfg_names[$item_key])) {
+                $mfg_name = $mfg_names[$item_key];
+              } else {
+                $mfg_name = '';
+              }
+              if(isset($uom_names[$item_key])) {
+                $uom_name = $uom_names[$item_key];
+              } else {
+                $uom_name = '';
+              }
+              if(isset($wholesale_prices[$item_key])) {
+                $wholesale_price = $wholesale_prices[$item_key];
+              } else {
+                $wholesale_price = '';
+              }
+              if(isset($online_prices[$item_key])) {
+                $online_price = $online_prices[$item_key];
+              } else {
+                $online_price = '';
+              }                  
+              if(isset($batch_nos[$item_key])) {
+                $batch_no = $batch_nos[$item_key];
+              } else {
+                $batch_no = '';
+              }              
+              $item_key_a = explode("__", $item_key);
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', ''];
+            }
+
+          } else {
+            $this->flash->set_flash_message('<i class="fa fa-window-close" aria-hidden="true"></i>&nbsp;The selected items have no Barcodes. Please generate barcodes from Purchase register or Opening balances.',1);
+            Utilities::redirect('/barcode/cbbal?locationCode='.$form_data['locationCode']);
+          }
+          if(count($print_array_final)>0) {
+            if(isset($_SESSION['printBarCodes'])) {
+              unset($_SESSION['printBarCodes']);
+            }
+            $_SESSION['printBarCodes'] = $print_array_final;
+            $rate_type = isset($form_data['rateType']) && $form_data['rateType'] !== '' ? Utilities::clean_string($form_data['rateType']) : ''; 
+            $redirect_url = $rate_type !== '' ? '/barcodes/print?format='.$indent_format.'&r='.$rate_type : '/barcodes/print?format='.$indent_format;
+            Utilities::redirect($redirect_url);
+          }
+        } else {
+          $this->flash->set_flash_message(json_encode($form_validation['errors']),1);
+          Utilities::redirect('/barcode/cbbal?locationCode='.$form_data['locationCode']);
+        }
+      } else {
+        $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : $_SESSION['lc'];
+        $item_name = isset($form_data['itemName']) ? Utilities::clean_string($form_data['itemName']) : '';
+        $brand_name = isset($form_data['brandName']) ? Utilities::clean_string($form_data['brandName']) : '';
+        $search_params = array(
+          'itemName' => $item_name,
+          'locationCode' => $location_code,
+          'pageNo' => $page_no,
+          'perPage' => $per_page,
+          'fromDate' => $from_date,
+          'toDate' => $to_date,
+          'groupBy' => $group_by,
+          'balanceType' => $balance_type,
+          'invenType' => $inven_type,
+          'brandName' => $brand_name,
+        );
+      }
+    } else {
+      if(!is_null($request->get('locationCode')) && $request->get('locationCode') !== '') {
+        $location_code = $request->get('locationCode');
+      } else {
+        $location_code = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+      }
+      $item_name = !is_null($request->get('itemName')) ? Utilities::clean_string($request->get('itemName')) : '';
+      $brand_name = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';
+      $search_params = array(
+        'pageNo' => $page_no,
+        'perPage' => $per_page,
+        'locationCode' => $location_code,
+        'fromDate' => $from_date,
+        'toDate' => $to_date,
+        'groupBy' => $group_by,
+        'balanceType' => $balance_type,
+        'invenType' => $inven_type,
+        'itemName' => $item_name,
+        'brandName' => $brand_name,
+      );
+      // dump($search_params, 'search params.....');
+    }
+
+    $closing_balances = $this->inven_api->get_stock_report($search_params);
+    // dump($closing_balances);
+    // exit;
+    // check api status
+    if($closing_balances['status']) {
+      // check whether we got products or not.
+      if(count($closing_balances['results']['results'])>0) {
+        $slno = Utilities::get_slno_start(count($closing_balances['results']['results']), $per_page, $page_no);
+        $to_sl_no = $slno+$per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
+        } else {
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;
+        }
+        if($closing_balances['results']['total_pages']<$page_links_to_end) {
+          $page_links_to_end = $closing_balances['results']['total_pages'];
+        }
+        if($closing_balances['results']['total_records'] < $per_page) {
+          $to_sl_no = ($slno+$closing_balances['results']['total_records'])-1;
+        }
+        $closings_a = $closing_balances['results']['results'];
+        $total_pages = $closing_balances['results']['total_pages'];
+        $total_records = $closing_balances['results']['total_records'];
+        $record_count = $closing_balances['results']['total_records'];
+      } else {
+        $page_error = $closing_balances['apierror'];
+      }
+    } else {
+      $this->flash->set_flash_message($closing_balances['apierror'],1);      
+    }
+
+   // prepare form variables.
+    $template_vars = array(
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'closings' => $closings_a,
+      'total_pages' => $total_pages ,
+      'total_records' => $total_records,
+      'record_count' =>  $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'search_params' => $search_params,            
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'categories' => $categories_a,
+      'client_locations' => $client_locations,
+      'location_code' => $location_code,
+      'sticker_print_type_a' => ['' => 'Choose'] + Utilities::get_barcode_sticker_print_formats(),
+      'rate_types' => $rate_types,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Print Barcodes for Closing Balances',
+      'icon_name' => 'fa fa-barcode',             
+    );
+
+    // render template
+    return array($this->template->render_view('barcodes-list-closings', $template_vars), $controller_vars);
   }
 
   private function _process_submitted_data($form_data=[], $submitted_item_details=[]) {

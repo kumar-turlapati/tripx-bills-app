@@ -759,6 +759,10 @@ $routes->add('barcode_opening', new Routing\Route('/barcode/opbal/{pageNo}', arr
   '_controller' => 'ClothingRm\\Barcode\\Controller\\BarcodeController::generateBarcodesOpbalAction',
   'pageNo' => null,
 )));
+$routes->add('barcode_closing', new Routing\Route('/barcode/cbbal/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Barcode\\Controller\\BarcodeController::generateBarcodesClosingbalAction',
+  'pageNo' => null,
+)));
 
 // sales indent
 $routes->add('create_sindent', new Routing\Route('/sales-indent/create', array(

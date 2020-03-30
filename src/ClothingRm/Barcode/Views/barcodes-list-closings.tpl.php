@@ -8,32 +8,25 @@
   } else {
     $itemName = '';
   }
-  if(isset($search_params['category']) && $search_params['category'] !=='' ) {
-    $category = $search_params['category'];
-    $query_params[] = 'category='.$category;
+  if(isset($search_params['brandName']) && $search_params['brandName'] !=='' ) {
+    $brand_name = $search_params['brandName'];
+    $query_params[] = 'brandName='.$brand_name;
   } else {
-    $category = '';
-  }
-  if(isset($search_params['indexBy']) && $search_params['indexBy'] !=='' ) {
-    $index_by = $search_params['indexBy'];
-    $query_params[] = 'idx='.$index_by;
-  } else {
-    $index_by = '';
+    $brand_name = '';
   }  
   if(isset($search_params['locationCode']) && $search_params['locationCode'] !=='' ) {
     $locationCode = $search_params['locationCode'];
     $query_params[] = 'locationCode='.$locationCode;
   } else {
     $locationCode = '';
-  }  
+  }
   if(count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   } else {
     $query_params = '';
   }
-  $pagination_url = $page_url = '/barcode/opbal';
 
-  $sort_by_a = ['item' => 'Index by Item name', 'upload' => 'Index by Entry time'];
+  $pagination_url = $page_url = '/barcode/cbbal';
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -56,7 +49,7 @@
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control" value="<?php echo $itemName ?>">
+                  <input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $itemName ?>">
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="select-wrap">
@@ -78,28 +71,13 @@
                    </div>
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="select-wrap">
-                    <select class="form-control" name="idx" id="idx">
-                      <?php 
-                        foreach($sort_by_a as $sort_key=>$sort_value):
-                          if($sort_key === $index_by) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                       <option value="<?php echo $sort_key ?>" <?php echo $selected ?>>
-                          <?php echo $sort_value ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                   </div>
-                </div>                
+                  <input placeholder="Brand" type="text" name="brandName" id="brandName" class="form-control brandAc" value="<?php echo $brand_name ?>">
+                </div>
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
             </div>
           </div>
-          <?php if(count($openings)>0): ?>
+          <?php if(count($closings)>0): ?>
             <div class="table-responsive">
               <table class="table table-striped table-hover font12">
                 <thead>
@@ -118,46 +96,44 @@
                     <th width="5%" class="text-center valign-middle">Lot no.</th>
                     <th width="15%" class="text-left valign-middle">Category</th> 
                     <th width="8%"  class="text-center valign-middle">Sticker qty.</th>
-                    <th width="8%" class="text-center valign-middle">Opening rate<br />(in Rs.)</th>
-                    <th width="8%" class="text-center valign-middle">Opening val.<br />(in Rs.)</th>
-                    <th width="8%" class="text-center valign-middle">Purch. rate<br />(in Rs.)</th>                
+                    <th width="8%" class="text-center valign-middle">M.R.P<br />(in Rs.)</th>
+                    <th width="8%" class="text-center valign-middle">Wholesale price<br />(in Rs.)</th>
+                    <th width="8%" class="text-center valign-middle">Online price<br />(in Rs.)</th>                
                     <th width="5%"  class="text-center valign-middle">Tax<br />(in %)</th>
-                    <th width="20%" class="text-center valign-middle">Barcode</th> 
-                    <th width="8%"  class="text-center valign-middle">Options</th>
+                    <th width="20%" class="text-center valign-middle">Barcode</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php
                     $cntr = $sl_no;
-                    $tot_opening_value_pur = $tot_opening_value_sale = 0;
-                    foreach($openings as $opening_details):
+                    foreach($closings as $opening_details):
+                      $packed_qty = $opening_details['packedQty'];
                       $item_name = $opening_details['itemName'];
                       $category_name = $opening_details['categoryName'];
-                      $opening_rate = $opening_details['openingRate']; 
-                      $opening_qty = $opening_details['openingQty'];
-                      $packed_qty = $opening_details['packedQty'];
-                      $opening_value = $opening_qty*$opening_rate;
-                      $purchase_rate = $opening_details['purchaseRate'];
+                      $mrp = $opening_details['mrp'];
+                      $online_price = is_numeric($opening_details['onlinePrice']) ? $opening_details['onlinePrice'] : 0;
+                      $wholesale_price = is_numeric($opening_details['wholesalePrice']) ? $opening_details['wholesalePrice'] : 0;
+                      $closing_qty = $opening_details['closingQty'];
                       $tax_percent = $opening_details['taxPercent'];
-                      $opening_code = $opening_details['openingCode'];
                       $item_code = $opening_details['itemCode'];
                       $lot_no = $opening_details['lotNo'];
-                      $barcode = $opening_details['barcode'];
                       $item_key = $item_code.'__'.$lot_no.'__'.$packed_qty;
                       $item_sku = $opening_details['itemSku'];
-                      $mfg_name = $opening_details['mfgName'];
+                      $mfg_name = $opening_details['brandName'];
                       $cno = $opening_details['cno'];
                       $uom_name = $opening_details['uomName'];
-                      $online_price = $opening_details['onlinePrice'];
-                      $wholesale_price = $opening_details['wholesalePrice'];
                       $bno = $opening_details['bno'];
-
-                      $tot_opening_value_pur += ($opening_qty * $purchase_rate);
-                      $tot_opening_value_sale += ($opening_qty * $opening_rate);
-                      if($packed_qty > 0) {
-                        $opening_qty_calc = round($opening_qty/$packed_qty, 2);
+                      if($opening_details['defBarcode'] !== '') {
+                        $barcode = $opening_details['defBarcode'];
+                      } elseif($opening_details['createdBarcode'] !== '') {
+                        $barcode = $opening_details['createdBarcode'];
                       } else {
-                        $opening_qty_calc = $opening_qty;
+                        $barcode = '';
+                      }
+                      if($closing_qty >= $packed_qty) {
+                        $sticker_qty = round($closing_qty/$packed_qty, 2);
+                      } else {
+                        $sticker_qty = $closing_qty;
                       }
                   ?>
                       <tr class="font11">
@@ -182,12 +158,12 @@
                             name="stickerQty[<?php echo $item_key ?>]" 
                             style="background-color:#f1f442;border:1px solid #000;font-weight:bold;text-align:right;"
                             id="stickerQty_<?php echo $item_key ?>"
-                            value="<?php echo $opening_qty_calc ?>"
+                            value="<?php echo $sticker_qty ?>"
                           />
                         </td>
-                        <td class="valign-middle text-right text-bold font12"><?php echo number_format($opening_rate,2,'.','') ?></td>
-                        <td class="text-bold valign-middle text-right font12"><?php echo number_format($opening_value,2,'.','') ?></td>
-                        <td class="text-bold valign-middle text-right font12"><?php echo number_format($purchase_rate,2,'.','') ?></td>                    
+                        <td class="valign-middle text-right text-bold font12"><?php echo number_format($mrp,2,'.','') ?></td>
+                        <td class="text-bold valign-middle text-right font12"><?php echo number_format($wholesale_price,2,'.','') ?></td>
+                        <td class="text-bold valign-middle text-right font12"><?php echo number_format($online_price,2,'.','') ?></td>                    
                         <td class="text-right valign-middle text-right"><?php echo number_format($tax_percent,2,'.','') ?></td>
                         <td class="text-center valign-middle text-bold">
                           <input
@@ -200,15 +176,6 @@
                             readonly
                           />
                         </td>
-                        <td align="center">
-                          <?php if($opening_code !== ''): ?>
-                            <div class="btn-actions-group">
-                              <a class="btn btn-primary" href="/opbal/update/<?php echo $opening_code ?>" title="Edit Opening Balance">
-                                <i class="fa fa-pencil"></i>
-                              </a>  
-                            </div>
-                          <?php endif; ?>
-                        </td>
                         <input
                           type="hidden" 
                           name="itemNames[<?php echo $item_key ?>]" 
@@ -219,7 +186,7 @@
                           type="hidden" 
                           name="itemRates[<?php echo $item_key ?>]" 
                           id="itemRate_<?php echo $item_key ?>" 
-                          value="<?php echo $opening_rate ?>" 
+                          value="<?php echo $mrp ?>" 
                         />
                         <input
                           type="hidden" 
@@ -262,16 +229,6 @@
                   $cntr++;
                   endforeach; 
                 ?>
-                  <tr style="height:30px;">
-                    <td colspan="7" class="text-right text-bold">PAGE TOTALS - BY PURCHASE RATE</td>
-                    <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_value_pur,2,'.','') ?></td>
-                    <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>                   
-                  </tr>
-                  <tr style="height:30px;">
-                    <td colspan="7" class="text-right text-bold">PAGE TOTALS - BY SALE RATE</td>
-                    <td align="right" style="font-weight:bold;font-size:14px;"><?php echo number_format($tot_opening_value_sale,2,'.','') ?></td>
-                    <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>                   
-                  </tr>                  
                 </tbody>
               </table>
               <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>          
@@ -287,11 +244,25 @@
                   </select>
                 </div>
               </div>
+              <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+                <label class="control-label">Rate tobe printed</label>
+                <div class="select-wrap">
+                  <select class="form-control" name="rateType" id="rateType">
+                    <?php foreach($rate_types as $key=>$value): ?>
+                      <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <?php if(isset($form_errors['rateType'])): ?>
+                  <span class="error"><?php echo $form_errors['rateType'] ?></span>
+                <?php endif; ?>                  
+              </div>              
             </div>
             <div class="text-center">
-              <button class="btn btn-danger" id="op" name="op" value="save" type="submit" formtarget="_blank" title="Barcodes will be generated in new Tab">
-                <i class="fa fa-print"></i> Generate & Print Barcodes
+              <button class="btn btn-success" id="op" name="op" value="save" type="submit" formtarget="_blank" title="Barcodes will be printed in new Tab">
+                <i class="fa fa-print"></i> Print Barcodes
               </button>
+              <button class="btn btn-danger" type="submit" title="Cancel" onclick="javascript: window.location.href='/barcode/cbbal'"><i class="fa fa-times"></i>&nbsp;Cancel</button>
             </div>
           <?php endif; ?>
         </form>

@@ -589,14 +589,14 @@ class Utilities
         '/async/get-tax-percent',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
-        '/sales-entry/combos',
+        '/sales-entry/combos', '/sales/entry-with-indent',
 
         '/print-sales-bill-small', '/print-sales-bill', '/sales-invoice-b2b',
 
         '/sales-return/entry', '/sales-return/view', '/sales-return/list', '/print-sales-return-bill',
 
         '/stock-audit/create', '/stock-audit/update', '/stock-audit/print', '/stock-audit/register',
-        '/stock-audit/items',
+        '/stock-audit/items', '/sales-indents/list',
 
         '/products/list', '/categories/list',
 
