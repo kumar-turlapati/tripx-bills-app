@@ -265,6 +265,9 @@ class BarcodeController {
       case 'indent':
         $print_tpl = 'barcode-print-stickers-html';
         break;
+      case 'indent2':
+        $print_tpl = 'barcode-print-stickers-item-html';
+        break;
       case 'mrp':
         $print_tpl = 'barcode-print-stickers-mrp-html';
         break;
@@ -759,6 +762,8 @@ class BarcodeController {
         $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : $_SESSION['lc'];
         $item_name = isset($form_data['itemName']) ? Utilities::clean_string($form_data['itemName']) : '';
         $brand_name = isset($form_data['brandName']) ? Utilities::clean_string($form_data['brandName']) : '';
+        $barcode = isset($form_data['barcode']) ? Utilities::clean_string($form_data['barcode']) : '';
+        $lot_no = isset($form_data['lotNo']) ? Utilities::clean_string($form_data['lotNo']) : '';
         $search_params = array(
           'itemName' => $item_name,
           'locationCode' => $location_code,
@@ -770,6 +775,8 @@ class BarcodeController {
           'balanceType' => $balance_type,
           'invenType' => $inven_type,
           'brandName' => $brand_name,
+          'barcode' => $barcode,
+          'lotNo' => $lot_no,
         );
       }
     } else {
@@ -780,6 +787,9 @@ class BarcodeController {
       }
       $item_name = !is_null($request->get('itemName')) ? Utilities::clean_string($request->get('itemName')) : '';
       $brand_name = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';
+      $barcode = !is_null($request->get('barcode')) ? Utilities::clean_string($request->get('barcode')) : '';
+      $lot_no = !is_null($request->get('lotNo')) ? Utilities::clean_string($request->get('lotNo')) : '';
+
       $search_params = array(
         'pageNo' => $page_no,
         'perPage' => $per_page,
@@ -791,6 +801,8 @@ class BarcodeController {
         'invenType' => $inven_type,
         'itemName' => $item_name,
         'brandName' => $brand_name,
+        'barcode' => $barcode,
+        'lotNo' => $lot_no,
       );
       // dump($search_params, 'search params.....');
     }

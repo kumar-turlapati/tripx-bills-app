@@ -20,6 +20,18 @@
   } else {
     $locationCode = '';
   }
+  if(isset($search_params['barcode']) && $search_params['barcode'] !=='' ) {
+    $barcode = $search_params['barcode'];
+    $query_params[] = 'barcode='.$barcode;
+  } else {
+    $barcode = '';
+  }
+  if(isset($search_params['lotNo']) && $search_params['lotNo'] !=='' ) {
+    $lot_no = $search_params['lotNo'];
+    $query_params[] = 'lotNo='.$lot_no;
+  } else {
+    $lot_no = '';
+  }  
   if(count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   } else {
@@ -48,9 +60,6 @@
             <div id="filters-form">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1">Filter by</div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
-                  <input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $itemName ?>">
-                </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
@@ -69,12 +78,23 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
+                </div>                
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input type="text" placeholder="Item name" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $itemName ?>">
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Brand" type="text" name="brandName" id="brandName" class="form-control brandAc" value="<?php echo $brand_name ?>">
                 </div>
-                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Barcode" type="text" name="barcode" id="barcode" class="form-control" value="<?php echo $barcode ?>">
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Lot No." type="text" name="lotNo" id="lotNo" class="form-control" value="<?php echo $lot_no ?>">
+                </div>
               </div>
+            </div>
+            <div style="padding-top: 5px;text-align: center;">
+              <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
             </div>
           </div>
           <?php if(count($closings)>0): ?>

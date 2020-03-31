@@ -1051,6 +1051,7 @@ class Utilities
   public static function get_barcode_sticker_print_formats() {
     return [
       'indent' => 'Indent Sticker',
+      'indent2' => 'Indent Sticker - By Item',
       'mrp' => 'MRP Sticker',
       'worate' => 'Sticker Without Rate',
       'sku-small' => 'Warehouse Sticker with Case/Container/Box No.',
