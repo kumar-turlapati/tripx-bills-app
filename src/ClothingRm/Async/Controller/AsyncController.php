@@ -132,15 +132,21 @@ class AsyncController {
         echo $response;
       }
     } elseif($api_string === 'getItemDetailsByCode') {
-      $barcode =  Utilities::clean_string($request->get('bc'));
+      $barcode =  !is_null($request->get('bc')) ? Utilities::clean_string($request->get('bc')) : '';
       $locationCode = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
       $skipLocation = !is_null($request->get('sl')) ? Utilities::clean_string($request->get('sl')) : false;
       $ind = !is_null($request->get('ind')) ? Utilities::clean_string($request->get('ind')) : false;
       $bch = !is_null($request->get('bch')) ? Utilities::clean_string($request->get('bch')) : false;
       $qty_zero = !is_null($request->get('qtyZero')) ? Utilities::clean_string($request->get('qtyZero')) : false;
 
+      if(!is_null($request->get('sc'))) {
+        $barcode = Utilities::clean_string($request->get('sc'));
+        $sc = true;
+      } else {
+        $sc = false;
+      }
       $api_url = 'barcode/'.$barcode;
-      $params = ['locationCode' => $locationCode, 'skipLocation' => $skipLocation, 'ind' => $ind, 'bch' => $bch, 'qtyZero' => $qty_zero];
+      $params = ['locationCode' => $locationCode, 'skipLocation' => $skipLocation, 'ind' => $ind, 'bch' => $bch, 'qtyZero' => $qty_zero, 'sc' => $sc];
       $response = $api_caller->sendRequest('get',$api_url,$params,false);
       header("Content-type: application/json");
       if(is_array($response)) {

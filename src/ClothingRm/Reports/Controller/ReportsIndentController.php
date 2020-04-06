@@ -302,7 +302,9 @@ class ReportsIndentController {
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
-      $pdf->Cell($item_widths[2],6,substr($item_details['itemName'],0,25),'RTB',0,'L');
+      $pdf->SetFont('Arial','',8);
+      $pdf->Cell($item_widths[2],6,$item_details['itemName'],'RTB',0,'L');
+      $pdf->SetFont('Arial','',9);
       $pdf->Cell($item_widths[3],6,substr($item_details['brandName'],0,25),'RTB',0,'L');      
       $pdf->Cell($item_widths[4],6,$item_details['hsnSacCode'],'RTB',0,'L');
       $pdf->Cell($item_widths[5],6,$order_qty,'RTB',0,'R');
@@ -425,7 +427,9 @@ class ReportsIndentController {
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
-      $pdf->Cell($item_widths[2],6,substr($item_details['itemName'],0,25),'RTB',0,'L');
+      $pdf->SetFont('Arial','',8);
+      $pdf->Cell($item_widths[2],6,$item_details['itemName'],'RTB',0,'L');
+      $pdf->SetFont('Arial','',9);
       $pdf->Cell($item_widths[3],6,$item_details['hsnSacCode'],'RTB',0,'L');
       $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
       $pdf->Cell($item_widths[5],6,$item_details['brandName'],'RTB',0,'L');
@@ -571,7 +575,7 @@ class ReportsIndentController {
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,$item_name,'RTB',0,'L');
       $pdf->Cell($item_widths[2],6,$category_name,'RTB',0,'L');
-      $pdf->Cell($item_widths[3],6,$store_name,'RTB',0,'L');            
+      $pdf->Cell($item_widths[3],6,substr($store_name,0,16),'RTB',0,'L');            
       $pdf->Cell($item_widths[4],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
     }
 

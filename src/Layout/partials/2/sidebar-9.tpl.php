@@ -56,6 +56,16 @@
               <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
             </ul>
           </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Indents</a></li>
+              <li><a href="/indent-vs-sales"><i class="fa fa-compress"></i> Indent vs Sales</a></li>
+              <li><a href="/indent-vs-sales-by-item"><i class="fa fa-compress"></i> Indent vs Sales(Item)</a></li>
+            </ul>
+          </li>          
         </ul>
       </li>      
       <li class="sub-menu">
@@ -125,6 +135,20 @@
               <li><a href="/reports/item-master"><i class="fa fa-angle-right"></i> Item Master</a></li>
               <li><a href="/reports/customer-master"><i class="fa fa-angle-right"></i> Customer Master</a></li>              
             </ul>            
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:">
+              <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span> 
+            </a>
+            <ul class="sub">
+              <li><a href="/report-options/indent-item-avail"><i class="fa fa-angle-right"></i> Item Availability</a></li>
+              <li><a href="/report-options/indent-itemwise"><i class="fa fa-angle-right"></i> Indents Itemwise</a></li>
+              <li><a href="/report-options/indent-agentwise"><i class="fa fa-angle-right"></i> Indents Ag.wise</a></li>
+              <li><a href="/report-options/indent-statewise"><i class="fa fa-angle-right"></i> Indents Statewise</a></li>
+              <li><a href="/report-options/print-indents-agentwise"><i class="fa fa-angle-right"></i> Indents All By Agent</a></li> 
+              <li><a href="/report-options/indent-register"><i class="fa fa-angle-right"></i> Indent Register</a></li>
+              <li><a href="/report-options/indent-dispatch-summary"><i class="fa fa-angle-right"></i> Dispatch Summary</a></li>              
+            </ul>
           </li>          
         </ul>
       </li>

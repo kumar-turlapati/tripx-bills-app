@@ -68,6 +68,11 @@
   } else {
     $combo_code = '';
   }
+  if(isset($submitted_data['serviceCode']) && $submitted_data['serviceCode'] !== '') {
+    $service_code = $submitted_data['serviceCode'];
+  } else {
+    $service_code = '';
+  }  
 
   $readonly = isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 15 ? 'readonly' : '';
   // dump($errors);
@@ -269,7 +274,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Rack no.</label>
               <input
                 type="text" 
@@ -283,7 +288,7 @@
                 <span class="error"><?php echo $errors['rack_no'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Combo code</label>
               <input
                 type="text" 
@@ -325,6 +330,24 @@
               <?php endif; ?>
             </div>            
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Service code (Applicable only for Services)</label>
+              <input
+                type="text" 
+                class="form-control noEnterKey"
+                name="serviceCode"
+                id="serviceCode"
+                value="<?php echo $service_code ?>"
+                maxlength="10"
+                title="This code is used in Sales Invoice entry with Barcode"
+                <?php echo $readonly ?>                
+              />             
+              <?php if(isset($errors['serviceCode'])): ?>
+                <span class="error"><?php echo $errors['serviceCode'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
@@ -335,55 +358,3 @@
     </section>
   </div>
 </div>
-
-
-            <?php /*
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Tax rate</label>
-              <div class="select-wrap">
-                <select class="form-control" name="taxPercent" id="taxPercent">
-                  <?php 
-                    foreach($tax_rates_a as $key=>$value):
-                      if($tax_rate == $value) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $value ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['taxRate'])): ?>
-                  <span class="error"><?php echo $errors['taxRate'] ?></span>
-                <?php endif; ?>
-              </div>              
-            </div> 
-
-              <div class="select-wrap">
-                <select class="form-control" name="categoryID" id="categoryID">
-                  <?php 
-                    foreach($categories as $key=>$value): 
-                      if($sel_cat == $key) {
-                        $selected = 'selected="selected"';
-                      } else {
-                        $selected = '';
-                      }                       
-                  ?>
-                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <?php if(isset($errors['categoryID'])): ?>
-                  <span class="error"><?php echo $errors['categoryID'] ?></span>
-                <?php endif; ?>
-              </div>
-/*if(isset($submitted_data['mrp'])) {
-    $sel_mrp = $submitted_data['mrp'];
-  } else {
-    $sel_mrp = '';
-  }
-  if(isset($submitted_data['taxPercent'])) {
-    $tax_rate = $submitted_data['taxPercent'];
-  } else {
-    $tax_rate = '';
-  }
-*/?>

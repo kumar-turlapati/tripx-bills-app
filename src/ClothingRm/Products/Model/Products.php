@@ -110,8 +110,11 @@ class Products
 		}
 		if($params['comboCode'] !== '') {
 			if( !is_numeric($params['comboCode']) || strlen($params['comboCode']) !== 2) {
-				$errors['comboCode'] = 'Invalid Combo Code. Must be 00-99';
+			  $errors['comboCode'] = 'Invalid Combo Code. Must be 00-99';
 			}
+		}
+		if($params['serviceCode'] !== '' && !is_numeric($params['serviceCode'])) {
+			$errors['serviceCode'] = 'Invalid service code. Only digits are accepted.';	
 		}
 
 		if(count($errors)>0) {

@@ -300,8 +300,8 @@ class SalesIndentController {
   public function updateIndentStatus(Request $request) {
 
     # allow this option only to the administrator.
-    if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 3) {
-      $this->flash_obj->set_flash_message("Permission Error: You are not authorized to perform this action.", 1);
+    if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 3 && (int)$_SESSION['utype'] !== 9) {
+      $this->flash->set_flash_message("Permission Error: You are not authorized to perform this action.", 1);
       Utilities::redirect('/sales-indents/list');
     }
 

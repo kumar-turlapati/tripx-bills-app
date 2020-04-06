@@ -185,7 +185,7 @@
                   <th width="12%" class="text-center">Lot no.</th>
                   <th width="5%"  class="text-center">Available<br />qty.</th>
                   <th width="11%"  class="text-center">Ordered<br />qty.</th>
-                  <th width="8%" class="text-center">M.R.P<br />( in Rs. )</th>
+                  <th width="8%" class="text-center">M.R.P / Service Price<br />( in Rs. )</th>
                   <th width="10%" class="text-center">Gross Amt.<br />( in Rs. )</th>
                   <th width="8%" class="text-center">Discount<br />( in Rs. )</th>                  
                   <th width="8%" class="text-center">Taxable Amt.<br />( in Rs. )</th>

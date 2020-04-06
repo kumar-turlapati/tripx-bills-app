@@ -116,7 +116,7 @@
           <div class="labelSheet">
             <?php for($cntr=1;$cntr<=$printable_qty;$cntr++): ?>
               <div>
-                <div class="productName"><?php echo $print_item_name ?></div>
+                <div class="productName" style="font-size: 8px;"><?php echo $print_item_name ?></div>
                 <div class="rate">RATE : <?php echo 'Rs.'.$print_item_mrp ?></div>
                 <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
                 <div class="barCode"><?php echo $barcode ?></div>

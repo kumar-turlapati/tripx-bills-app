@@ -153,6 +153,7 @@ class Constants
     'date' => 'Bill Date (yyyy-mm-dd)',
     'suppname' => 'Supplier Name',
     'itemname' => 'Item Name',
+    'pono' => 'PO No.',
   ];
 
   public static $CUSTOMER_RATING = [

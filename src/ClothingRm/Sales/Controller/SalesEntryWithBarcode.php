@@ -153,6 +153,7 @@ class salesEntryWithBarcode {
       } else {
       # if no promo code is available process the transaction as is.
         $form_data = $request->request->all();
+        // dump($form_data);
         $validation = $this->_validate_form_data($form_data);
         if( $validation['status'] === false ) {
           $form_errors = $validation['errors'];
@@ -618,6 +619,8 @@ class salesEntryWithBarcode {
       }
     }
 
+    // dump($form_data);
+
     // validate item details.
     for($item_key=0;$item_key<count($item_details['itemName']);$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
@@ -630,6 +633,7 @@ class salesEntryWithBarcode {
         $item_discount = Utilities::clean_string($item_details['itemDiscount'][$item_key]);
         $item_tax_percent = Utilities::clean_string($item_details['itemTaxPercent'][$item_key]);
         $lot_no = Utilities::clean_string($item_details['lotNo'][$item_key]);
+        $item_type = Utilities::clean_string($item_details['itemType'][$item_key]);
 
         if(!is_numeric($item_discount)) {
           $item_discount = 0;
@@ -651,12 +655,17 @@ class salesEntryWithBarcode {
         $tot_tax_value += $item_tax_amount;
 
         $cleaned_params['itemDetails']['itemName'][$item_key] = $item_name;
+        $cleaned_params['itemDetails']['itemType'][$item_key] = $item_type;
 
         # validate item avaiable qty.
-        if(!is_numeric($item_ava_qty) || $item_ava_qty<=0) {
-          $form_errors['itemDetails']['itemAvailQty'][$item_key] = 'Invalid available qty.';
-        } else {
-          $cleaned_params['itemDetails']['itemAvailQty'][$item_key] = $item_ava_qty;
+        if($item_type === 'p') {
+          if(!is_numeric($item_ava_qty) || $item_ava_qty<=0) {
+            $form_errors['itemDetails']['itemAvailQty'][$item_key] = 'Invalid available qty.';
+          } else {
+            $cleaned_params['itemDetails']['itemAvailQty'][$item_key] = $item_ava_qty;
+          }
+        } else if($item_type === 's') {
+          $cleaned_params['itemDetails']['itemAvailQty'][$item_key] = 1;          
         }
 
         # validate sold qty.
@@ -695,7 +704,7 @@ class salesEntryWithBarcode {
         }        
 
         # validate if sold qty. is more than available qty.
-        if($item_sold_qty > $item_ava_qty) {
+        if($item_sold_qty > $item_ava_qty && $item_type === 'p') {
           $form_errors['itemDetails']['itemSoldQty'][$item_key] = 'Invalid sold qty.';
         }
       }
@@ -1021,7 +1030,9 @@ class salesEntryWithBarcode {
       $cleaned_params['itemDetails']['itemAvailQty'][$key] = $available_qty;
       $cleaned_params['itemDetails']['lotNo'][$key] = $item_details['lotNo'];
       $cleaned_params['itemDetails']['barcode'][$key] = $item_details['barcode'];
-      $cleaned_params['itemDetails']['itemDiscount'][$key] = $item_details['discountAmount'];      
+      $cleaned_params['itemDetails']['itemDiscount'][$key] = $item_details['discountAmount'];
+      $cleaned_params['itemDetails']['itemType'][$key] = $item_details['itemType'];
+      $cleaned_params['itemDetails']['itemServiceCode'][$key] = $item_details['itemServiceCode'];
     }
     $cleaned_params = array_merge($invoice_details, $cleaned_params);
 

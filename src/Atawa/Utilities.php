@@ -530,7 +530,7 @@ class Utilities
         '/grn/list', '/purchase-return/register', '/fin/payment-vouchers',
         '/fin/receipt-vouchers', '/fin/credit-notes', '/fin/petty-cash-book', '/stock-transfer/register',
         '/barcodes/list', '/sales-indents/list', '/inventory/available-qty', '/inventory/track-item',
-        '/sales/search-bills', '/purchases/search-bills',
+        '/sales/search-bills', '/purchases/search-bills',  '/sales-indent/update-status',
 
         '/reports/stock-report', '/reports/opbal', '/reports/sales-register', '/reports/itemwise-sales-register', '/reports/sales-summary-by-month', 
         '/reports/day-sales', '/reports/sales-by-tax-rate', '/reports/po-register', '/reports/po-register-itemwise', '/reports/payables',
@@ -541,6 +541,14 @@ class Utilities
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
         '/reports/po-return-register',
+
+        '/report-options/indent-item-avail', '/report-options/indent-itemwise',
+        '/report-options/indent-agentwise', '/report-options/indent-statewise', 
+        '/report-options/print-indents-agentwise', '/report-options/indent-register',
+        '/report-options/indent-dispatch-summary',
+
+        '/indent-item-avail', '/indent-itemwise', '/indent-agentwise', '/indent-statewise',
+        '/print-indents-agentwise', '/indent-register', '/indent-dispatch-summary',        
 
         '/finy/switch', '/discount-manager',
 

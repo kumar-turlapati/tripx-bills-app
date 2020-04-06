@@ -74,6 +74,8 @@
   $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
+
+  // dump($errors);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -91,7 +93,7 @@
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid;margin-bottom: 0px;">
               <thead>
                 <tr>
-                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Scan Barcode</td>
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;" id="scanText">Scan Barcode</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:10%;">
                     <input
                       type="text"
@@ -100,8 +102,14 @@
                       maxlength="13"
                       <?php echo $from_indent ? 'disabled' : '' ?>
                     />
+                    <input
+                      type="text"
+                      id="serviceCode"
+                      style="font-size:16px;font-weight:bold;border:1px dashed #225992;padding-left:5px;font-weight:bold;width:150px;display: none;"
+                      maxlength="13"
+                      <?php echo $from_indent ? 'disabled' : '' ?>
+                    />                    
                   </td>
-
                   <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;">Store Name</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <select class="form-control" name="locationCode" id="locationCode">
@@ -119,7 +127,6 @@
                       <?php endforeach; ?>
                     </select>                    
                   </td>
-
                   <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Customer Type</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <select class="form-control" name="customerType" id="customerType">
@@ -137,7 +144,6 @@
                       <?php endforeach; ?>
                     </select>
                   </td>
-
                   <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Billing rate</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <?php if($from_indent): ?>
@@ -160,18 +166,20 @@
                       </select>
                     <?php endif; ?>
                   </td>
-                  
                 </tr>
               </thead>
             </table>
           </div>
-
           <div class="table-responsive">
             <table class="table font12" style="border:none;">
-                <tr>
-                  <td style="border-top:none; border-left:none; border-right:none; border-bottom:none; text-align: right; width: 40%; color: #225992; font-weight: bold; font-size: 14px; vertical-align: middle;">Last item scanned:</td>
-                  <td  style="border-top:none; border-left:none; border-right:none; border-bottom: 2px dotted; text-align: left; width: 60%; color: #4ab033; font-weight: bold; font-size: 16px; vertical-align: middle;" id="lastScannedSaleItem">&nbsp;</td>
-                </tr>
+              <tr>
+                <td style="width: 20%; border: none;">
+                  <a href="javascript:void(0);" id="showServiceCode" style="margin-left: 10px; font-size: 16px; color:indianred; font-weight: bold;"><i class="fa fa-random" aria-hidden="true"></i>&nbsp;Add a Service</a>
+                  <a href="javascript:void(0);" id="showBarcode" style="margin-left: 10px; font-size: 16px; color:indianred; font-weight: bold; display:none;"><i class="fa fa-barcode" aria-hidden="true"></i>&nbsp;Scan Barcode</a>
+                </td>
+                <td style="border-top:none; border-left:none; border-right:none; border-bottom:none; text-align: right; width: 20%; color: #225992; font-weight: bold; font-size: 14px; vertical-align: middle;">Last item scanned:</td>
+                <td style="border-top:none; border-left:none; border-right:none; border-bottom: 2px dotted; text-align: left; width: 60%; color: #4ab033; font-weight: bold; font-size: 16px; vertical-align: middle;" id="lastScannedSaleItem">&nbsp;</td>
+              </tr>
             </table>
           </div>
 
@@ -184,7 +192,7 @@
                   <th width="11%" class="text-center">Lot no.</th>
                   <th width="11%" class="text-center">Available<br />qty.</th>                
                   <th width="11%" class="text-center">Ordered<br />qty.</th>
-                  <th width="8%"  class="text-center">M.R.P<br />( Rs. )</th>
+                  <th width="8%"  class="text-center">M.R.P / Service Price<br />( Rs. )</th>
                   <th width="8%"  class="text-center">Gross Amt.<br />( Rs. )</th>
                   <th width="8%"  class="text-center">Discount<br />( Rs. )</th>                  
                   <th width="8%"  class="text-center">Taxable Amt.<br />( Rs. )</th>
@@ -205,7 +213,8 @@
                       $item_discount = isset($form_data['itemDetails']['itemDiscount'][$i]) ? $form_data['itemDetails']['itemDiscount'][$i] : '';
                       $tax_percent = isset($form_data['itemDetails']['itemTaxPercent'][$i]) ? $form_data['itemDetails']['itemTaxPercent'][$i] : '';
                       $lot_no = isset($form_data['itemDetails']['lotNo'][$i]) ? $form_data['itemDetails']['lotNo'][$i] : '';
-                      $barcode = isset($form_data['itemDetails']['barcode'][$i]) ? $form_data['itemDetails']['barcode'][$i] : '';                      
+                      $barcode = isset($form_data['itemDetails']['barcode'][$i]) ? $form_data['itemDetails']['barcode'][$i] : '';
+                      $item_type = isset($form_data['itemDetails']['itemType'][$i]) ? $form_data['itemDetails']['itemType'][$i] : 'p';
 
                       if($item_qty > 0 && $item_rate > 0) {
                         $item_amount = $item_qty * $item_rate;
@@ -223,7 +232,7 @@
                         $tax_amount = '';
                       }
                   ?>
-                  <tr id="tr_<?php echo $barcode.'_'.$lot_no ?>">
+                  <tr id="tr_<?php echo $barcode.'_'.$lot_no ?>" index="<?php echo $i+1 ?>">
                     <td align="right" style="vertical-align:middle;" class="itemSlno"><?php echo $i+1 ?></td>
                     <td style="vertical-align:middle;">
                       <input 
@@ -288,7 +297,7 @@
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
-                        readonly
+                        <?php echo $item_type === 'p' ? 'readonly' : '' ?>
                         class = "mrp text-right noEnterKey"
                         id = "mrp_<?php echo $i+1 ?>"
                         index = "<?php echo $i+1 ?>"
@@ -296,7 +305,7 @@
                         value = "<?php echo $item_rate ?>"
                         name = "itemDetails[itemRate][]"
                       />
-                      <?php if(isset($errors['itemDetails']['mrp'][$i])): ?>
+                      <?php if(isset($errors['itemDetails']['itemRate'][$i])): ?>
                         <span class="error">Invalid</span>
                       <?php endif; ?>                      
                     </td>
@@ -342,7 +351,7 @@
                         <span class="error">Invalid</span>
                       <?php endif; ?>                      
                       <input type="hidden" class="taxAmount" id="taxAmount_<?php echo $i+1 ?>" value="<?php echo $tax_amount ?>" />
-                      <input type="hidden" class="itemType" id="itemType_<?php echo $i+1 ?>" />
+                      <input type="hidden" class="itemType" id="itemType_<?php echo $i+1 ?>" name="itemDetails[itemType][]" value="<?php echo $item_type ?>" />
                     </td>
                     <td style="vertical-align:middle;text-align:center;">
                       <div class="btn-actions-group">
@@ -394,6 +403,7 @@
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0  && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
+                <?php /*
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
                   <label class="control-label labelStyle">Packing charges (in Rs.)</label>
                   <input
@@ -456,6 +466,11 @@
                     <span class="error"><?php echo $errors['otherCharges'] ?></span>
                   <?php endif; ?>                   
                 </div>
+                */ ?>
+                <input type="hidden" value="0" name="packingCharges" id="packingCharges" />
+                <input type="hidden" value="0" name="shippingCharges" id="shippingCharges" />
+                <input type="hidden" value="0" name="insuranceCharges" id="insuranceCharges" />
+                <input type="hidden" value="0" name="otherCharges" id="otherCharges" />
               </div>
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">

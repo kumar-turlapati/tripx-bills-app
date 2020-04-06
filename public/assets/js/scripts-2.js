@@ -599,6 +599,57 @@ function initializeJS() {
 
   if( $('#owBarcode').length>0 ) {
 
+    $('#showServiceCode').on('click', function(e) {
+      e.preventDefault();
+      $('#serviceCode').show();
+      $('#owBarcode, #showServiceCode').hide();
+      $('#scanText').text('Service Code');
+      $('#showBarcode').show();
+    });
+
+    $('#showBarcode').on('click', function(e) {
+      e.preventDefault();
+      $('#owBarcode').show();
+      $('#serviceCode, #showBarcode').hide();
+      $('#scanText').text('Scan Barcode');
+      $('#showServiceCode').show();
+    });
+
+    $('#serviceCode').on('keypress', function (e) {
+       if (e.keyCode == 13) {
+         var serviceCode = $('#serviceCode').val();
+         var locationCode = $('#locationCode').val();
+         jQuery.ajax("/async/getItemDetailsByCode?sc="+serviceCode+'&locationCode='+locationCode, {
+            success: function(itemDetails) {
+              if(itemDetails.status === 'success') {
+                var objLength = Object.keys(itemDetails.response.bcDetails).length;
+                if(objLength > 0) {
+                  var itemName = '';
+                  jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                    lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                    itemName = lotNoDetails.itemName;
+                  });
+                  var selectedLotNoDetails = itemDetails.response.bcDetails[0];
+                  var barCodeItem = '[ '+serviceCode+' ] '+itemName;
+                  $('#lastScannedSaleItem').html(barCodeItem);
+                  __injectOutwardItemRow(selectedLotNoDetails, serviceCode, '');
+                  $('#serviceCode').val('');
+                } else {
+                  alert('Service code not found');                
+                }
+              } else {
+                alert('[ '+serviceCode + ' ] Service code is not available.');
+                $('#serviceCode').val('');
+              }
+            },
+            error: function(e) {
+              alert('Service code not found in the Selected Store or Location.');
+            }
+         });
+         e.preventDefault();
+       }
+    });
+
     $('#customerType').on('change', function(e){
       if($('#tBodyowItems tr').length > 0) {
         var customerType = $(this).val();
@@ -647,10 +698,10 @@ function initializeJS() {
        var billingRate = $('#billingRate').val();
        if (e.keyCode == 13) {
          var barcode = $(this).val();
-         if(barcode.length > 13) {
-          alert('Invalid barcode');
-          return false;
-         }
+         // if(barcode.length > 13) {
+         //  alert('Invalid barcode');
+         //  return false;
+         // }
          var locationCode = $('#locationCode').val();
          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
             success: function(itemDetails) {
@@ -762,6 +813,8 @@ function initializeJS() {
     });
 
     function __injectOutwardItemRow(itemDetails, barcode, billingRate) {
+      // alert('you are here.......'+barcode+billingRate);
+      // console.log(itemDetails, '-----------');
       var itemName = itemDetails.itemName;
       var nextIndex = 0;
       var lotNo = itemDetails.lotNo;
@@ -775,6 +828,7 @@ function initializeJS() {
       var orderQty = (parseFloat(moq)*1).toFixed(2);
       var customerType = $('#customerType').val();
       var totalRows = $('#tBodyowItems tr').length;
+      var itemType = itemDetails.itemType;
 
       if(billingRate === 'wholesale') {
         var mrp = itemDetails.wholesalePrice;
@@ -821,7 +875,7 @@ function initializeJS() {
         var grossAmount = taxableAmount = parseFloat(mrp*1).toFixed(2);
         var tableRowBegin = '<tr id="tr_'+barcode+'_'+lotNo+'" class="bcRow" index="' + nextIndex + '">';
         var itemSlno = '<td align="right" style="vertical-align:middle;" class="itemSlno">' + nextIndex + '</td>';
-        var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
+        var itemNameInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemName][]" id="iname_' + nextIndex +'" class="saleItem noEnterKey" size="30" index="' + nextIndex + '"  value="' + itemName + '" style="width:190px;" readonly/></td>';
         var lotNoInput = '<td style="vertical-align:middle;">'+
                          '<input type="text" class="form-control lotNo" name="itemDetails[lotNo][]" id="lotNo_' + nextIndex + '" index="' + nextIndex + '" value="' + lotNo + '"  readonly />';
         if(cno !== '') {
@@ -833,7 +887,7 @@ function initializeJS() {
         var qtyAvailableInput = '<td style="vertical-align:middle;"><input type="text" class="qtyAvailable text-right noEnterKey" name="itemDetails[itemAvailQty][]" id="qtyava_' + nextIndex + '" index="' + nextIndex + '" value="' + availableQty + '"  readonly  size="10" /></td>';
         var qtyOrderedInput = '<td style="vertical-align:middle;"><input type="text" class="form-control saleItemQty noEnterKey" name="itemDetails[itemSoldQty][]" id="qty_' + nextIndex + '" index="' + nextIndex + '" value="'+orderQty+'" style="text-align:right;font-weight:bold;font-size:14px;border:1px dashed;" /></td>';
         var mrpInput = '<td style="vertical-align:middle;"><input type="text" class="mrp text-right noEnterKey" name="itemDetails[itemRate][]" id="mrp_' + nextIndex + '" index="' + nextIndex + '" value="'+mrp+'" size="10"';
-        if(parseInt(editableMrps) === 0) {
+        if(parseInt(editableMrps) === 0 && itemType === 'p') {
           mrpInput += ' readonly';
         }
         mrpInput += ' /></td>';
@@ -847,13 +901,14 @@ function initializeJS() {
         var gstInput = '<td style="vertical-align:middle;"><input type="text" name="itemDetails[itemTaxPercent][]" id="saItemTax_' + nextIndex + '" size="10" class="form-control saItemTax noEnterKey"  index="'+ nextIndex +'" value="'+taxPercent+'"  />'+'</td>';
         var deleteRow = '<td style="vertical-align:middle;text-align:center;"><div class="btn-actions-group"><a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_'+barcode+'_'+lotNo+'"><i class="fa fa-times"></i></a></div></td>'; 
         var hiddenGrossAmountRow = '<input type="hidden" class="taxAmount" id="taxAmount_'+nextIndex+'" value="" />'; 
-        var hiddenItemTypeRow = '<input type="hidden" class="itemType" id="itemType_'+nextIndex+'" value="" />';       
+        var hiddenItemTypeRow = '<input type="hidden" class="itemType" name="itemDetails[itemType][]" id="itemType_'+nextIndex+'" value="'+itemType+'" />';
         var hiddenHsnSacRow = '<input type="hidden" class="hsnSacCode" id="hsnSac_'+nextIndex+'" value="'+hsnSacCode+'" />';       
         // var hiddenHsnSacRow = '';       
         var tableRowEnd = '</tr>';
         var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyAvailableInput + qtyOrderedInput + mrpInput + grossAmount + discounInput + taxableInput + gstInput + deleteRow + hiddenGrossAmountRow + hiddenItemTypeRow + hiddenHsnSacRow + tableRowEnd;
         $('#tBodyowItems').append(tableRow);
       }
+
       // trigger change
       // $('.saleItemQty').trigger('change');
       updateSaleItemRow(nextIndex);
@@ -2510,9 +2565,10 @@ function initializeJS() {
     $('#outwardEntryForm').on('change', '.saleItemQty', function() {
       var itemIndex = jQuery(this).attr('index');
       var avaQty = returnNumber(parseFloat($('#qtyava_'+itemIndex).val()));
+      var itemType = $('#itemType_'+itemIndex).val();
       var itemQty = returnNumber(parseFloat($(this).val()));
       if($('#in').length === 0) {
-        if(itemQty > avaQty) {
+        if(itemQty > avaQty && itemType === 'p') {
           alert('Qty. not available');
           $(this).val('');
           $(this).focus();
@@ -2536,6 +2592,11 @@ function initializeJS() {
       var itemIndex = jQuery(this).attr('index');      
       updateSaleItemRow(itemIndex);
     });
+
+    // $('#outwardEntryForm').on('blur', '.saItemTax', function(){
+    //   var itemIndex = jQuery(this).attr('index');
+    //   updateSaleItemRow(itemIndex);
+    // });
 
     $('#refCode').on('blur', function(e){
       var refCode = returnNumber($(this).val());
@@ -2583,6 +2644,8 @@ function initializeJS() {
       var mrp = parseFloat( returnNumber(jQuery('#mrp_' + itemIndex).val()) );
       var discount = parseFloat( returnNumber(jQuery('#discount_' + itemIndex).val()) );
       var taxPercent = parseFloat( returnNumber(jQuery('#saItemTax_' + itemIndex).val()) );
+
+      // alert(itemIndex+' updateSaleItemRow()');
 
       var grossAmount = parseFloat(mrp * reqQty).toFixed(2);
       var taxableAmount = parseFloat(grossAmount - discount).toFixed(2);
