@@ -160,9 +160,10 @@
           <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Inventory Openings</a></li>          
           <li><a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a></li>
           <li><a href="/barcode/opbal"><i class="fa fa-barcode"></i> Generate Barcodes (OB)</a></li>          
-          <li><a href="/barcode/cbbal"><i class="fa fa-barcode"></i> Print Barcodes (from CB)</a></li>          
+          <li><a href="/barcode/cbbal"><i class="fa fa-barcode"></i> Print Barcodes (from CB)</a></li>
+          <?php /*
           <li><a href="/inventory/change-mrp"><i class="fa fa-edit"></i> Change MRP</a></li>
-          <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li>
+          <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li> */ ?>
         </ul>
       </li>
       <li class="sub-menu">

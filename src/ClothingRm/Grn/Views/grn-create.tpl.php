@@ -88,6 +88,8 @@
 
   $round_off = round(round($bill_value)-round($bill_value,2),2);
   $net_pay = round($bill_value,0);
+
+  // dump($form_data, 'form data is...');
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -246,6 +248,7 @@
               </thead>
               <tbody>
               <?php
+                $total_qty_inventory = $total_qty_non_inventry = 0;
                 for($i=1;$i<=$total_item_rows;$i++):
                   if( isset($form_data['itemCode'][$i-1]) && $form_data['itemCode'][$i-1] !== '' ) {
                     $item_code = $form_data['itemCode'][$i-1];
@@ -302,15 +305,25 @@
                   } else {
                     $packed_qty = '';
                   }
+                  if( isset($form_data['itemType'][$i-1]) && $form_data['itemType'][$i-1] !== '' ) {
+                    $item_type = $form_data['itemType'][$i-1];
+                  } else {
+                    $item_type = '';
+                  }
                   $item_amount = round( ($inward_qty-$free_qty)*$packed_qty*$item_rate, 2);
                   $inward_qty_in_units = $inward_qty-$free_qty;
                   $inward_qty = $inward_qty * $packed_qty;
+
+                  $total_qty_inventory += $item_type === 'p' ? $inward_qty : 0;
+                  $total_qty_non_inventry += $item_type === 's' ? $inward_qty : 0;
               ?>
                 <tr class="purchaseItemRow">
                   <td style="vertical-align:middle;"><?php echo $item_name ?></td>
                   <td style="vertical-align:middle;"><?php echo $lot_no ?></td>                  
                   <td style="vertical-align:middle;"><?php echo $hsn_sac_code ?></td>                  
-                  <td style="vertical-align:middle;text-align:right;"><?php echo $inward_qty_in_units.' x '.number_format($packed_qty,2,'.','') ?></td>
+                  <td style="vertical-align:middle;text-align:right;">
+                    <?php echo $inward_qty_in_units.' x '.number_format($packed_qty,2,'.','') ?>
+                  </td>
                   <td style="vertical-align:middle;width:70px;" align="center">
                     <input
                       type="text"
@@ -341,33 +354,41 @@
                 <tr>
                   <th width="10%" class="text-center valign-middle">Taxable Value (in Rs.)</th>
                   <th width="10%"  class="text-center valign-middle">G.S.T (in Rs.)</th>             
+                  <th width="10%" class="text-center valign-middle">Round Off (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Bill Amount (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Total Inventory</th>
+                  <th width="10%" class="text-center valign-middle">Total Noninventory</th>
+                  <?php /*
                   <th width="10%" class="text-center valign-middle">Packing Charges (in Rs.)</th>
-                  <th width="10%"  class="text-center valign-middle">Shipping Charges (in Rs.)</th>             
+                  <th width="10%"  class="text-center valign-middle">Shipping Charges (in Rs.)</th> */?>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($bill_amount, 2, '.', '') ?></td>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($tax_amount, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2, '.', '')  ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($net_pay, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($total_qty_inventory, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($total_qty_non_inventry, 2, '.', '') ?></td>
+                  <?php /*
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($packing_charges, 2, '.', '') ?></td>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($shipping_charges, 2, '.', '') ?></td>
+                  */ ?>
                 </tr>
             </table>
           </div>
+          <?php /*
           <div class="table-responsive">
             <table class="table table-striped table-hover font14" id="owItemsTable">
                 <tr>
                   <th width="10%" class="text-center valign-middle">Insurance Charges (in Rs.)</th>
                   <th width="10%" class="text-center valign-middle">Other Charges (in Rs.)</th>
-                  <th width="10%" class="text-center valign-middle">Round Off (in Rs.)</th>
-                  <th width="10%" class="text-center valign-middle">Bill Amount (in Rs.)</th>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($insurance_charges, 2, '.', '')  ?></td>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($other_charges, 2, '.', '') ?></td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2, '.', '')  ?></td>
-                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($net_pay, 2, '.', '') ?></td>
                 </tr>
             </table>
-          </div>
+          </div>*/ ?>
           <div class="table-responsive">
             <table class="table table-striped table-hover font14" id="owItemsTable">
                 <tr>

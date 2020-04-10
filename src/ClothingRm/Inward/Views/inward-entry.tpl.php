@@ -253,6 +253,11 @@
                   </div>
                 </div>
               </div>
+              <input type="hidden" value="0" id="shippingCharges" name="shippingCharges" />
+              <input type="hidden" value="0" id="packingCharges" name="packingCharges" />
+              <input type="hidden" value="0" id="insuranceCharges" name="insuranceCharges" />
+              <input type="hidden" value="0" id="otherCharges" name="otherCharges" />
+              <?php /*
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label labelStyle">Packing charges (in Rs.)</label>
@@ -316,7 +321,7 @@
                     <span class="error"><?php echo $errors['otherCharges'] ?></span>
                   <?php endif; ?>                   
                 </div>
-              </div>
+              </div> */ ?>
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
                   <label class="control-label labelStyle">Transporter name</label>

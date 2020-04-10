@@ -393,6 +393,11 @@ class InwardController
         $itemSizes = array_column($purchase_details['itemDetails'], 'itemSize');
         $itemColors = array_column($purchase_details['itemDetails'], 'itemColor');
         $itemSleeves = array_column($purchase_details['itemDetails'], 'itemSleeve');
+        $expiryDates = array_column($purchase_details['itemDetails'], 'expiryDate');
+        $wholesalePrices = array_column($purchase_details['itemDetails'], 'wholesalePrice');
+        $onlinePrices = array_column($purchase_details['itemDetails'], 'onlinePrice');
+        $batchNos = array_column($purchase_details['itemDetails'], 'batchNo');
+        $itemTypes = array_column($purchase_details['itemDetails'], 'itemType');
 
         # unser item details from api data.
         unset($purchase_details['itemDetails']);
@@ -428,6 +433,7 @@ class InwardController
         $form_data['itemSize'] = $itemSizes;
         $form_data['itemColor'] = $itemColors;
         $form_data['itemSleeve'] = $itemSleeves;
+        $form_data['itemType'] = $itemTypes;
         
         if($form_data['grnFlag'] === 'yes') {
           $is_grn_generated = true;
@@ -663,6 +669,7 @@ class InwardController
         $cnos = array_column($purchase_details['itemDetails'], 'cno');
         $lot_nos =  array_column($purchase_details['itemDetails'], 'lotNo');
         $barcodes =  array_column($purchase_details['itemDetails'], 'barcode');
+        $itemTypes = array_column($purchase_details['itemDetails'], 'itemType');
 
         $total_item_rows = count($item_names);
 
@@ -688,6 +695,7 @@ class InwardController
         $form_data['cnos'] = $cnos;
         $form_data['lot_nos'] = $lot_nos;
         $form_data['barcodes'] = $barcodes;
+        $form_data['itemType'] = $itemTypes;
 
         if($form_data['grnFlag'] === 'yes') {
           $page_error = 'GRN is already generated for PO No. `'.$purchase_details['poNo']."`. You can't edit now.";

@@ -94,6 +94,7 @@
               <?php
                 $items_total =  $total_tax_amount = $items_tot_after_discount = $total_disc_amount = 0;
                 $taxable_values = $taxable_gst_value = [];
+                $total_qty_inventory = $total_qty_non_inventry = 0;
 
                 for($i=1;$i<=$total_item_rows;$i++):
 
@@ -115,7 +116,7 @@
                   if( isset($form_data['billedQty'][$i-1]) && $form_data['billedQty'][$i-1] !== '' ) {
                     $billed_qty = $form_data['billedQty'][$i-1];
                   } else {
-                    $billed_qty = '';
+                    $billed_qty = $inward_qty-$free_qty;
                   }                  
                   if( isset($form_data['mrp'][$i-1]) && $form_data['mrp'][$i-1] !== '' ) {
                     $mrp = $form_data['mrp'][$i-1];
@@ -161,6 +162,11 @@
                     $barcode = $form_data['barcodes'][$i-1];
                   } else {
                     $barcode = '-';
+                  }
+                  if($packed_qty !== '') {
+                    $billed_qty = round($billed_qty*$packed_qty,2);
+                  } else {
+                    $billed_qty = round($billed_qty, 2);
                   }                  
 
                   if(is_numeric($packed_qty) && $packed_qty>0) {
@@ -168,7 +174,11 @@
                   } else {
                     $gross_amount = $billed_qty*$item_rate;
                   }
-                  
+                  if( isset($form_data['itemType'][$i-1]) && $form_data['itemType'][$i-1] !== '' ) {
+                    $item_type = $form_data['itemType'][$i-1];
+                  } else {
+                    $item_type = '';
+                  }                  
                   $item_amount = $gross_amount - $item_discount;
                   $tax_amount = $item_amount*$tax_percent/100;
 
@@ -186,6 +196,9 @@
                     $taxable_values[$tax_percent] = $item_amount;
                     $taxable_gst_value[$tax_percent] = $tax_amount;
                   }
+
+                $total_qty_inventory += $item_type === 'p' ? $billed_qty : 0;
+                $total_qty_non_inventry += $item_type === 's' ? $billed_qty : 0;
               ?>
                 <tr class="purchaseItemRow">
                   <td style="width:240px;"><?php echo $item_name ?></td>
@@ -220,34 +233,28 @@
                 <tr>
                   <th width="10%" class="text-center valign-middle">Taxable Value (in Rs.)</th>
                   <th width="10%"  class="text-center valign-middle">G.S.T (in Rs.)</th>             
-                  <th width="10%" class="text-center valign-middle">Packing Charges (in Rs.)</th>
-                  <th width="10%"  class="text-center valign-middle">Shipping Charges (in Rs.)</th>             
+                  <th width="10%" class="text-center valign-middle">Round Off (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Bill Amount (in Rs.)</th>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($items_total, 2, '.', '') ?></td>
                   <td style="vertical-align:middle;text-align:right;"><?php echo number_format($total_tax_amount, 2, '.', '') ?></td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($packing_charges, 2, '.', '') ?></td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($shipping_charges, 2, '.', '') ?></td>
+                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2, '.', '')  ?></td>
+                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($net_pay, 2, '.', '') ?></td>
                 </tr>
             </table>
           </div>          
           <div class="table-responsive">
             <table class="table table-striped table-hover font14" id="owItemsTable">
                 <tr>
-                  <th width="10%" class="text-center valign-middle">Insurance Charges (in Rs.)</th>
-                  <th width="10%" class="text-center valign-middle">Other Charges (in Rs.)</th>
-                  <th width="10%" class="text-center valign-middle">Round Off (in Rs.)</th>
-                  <th width="10%" class="text-center valign-middle">Bill Amount (in Rs.)</th>
+                  <th width="10%" class="text-center valign-middle">Total PO Qty - Inventory</th>
+                  <th width="10%"  class="text-center valign-middle">Total PO Qty - Noninventory</th>             
+                  <td style="vertical-align:middle;font-weight:bold;" align="center" width="20%">Notes / Comments</td>
                 </tr>
                 <tr>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($insurance_charges, 2, '.', '')  ?></td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($other_charges, 2, '.', '') ?></td>
-                  <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2, '.', '')  ?></td>
-                  <td style="vertical-align:middle;text-align:right;font-size:20px;color:red;font-weight:bold;"><?php echo number_format($net_pay, 2, '.', '') ?></td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle;font-weight:bold;" align="center">Notes / Comments</td>
-                  <td style="vertical-align:middle;text-align:right;" colspan="3"><?php echo $remarks ?></td>
+                  <td style="vertical-align:middle;text-align: center;font-size: 16px; color: red;font-weight: bold;"><?php echo $total_qty_inventory ?></td>
+                  <td style="vertical-align:middle;text-align: center;font-size: 16px; color: red;font-weight: bold;"><?php echo $total_qty_non_inventry ?></td>
+                  <td style="vertical-align:middle;"><?php echo $remarks ?></td>
                 </tr>
             </table>
           </div>

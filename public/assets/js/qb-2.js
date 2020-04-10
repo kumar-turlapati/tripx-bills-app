@@ -2709,10 +2709,11 @@ function initializeJS() {
       });
       jQuery('.saleItemQty').each(function(i, obj) {
         var itemIndex = jQuery(this).attr('index');
-        if($('#iname_'+itemIndex).val() !== '') {
+        var itemType = jQuery(this).attr('index');
+        if($('#iname_'+itemIndex).val() !== '' && $('#itemType_'+itemIndex).val() === 'p') {
           qTotal = returnNumber(parseFloat(jQuery(this).val()));
           totalQty += qTotal;
-        }       
+        }
       });
 
       if(taxCalcOption === 'i') {

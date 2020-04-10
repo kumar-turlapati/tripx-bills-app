@@ -260,6 +260,11 @@
                   </div>
                 </div>
               </div>
+              <input type="hidden" value="0" id="shippingCharges" name="shippingCharges" />
+              <input type="hidden" value="0" id="packingCharges" name="packingCharges" />
+              <input type="hidden" value="0" id="insuranceCharges" name="insuranceCharges" />
+              <input type="hidden" value="0" id="otherCharges" name="otherCharges" />
+              <?php /*
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label labelStyle">Packing charges (in Rs.)</label>
@@ -323,7 +328,7 @@
                     <span class="error"><?php echo $errors['otherCharges'] ?></span>
                   <?php endif; ?>                   
                 </div>
-              </div>
+              </div> */ ?>
               <div class="form-group">
                 <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
                   <label class="control-label labelStyle">Transporter name</label>
@@ -427,6 +432,7 @@
               <?php
                 $items_total =  $total_tax_amount = $items_tot_after_discount = $total_disc_amount = 0;
                 $taxable_values = $taxable_gst_value = [];
+                $total_qty_inventory = $total_qty_non_inventry = 0;
                 for($i=1;$i<=$total_item_rows;$i++):
                   if( isset($form_data['packedQty'][$i-1]) && $form_data['packedQty'][$i-1] !== '' ) {
                     $packed_qty = $form_data['packedQty'][$i-1];
@@ -577,6 +583,11 @@
                   } else {
                     $online_price = '';
                   }
+                  if( isset($form_data['itemType'][$i-1]) && $form_data['itemType'][$i-1] !== '' ) {
+                    $item_type = $form_data['itemType'][$i-1];
+                  } else {
+                    $item_type = '';
+                  }
                   if(is_numeric($packed_qty) && $packed_qty>0) {
                     $gross_amount = $billed_qty*$item_rate;
                   } else {
@@ -589,6 +600,9 @@
                   $items_total += $item_amount;
                   $total_tax_amount += $tax_amount;
                   $total_disc_amount += $item_discount;
+
+                  $total_qty_inventory += $item_type === 'p' ? $billed_qty : 0;
+                  $total_qty_non_inventry += $item_type === 's' ? $billed_qty : 0;
 
                   if(isset($taxable_values[$tax_percent])) {
                     $taxable = $taxable_values[$tax_percent] + $item_amount;

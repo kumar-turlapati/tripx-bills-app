@@ -63,7 +63,7 @@
           </table>
         </div>   
         <div class="table-responsive">
-          <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="margin-bottom:0px;width:1600px;">
+          <table class="table table-striped table-hover item-detail-table font11" id="purchaseTable" style="margin-bottom:0px;width:1700px;">
             <thead>
               <tr>
                 <th style="width:220px;" class="text-center purItem">Item name</th>
@@ -90,12 +90,17 @@
                 <th style="width:20px"   class="text-center">Size</th>
                 <th style="width:20px"   class="text-center">Color</th>
                 <th style="width:20px"   class="text-center">Sleeve<br />Type</th>
+                <th style="width:20px"   class="text-center">BatchNo.</th>
+                <th style="width:20px"   class="text-center">ExpiryDate</th>
+                <th style="width:20px"   class="text-center">Wholesale<br />Price (in Rs.)</th>
+                <th style="width:20px"   class="text-center">Online<br />Price (in Rs.)</th>
               </tr>
             </thead>
             <tbody>
             <?php
               $items_total =  $total_tax_amount = $items_tot_after_discount = $total_disc_amount = 0;
               $taxable_values = $taxable_gst_value = [];
+              $total_qty_inventory = $total_qty_non_inventry = 0;
               for($i=1;$i<=$total_item_rows;$i++):
                 if( isset($form_data['itemName'][$i-1]) && $form_data['itemName'][$i-1] !== '' ) {
                   $item_name = $form_data['itemName'][$i-1];
@@ -116,7 +121,12 @@
                   $billed_qty = $form_data['billedQty'][$i-1];
                 } else {
                   $billed_qty = '';
-                }                  
+                }
+                if( isset($form_data['billedQty'][$i-1]) && $form_data['billedQty'][$i-1] !== '' ) {
+                  $billed_qty = $form_data['billedQty'][$i-1];
+                } else {
+                  $billed_qty = $inward_qty-$free_qty;
+                }
                 if( isset($form_data['mrp'][$i-1]) && $form_data['mrp'][$i-1] !== '' ) {
                   $mrp = $form_data['mrp'][$i-1];
                 } else {
@@ -194,11 +204,51 @@
                 } else {
                   $barcode = '';
                 }
+                if( isset($form_data['batchNo'][$i-1]) && $form_data['batchNo'][$i-1] !== '' ) {
+                  $batch_no = $form_data['batchNo'][$i-1];
+                } else {
+                  $batch_no = '';
+                }
+                if( isset($form_data['expiryDate'][$i-1]) && $form_data['expiryDate'][$i-1] !== '' ) {
+                  $expiry_date = date("d-m-Y", strtotime($form_data['expiryDate'][$i-1]));
+                } else {
+                  $expiry_date = '';
+                }
+                if( isset($form_data['wholesalePrice'][$i-1]) && $form_data['wholesalePrice'][$i-1] !== '' ) {
+                  $wholesale_price = $form_data['wholesalePrice'][$i-1];
+                } else {
+                  $wholesale_price = '';
+                }
+                if( isset($form_data['onlinePrice'][$i-1]) && $form_data['onlinePrice'][$i-1] !== '' ) {
+                  $online_price = $form_data['onlinePrice'][$i-1];
+                } else {
+                  $online_price = '';
+                }
+                if( isset($form_data['brandName'][$i-1]) && $form_data['brandName'][$i-1] !== '' ) {
+                  $brand_name = $form_data['brandName'][$i-1];
+                } else {
+                  $brand_name = '';
+                }
+                if( isset($form_data['categoryName'][$i-1]) && $form_data['categoryName'][$i-1] !== '' ) {
+                  $category_name = $form_data['categoryName'][$i-1];
+                } else {
+                  $category_name = '';
+                }
+                if( isset($form_data['itemType'][$i-1]) && $form_data['itemType'][$i-1] !== '' ) {
+                  $item_type = $form_data['itemType'][$i-1];
+                } else {
+                  $item_type = '';
+                }                
                 if(is_numeric($packed_qty) && $packed_qty>0) {
                   $gross_amount = $billed_qty*$item_rate*$packed_qty;
                 } else {
                   $gross_amount = $billed_qty*$item_rate;
                 }
+                if($packed_qty !== '') {
+                  $billed_qty = round($billed_qty*$packed_qty,2);
+                } else {
+                  $billed_qty = round($billed_qty, 2);
+                }                
                 
                 $item_amount = $gross_amount - $item_discount;
                 $tax_amount = $item_amount*$tax_percent/100;
@@ -217,32 +267,39 @@
                   $taxable_values[$tax_percent] = $item_amount;
                   $taxable_gst_value[$tax_percent] = $tax_amount;
                 }
+
+                $total_qty_inventory += $item_type === 'p' ? $billed_qty : 0;
+                $total_qty_non_inventry += $item_type === 's' ? $billed_qty : 0;
             ?>
               <tr class="purchaseItemRow">
-                <td style="width:300px;"><?php echo $item_name ?></td>
-                <td style="width:80px;"><?php echo $hsn_code ?></td>                  
-                <td style="width:80px;"><?php echo $cno ?></td>                  
-                <td style="width:80px;"><?php echo $lot_no ?></td>                  
-                <td style="width:50px;" align="right"><?php echo number_format($inward_qty,2,'.','') ?></td>
-                <td style="width:50px;" align="right"><?php echo number_format($free_qty,2,'.','') ?></td>
-                <td style="width:55px;" align="right"><?php echo number_format($billed_qty,2,'.','') ?></td>
-                <td style="width:60px;" align="right"><?php echo number_format($packed_qty,2,'.','') ?></td>                  
-                <td style="width:55px;" align="right"><?php echo number_format($mrp,2,'.','') ?></td>
-                <td style="width:55px;" align="right"><?php echo number_format($item_rate,2,'.','') ?></td>
-                <td style="width:80px;" align="right"><?php echo number_format(round($gross_amount,2),2,'.','') ?></td>
-                <td style="width:80px;" align="right"><?php echo number_format($item_discount,2,'.','') ?></td>
-                <td style="width:70px;" align="right"><?php echo number_format(round($item_amount,2),2,'.','') ?></td>
-                <td style="width:80px;" align="right"><?php echo number_format($tax_percent, 2, '.', '') ?></td>
-                <td style="width:50px"  class="text-center"><?php echo '' ?></td>
-                <td style="width:50px"  class="text-center"><?php echo '' ?></td>
-                <td style="width:20px"  class="text-center"><?php echo $cno ?></td>
-                <td style="width:20px"  class="text-center"><?php echo $uom_name ?></td>
-                <td style="width:20px"  class="text-center"><?php echo $barcode ?></td>
-                <td style="width:20px"  class="text-center"><?php echo $item_sku ?></th>
-                <td style="width:20px"  class="text-center"><?php echo $item_style_code ?></td>
-                <td style="width:20px"  class="text-center"><?php echo $item_size ?></td>
-                <td style="width:20px"  class="text-center"><?php echo $item_color ?></td>
-                <td style="width:20px"  class="text-center"><?php echo $item_sleeve ?></td>                
+                <td style="width:300px; vertical-align: middle;"><?php echo $item_name ?></td>
+                <td style="width:80px; vertical-align: middle;"><?php echo $hsn_code ?></td>                  
+                <td style="width:80px; vertical-align: middle;"><?php echo $cno ?></td>                  
+                <td style="width:80px; vertical-align: middle;"><?php echo $lot_no ?></td>                  
+                <td style="width:50px; vertical-align: middle;" align="right"><?php echo number_format($inward_qty,2,'.','') ?></td>
+                <td style="width:50px; vertical-align: middle;" align="right"><?php echo number_format($free_qty,2,'.','') ?></td>
+                <td style="width:55px; vertical-align: middle;" align="right"><?php echo number_format($billed_qty,2,'.','') ?></td>
+                <td style="width:60px; vertical-align: middle;" align="right"><?php echo number_format($packed_qty,2,'.','') ?></td>                  
+                <td style="width:55px; vertical-align: middle;" align="right"><?php echo number_format($mrp,2,'.','') ?></td>
+                <td style="width:55px; vertical-align: middle;" align="right"><?php echo number_format($item_rate,2,'.','') ?></td>
+                <td style="width:80px; vertical-align: middle;" align="right"><?php echo number_format(round($gross_amount,2),2,'.','') ?></td>
+                <td style="width:80px; vertical-align: middle;" align="right"><?php echo number_format($item_discount,2,'.','') ?></td>
+                <td style="width:70px; vertical-align: middle;" align="right"><?php echo number_format(round($item_amount,2),2,'.','') ?></td>
+                <td style="width:80px; vertical-align: middle;" align="right"><?php echo number_format($tax_percent, 2, '.', '') ?></td>
+                <td style="width:50px vertical-align: middle;"  class="text-center"><?php echo '' ?></td>
+                <td style="width:50px vertical-align: middle;"  class="text-center"><?php echo '' ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $cno ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $uom_name ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $barcode ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $item_sku ?></th>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $item_style_code ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $item_size ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $item_color ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $item_sleeve ?></td>                
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $batch_no ?></td>                
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $expiry_date ?></td>
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $wholesale_price ?></td>                
+                <td style="width:20px vertical-align: middle;"  class="text-center"><?php echo $online_price ?></td>
               </tr>
             <?php 
               endfor;
@@ -258,12 +315,16 @@
         <div class="table-responsive">
           <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
               <tr>
+                <th width="10%" class="text-center valign-middle">PO Qty - Inventory</th>
+                <th width="10%" class="text-center valign-middle">PO Qty - Noninventory</th>
                 <th width="10%" class="text-center valign-middle">Taxable Value (in Rs.)</th>
                 <th width="10%"  class="text-center valign-middle">G.S.T (in Rs.)</th>             
                 <th width="10%" class="text-center valign-middle">Packing Charges (in Rs.)</th>
                 <th width="10%"  class="text-center valign-middle">Shipping Charges (in Rs.)</th>             
               </tr>
               <tr>
+                <td style="vertical-align:middle;text-align:right;color: red; font-weight: bold;font-size: 16px;"><?php echo number_format($total_qty_inventory, 2, '.', '') ?></td>
+                <td style="vertical-align:middle;text-align:right;color: red; font-weight: bold;font-size: 16px;"><?php echo number_format($total_qty_non_inventry, 0, '.', '') ?></td>
                 <td style="vertical-align:middle;text-align:right;"><?php echo number_format($items_total, 2, '.', '') ?></td>
                 <td style="vertical-align:middle;text-align:right;"><?php echo number_format($total_tax_amount, 2, '.', '') ?></td>
                 <td style="vertical-align:middle;text-align:right;"><?php echo number_format($packing_charges, 2, '.', '') ?></td>
@@ -271,6 +332,7 @@
               </tr>
           </table>
         </div>
+        <?php /*
         <div class="table-responsive">
           <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
               <tr>
@@ -291,6 +353,7 @@
               </tr>
           </table>
         </div>
+        */ ?>
         <div class="table-responsive">
           <table class="table table-striped table-hover font14" id="owItemsTable" style="margin-bottom:0px;">
               <tr>

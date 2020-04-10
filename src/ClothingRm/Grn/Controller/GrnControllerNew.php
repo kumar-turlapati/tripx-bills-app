@@ -99,6 +99,8 @@ class GrnControllerNew
       $hsn_sac_codes = array_column($purchase_details['itemDetails'], 'hsnSacCode');
       $lot_nos = array_column($purchase_details['itemDetails'], 'lotNo');
       $packed_qtys = array_column($purchase_details['itemDetails'], 'packedQty');
+      $itemTypes = array_column($purchase_details['itemDetails'], 'itemType');
+
 
       # unset item details from api data.
       unset($purchase_details['itemDetails']);
@@ -121,6 +123,7 @@ class GrnControllerNew
       $form_data['itemCode'] = $item_codes;
       $form_data['lotNos'] = $lot_nos;
       $form_data['packedQtys'] = $packed_qtys;
+      $form_data['itemType'] = $itemTypes;
 
     # invalid PO No. redirect user.
     } else {
