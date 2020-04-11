@@ -25,9 +25,10 @@
           <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>
           <li><a href="/sales-entry/combos"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Sales Entry - Combos</a></li>
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock transfer</a></li>
-          <li><a href="/fin/pc-voucher/create"><i class="fa fa-inr"></i> Cash Voucher</a></li>
-          <li><a href="/stock-audit/create"><i class="fa fa-check"></i> Phy. Stock Audit</a></li>
+          <li><a href="/fin/cash-voucher/create"><i class="fa fa-inr"></i> Cash Voucher</a></li>
+          <?php /*<li><a href="/stock-audit/create"><i class="fa fa-check"></i> Phy. Stock Audit</a></li> */ ?>
           <li><a href="/fin/credit-note/create"><i class="fa fa-sign-out"></i> Credit note</a></li>
+          <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
         </ul>
       </li>
       <li class="sub-menu">

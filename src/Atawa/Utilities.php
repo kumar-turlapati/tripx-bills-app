@@ -594,7 +594,7 @@ class Utilities
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
         '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd', '/async/getComboItemDetails',
-        '/async/get-tax-percent',
+        '/async/get-tax-percent', '/async/getBillNos',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
         '/sales-entry/combos', '/sales/entry-with-indent',
@@ -604,7 +604,7 @@ class Utilities
         '/sales-return/entry', '/sales-return/view', '/sales-return/list', '/print-sales-return-bill',
 
         '/stock-audit/create', '/stock-audit/update', '/stock-audit/print', '/stock-audit/register',
-        '/stock-audit/items', '/sales-indents/list',
+        '/stock-audit/items', '/sales-indents/list', '/fin/sales2cb', '/fin/post-sales2cb',
 
         '/products/list', '/categories/list',
 
@@ -614,9 +614,10 @@ class Utilities
 
         '/customers/create', '/customers/update', '/customers/view', '/customers/list', 
 
-        '/fin/pc-voucher', '/fin/pc-vouchers', '/fin/petty-cash-book', '/fin/credit-note', '/fin/credit-notes',
+        '/fin/cash-voucher', '/fin/cash-vouchers', '/fin/cash-book', '/fin/credit-note', '/fin/credit-notes',
+        '/fin/receipt-vouchers',
 
-        '/taxes/list', 
+        '/taxes/list', '/fin/receipt-voucher',
 
         '/promo-offers/list', 
 

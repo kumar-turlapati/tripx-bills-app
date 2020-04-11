@@ -353,6 +353,7 @@ class InventoryController {
     $color = !is_null($request->get('itemColor')) ? Utilities::clean_string($request->get('itemColor')) : '';
     $sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
     $sleeve = !is_null($request->get('itemSleeve')) ? Utilities::clean_string($request->get('itemSleeve')) : '';
+    $lot_no = !is_null($request->get('lotNo')) ? Utilities::clean_string($request->get('lotNo')) : '';
     $location_code = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
 
     $client_locations = Utilities::get_client_locations();
@@ -368,6 +369,7 @@ class InventoryController {
       $cleaned_params['itemColor'] = $color;
       $cleaned_params['itemSku'] = $sku;
       $cleaned_params['itemSleeve'] = $sleeve;
+      $cleaned_params['lotNo'] = $lot_no;
 
       // hit api
       $api_response = $this->inven_api->track_item($cleaned_params);

@@ -7,6 +7,8 @@
   $color = isset($form_data['itemColor']) && $form_data['itemColor'] !== '' ? $form_data['itemColor'] : '';
   $sku = isset($form_data['itemSku']) && $form_data['itemSku'] !== '' ? $form_data['itemSku'] : '';
   $sleeve = isset($form_data['itemSleeve']) && $form_data['itemSleeve'] !== '' ? $form_data['itemSleeve'] : '';
+  $lot_no = isset($form_data['lotNo']) && $form_data['lotNo'] !== '' ? $form_data['lotNo'] : '';
+
   $location_code = isset($form_data['locationCode']) ? $form_data['locationCode'] : $default_location;
 
   $query_params = [];
@@ -100,6 +102,12 @@
                     <span class="error"><?php echo $form_errors['itemSleeve'] ?></span>
                   <?php endif; ?>
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Lot No." type="text" name="lotNo" id="lotNo" class="form-control" value="<?php echo $lot_no ?>">
+                  <?php if(isset($form_errors['lotNo'])): ?>
+                    <span class="error"><?php echo $form_errors['lotNo'] ?></span>
+                  <?php endif; ?>
+                </div>                
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="container-fluid">
                     <button class="btn btn-success">
