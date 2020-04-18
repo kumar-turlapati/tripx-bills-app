@@ -2046,6 +2046,7 @@ class InventoryReportsController {
       $barcode = $item_details['barcode'];
       $opening_date = date("d-m-Y", strtotime($item_details['createdDateTime']));
       $opening_rate = $item_details['openingRate'];
+      $lot_no = $item_details['lotNo'];
       if($purchase_rate > 0 && $opening_qty > 0) {
         $item_amount = round($purchase_rate*$opening_qty,2);
       } else {
@@ -2064,6 +2065,7 @@ class InventoryReportsController {
       $cleaned_params[$key] = [
         'Sno.' => $slno,
         'Item Name' => $item_name,
+        'Lot No.' => $lot_no,
         'BrandName' => $brand_name,
         'Category' => $category_name,
         'OpenQty.' => number_format($opening_qty,2,'.',''),
@@ -2077,6 +2079,7 @@ class InventoryReportsController {
     $cleaned_params[count($cleaned_params)] = [
       'Sno.' => '',
       'Item Name' => 'T O T A L S',
+      'Lot No.' => '',
       'BrandName' => '',
       'Category' => '',
       'OpenQty.' => number_format($tot_qty,2,'.',''),

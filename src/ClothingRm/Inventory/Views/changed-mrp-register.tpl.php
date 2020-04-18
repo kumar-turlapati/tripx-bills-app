@@ -39,6 +39,13 @@
     <section class="panelBox">
       <div class="panelBody">
         <?php echo Utilities::print_flash_message() ?>
+        <div class="global-links actionButtons clearfix">
+          <div class="pull-right text-right">
+            <a href="/inventory/change-selling-price" class="btn btn-default">
+              <i class="fa fa-edit"></i> Update Selling Price
+            </a>
+          </div>
+        </div>        
         <div class="filters-block">
           <div id="filters-form">
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>" id="changeMrpForm">
@@ -106,14 +113,14 @@
               <thead>
                 <tr>
                   <th width="5% " class="text-center">Sno</th>
-                  <th width="25%" class="text-left">Item Name &amp; Lot No.</th>
-                  <th width="10%" class="text-left">Category Name</th>
-                  <th width="10%" class="text-left">Brand Name</th>
-                  <th width="10%" class="text-left">Store Name</th>
-                  <th width="8%" class="text-center">Old MRP<br />(in Rs.)</th>
-                  <th width="8%" class="text-center">New MRP<br />(in Rs.)</th>
-                  <th width="8%" class="text-center">Changed<br />on</th>                
-                  <th width="15%" class="text-center">PO No.</th>
+                  <th width="25%" class="text-left">Item name &amp; Lot no.</th>
+                  <th width="10%" class="text-left">Category name</th>
+                  <th width="10%" class="text-left">Brand name</th>
+                  <?php /*<th width="10%" class="text-left">Store Name</th> */ ?>
+                  <th width="8%" class="text-center">Changed <br />MRP<br />(in Rs.)</th>
+                  <th width="8%" class="text-center">Changed <br />Wholesale price<br />(in Rs.)</th>
+                  <th width="8%" class="text-center">Changed <br />Online price<br />(in Rs.)</th>
+                  <th width="10%" class="text-center">Changed<br />on</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,10 +135,13 @@
                     $brand_name = $item_details['brandName'];
                     $old_mrp = $item_details['oldMrp'];
                     $new_mrp = $item_details['newMrp'];
+                    $new_online_price = $item_details['newOnlinePrice'];
+                    $new_wholesale_price = $item_details['newWholesalePrice'];
+
                     $location_id = $item_details['locationID'];
                     $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
                     $po_no = $item_details['poNo'];
-                    $changed_on = date("d-M-Y", strtotime($item_details['createdTime']));
+                    $changed_on = date("d-M-Y h:ia", strtotime($item_details['createdTime']));
 
                     $unique_key = $item_name.' [ '.$lot_no.' ]';
                     $po_key = $po_no.' [ '.date("d-M-Y", strtotime($item_details['purchaseDate'])).']';
@@ -141,13 +151,15 @@
                     <td class="text-left valign-middle"><?php echo $unique_key ?></td>
                     <td class="text-left valign-middle"><?php echo $category_name ?></td>                 
                     <td class="text-left valign-middle"><?php echo $brand_name ?></td>                 
-                    <td class="text-left valign-middle"><?php echo $location_name ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($old_mrp,2,'.','') ?></td>
-                    <td class="text-right valign-middle font14" style="color:blue;"><?php echo number_format($new_mrp,2,'.','') ?></td>
+                    <?php /*<td class="text-left valign-middle"><?php echo $location_name ?></td> */ ?>
+                    <td class="text-right valign-middle font14" style="color:blue;"><?php echo $new_mrp > 0 ? number_format($new_mrp,2,'.','') : '' ?></td>
+                    <td class="text-right valign-middle font14" style="color:blue;"><?php echo $new_wholesale_price > 0 ? number_format($new_wholesale_price,2,'.','') : '' ?></td>
+                    <td class="text-right valign-middle font14" style="color:blue;"><?php echo $new_online_price > 0 ? number_format($new_online_price,2,'.','') : '' ?></td>
                     <td class="text-right valign-middle"><?php echo $changed_on ?></td>
+                    <?php /*
                     <td class="text-right valign-middle hyperlink">
                       <a href="/inward-entry/view/<?php echo $item_details['purchaseCode'] ?>" target="_blank"><?php echo $po_key ?></a>
-                    </td>
+                    </td> */ ?>
                   </tr>
               <?php
                 $cntr++;

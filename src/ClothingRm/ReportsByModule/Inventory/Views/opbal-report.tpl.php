@@ -2,6 +2,9 @@
   $category_code = '';
   $current_date = date("d-m-Y");
   $page_url = '/reports/opbal';
+
+  $op_from_date = date("d-m-Y", strtotime($_SESSION['finy_s_date']));
+  $op_to_date = date("d-m-Y", strtotime($_SESSION['finy_e_date']));
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -14,17 +17,17 @@
       				<div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1" style="padding-top:5px;text-align:right;font-weight:bold;">Filters</div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" placeholder="From Date" />
+                  <div class="input-append date" data-date="<?php echo $op_from_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" placeholder="From Date" value="<?php echo $op_from_date ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" placeholder="To Date" />
+                  <div class="input-append date" data-date="<?php echo $op_to_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" placeholder="To Date" value="<?php echo $op_to_date ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
-                </div>                
+                </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">

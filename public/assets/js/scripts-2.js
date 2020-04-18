@@ -437,52 +437,57 @@ function initializeJS() {
     });
   }
 
-  if( $('#changeMrpForm').length > 0 ) {
-    $('.itemnames').Tabledit({
-      url: '/async/change-mrp',      
-      editButton: false,
-      deleteButton: false,
-      hideIdentifier: false,
-      columns: {
-        identifier: [1,'lotAndItem'],
-        editable: [
-          [2, 'newMrp']
-        ]
-      },
-      onDraw: function() {
-        if($('[name="newMrp"]').length>0) {
-          $('[name="newMrp"]').attr('title', 'Add new MRP and Hit Enter to Save.');
-        }
-      },
-      onAjax: function(action, serialize) {
-        var urlParams = new URLSearchParams(serialize);
-        var newMrp = returnNumber(parseFloat(urlParams.get('newMrp')));
-        if(newMrp > 0) {
-          var lotAndItem = urlParams.get('lotAndItem');
-          var oldMrp = returnNumber(parseFloat($('#om__'+lotAndItem).text()));
-          if(newMrp > oldMrp) {
-            return true;
-          } else {
-            bootbox.alert({
-              message: "New MRP should be greater than old MRP. If you want to reduce the current MRP, please use Promocodes or Discount option."
-            });
-            return false;
-          }
-        }
-        return;
-      },
-      onSuccess: function(axResponse, textStatus, jqXHR) {
-        if(axResponse.status === 'success') {
-          var responseMessage = axResponse.response.updateMessage;
-        } else if(axResponse.status === 'failed') {
-          var responseMessage = 'Error: ' + axResponse.errorcode + ', ' + axResponse.errortext;
-        } else {
-          var responseMessage = 'Unknown Error.';
-        }
-        bootbox.alert({
-          message: responseMessage
-        });
-      }
+  if( $('#bulkUpdateSellingPriceFrm').length > 0 ) {
+    // $('.itemnames').Tabledit({
+    //   url: '/async/change-mrp',      
+    //   editButton: false,
+    //   deleteButton: false,
+    //   hideIdentifier: false,
+    //   columns: {
+    //     identifier: [1,'lotAndItem'],
+    //     editable: [
+    //       [2, 'newMrp']
+    //     ]
+    //   },
+    //   onDraw: function() {
+    //     if($('[name="newMrp"]').length>0) {
+    //       $('[name="newMrp"]').attr('title', 'Add new MRP and Hit Enter to Save.');
+    //     }
+    //   },
+    //   onAjax: function(action, serialize) {
+    //     var urlParams = new URLSearchParams(serialize);
+    //     var newMrp = returnNumber(parseFloat(urlParams.get('newMrp')));
+    //     if(newMrp > 0) {
+    //       var lotAndItem = urlParams.get('lotAndItem');
+    //       var oldMrp = returnNumber(parseFloat($('#om__'+lotAndItem).text()));
+    //       if(newMrp > oldMrp) {
+    //         return true;
+    //       } else {
+    //         bootbox.alert({
+    //           message: "New MRP should be greater than old MRP. If you want to reduce the current MRP, please use Promocodes or Discount option."
+    //         });
+    //         return false;
+    //       }
+    //     }
+    //     return;
+    //   },
+    //   onSuccess: function(axResponse, textStatus, jqXHR) {
+    //     if(axResponse.status === 'success') {
+    //       var responseMessage = axResponse.response.updateMessage;
+    //     } else if(axResponse.status === 'failed') {
+    //       var responseMessage = 'Error: ' + axResponse.errorcode + ', ' + axResponse.errortext;
+    //     } else {
+    //       var responseMessage = 'Unknown Error.';
+    //     }
+    //     bootbox.alert({
+    //       message: responseMessage
+    //     });
+    //   }
+    // });
+    $('#bulkUpdateSellingPriceSubmit').on('click', function(e){
+      e.preventDefault();
+      $('#bulkUpdateSellingPriceSubmit, #bulkUpdateSellingPrice').attr('disabled', true);
+      $('#bulkUpdateSellingPriceFrm').submit();
     });
   }
 
@@ -1651,6 +1656,8 @@ function initializeJS() {
       window.location.href = '/fin/credit-note/create';
     } else if(buttonId === 'arIndentStatus') {
       window.location.href = '/sales-indents/list';      
+    } else if(buttonId === 'bulkUpdateSellingPrice') {
+      window.location.href = '/inventory/change-selling-price';      
     }
   });
 

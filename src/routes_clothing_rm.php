@@ -363,10 +363,13 @@ $routes->add('change_mrp', new Routing\Route('/inventory/change-mrp/{pageNo}', a
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::changeMrpAction',
   'pageNo' => null,
 )));
-$routes->add('mrp_register', new Routing\Route('/inventory/changed-mrp-register', array(
-  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::mrpRegisterAction',   
+$routes->add('mrp_register', new Routing\Route('/inventory/changed-mrp-register/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::mrpRegisterAction',
+  'pageNo' => 1,
 )));
-
+$routes->add('update_selling_price', new Routing\Route('/inventory/change-selling-price', array(
+  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryMrpController::bulkMrpUpdateAction',
+)));
 
 // async calls
 $routes->add('async', new Routing\Route('/async/{apiString}', array(
