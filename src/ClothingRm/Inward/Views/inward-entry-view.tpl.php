@@ -317,18 +317,18 @@
               <tr>
                 <th width="10%" class="text-center valign-middle">PO Qty - Inventory</th>
                 <th width="10%" class="text-center valign-middle">PO Qty - Noninventory</th>
-                <th width="10%" class="text-center valign-middle">Taxable Value (in Rs.)</th>
+                <th width="10%" class="text-center valign-middle">Taxable amount (in Rs.)</th>
                 <th width="10%"  class="text-center valign-middle">G.S.T (in Rs.)</th>             
-                <th width="10%" class="text-center valign-middle">Packing Charges (in Rs.)</th>
-                <th width="10%"  class="text-center valign-middle">Shipping Charges (in Rs.)</th>             
+                <th width="10%" class="text-center valign-middle">Round off (in Rs.)</th>
+                <th width="10%"  class="text-center valign-middle">Total (in Rs.)</th>             
               </tr>
               <tr>
                 <td style="vertical-align:middle;text-align:right;color: red; font-weight: bold;font-size: 16px;"><?php echo number_format($total_qty_inventory, 2, '.', '') ?></td>
                 <td style="vertical-align:middle;text-align:right;color: red; font-weight: bold;font-size: 16px;"><?php echo number_format($total_qty_non_inventry, 0, '.', '') ?></td>
                 <td style="vertical-align:middle;text-align:right;"><?php echo number_format($items_total, 2, '.', '') ?></td>
                 <td style="vertical-align:middle;text-align:right;"><?php echo number_format($total_tax_amount, 2, '.', '') ?></td>
-                <td style="vertical-align:middle;text-align:right;"><?php echo number_format($packing_charges, 2, '.', '') ?></td>
-                <td style="vertical-align:middle;text-align:right;"><?php echo number_format($shipping_charges, 2, '.', '') ?></td>
+                <td style="vertical-align:middle;text-align:right;"><?php echo number_format($round_off, 2, '.', '') ?></td>
+                <td style="vertical-align:middle;text-align:right;"><?php echo number_format($net_pay, 2, '.', '') ?></td>
               </tr>
           </table>
         </div>

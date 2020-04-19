@@ -20,7 +20,7 @@
         <form class="form-validate form-horizontal" method="POST" autocomplete="Off" enctype="multipart/form-data">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name (against which store this entry effects)</label>
+              <label class="control-label labelStyle">Store / Location name</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
@@ -41,8 +41,8 @@
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>     
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">File name</label>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label labelStyle">File name</label>
               <input 
                 type="file" 
                 class="form-control noEnterKey"
@@ -53,8 +53,8 @@
                 <span class="error"><?php echo $form_errors['fileName'] ?></span>
               <?php endif; ?>
             </div>          	
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Import action</label>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label labelStyle">Upload type</label>
               <div class="select-wrap">
                 <select class="form-control" id="op" name="op">
                   <?php foreach($op_a as $key=>$value): ?>
@@ -67,6 +67,16 @@
               <?php endif; ?>
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-12 col-md-12 m-bot15" id="downloadButton" style="padding-top:15px;">
+              <label class="control-label" style="text-align: center;">
+                <a href="/downloads/Qb_OpeningBalances_Upload_Format_V.1.0.xlsx" target="_blank">
+                  <i class="fa fa-download"></i> Download opening balances upload format.
+                </a>
+              </label>
+              <p class="red" align="center">Note: Only .xlsx format is allowed.</p>
+            </div>              
+          </div>          
           <div class="text-center margin-top-20">
             <button class="btn btn-danger cancelForm" id="inventoryImport">
               <i class="fa fa-times"></i> Cancel

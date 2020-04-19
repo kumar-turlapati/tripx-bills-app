@@ -70,10 +70,9 @@
         <form class="form-validate form-horizontal" method="POST" id="inwardEntryBulkUploadForm" autocomplete="off" enctype="multipart/form-data">
           <div class="panel">
             <div class="panel-body">
-              <h2 class="hdg-reports borderBottom">Transaction Details</h2>
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Date of inward (dd-mm-yyyy)</label>
+                  <label class="control-label labelStyle">Date of inward (dd-mm-yyyy)</label>
                   <div class="form-group">
                     <div class="col-lg-12">
                       <div class="input-append date" data-date="<?php echo $purchase_date ?>" data-date-format="dd-mm-yyyy">
@@ -87,7 +86,7 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Supplier name</label>
+                  <label class="control-label labelStyle">Supplier name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="supplierID" id="supplierID">
                       <?php 
@@ -109,7 +108,7 @@
                   <?php endif; ?>              
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Store name (against which store this entry effects)</label>
+                  <label class="control-label labelStyle">Store / Location name</label>
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
@@ -132,22 +131,8 @@
                 </div>
               </div>
               <div class="form-group">
-                <?php /*
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Purchaser order (PO) No.</label>
-                  <input 
-                    type="text" 
-                    class="form-control noEnterKey" 
-                    name="poNo" 
-                    id="poNo" 
-                    value="<?php echo $po_no ?>"
-                  >
-                  <?php if(isset($form_errors['poNo'])): ?>
-                      <span class="error"><?php echo $form_errors['poNo'] ?></span>
-                  <?php endif; ?>              
-                </div> */?>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">Payment method</label>
+                  <label class="control-label labelStyle">Payment method</label>
                   <div class="select-wrap">
                     <select class="form-control" name="paymentMethod" id="paymentMethod">
                       <?php 
@@ -169,7 +154,7 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                    <label class="control-label">Credit period (in days)</label>
+                    <label class="control-label labelStyle">Credit period (in days)</label>
                     <div class="select-wrap">
                       <select class="form-control" name="creditDays" id="creditDays">
                         <?php 
@@ -190,14 +175,8 @@
                       <?php endif; ?>
                     </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="panel-body" style="padding-top:0px; padding-bottom:10px;">
-              <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label">File name</label>
+                  <label class="control-label labelStyle">File name</label>
                   <input 
                     type="file"
                     class="form-control noEnterKey"
@@ -208,13 +187,15 @@
                     <span class="error"><?php echo $form_errors['fileName'] ?></span>
                   <?php endif; ?>
                 </div>
+              </div>
+              <div class="form-group" style="padding-left: 35%">
                 <div class="col-sm-12 col-md-8" id="downloadButton" style="padding-top:15px;">
                   <label class="control-label">
-                    <a href="/downloads/BillQwik_InwardEntry_Upload_Format_V.1.0.xlsx" target="_blank">
-                      <i class="fa fa-download"></i> Click here to download Inward import format.
+                    <a href="/downloads/Qb_InwardMaterial_Upload_Format_V.1.0.xlsx" target="_blank">
+                      <i class="fa fa-download"></i> Click here to download format.
                     </a>
                   </label>
-                  <p class="red" align="left">Note: For importing inward bills only .xlsx and .ods file formats are allowed.</p>
+                  <p class="red" align="left">Note: For importing inward bills only .xlsx file format is allowed.</p>
                 </div>
               </div>
             </div>

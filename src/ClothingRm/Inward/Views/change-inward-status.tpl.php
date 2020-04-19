@@ -169,11 +169,12 @@
                     $billed_qty = round($billed_qty, 2);
                   }                  
 
-                  if(is_numeric($packed_qty) && $packed_qty>0) {
-                    $gross_amount = $billed_qty*$item_rate*$packed_qty;
-                  } else {
-                    $gross_amount = $billed_qty*$item_rate;
-                  }
+                  $gross_amount = $billed_qty*$item_rate;
+
+                  // if(is_numeric($packed_qty) && $packed_qty>0) {
+                  //   $gross_amount = $billed_qty*$item_rate*$packed_qty;
+                  // } else {
+                  // }
                   if( isset($form_data['itemType'][$i-1]) && $form_data['itemType'][$i-1] !== '' ) {
                     $item_type = $form_data['itemType'][$i-1];
                   } else {
@@ -219,6 +220,7 @@
                 </tr>
               <?php 
                 endfor;
+
                 $grand_total = round($items_total + $total_tax_amount, 2);
                 $grand_total += ($shipping_charges + $packing_charges + $insurance_charges + $other_charges);
 
