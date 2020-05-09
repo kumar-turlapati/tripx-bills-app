@@ -61,10 +61,11 @@ class Lead {
 	}	
 
 	# get all leads
-	public function getAllLeads($params=[], $page_no=1, $per_page=100) {
+	public function getAllLeads($page_no=1, $per_page=100, $lead_status_id='') {
 		$search_params = [
 			'pageNo' => $page_no,
 			'perPage' => $per_page,
+			'leadStatusId' => $lead_status_id,
 		];
 		$client_id = Utilities::get_current_client_id();
 		$api_caller = new ApiCaller();

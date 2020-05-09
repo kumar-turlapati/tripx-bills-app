@@ -63,6 +63,9 @@
           */ ?>
         </ul>
       </li>
+      <li class="active">
+        <a href="/tasks/list"><i class="fa fa-tasks"></i> My Tasks</a>
+      </li>
       <li class="sub-menu">
         <a href="javascript:">
           <i class="fa fa-sitemap fa-3x"></i> Reports <span class="menu-arrow arrow_carrot-right"></span>

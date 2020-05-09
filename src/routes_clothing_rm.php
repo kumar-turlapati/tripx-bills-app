@@ -1024,6 +1024,7 @@ $routes->add('lead_update', new Routing\Route('/lead/update/{leadCode}', array(
 )));
 $routes->add('lead_remove', new Routing\Route('/lead/remove/{leadCode}', array(
   '_controller' => 'Leads\\Controller\\LeadsController::leadRemoveAction',
+  'leadCode' => null,
 )));
 $routes->add('leads_list', new Routing\Route('/leads/list/{pageNo}/{perPage}', array(
   '_controller' => 'Leads\\Controller\\LeadsController::leadListAction',
@@ -1035,6 +1036,46 @@ $routes->add('lead_details', new Routing\Route('/lead/details/{leadCode}', array
 )));
 $routes->add('lead_import', new Routing\Route('/lead/import', array(
   '_controller' => 'Leads\\Controller\\LeadsController::importLeadsAction',
+)));
+
+// task routes.
+$routes->add('task_create', new Routing\Route('/task/create', array(
+  '_controller' => 'Tasks\\Controller\\TasksController::taskCreateAction',
+)));
+$routes->add('task_update', new Routing\Route('/task/update/{taskCode}', array(
+  '_controller' => 'Tasks\\Controller\\TasksController::taskUpdateAction',
+)));
+$routes->add('task_remove', new Routing\Route('/task/remove/{taskCode}', array(
+  '_controller' => 'Tasks\\Controller\\TasksController::taskRemoveAction',
+  'taskCode' => null,
+)));
+$routes->add('tasks_list', new Routing\Route('/tasks/list/{pageNo}/{perPage}', array(
+  '_controller' => 'Tasks\\Controller\\TasksController::taskListAction',
+  'pageNo' => 1,
+  'perPage' => 100,
+)));
+$routes->add('task_details', new Routing\Route('/task/details/{taskCode}', array(
+  '_controller' => 'Tasks\\Controller\\TasksController::taskDetailsAction',
+)));
+
+// appt routes.
+$routes->add('appt_create', new Routing\Route('/appointment/create', array(
+  '_controller' => 'Appointments\\Controller\\AppointmentsController::appointmentCreateAction',
+)));
+$routes->add('appt_update', new Routing\Route('/appointment/update/{appointmentCode}', array(
+  '_controller' => 'Appointments\\Controller\\AppointmentsController::appointmentUpdateAction',
+)));
+$routes->add('appt_remove', new Routing\Route('/appointment/remove/{appointmentCode}', array(
+  '_controller' => 'Appointments\\Controller\\AppointmentsController::appointmentRemoveAction',
+  'appointmentCode' => null,
+)));
+$routes->add('appts_list', new Routing\Route('/appointments/list/{pageNo}/{perPage}', array(
+  '_controller' => 'Appointments\\Controller\\AppointmentsController::appointmentListAction',
+  'pageNo' => 1,
+  'perPage' => 100,
+)));
+$routes->add('appt_details', new Routing\Route('/appointment/details/{appointmentCode}', array(
+  '_controller' => 'Appointments\\Controller\\AppointmentsController::taskDetailsAction',
 )));
 
 return $routes;

@@ -9,6 +9,7 @@ use Atawa\Template;
 use Atawa\Flash;
 use Atawa\Importer;
 use Atawa\CrmUtilities;
+use User\Model\User;
 
 use Leads\Model\Lead;
 
@@ -19,6 +20,7 @@ class LeadsController
     $this->template = new Template(__DIR__.'/../Views/');
     $this->lead_model = new Lead;
     $this->flash = new Flash;
+    $this->user_model = new User;
 	}
 
 	# lead create action
@@ -30,11 +32,11 @@ class LeadsController
     $lead_code = '';
 
     $form_data = $form_errors = [];
+    $users = $users_a = [];
 
     # form submit
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
-      $form_data['leadOwnerId'] = '592ec57c-b7f8-4c4f-965d-31664d5654f6';
       # validate form data
       $form_validation = $this->_validate_form_data($form_data);
       if($form_validation['status'] === false) {
@@ -46,16 +48,25 @@ class LeadsController
         $api_action = $this->lead_model->createLead($form_data);
         if($api_action['status']) {
           $lead_code = $api_action['leadCode'];
-          $message = 'Lead created successfully with code `'.$lead_code.'`';
+          $message = '<i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;Lead created successfully with code `'.$lead_code.'`';
           $this->flash->set_flash_message($message);
-          CrmUtilities::redirect('/lead/create');
+          Utilities::redirect('/lead/create');
         } else {
-          $form_errors = CrmUtilities::format_api_error_messages($api_action['apierror']);
+          $form_errors = Utilities::format_api_error_messages($api_action['apierror']);
           $message = 'You have errors in the Form. Please fix them before you hit Save.';
           $this->flash->set_flash_message($message, 1);
         }
       }
     }
+
+    // get users from api
+    $result = $this->user_model->get_users();
+    if($result['status']) {
+      $users_a = $result['users'];
+      foreach($users_a as $user_details) {
+        $users[$user_details['uuid']] = $user_details['userName'];
+      }
+    }    
 
     # prepare form variables.
     $template_vars = array(
@@ -65,7 +76,8 @@ class LeadsController
       'lead_status_a' => array(''=>'Choose') + CrmUtilities::get_lead_status(),
       'lead_ratings_a' => array(''=>'Choose') + CrmUtilities::get_lead_rating(),
       'industries_a' => array(''=>'Choose') + CrmUtilities::get_crm_industries(),
-      'emp_ranges_a' =>  array(''=>'Choose') + CrmUtilities::get_employee_range(),
+      'emp_ranges_a' => array(''=>'Choose') + CrmUtilities::get_employee_range(),
+      'titles_a' => array(''=>'Choose') + CrmUtilities::get_titles(),
       'email_optout_a' => array(''=>'Choose') + array(0=>'No', 1=>'Yes'),
       'lead_source_id' => $lead_source_id,
       'lead_status_id' => $lead_status_id,
@@ -74,6 +86,7 @@ class LeadsController
       'industry_id' => $industry_id,
       'form_errors' => $form_errors,
       'form_data' => $form_data,
+      'users' => array(''=>'Choose') + $users,
       'flash' => $this->flash,
     );
 
@@ -94,6 +107,7 @@ class LeadsController
     $lead_code = '';
 
     $form_data = $form_errors = [];
+    $users = $users_a = [];
 
     # form submit
     if(count($request->request->all()) > 0) {
@@ -109,10 +123,11 @@ class LeadsController
         # hit api and get the status.
         $api_action = $this->lead_model->updateLead($form_data, $lead_code);
         if($api_action['status']) {
-          $message = 'Lead updated successfully with code `'.$lead_code.'`';
+          $message = '<i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;Lead updated successfully with code [`'.$lead_code.'`]';
           $this->flash->set_flash_message($message);
           Utilities::redirect('/lead/update/'.$lead_code);
         } else {
+          dump($api_action['apierror']);
           $form_errors = Utilities::format_api_error_messages($api_action['apierror']);
           $message = 'You have errors in the Form. Please fix them before you hit Save.';
           $this->flash->set_flash_message($message, 1);
@@ -132,10 +147,27 @@ class LeadsController
       Utilities::redirect('/leads/list');
     }
 
-    # lead owner details.
-    $lead_owner_a = array(
-      $_SESSION['uid'] => $_SESSION['uname'],
-    );
+    // # lead owner details.
+    // $lead_owner_a = array(
+    //   $_SESSION['uid'] => $_SESSION['uname'],
+    // );
+
+    // get users from api
+    $result = $this->user_model->get_users();
+    if($result['status']) {
+      $users_a = $result['users'];
+      $user_ids = array_column($users_a, 'uid');
+      $user_uuids = array_column($users_a, 'uuid');
+      $user_ids_uuids = array_combine($user_ids, $user_uuids);
+      foreach($users_a as $user_details) {
+        $users[$user_details['uuid']] = $user_details['userName'];
+      }
+      if(isset($user_ids_uuids[$form_data['leadOwnerId']])) {
+        $form_data['leadOwnerId'] = $user_ids_uuids[$form_data['leadOwnerId']];
+      } else {
+        $form_data['leadOwnerId'] = '';
+      }
+    }
 
     # prepare form variables.
     $template_vars = array(
@@ -146,13 +178,14 @@ class LeadsController
       'lead_ratings_a' => array(''=>'Choose') + CrmUtilities::get_lead_rating(),
       'industries_a' => array(''=>'Choose') + CrmUtilities::get_crm_industries(),
       'emp_ranges_a' =>  array(''=>'Choose') + CrmUtilities::get_employee_range(),
-      'lead_owner_a' => $lead_owner_a,
+      'titles_a' => array(''=>'Choose') + CrmUtilities::get_titles(),
       'email_optout_a' => array(''=>'Choose') + array(0=>'No', 1=>'Yes'),
       'lead_source_id' => $lead_source_id,
       'lead_status_id' => $lead_status_id,
       'lead_rating_id' => $lead_rating_id,
       'lead_emprange_id' => $lead_emprange_id,
       'industry_id' => $industry_id,
+      'users' => array(''=>'Choose') + $users,
       'form_errors' => $form_errors,
       'form_data' => $form_data,
       'flash' => $this->flash,
@@ -175,12 +208,13 @@ class LeadsController
       $lead_details_response = $this->lead_model->leadDetails($lead_code);
       if($lead_details_response === false) {
         $this->flash->set_flash_message('Invalid lead object', 1);
+        Utilities::redirect('/leads/list');
       } else {
         $lead_api_response = $this->lead_model->deleteLead($lead_code);
         if($lead_api_response['status']) {
-          $this->flash->set_flash_message('Lead `'.$lead_code.'` removed successfully.');
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;Lead removed successfully.');
         } else {
-          $this->flash->set_flash_message('An error occurred while removing this lead.', 1);          
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;An error occurred while removing this lead.', 1);          
         }
         Utilities::redirect('/leads/list/'.$page_no);
       }
@@ -203,9 +237,10 @@ class LeadsController
     # check page no and per page variables.
     $page_no = $request->get('pageNo')!== null ? Utilities::clean_string($request->get('pageNo')):1;
     $per_page = $request->get('perPage')!== null ? Utilities::clean_string($request->get('perPage')):100;
+    $lead_status_id = $request->get('leadStatusId')!== null ? Utilities::clean_string($request->get('leadStatusId')) : '';
 
     # hit api and get the status.
-    $api_action = $this->lead_model->getAllLeads($search_params, $page_no, $per_page);
+    $api_action = $this->lead_model->getAllLeads($page_no, $per_page, $lead_status_id);
     $api_status = $api_action['status'];
 
     # check api status
@@ -261,6 +296,7 @@ class LeadsController
       'lead_sources_a' => CrmUtilities::get_lead_source(),
       'lead_ratings_a' => CrmUtilities::get_lead_rating(),
       'lead_industries_a' => CrmUtilities::get_crm_industries(),
+      'lead_status_id' => $lead_status_id,
     );
 
     # build variables
@@ -281,9 +317,11 @@ class LeadsController
 
     # variable assignments.
     $unique_leads = $import_data = $form_errors = [];
+    $users = $users_a = [];
+
     $op_a = ['append' => 'Append to existing data', 'remove' => 'Remove existing data and append'];
     $remove_duplicates_a = [0 => 'No', 1 => 'Yes'];
-    $allowed_extensions = ['xls', 'ods', 'xlsx'];
+    $allowed_extensions = ['xlsx'];
     $redirect_url = '/lead/import';
     $matching_attribute = $remove_duplicates = $op = -1;
 
@@ -301,15 +339,17 @@ class LeadsController
         $file_details = $_FILES['fileName'];
         $file_name = $file_details['name'];
         $extension = pathinfo($file_name, PATHINFO_EXTENSION);
+        $lead_date = Utilities::clean_string($form_data['leadDate']);
+        $lead_onwer_id = Utilities::clean_string($form_data['leadOwnerId']);
 
-        # check if we have valid file extension
+        // check if we have valid file extension
         if(!in_array($extension, $allowed_extensions)) {
-          $this->flash->set_flash_message('Invalid file uploaded. Only (.ods, .xls, .xlsx) file formats are allowed',1);
+          $this->flash->set_flash_message('Invalid file uploaded. Only .xlsx file formats are allowed',1);
           Utilities::redirect($redirect_url);
         }
 
-        # upload file to server
-        $file_upload_path = __DIR__.'/../../../../bulkuploads';
+        // upload file to server
+        $file_upload_path = __DIR__.'/../../../bulkuploads';
         $storage = new \Upload\Storage\FileSystem($file_upload_path);
         $file = new \Upload\File('fileName', $storage);
 
@@ -320,7 +360,7 @@ class LeadsController
           Utilities::redirect($redirect_url);        
         }
 
-        # upload file.
+        // upload file.
         $new_filename = 'objectUpload_'.time();
         $file->setName($new_filename);
         try {
@@ -330,18 +370,20 @@ class LeadsController
           Utilities::redirect($redirect_url);        
         }
 
-        # get file path from uploaded operation.
+        // get file path from uploaded operation.
         $file_path = $file_upload_path.'/'.$new_filename.'.'.$uploaded_file_ext;
 
-        # initiate importer
+        // initiate importer
         $importer = new Importer($file_path, 'lead');
         $imported_leads = $importer->_import_data();
 
         $remove_duplicates = (bool)$form_data['removeDuplicates'];
         $matching_attribute = CrmUtilities::get_lead_matching_attributes($form_data['matchingAttribute'], false);
 
-        # validate imported leads.
-        $validation_response = $this->_validate_imported_leads($imported_leads, $matching_attribute, $remove_duplicates);
+        // validate imported leads.
+        $validation_response = $this->_validate_imported_leads($imported_leads, $matching_attribute, $remove_duplicates, $lead_onwer_id, $lead_date);
+        // dump($validation_response);        
+        // exit;
         if($validation_response === false) {
           $this->flash->set_flash_message('Could not upload. You have duplicate data in the uploaded file for matching column.', 1);
           Utilities::redirect($redirect_url);
@@ -351,10 +393,13 @@ class LeadsController
           $import_data['op'] = $form_data['op'];
         }
 
-        # upload leads information.
+        // dump($import_data);
+        // exit;
+
+        // upload leads information.
         $insert_response = $this->lead_model->bulkLeadsUpload($import_data);
         if($insert_response['status']) {
-          $message = 'Successfully imported '.$insert_response['objectsInserted'].' records.';
+          $message = '<i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;Successfully imported '.$insert_response['objectsInserted'].' record(s).';
           $this->flash->set_flash_message($message);
           Utilities::redirect('/leads/list');      
         } else {
@@ -362,6 +407,15 @@ class LeadsController
           $this->flash->set_flash_message($message,1);
           Utilities::redirect($redirect_url);
         }
+      }
+    }
+
+    // get users from api
+    $result = $this->user_model->get_users();
+    if($result['status']) {
+      $users_a = $result['users'];
+      foreach($users_a as $user_details) {
+        $users[$user_details['uuid']] = $user_details['userName'];
       }
     }
 
@@ -375,6 +429,7 @@ class LeadsController
       'op' => $op,
       'flash' => $this->flash,
       'form_errors' => $form_errors,
+      'users' => array(''=>'Choose') + $users,
     );
 
     # build variables
@@ -389,17 +444,18 @@ class LeadsController
   # validate form data
   private function _validate_form_data($form_data=[]) {
     $errors = [];
-    $first_name = Utilities::clean_string($form_data['firstName']);
-    $last_name = Utilities::clean_string($form_data['lastName']);
+    // $first_name = Utilities::clean_string($form_data['firstName']);
+    // $last_name = Utilities::clean_string($form_data['lastName']);
     $business_name = Utilities::clean_string($form_data['businessName']);
 
     if($business_name === '') {
-      if($first_name === '') {
-        $errors['firstName'] = 'Invalid first name.';
-      }
-      if($last_name === '') {
-        $errors['lastName'] = 'Invalid last name.';
-      }
+      $errors['businessName'] = 'Invalid business name.';
+      // if($first_name === '') {
+      //   $errors['firstName'] = 'Invalid first name.';
+      // }
+      // if($last_name === '') {
+      //   $errors['lastName'] = 'Invalid last name.';
+      // }
     }
 
     if(count($errors) > 0) {
@@ -415,18 +471,25 @@ class LeadsController
   }
 
   # validating imported leads.
-  private function _validate_imported_leads($imported_leads=[], $matching_attribute='mobile', $remove_duplicates = false) {
+  private function _validate_imported_leads($imported_leads=[], $matching_attribute='mobile', $remove_duplicates = false,  $lead_onwer_id='', $lead_date='') {
     $unique_leads = $duplicate_leads = [];
     foreach($imported_leads as $key => $imported_lead_details) {
-      if(count($unique_leads)>0) {
-        if(array_search($imported_lead_details[$matching_attribute], array_column($unique_leads, $matching_attribute)) === false) {
-          $unique_leads[$key] = $imported_lead_details;
+      if($matching_attribute !== '') {
+        if(count($unique_leads)>0) {
+          if(array_search($imported_lead_details[$matching_attribute], array_column($unique_leads, $matching_attribute)) === false) {
+            $unique_leads[$key] = $imported_lead_details;
+          } else {
+            $duplicate_leads[$key] = $imported_lead_details;
+          }
         } else {
-          $duplicate_leads[$key] = $imported_lead_details;
+          $unique_leads[$key] = $imported_lead_details;
         }
       } else {
         $unique_leads[$key] = $imported_lead_details;
       }
+
+      $unique_leads[$key]['leadOwnerId'] = $lead_onwer_id;
+      $unique_leads[$key]['leadDate'] = $lead_date;
     }
 
     if($remove_duplicates === false && count($duplicate_leads)>0) {
@@ -447,7 +510,7 @@ class LeadsController
     $remove_duplicates = Utilities::clean_string($form_data['removeDuplicates']);
     $matching_attribute = Utilities::clean_string($form_data['matchingAttribute']);
 
-    # check uploaded file information
+    // check uploaded file information
     $file_details = $_FILES['fileName'];
     $file_name = $file_details['name'];
     if(trim($file_name) === '') {

@@ -88,9 +88,9 @@
                       <a class="btn btn-primary" href="/lead/update/<?php echo $lead_code ?>" title="Update Lead">
                         <i class="fa fa-pencil"></i>
                       </a>
-                      <a class="btn btn-danger leadDelete" href="javascript:void(0)" id="<?php echo $lead_code ?>" title="Remove Lead">
+                      <a class="btn btn-danger leadDelete" href="/lead/remove/<?php echo $lead_code ?>" id="<?php echo $lead_code ?>" title="Remove Lead">
                         <i class="fa fa-times"></i>
-                      </a>                      
+                      </a>
                     </div>
                   </td>
                 </tr>

@@ -78,6 +78,16 @@
         </ul>
       </li>
       <li class="sub-menu">
+        <a href="javascript:" class="">
+          <i class="fa fa-bolt"></i> CRM <span class="menu-arrow arrow_carrot-right"></span> 
+        </a>
+        <ul class="sub">
+          <li><a href="/leads/list"><i class="fa fa-users"></i> Leads</a></li>          
+          <li><a href="/tasks/list"><i class="fa fa-tasks"></i> Tasks</a></li>
+          <li><a href="/appointments/list"><i class="fa fa-calendar"></i> Appointments</a></li> 
+        </ul>
+      </li>      
+      <li class="sub-menu">
         <a href="javascript:">
           <i class="fa fa-sitemap fa-3x"></i> Reports <span class="menu-arrow arrow_carrot-right"></span>
         </a>

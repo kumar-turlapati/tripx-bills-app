@@ -553,6 +553,10 @@ class Utilities
         '/finy/switch', '/discount-manager',
 
         '/indent-vs-sales', '/indent-vs-sales-by-item',
+
+        '/leads/list', '/lead/create', '/lead/update', '/lead/import', '/lead/remove',
+        '/tasks/list', '/task/create', '/task/update', '/task/remove',
+        '/appointments/list', '/appointment/create', '/appointment/update', '/appointment/remove',
       ],
 
       // for Business head
@@ -637,6 +641,8 @@ class Utilities
         '/finy/switch', '/discount-manager',
 
         '/indent-vs-sales', '/indent-vs-sales-by-item',
+
+        '/tasks/list', '/task/create', '/task/update', '/task/remove',
       ],
 
       6  => [
@@ -673,6 +679,8 @@ class Utilities
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
         '/reports/po-return-register',
 
+        '/tasks/list', '/task/create', '/task/update', '/task/remove',
+
         '/finy/switch',
       ],
 
@@ -699,6 +707,10 @@ class Utilities
         '/print-indents-agentwise', '/indent-register', '/indent-dispatch-summary',
 
         '/indent-vs-sales', '/indent-vs-sales-by-item',
+
+        '/leads/list', '/lead/create', '/lead/update', '/lead/import', '/lead/remove',
+        '/tasks/list', '/task/create', '/task/update', '/task/remove',
+        '/appointments/list', '/appointment/create', '/appointment/update', '/appointment/remove',
       ],
 
       13 => [
@@ -1207,5 +1219,17 @@ class Utilities
   public static function get_country_name($country_id = 99) {
     return 'India';
   }
+
+  public static function format_api_error_messages($error_string='') {
+    $api_errors = [];
+    $errors_a = explode('|',explode('#', $error_string)[1]);
+    foreach($errors_a as $key => $error_details) {
+      $field_details = explode('=', $error_details);
+      if(is_array($field_details) && count($field_details) > 0) {
+        $api_errors[$field_details[0]] = $field_details[1];
+      }
+    }
+    return $api_errors;
+  }  
 
 }
