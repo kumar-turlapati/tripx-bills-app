@@ -209,6 +209,23 @@ function initializeJS() {
     });
   }
 
+  // crm related
+  /************************************************************************************************/
+
+  /* lead remove duplicates choice while importing */
+  if($('#removeDuplicates').length > 0) {
+    $('#removeDuplicates').on('change', function(e){
+      e.preventDefault();
+      var userChoice = parseInt($(this).val());
+      if(userChoice === 0) {
+        $('#duplicatesDiv, #maErrorId').hide();
+      } else if(userChoice === 1) {
+        $('#duplicatesDiv').show();      
+      }
+    });
+  }
+
+  /************************************************************************************************/
   // Combo Bills entry.
   if( $('#comboBillEntry').length>0 ) {
 
@@ -1658,6 +1675,18 @@ function initializeJS() {
       window.location.href = '/sales-indents/list';      
     } else if(buttonId === 'bulkUpdateSellingPrice') {
       window.location.href = '/inventory/change-selling-price';      
+    } else if(buttonId === 'leadCreate') {
+      window.location.href = '/lead/create';      
+    } else if(buttonId === 'leadUpdate') {
+      window.location.href = '/leads/list';
+    } else if(buttonId === 'leadImport') {
+      window.location.href = '/lead/import';        
+    } else if(buttonId === 'taskSave') {
+      window.location.href = '/task/create';        
+    } else if(buttonId === 'appointmentSave') {
+      window.location.href = '/appointment/create';    
+    } else if(buttonId === 'appointmentUpdate') {
+      window.location.href = '/appointments/list';    
     }
   });
 
@@ -1723,6 +1752,48 @@ function initializeJS() {
       e.preventDefault();
       var delUrl = jQuery(this).attr('href');
       bootbox.confirm("Are you sure. You want to delete this Credit Note?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }  
+
+  if( $('.taskDelete').length>0 ) {
+    jQuery('.taskDelete').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Task?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }
+
+  if( $('.appointmentDelete').length>0 ) {
+    jQuery('.appointmentDelete').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Appointment?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }  
+
+  if( $('.leadDelete').length>0 ) {
+    jQuery('.leadDelete').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Lead?", function(result) {
         if(result===true) {
           window.location.href=delUrl;
         } else {
