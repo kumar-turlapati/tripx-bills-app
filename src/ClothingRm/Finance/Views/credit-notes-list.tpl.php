@@ -171,21 +171,10 @@
                   <td class="valign-middle"><?php echo $customer_name ?></td>
                   <td class="valign-middle">
                     <div class="btn-actions-group" align="right">
-                      <?php if($user_type === 3 || $user_type === 9): ?>
-                        <?php /*
-                        <a class="btn btn-primary" href="/fin/credit-note/update/<?php echo $voucher_no ?>" title="Edit Voucher">
-                          <i class="fa fa-pencil"></i>
-                        </a> */ ?>
-                        <a class="btn btn-danger delCNote" href="/fin/credit-note/delete/<?php echo $voucher_no ?>" title="Delete Voucher">
-                          <i class="fa fa-times "></i>
-                        </a>
-                      <?php endif; ?>
-
-                      <?php if( ($user_type>3 || $user_type<9) && $voucher_type === 'lo'): ?>
-                        <?php /*
-                        <a class="btn btn-primary" href="/fin/credit-note/update/<?php echo $voucher_no ?>" title="Edit Voucher">
-                          <i class="fa fa-pencil"></i>
-                        </a>*/ ?>
+                      <a class="btn btn-primary" href="/fin/credit-note/view/<?php echo $voucher_no ?>" title="View Voucher">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <?php if($user_type === 3 || $user_type === 9 || $user_type === 5): ?>
                         <a class="btn btn-danger delCNote" href="/fin/credit-note/delete/<?php echo $voucher_no ?>" title="Delete Voucher">
                           <i class="fa fa-times "></i>
                         </a>

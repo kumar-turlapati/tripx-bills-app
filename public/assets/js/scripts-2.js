@@ -1671,6 +1671,8 @@ function initializeJS() {
       window.location.href = '/catalog/list';
     } else if(buttonId === 'manCreditNoteCancel') {
       window.location.href = '/fin/credit-note/create';
+    } else if(buttonId === 'manDebitNoteCancel') {
+      window.location.href = '/fin/debit-note/create';
     } else if(buttonId === 'arIndentStatus') {
       window.location.href = '/sales-indents/list';      
     } else if(buttonId === 'bulkUpdateSellingPrice') {
@@ -1759,7 +1761,21 @@ function initializeJS() {
         }
       });
     });
-  }  
+  }
+
+  if( $('.delDNote').length>0 ) {
+    jQuery('.delDNote').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Debit note?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }
 
   if( $('.taskDelete').length>0 ) {
     jQuery('.taskDelete').on("click", function(e){
@@ -1941,7 +1957,7 @@ function initializeJS() {
         jQuery('#mrp_'+itemIndex).val('');
         jQuery('#itemType_'+itemIndex).val('');
         jQuery('#saItemTax_'+itemIndex+' option[value="'+''+'"]').attr('selected', 'selected');
-        jQuery('#qty_'+itemIndex+' option[value="'+'0'+'"]').attr('selected', 'selected');
+        jQuery('#qty_'+itemIndex).val('');
       }
     });
 
@@ -2923,6 +2939,370 @@ function initializeJS() {
       $('#manCreditNoteForm').submit();
     });    
   }
+
+  // manual debit note Form
+  if( $('#manDebitNoteForm').length>0 ) {
+    $('#manDebitNoteForm').on('blur', '.dnReturnQty', function() {
+      var itemIndex = jQuery(this).attr('index');
+      updateManualDebitNoteFormRow(itemIndex);
+    });
+    $('#manDebitNoteForm').on('blur', '.purchaseRate', function() {
+      var itemIndex = jQuery(this).attr('index');
+      updateManualDebitNoteFormRow(itemIndex);
+    });
+    $('#manDebitNoteForm').on('change', '.dnItemTax', function() {
+      var itemIndex = jQuery(this).attr('index');
+      updateManualDebitNoteFormRow(itemIndex);
+    });
+    $('#manDebitNoteForm').on('change', '#taxCalcOption', function(){
+      var totalsTaxable = totalsGST = totalsItems = 0;
+      var taxCalcOption = $(this).val();
+      $('#manDebitNoteForm .dnReturnQty').each(function(index) {
+        var rowId = index;
+        var itemQty = returnNumber(parseFloat($('#qty_'+rowId).val()));
+        var purchaseRate = returnNumber(parseFloat($('#purchaseRate_'+rowId).val()));
+        var gstPercent = returnNumber(parseFloat($('#dnItemTax_'+rowId).val()));
+        if(taxCalcOption === 'i') {
+          var taxableAmount = Math.round(itemQty*purchaseRate, 2);
+          var totalAmount = taxableAmount;
+          var gstValue = 0;
+        } else {
+          var taxableAmount = Math.round(itemQty*purchaseRate, 2);
+          var gstValue = Math.round(taxableAmount*gstPercent/100, 2);
+          var totalAmount = taxableAmount+gstValue;
+        }
+        if(itemQty > 0 && purchaseRate > 0) {
+          $('#taxable_'+rowId).text(taxableAmount.toFixed(2));
+          $('#taxAmount_'+rowId).text(gstValue.toFixed(2));
+          $('#totalAmount_'+rowId).text(totalAmount.toFixed(2));
+        }
+      });
+      updateManualDebitNoteFormTotals();
+    });
+    $('#manDebitNoteForm').on('change', '.mDebitNoteType', function() {
+      var mDebitNoteType = jQuery(this).val();
+      if(mDebitNoteType === 'wo') {
+        $('#mDnOptionalFields').hide();
+        $('#mDnItems').hide();
+        $('#cnValue').val('');
+        for(i=0;i<15;i++) {
+          var index = i+1;
+          $('#iname_'+index).val('');
+          $('#qty_'+index).val('');
+          $('#mrp_'+index).val('');
+          $('#purchaseRate_'+index).val('');
+          $('#saItemTax_'+index).val('');
+          $('#taxable_'+index).text('');
+          $('#taxAmount_'+index).text('');
+          $('#totalAmount_'+index).text('');
+        }
+        $('.totalTaxable, .totalGST, .totalAmount').text('');
+      } else {
+        $('#mDnOptionalFields').show();
+        $('#mDnItems').show();
+      }
+    });
+    function updateManualDebitNoteFormRow(rowId) {
+      var itemQty = returnNumber(parseFloat($('#qty_'+rowId).val()));
+      var mrp = returnNumber(parseFloat($('#purchaseRate_'+rowId).val()));
+      var gstPercent = returnNumber(parseFloat($('#dnItemTax_'+rowId).val()));
+      var taxCalcOption = $('#taxCalcOption').val();
+      if(taxCalcOption === 'i') {
+        var taxableAmount = Math.round(itemQty*mrp, 2);
+        var totalAmount = taxableAmount;
+        var gstValue = 0;
+      } else {
+        var taxableAmount = Math.round(itemQty*mrp, 2);
+        var gstValue = Math.round(taxableAmount*gstPercent/100, 2);
+        var totalAmount = taxableAmount+gstValue;
+      }
+      if(taxableAmount > 0) {
+        $('#taxable_'+rowId).text(taxableAmount.toFixed(2));
+      } else {
+        $('#taxable_'+rowId).text('');
+      }
+      if(gstValue > 0) {
+        $('#taxAmount_'+rowId).text(gstValue.toFixed(2));
+      } else {
+        $('#taxAmount_'+rowId).text('');
+      }
+      if(totalAmount > 0) {
+        $('#totalAmount_'+rowId).text(totalAmount.toFixed(2));
+      } else {
+        $('#totalAmount_'+rowId).text('');
+      }
+      updateManualDebitNoteFormTotals();
+    }
+    function updateManualDebitNoteFormTotals() {
+      var totalTaxable = totalGST = totalAmount = 0;
+      jQuery('.rowTaxable').each(function(i, obj) {
+        var taxable = jQuery(this).text();
+        var gst = $('#taxAmount_'+i).text();
+        var amount = $('#totalAmount_'+i).text();
+        totalTaxable += returnNumber(parseFloat(taxable));
+        totalGST += returnNumber(parseFloat(gst));
+        totalAmount += returnNumber(parseFloat(amount));
+      });
+      $('.totalTaxable').text(totalTaxable.toFixed(2));
+      $('.totalGST').text(totalGST.toFixed(2));
+      $('.totalAmount').text(totalAmount.toFixed(2));
+      $('#dnValue').val(totalAmount.toFixed(2));
+    }
+    $('#manDebitNoteSubmit').on("click", function(e){
+      $(this).attr('disabled', true);
+      $('#manDebitNoteCancel').attr('disabled', true);
+      $('#manDebitNoteForm').submit();
+    });
+    if( $('.manDnBarcode').length > 0) {
+
+      var lotNosResponse = [];
+      var selectedLotNoDetails = null;
+      var barcode = '';
+      var barcodeId = '';
+      var rowId = '';
+
+      $(document).on('click', '#modalManDebitNoteCancel', function(){
+        $('#modalManualDebitNote').modal('hide');
+        var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
+        selectedLotNoDetails = lotNosResponse[selectedLotNo];
+        updateManDebitNoteRowFromBarcode(selectedLotNoDetails);
+      });
+
+      $(document).on('click', '#modalManDebitNoteSelect', function(){
+        $('#dualLotModal').modal('hide');
+        $('#owBarcode').focus().val('');
+      });    
+
+      $('.transBarcode').on('blur', function(e){
+        var barcode = $(this).val();
+        var barcodeId = $(this).attr('id');
+        var rowId = barcodeId.split('_')[1];
+        if(barcode === '') {
+          $('#iname_'+rowId).removeAttr("readonly");
+        }
+      });
+
+      function updateManDebitNoteRowFromBarcode(selectedLotNoDetails) {
+        var isLotExists = false;
+        var itemName = selectedLotNoDetails.itemName;
+        var availableQty = parseFloat(selectedLotNoDetails.availableQty).toFixed(2);
+        var lotNo = selectedLotNoDetails.lotNo;
+        var cno = selectedLotNoDetails.cno;
+        var mOq = parseFloat(selectedLotNoDetails.mOq).toFixed(2);
+        var taxPercent = parseFloat(selectedLotNoDetails.taxPercent).toFixed(2);
+        var mrpDn = parseFloat(selectedLotNoDetails.mrpDn).toFixed(2);
+        var transferQty = parseFloat(mOq*1).toFixed(2);
+        var itemAmount = parseFloat(mrpDn*transferQty).toFixed(2);
+        var lotNoRef = $('#lotNo_'+rowId);
+        var isLotExists = false;
+        var existingLotId = null;
+        var selectedLotId = selectedLotNo = null;
+
+        /* check if lot no is already selected. */
+        jQuery('.lotNo').each(function(i, obj) {
+          selectedLotNo = $(this).val();
+          selectedLotId = $(this).attr('id');
+          if(selectedLotNo === lotNo && rowId !== i) {
+            isLotExists = true;
+            existingLotId = i;
+          }
+        });
+
+        if(isLotExists) {
+          $('#barcode_'+rowId).focus().val('');
+          var selectedLotIndex = existingLotId;
+          var selectedLotQty = parseFloat($('#qty_'+selectedLotIndex).val());
+          var newTransferQty = parseFloat(transferQty)+parseFloat(selectedLotQty); 
+          var itemAmount = parseFloat(mrp*newTransferQty).toFixed(2);
+          var availQty = parseFloat($('#qtyava_'+selectedLotIndex).val());
+          if(newTransferQty <= availableQty) {
+            $('#qty_'+selectedLotIndex).val(newTransferQty);
+            $('#grossAmount_'+selectedLotIndex).text(itemAmount);
+            updateManualDebitNoteFormRow(selectedLotIndex);
+          } else {
+            alert('Available  Qty. is less than Transfer Qty!! Please check.');
+            return false;
+          }
+        } else {
+          $('#iname_'+rowId).attr('readonly', 'readonly');
+          $('#iname_'+rowId).val(itemName);
+          $('#qtyava_'+rowId).val(availableQty);
+          // $('#cno_'+rowId).text(cno);
+          $('#qty_'+rowId).val(transferQty);
+          $('#purchaseRate_'+rowId).val(mrpDn);
+          $('#grossAmount_'+rowId).text(itemAmount);
+          $('#dnItemTax_'+rowId+' option[value="'+taxPercent+'"]').attr('selected', 'selected');
+          
+          $('#qtyava_'+rowId).attr('readonly', 'readonly');
+          $('#mrp_'+rowId).attr('readonly', 'readonly');
+          jQuery(lotNoRef).html(
+            jQuery("<option></option>").
+            attr("value",lotNo).
+            text(lotNo)
+          );
+          updateManualDebitNoteFormRow(rowId);
+          var nextRowId = rowId+1;
+          $('#barcode_'+nextRowId).focus();
+        }
+      }
+
+      $('.manDnBarcode').on('keypress', function (e) {
+       if (e.keyCode == 13) {
+          barcode = $(this).val();
+          barcodeId = $(this).attr('id');
+          rowId = parseInt(barcodeId.split('_')[1]);
+          var locationCode = $('#locationCode').val();
+          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+              success: function(itemDetails) {
+                if(itemDetails.status === 'success') {
+                  var objLength = Object.keys(itemDetails.response.bcDetails).length;
+                  if(objLength > 0) {
+                    var itemName = '';
+                    jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                      lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                      itemName = lotNoDetails.itemName;
+                    });
+                    if(objLength === 1) {
+                      selectedLotNoDetails = itemDetails.response.bcDetails[0];
+                      updateManDebitNoteRowFromBarcode(selectedLotNoDetails);
+                    } else {
+                      $('#dualLotNosTitle').text(itemName);
+                      var dualBarcodesHtml = '<form>';
+                      dualBarcodesHtml += '<div class="table-responsive">';
+                      dualBarcodesHtml += '<table class="table table-striped table-hover font12" id="dualLotNosTable" style="margin-bottom:0px;">';
+                      dualBarcodesHtml += '<thead><tr>';
+                      dualBarcodesHtml += '<th>&nbsp;</th>';
+                      dualBarcodesHtml += '<th style="text-align: center;">Lot No.</th>';
+                      dualBarcodesHtml += '<th style="text-align: center;">Batch No.</th>';
+                      dualBarcodesHtml += '<th style="text-align: center;">Cno/Box No.</th>';
+                      dualBarcodesHtml += '<th style="text-align: center;">Available</th>';
+                      dualBarcodesHtml += '</tr></thead>';
+                      dualBarcodesHtml += '<tbody>';
+                      jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
+                        var lotNo = lotNoDetails.lotNo;
+                        var batchNo = lotNoDetails.batchNo;
+                        var availableQty = lotNoDetails.availableQty;
+                        var cno = lotNoDetails.cno;
+                        dualBarcodesHtml += '<tr>';
+                        dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
+                        dualBarcodesHtml += '<input type="radio" name="dualLotRadios" value="'+lotNo+'" style="visibility: visible; margin-top:0px;" />';
+                        dualBarcodesHtml += '</td>';
+                        dualBarcodesHtml += '<td style="vertical-align: middle">'+lotNo+'</td>';
+                        dualBarcodesHtml += '<td style="vertical-align: middle">'+batchNo+'</td>';
+                        dualBarcodesHtml += '<td style="vertical-align: middle">'+cno+'</td>';
+                        dualBarcodesHtml += '<td style="vertical-align: middle">'+availableQty+'</td>';
+                        dualBarcodesHtml += '</tr>';
+                      });
+                      dualBarcodesHtml += '</tbody>';
+                      dualBarcodesHtml += '</table>';
+                      dualBarcodesHtml += '</div>';
+                      $('#modalStockTransferLotNos').html(dualBarcodesHtml);
+                      $('#modalStockTransfer').modal('show');
+                    }
+                  } else {
+                    alert('Barcode not found');                
+                  }
+                } else {
+                  alert('Invalid Barcode / Barcode does not exists');
+                }
+              },
+              error: function(e) {
+                alert('Barcode not found in the Selected store.');
+              }
+          });
+          e.preventDefault();
+       }
+      });
+    }
+    $('#manDebitNoteForm').on('blur', '.dnItem', function() {
+      var itemName = jQuery(this).val();
+      var itemIndex = jQuery(this).attr('index');
+      var lotNoRef = $('#lotNo_'+itemIndex);
+      var barcode = $('#barcode_'+itemIndex).val();
+      var bnoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");
+      if(itemName.length > 0 && barcode.length === 0) {
+       var locationCode = $('#locationCode').val();
+       var data = {itemname:itemName, locationCode:locationCode};
+       jQuery.ajax("/async/getAvailableQty", {
+          data: data,
+          method:"POST",
+          success: function(lotNos) {
+            if(lotNos.status === 'success') {
+              var objLength = Object.keys(lotNos).length;
+              if(objLength>0) {
+                jQuery(lotNoRef).empty().append(bnoFirstOption);
+                jQuery.each(lotNos.response, function (index, lotNoDetails) {
+                  var cno = lotNoDetails.cno;
+                  var lotNoText = lotNoDetails.lotNo;
+                  if(cno !== '') {
+                    lotNoText += ' [ CASE: ' + cno + ' ]';
+                  }
+                  lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
+                  jQuery(lotNoRef).append(
+                    jQuery("<option></option>").
+                    attr("value",lotNoDetails.lotNo).
+                    text(lotNoText)
+                  );
+                });
+              } else {
+                jQuery(uppElement).text('');
+              }
+            }
+          },
+          error: function(e) {
+            alert('An error occurred while fetching Batch Nos.');
+          }
+       });
+      } else if(parseInt(itemName.length) === 0){
+        jQuery(lotNoRef).empty().append(bnoFirstOption);
+        jQuery('#qtyava_'+itemIndex).val('');
+        jQuery('#purchaseRate_'+itemIndex).val('');
+        jQuery('#dnItemTax_'+itemIndex+' option[value="'+''+'"]').attr('selected', 'selected');
+        jQuery('#qty_'+itemIndex).val('');
+        updateManualDebitNoteFormRow(itemIndex);
+      }
+    });
+
+    $('#manDebitNoteForm').on('change', '.lotNo', function() {
+      var qtyAvailable = itemRate = itemType = '';
+      var itemIndex = jQuery(this).attr('index');
+      var lotNo = jQuery(this).val();
+      var avaQtyContainer = jQuery('#qtyava_'+itemIndex);
+      var mrpContainer = jQuery('#purchaseRate_'+itemIndex);
+      var itemName = jQuery('#iname_'+itemIndex).val();
+      // var itemTypeContainer = jQuery('#itemType_'+itemIndex);
+      if(lotNo !== '') {
+        var selectedLotNo = '';
+        var lotFound = false;
+        jQuery('.lotNo').each(function(i, obj) {
+          selectedLotNo = $(this).val();
+          if(selectedLotNo === lotNo && parseInt(itemIndex) !== parseInt(i)) {
+            lotFound = true;
+          }
+        });
+
+        if(lotFound) {
+          $('#lotNo_'+itemIndex).val('');
+          jQuery('#qtyava_'+itemIndex).val('');
+          jQuery('#qty_'+itemIndex).val('');
+          jQuery('#purchaseRate_'+itemIndex).val('');
+          jQuery('#iname_'+itemIndex).val('');
+          jQuery('#barcode_'+itemIndex).val('');
+          bootbox.alert({
+            message: "This Lot No. is already selected for `" +itemName+"`. A Lot No. must be unique and selected only once in the bill against the same item."
+          });
+          return false;              
+        } else if(Object.keys(lotNosResponse[lotNo]).length>0) {
+          jQuery('#qtyava_'+itemIndex).val(lotNosResponse[lotNo].closingQty);
+          jQuery('#qty_'+itemIndex).val(lotNosResponse[lotNo].mOq);
+          jQuery('#purchaseRate_'+itemIndex).val(lotNosResponse[lotNo].mrp);
+          // jQuery('#itemType_'+itemIndex).val(lotNosResponse[lotNo].itemType);
+          jQuery('#dnItemTax_'+itemIndex+' option[value="'+lotNosResponse[lotNo].taxPercent+'"]').attr('selected', 'selected');
+          updateManualDebitNoteFormRow(itemIndex);
+        }
+      }
+    });
+  }  
 
   // sales return window.
   if( $('#salesReturnWindow').length > 0 ) {

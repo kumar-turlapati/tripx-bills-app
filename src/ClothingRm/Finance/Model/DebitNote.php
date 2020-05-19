@@ -17,7 +17,7 @@ class DebitNote
 		$response = $this->api_caller->sendRequest('post', 'fin/dn', $form_data);
 		$status = $response['status'];
 		if ($status === 'success') {
-			return array('status'=>true,'cnNo'=>$response['response']['cnNo']);
+			return array('status'=>true,'dnNo'=>$response['response']['dnNo']);
 		} elseif($status === 'failed') {
 			return array('status'=>false, 'apierror'=>$response['reason']);
 		}

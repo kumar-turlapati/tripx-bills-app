@@ -507,6 +507,10 @@ $routes->add('cn_delete', new Routing\Route('/fin/credit-note/delete/{cnNo}', ar
   '_controller' => 'ClothingRm\\Finance\\Controller\\CreditNotesController::cnDeleteAction',
   'cnNo' => null,
 )));
+$routes->add('cn_view', new Routing\Route('/fin/credit-note/view/{cnCode}', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\CreditNotesController::cnViewAction',
+  'cnCode' => null,
+)));
 $routes->add('cn_list', new Routing\Route('/fin/credit-notes/{pageNo}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\CreditNotesController::cnListAction',
   'pageNo' => null,
@@ -522,6 +526,10 @@ $routes->add('dn_update', new Routing\Route('/fin/debit-note/update/{dnCode}', a
 )));
 $routes->add('dn_delete', new Routing\Route('/fin/debit-note/delete/{dnCode}', array(
   '_controller' => 'ClothingRm\\Finance\\Controller\\DebitNotesController::dnDeleteAction',
+  'dnCode' => null,
+)));
+$routes->add('dn_view', new Routing\Route('/fin/debit-note/view/{dnCode}', array(
+  '_controller' => 'ClothingRm\\Finance\\Controller\\DebitNotesController::dnViewAction',
   'dnCode' => null,
 )));
 $routes->add('dn_list', new Routing\Route('/fin/debit-notes/{pageNo}', array(

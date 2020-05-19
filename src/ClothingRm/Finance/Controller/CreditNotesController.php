@@ -111,6 +111,73 @@ class CreditNotesController
     return array($template->render_view('update-credit-note', $template_vars), $controller_vars);     
   }
 
+  # view credit note.
+  public function cnViewAction(Request $request) {
+    $cn_details = $taxes_final = [];
+    $location_ids = $location_codes = [];
+
+    # ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    } 
+
+    if($request->get('cnCode') && $request->get('cnCode')!=='') {
+      $cn_code = Utilities::clean_string($request->get('cnCode'));
+      $cn_response = $this->cv_model->get_credit_note_details([], $cn_code);
+      if($cn_response['status']) {
+        $cn_details = $cn_response['data']['vocDetails'];
+      } else {
+        $page_error = $sales_response['apierror'];
+        $this->flash->set_flash_message($page_error,1);
+        Utilities::redirect('/fin/credit-notes');
+      }
+    } else {
+      $this->flash->set_flash_message('Invalid Credit note no. (or) Credit note no. does not exist.',1);
+      Utilities::redirect('/fin/credit-notes');
+    }
+
+    // ---------- get tax percents from api ----------------------
+    $taxes_a = $this->taxes_model->list_taxes();
+    if($taxes_a['status'] && count($taxes_a['taxes'])>0 ) {
+      $taxes_raw = $taxes_a['taxes'];
+      foreach($taxes_a['taxes'] as $tax_details) {
+        $taxes[$tax_details['taxCode']] = $tax_details['taxPercent'];
+      }
+    }
+
+    // ---- adj reasons -------------------------------------------
+    $api_response = $this->inven_api->get_inventory_adj_reasons();
+    if($api_response['status']===true) {
+      $adj_reasons = array(''=>'Choose') + $api_response['results'];
+    } else {
+      $adj_reasons = array(''=>'Choose');
+    }    
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Finance Management - Debit Note',
+      'icon_name' => 'fa fa-inr',
+    );
+
+    // template variables
+    $template_vars = array(
+      'client_locations' => $client_locations,
+      'taxes' => ['' => 'Select'] + $taxes_final,
+      'adj_reasons' => $adj_reasons,
+      'cn_details' => $cn_details,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'flash_obj' => $this->flash,
+    );
+
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('view-credit-note', $template_vars), $controller_vars);     
+  }
+
   # delete credit note.
   public function cnDeleteAction(Request $request) {
     $cn_no = !is_null($request->get('cnNo')) ? Utilities::clean_string($request->get('cnNo')) : '';
@@ -246,18 +313,27 @@ class CreditNotesController
     if(is_numeric($cn_value) && $cn_value>0) {
       $cleaned_params['cnValue'] = $cn_value;
     } else {
-      $form_errors['cnValue'] = 'Invalid Credit note value.';
+      $form_errors['cnValue'] = 'Invalid credit note value.';
     }
     if($customer_name !== '') {
       $cleaned_params['customerName'] = $customer_name;
     } else {
-      $form_errors['customerName'] = 'Invalid Customer name.';
+      $form_errors['customerName'] = 'Invalid customer name.';
     }
+    if($bill_no === '') {
+      $form_errors['billNo'] = 'Invalid bill no.';
+    } else {
+      $cleaned_params['billNo'] = $bill_no;
+    }
+    if($adj_reason_code === '') {
+      $form_errors['adjReasonCode'] = 'Invalid credit note reason.';
+    } else {
+      $cleaned_params['adjReasonCode'] = $adj_reason_code;
+    }    
+
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
-    $cleaned_params['adjReasonCode'] = $adj_reason_code;
     $cleaned_params['mCreditNoteType'] = $m_cn_type;
     $cleaned_params['cnDate'] = $cn_date;
-    $cleaned_params['billNo'] = $bill_no;
 
     for($item_key=0;$item_key<15;$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {

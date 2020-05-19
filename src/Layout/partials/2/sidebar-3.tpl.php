@@ -64,6 +64,7 @@
               <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>
               <li><a href="/fin/cash-voucher/create"><i class="fa fa-sticky-note-o"></i> Cash</a></li>
               <li><a href="/fin/credit-note/create"><i class="fa fa-sign-out"></i> Credit note</a></li>
+              <li><a href="/fin/debit-note/create"><i class="fa fa-share"></i> Debit note</a></li>
             </ul>
           </li>
           <li class="sub-menu">

@@ -654,7 +654,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/get-supplier-details',
-        '/async/finyDefault', '/async/itd',
+        '/async/finyDefault', '/async/itd', '/async/suppAc',
 
         '/products/list', '/categories/list', '/mfgs/list', '/suppliers/list',
         '/taxes/list', '/fin/supp-opbal/list', '/inward-entry', '/inward-entry/bulk-upload',
@@ -669,6 +669,7 @@ class Utilities
         '/fin/supp-opbal',
 
         '/barcode/generate', '/inward-entry/view', '/purchase-return/entry', '/fin/debit-note',
+        '/fin/debit-notes',
         '/grn/view', '/print-grn', '/grn/create', 
 
         // '/opbal/add', '/opbal/update', '/barcodes/print', '/barcode/opbal', 

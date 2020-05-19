@@ -28,6 +28,7 @@
           <li><a href="/inward-entry"><i class="fa fa-laptop"></i> Purchase Entry</a></li>
           <li><a href="/inward-entry/bulk-upload"><i class="fa fa-upload"></i> Purchase Entry From Files</a></li>          
           <li><a href="/stock-transfer/out"><i class="fa fa-truck"></i> Stock Transfer</a></li>
+          <li><a href="/fin/debit-note/create"><i class="fa fa-share"></i> Debit note</a></li>
         </ul>
       </li>      
       <li class="sub-menu">
@@ -40,6 +41,7 @@
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Transfer Register</a></li>
           <li><a href="/purchase-return/register"><i class="fa fa-undo"></i> Purchase Return Register</a></li>
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>
+          <li><a href="/fin/debit-notes"><i class="fa fa-minus-square"></i> Debit Notes Register</a></li>
         </ul>
       </li>
       <li class="sub-menu">
@@ -60,7 +62,7 @@
           <li><a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a></li>
         </ul>
       </li>
-      <li class="active">
+      <li class="sub">
         <a href="/tasks/list"><i class="fa fa-tasks"></i> My Tasks</a>
       </li>      
       <li class="sub-menu">

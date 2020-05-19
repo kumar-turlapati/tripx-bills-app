@@ -46,7 +46,10 @@
             </a>&nbsp;
             <a href="/purchase-return/register" class="btn btn-default">
               <i class="fa fa-book"></i> Purchase Return Register
-            </a>            
+            </a>&nbsp;
+            <a href="/fin/debit-note/create" class="btn btn-default">
+              <i class="fa fa-share"></i> Create debit note
+            </a>
           </div>
         </div>
   		  <div class="filters-block">
@@ -122,15 +125,16 @@
                     $bill_no = $voucher_details['billNo'] !== '' ? $voucher_details['billNo'] : '-';
                     $bill_value = $voucher_details['billValue'] > 0 ? $voucher_details['billValue'] : 0;
                     $purchase_date = !is_null($voucher_details['purchaseDate']) ? date('d-M-Y', strtotime($voucher_details['purchaseDate'])) : '-';
-                    $voucher_type = $voucher_details['dnType'] === 'ma' ? 'Pur.Return' : 'Auto';
-
+                    if($voucher_details['dnType'] === 'w' || $voucher_details['dnType'] === 'wo') {
+                      $voucher_type = $voucher_details['dnType'] === 'w' ? 'With items' : 'W/o Items';
+                    } elseif($voucher_details['dnType'] === 'ma') {
+                      $voucher_type = 'Pur.Return';
+                    } else {
+                      $voucher_type = 'Auto';
+                    }
                     $purchase_code = $voucher_details['purchaseCode'];
-                    // $grn_code = $voucher_details['grnCode'];
-                    // $return_code = $voucher_details['purchaseReturnCode'];
-
                     $grn_code = '';
                     $return_code = '';                    
-
                     $total += $voucher_amount;
                     $tot_bill_value += $bill_value;
                 ?>
@@ -142,15 +146,11 @@
                       </a>
                     </td>
                     <td align="left" class="valign-middle">
-                      <?php if($grn_code !== ''): ?>
-                      <a href="/grn/view/<?php echo $grn_code ?>" class="hyperlink" title="View GRN entry" target="_blank">
-                        <?php echo $bill_no ?>
-                      </a>
-                      <?php else: ?>
-                        <?php echo $bill_no ?>
-                      <?php endif; ?>
+                      <?php echo $bill_no ?>
                     </td>                
-                    <td align="right" class="valign-middle"><?php echo number_format($bill_value, 2, '.', '') ?></td>
+                    <td align="right" class="valign-middle">
+                      <?php echo $bill_value > 0 ? number_format($bill_value, 2, '.', '') : '-' ?>
+                    </td>
                     <td align="right" class="valign-middle">
                       <?php if($return_code !== ''): ?>
                       <a href="/purchase-return/view/<?php echo $return_code ?>" class="hyperlink" title="View Debit Note" target="_blank">
@@ -164,15 +164,17 @@
                     <td align="right" class="valign-middle"><?php echo number_format($voucher_amount,2, '.', '') ?></td>
                     <td align="center" class="valign-middle"><?php echo $voucher_type ?></td>                  
                     <td class="valign-middle"><?php echo $location_name ?></td>
-                    <td>&nbsp;
-                      <?php /*
+                    <td>
                       <div class="btn-actions-group" align="center">
-                        <?php if( $user_type === 3 && $voucher_details['dnType'] === 'ma'): ?>
+                        <a class="btn btn-primary" href="/fin/debit-note/view/<?php echo $voucher_code ?>" title="View debit note">
+                          <i class="fa fa-eye"></i>
+                        </a>                        
+                        <?php if($user_type === 3 || $user_type === 9 || $user_type === 7): ?>
                           <a class="btn btn-danger delDNote" href="/fin/debit-note/delete/<?php echo $voucher_code ?>" title="Delete Voucher">
-                            <i class="fa fa-times "></i>
+                            <i class="fa fa-times"></i>
                           </a>
                         <?php endif; ?>
-                      </div>*/ ?>
+                      </div>
                     </td>
                   </tr>
               <?php
