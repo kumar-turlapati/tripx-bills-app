@@ -654,7 +654,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/get-supplier-details',
-        '/async/finyDefault', '/async/itd', '/async/suppAc',
+        '/async/finyDefault', '/async/itd', '/async/suppAc', '/async/getAvailableQty',
 
         '/products/list', '/categories/list', '/mfgs/list', '/suppliers/list',
         '/taxes/list', '/fin/supp-opbal/list', '/inward-entry', '/inward-entry/bulk-upload',
