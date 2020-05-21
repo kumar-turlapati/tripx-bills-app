@@ -223,13 +223,18 @@ class FinyController {
         $fin_year_name = $finys[$submitted_finy_code];
         $api_response = $this->finy_model->switch_finy(['finyCode' => $submitted_finy_code]);
         if($api_response['status']) {
-          // update default dates.
-          $response = $this->api_caller->sendRequest('get','finy/default',[],false);
-          if(!is_array($response)) {
-            $response = json_decode($response, true);
-          }
-          Utilities::_set_fin_start_end_dates($response['response']);
+          $switched_year_index = array_search($submitted_finy_code, array_column($finy_response['finys'], 'finyCode'));
 
+          // update default dates.
+          // $response = $this->api_caller->sendRequest('get','finy/default',[],false);
+          // if(!is_array($response)) {
+          //   $response = json_decode($response, true);
+          // }
+          // Utilities::_set_fin_start_end_dates($response['response']);
+          Utilities::_set_fin_start_end_dates(array(
+            "startDate" => $finy_response['finys'][$switched_year_index]['startDate'],
+            "endDate" => $finy_response['finys'][$switched_year_index]['endDate'],
+          ));
           $message = '<i class="fa fa-check" aria-hidden="true"></i>&nbsp;You are switched to Financial year `'.$fin_year_name.'` successfully.';
           $this->flash->set_flash_message($message);
           Utilities::redirect('/finy/switch');
