@@ -1888,13 +1888,14 @@ class InventoryReportsController {
       $item_name = $item_details['itemName'];
       $category_name = $item_details['categoryName'];
       $brand_name = $item_details['brandName'];
-      if($group_by === 'case') {
-        $lot_no = $item_details['cno'];
-        $label = 'Case/Container/Box No.';
-      } else {
-        $lot_no = $item_details['lotNo'];
-        $label = 'Lot No.';
-      }
+      $case_no = $item_details['cno'];
+      $batch_no = $item_details['bno'];
+      $item_sku = $item_details['itemSku'];
+      $item_style_code = $item_details['itemStyleCode'];
+      $item_size = $item_details['itemSize'];
+      $item_color = $item_details['itemColor'];
+      $item_sleeve = $item_details['itemSleeve'];
+      $lot_no = $item_details['lotNo'];
       $opening_qty = $item_details['openingQty'];
       $purchased_qty = $item_details['purchasedQty'];
       $sales_return_qty = $item_details['salesReturnQty'];
@@ -1906,6 +1907,8 @@ class InventoryReportsController {
       $mrp = $item_details['mrp'];
       $purchase_rate = $item_details['purchaseRate'];
       $tax_percent = $item_details['taxPercent'];
+      $wholesale_price = $item_details['wholesalePrice'];
+      $online_price = $item_details['onlinePrice'];
 
       $amount = round($closing_qty * $purchase_rate, 2);
       
@@ -1926,7 +1929,16 @@ class InventoryReportsController {
         'Item Name' => $item_name,
         'Category Name' => $category_name,
         'Brand Name'  => $brand_name,
-        $label        => $lot_no,
+        'Case/Container/Box No.' => $case_no,
+        'Batch No.'   => $batch_no,
+        'Item SKU'    => $item_sku,
+        'Item Style Code' => $item_style_code,
+        'Item Size'   => $item_size,
+        'Item Color'  => $item_color,
+        'Item Sleeve' => $item_sleeve,
+        'Lot No.'     => $lot_no,
+        'Wholesale Price' => $wholesale_price,
+        'Online Price' => $online_price,
         'GST (%)'     => number_format($tax_percent,2,'.',''),
         'OP Qty.'     => number_format($opening_qty,2,'.',''),
         'PU Qty.'     => number_format($purchased_qty,2,'.',''),
@@ -1943,11 +1955,20 @@ class InventoryReportsController {
     }
 
     $cleaned_params[count($cleaned_params)] = [
-        'Sno.' => '',
-        'Item Name' => '',
+        'Sno.'          => '',
+        'Item Name'     => '',
         'Category Name' => '',
-        'Brand Name'  => '',
-        $label        => '',
+        'Brand Name'    => '',
+        'Case/Container/Box No.' => '',
+        'Batch No.'   => '',
+        'Item SKU'    => '',
+        'Item Style Code' => '',
+        'Item Size'   => '',
+        'Item Color'  => '',
+        'Item Sleeve' => '',
+        'Lot No.'     => '',
+        'Wholesale Price' => '',
+        'Online Price' => '',
         'GST (%)'     => '',
         'OP Qty.'     => number_format($tot_op_qty,2,'.',''),
         'PU Qty.'     => number_format($tot_pu_qty,2,'.',''),

@@ -149,8 +149,14 @@ class SalesEntryComboController
 
     $item_details = $form_data['itemDetails'];
 
-    $cleaned_params['saleDate'] = $sale_date;
     $cleaned_params['name'] = $name;      
+
+    // add misc parameters.
+    if(Utilities::is_valid_fin_date($sale_date)) {
+      $cleaned_params['saleDate'] = $sale_date;
+    } else {
+      $form_errors['saleDate'] = 'Invoice Date is out of Financial year dates.';
+    }
 
     // validate location code.
     if($location_code !== '') {

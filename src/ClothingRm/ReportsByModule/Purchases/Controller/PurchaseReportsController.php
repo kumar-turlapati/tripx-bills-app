@@ -258,6 +258,9 @@ class PurchaseReportsController {
         $csv_headings = [ [$heading1], [$heading2] ];
       }
 
+      // dump($total_records);
+      // exit;
+
       $format = $form_data['format'];
       if($format === 'csv') {
         $total_records = $this->_format_po_register_itemwise_for_csv($total_records);
@@ -265,8 +268,6 @@ class PurchaseReportsController {
         return;
       }
 
-      // dump($total_records);
-      // exit;
       
       // start PDF printing.
       $item_widths = array(10,45,15,20,23,15,17,36,12,18,12,18,18,18);
@@ -666,7 +667,11 @@ class PurchaseReportsController {
   private function _format_po_register_itemwise_for_csv($total_records = []) {
     $cleaned_params = [];
     $cntr = 0;
-    $tot_gross = $tot_tax = $tot_net_pay = $tot_qty = 0;    
+    $tot_gross = $tot_tax = $tot_net_pay = $tot_qty = 0;
+
+    // dump($total_records);
+    // exit;
+
     foreach($total_records as $key => $record_details) {
       $cntr++;
       $tot_gross += $record_details['taxableAmount'];
@@ -679,6 +684,15 @@ class PurchaseReportsController {
         'HSN/SAC' => $record_details['hsnSacCode'],
         'Brand Name' => $record_details['brandName'],
         'Lot No.' => $record_details['lotNo'],
+        'Case/Container/Box No.' => $record_details['cno'],
+        'Batch No.'   => $record_details['batchNo'],
+        'Item SKU'    => $record_details['itemSku'],
+        'Item Style Code' => $record_details['itemStyleCode'],
+        'Item Size'   => $record_details['itemSize'],
+        'Item Color'  => $record_details['itemColor'],
+        'Item Sleeve' => $record_details['itemSleeve'],
+        'Wholesale Price' => $record_details['wholesalePrice'],
+        'Online Price' => $record_details['onlinePrice'],
         'PO No.' => $record_details['poNo'],
         'PO Date' => date('d-m-Y', strtotime($record_details['poDate'])),
         'Supplier Name' => $record_details['supplierName'],
@@ -697,6 +711,15 @@ class PurchaseReportsController {
       'HSN/SAC' => '',
       'Brand Name' => '',
       'Lot No.' => '',
+      'Case/Container/Box No.' => '',
+      'Batch No.'   => '',
+      'Item SKU'    => '',
+      'Item Style Code' => '',
+      'Item Size'   => '',
+      'Item Color'  => '',
+      'Item Sleeve' => '',
+      'Wholesale Price' => '',
+      'Online Price' => '',
       'PO No.' => '',
       'PO Date' => '',
       'Supplier Name' => '',
