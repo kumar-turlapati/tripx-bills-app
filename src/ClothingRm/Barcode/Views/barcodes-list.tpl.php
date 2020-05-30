@@ -27,6 +27,24 @@
   } else {
     $barcode = '';
   }
+  if(isset($search_params['bno']) && $search_params['bno'] !== '' ) {
+    $bno = $search_params['bno'];
+    $query_params[] = 'bno='.$bno;
+  } else {
+    $bno = '';
+  }
+  if(isset($search_params['cno']) && $search_params['cno'] !== '' ) {
+    $cno = $search_params['cno'];
+    $query_params[] = 'cno='.$bno;
+  } else {
+    $cno = '';
+  }
+  if(isset($search_params['itemSku']) && $search_params['itemSku'] !== '' ) {
+    $itemSku = $search_params['itemSku'];
+    $query_params[] = 'itemSku='.$itemSku;
+  } else {
+    $itemSku = '';
+  }
   if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
     $locationCode = $search_params['locationCode'];
     $query_params[] = 'locationCode='.$locationCode;
@@ -84,6 +102,17 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
+                </div>
+              </div>
+              <div class="form-group" style="margin-left:77px;">
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Container/Case/Box No." type="text" name="cno" id="cno" class="form-control" value="<?php echo $cno ?>" size="13" />
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Batch No." type="text" name="bno" id="bno" class="form-control" value="<?php echo $bno ?>" size="13" />
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Item SKU" type="text" name="itemSku" id="itemSku" class="form-control" value="<?php echo $itemSku ?>" size="13" />
                 </div>
               </div>
               <div class="form-group text-center">

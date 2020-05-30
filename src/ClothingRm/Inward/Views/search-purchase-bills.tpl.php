@@ -115,14 +115,15 @@
               <thead>
                 <tr>
                   <th width="3%"  class="text-center">Sno.</th>
-                  <th width="24%" class="text-center">Supplier<br />Name</th>
+                  <th width="25%" class="text-center">Supplier<br />Name</th>
+                  <th width="8%" class="text-center">PO No.</th>
                   <th width="5%" class="text-center">Payment<br />Method</th>
                   <th width="5%" class="text-center">Credit<br />Days</th>                  
-                  <th width="15%" class="text-center">Bill No.</th>
+                  <th width="10%" class="text-center">Bill No.</th>
                   <th width="10%" class="text-center">Bill Amount<br />(in Rs.)</th>
-                  <th width="15%" class="text-center">GRN No &amp; Date</th>
+                  <th width="12%" class="text-center">GRN No &amp; Date</th>
                   <th width="7%" class="text-center">Status</th>
-                  <th width="20%" class="text-center">Actions</th>
+                  <th width="17%" class="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,6 +140,7 @@
                     $credit_days = $purchase_details['creditDays'];
                     $bill_no = $purchase_details['billNo'];
                     $bill_amount = $purchase_details['netpay'];
+                    $po_no = $purchase_details['poNo'];
                     $grn_no = $purchase_details['grnNo'].'___'.date("d-M-Y", strtotime($purchase_details['grnDate']));
                     if((int)$purchase_details['status'] === 0) {
                       $status_text = '<span style="color:brown;font-weight:bold;font-size:12px;">Pending</span>';
@@ -156,6 +158,7 @@
                     <tr class="text-uppercase text-right font11">
                       <td class="valign-middle"><?php echo $cntr ?></td>
                       <td class="text-left valign-middle"><?php echo $supplier_name ?></td>
+                      <td class="text-center valign-middle"><?php echo $po_no ?></td>
                       <td class="text-left valign-middle"><span style="font-weight:bold;"><?php echo $payment_method ?></span></td>
                       <td class="valign-middle"><?php echo $credit_days ?></td>
                       <td class="text-right valign-middle"><?php echo $bill_no ?></td>

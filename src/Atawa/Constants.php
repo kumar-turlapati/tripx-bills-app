@@ -153,6 +153,9 @@ class Constants
     'date' => 'Bill Date (yyyy-mm-dd)',
     'suppname' => 'Supplier Name',
     'itemname' => 'Item Name',
+    'caseno' => 'Case/Container/Box No.',
+    'bno' => 'Batch No.',
+    'sku' => 'Item SKU',
     'pono' => 'PO No.',
   ];
 
