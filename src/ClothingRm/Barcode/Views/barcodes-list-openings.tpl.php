@@ -25,7 +25,26 @@
     $query_params[] = 'locationCode='.$locationCode;
   } else {
     $locationCode = '';
+  }
+  if(isset($search_params['cnoFilter']) && $search_params['cnoFilter'] !=='' ) {
+    $cno_filter = $search_params['cnoFilter'];
+    $query_params[] = 'cnoFilter='.$cno_filter;
+  } else {
+    $cno_filter = '';
+  }
+  if(isset($search_params['bnoFilter']) && $search_params['bnoFilter'] !=='' ) {
+    $bno_filter = $search_params['bnoFilter'];
+    $query_params[] = 'bnoFilter='.$bno_filter;
+  } else {
+    $bno_filter = '';
+  }
+  if(isset($search_params['itemSku']) && $search_params['itemSku'] !=='' ) {
+    $item_sku = $search_params['itemSku'];
+    $query_params[] = 'itemSku='.$item_sku;
+  } else {
+    $item_sku = '';
   }  
+
   if(count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   } else {
@@ -94,9 +113,22 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <input placeholder="Container/Case/Box No." type="text" name="cnoFilter" id="cnoFilter" class="form-control" value="<?php echo $cno_filter ?>" size="13" />
                 </div>                
-                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
+              <div class="form-group" style="margin-left:77px;">
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Batch No." type="text" name="bnoFilter" id="bnoFilter" class="form-control" value="<?php echo $bno_filter ?>" size="13" />
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Item SKU" type="text" name="itemSku" id="itemSku" class="form-control" value="<?php echo $item_sku ?>" size="13" />
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                </div>
+              </div>              
             </div>
           </div>
           <?php if(count($openings)>0): ?>

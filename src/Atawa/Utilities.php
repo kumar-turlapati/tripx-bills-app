@@ -717,7 +717,7 @@ class Utilities
       13 => [
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
-        '/async/getTrDetailsByCode',
+        '/async/getTrDetailsByCode', '/async/finyDefault',
 
         '/stock-transfer/validate', '/stock-transfer/register', '/stock-transfer/out',
 
@@ -726,7 +726,8 @@ class Utilities
 
       15 => [
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
-        '/async/itemsAc', '/async/brandAc', '/async/custAc',        
+        '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/updateRackNo',
+        '/async/finyDefault',
 
         '/sales-indents/list', '/campaigns/list', '/inventory/available-qty', '/products/list',
         '/products/update',

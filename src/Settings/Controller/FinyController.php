@@ -201,6 +201,8 @@ class FinyController {
     $finys = $form_data = $form_errors = [];
     $def_finy = '';
 
+    // dump($_SESSION);
+
     $finy_response = $this->finy_model->get_finys();
     if($finy_response['status'] && count($finy_response['finys']) > 0) {
       $def_start_date = $_SESSION['finy_s_date'];

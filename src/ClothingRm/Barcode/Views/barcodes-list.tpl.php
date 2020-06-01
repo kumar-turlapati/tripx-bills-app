@@ -105,7 +105,7 @@
                 </div>
               </div>
               <div class="form-group" style="margin-left:77px;">
-                <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <input placeholder="Container/Case/Box No." type="text" name="cno" id="cno" class="form-control" value="<?php echo $cno ?>" size="13" />
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
@@ -114,9 +114,9 @@
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Item SKU" type="text" name="itemSku" id="itemSku" class="form-control" value="<?php echo $itemSku ?>" size="13" />
                 </div>
-              </div>
-              <div class="form-group text-center">
-                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                </div>
               </div>
             </form>
 			    </div>

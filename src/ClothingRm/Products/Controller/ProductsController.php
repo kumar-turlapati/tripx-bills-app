@@ -155,6 +155,7 @@ class ProductsController {
     $show_add_link = false;
 
     $default_location = isset($_SESSION['lc']) ? $_SESSION['lc'] : '';
+    $user_type = isset($_SESSION['utype']) ? (int)$_SESSION['utype'] : 0;
 
     $flash = new Flash;        
     $product_api_call = new Products;
@@ -166,6 +167,9 @@ class ProductsController {
     $category = !is_null($request->get('category')) ? Utilities::clean_string($request->get('category')) : '';
     $mfg = !is_null($request->get('mfg')) ? Utilities::clean_string($request->get('mfg')) : '';
     $location_code = $request->get('locationCode')!== null ? Utilities::clean_string($request->get('locationCode')) : $default_location;
+    $cno = !is_null($request->get('cno')) ? Utilities::clean_string($request->get('cno')) : '';
+    $bno = !is_null($request->get('bno')) ? Utilities::clean_string($request->get('bno')) : '';
+    $item_sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
 
     $search_params = [
       'psName' => $ps_name,
@@ -174,6 +178,15 @@ class ProductsController {
       'locationCode' => $location_code,
       'medname' => $ps_name,
     ];
+
+    // show different view for Godown op. based on this flag
+    // the query will change in backend.
+    if($user_type === 15) {
+      $search_params['rackUpdate'] = true;
+      $search_params['cno'] = $cno;
+      $search_params['bno'] = $bno;
+      $search_params['itemSku'] = $item_sku;
+    }
 
     // ---------- get location codes from api -----------------
     $client_locations = Utilities::get_client_locations(true);

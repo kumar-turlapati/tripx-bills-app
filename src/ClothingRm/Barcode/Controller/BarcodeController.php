@@ -485,7 +485,7 @@ class BarcodeController {
                     $batch_no = '';
                   }
                   $item_key_a = explode("__", $item_key);
-                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', '']; 
+                  $print_array_final[$new_barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', $mfg_name]; 
                 }
               }
             } else {
@@ -544,7 +544,7 @@ class BarcodeController {
                 $batch_no = '';
               }              
               $item_key_a = explode("__", $item_key);
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', ''];
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', $mfg_name];
             }
           }
           if(count($print_array_final)>0) {
@@ -563,12 +563,18 @@ class BarcodeController {
         $item_name = isset($form_data['itemName']) ? Utilities::clean_string($form_data['itemName']) : '';
         $index_by =  isset($form_data['idx']) ? Utilities::clean_string($form_data['idx']) : 'item';        
         $location_code = isset($form_data['locationCode']) ? Utilities::clean_string($form_data['locationCode']) : $_SESSION['lc'];
+        $cno_filter = !is_null($request->get('cnoFilter')) ? Utilities::clean_string($request->get('cnoFilter')) : '';
+        $bno_filter = !is_null($request->get('bnoFilter')) ? Utilities::clean_string($request->get('bnoFilter')) : '';
+        $item_sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
         $search_params = array(
           'itemName' => $item_name,
           'locationCode' => $location_code,
           'pageNo' => $page_no,
           'perPage' => $per_page,
           'indexBy' => $index_by,
+          'cnoFilter' => $cno_filter,
+          'bnoFilter' => $bno_filter,
+          'itemSku' => $item_sku,
         );
       }
     } else {
@@ -581,12 +587,19 @@ class BarcodeController {
         $index_by = $request->get('idx');
       } else {
         $index_by = 'item';
-      }      
+      }
+      $cno_filter = !is_null($request->get('cnoFilter')) ? Utilities::clean_string($request->get('cnoFilter')) : '';
+      $bno_filter = !is_null($request->get('bnoFilter')) ? Utilities::clean_string($request->get('bnoFilter')) : '';
+      $item_sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
+     
       $search_params = array(
         'pageNo' => $page_no,
         'perPage' => $per_page,
         'locationCode' => $location_code,
         'indexBy' => $index_by,
+        'cnoFilter' => $cno_filter,
+        'bnoFilter' => $bno_filter,
+        'itemSku' => $item_sku,
       );
     }
 
@@ -744,7 +757,7 @@ class BarcodeController {
                 $batch_no = '';
               }              
               $item_key_a = explode("__", $item_key);
-              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', ''];
+              $print_array_final[$barcode] = [$print_qty, $item_name, $item_rate, date("Y-m-d"), $item_key_a[2], $cno, $mfg_name, $uom_name, $wholesale_price, $online_price, $batch_no, '', $mfg_name];
             }
 
           } else {
@@ -770,6 +783,10 @@ class BarcodeController {
         $brand_name = isset($form_data['brandName']) ? Utilities::clean_string($form_data['brandName']) : '';
         $barcode = isset($form_data['barcode']) ? Utilities::clean_string($form_data['barcode']) : '';
         $lot_no = isset($form_data['lotNo']) ? Utilities::clean_string($form_data['lotNo']) : '';
+        $cno_filter = !is_null($request->get('cnoFilter')) ? Utilities::clean_string($request->get('cnoFilter')) : '';
+        $bno_filter = !is_null($request->get('bnoFilter')) ? Utilities::clean_string($request->get('bnoFilter')) : '';
+        $item_sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
+
         $search_params = array(
           'itemName' => $item_name,
           'locationCode' => $location_code,
@@ -783,6 +800,9 @@ class BarcodeController {
           'brandName' => $brand_name,
           'barcode' => $barcode,
           'lotNo' => $lot_no,
+          'cnoFilter' => $cno_filter,
+          'bnoFilter' => $bno_filter,
+          'itemSku' => $item_sku,
         );
       }
     } else {
@@ -795,6 +815,9 @@ class BarcodeController {
       $brand_name = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';
       $barcode = !is_null($request->get('barcode')) ? Utilities::clean_string($request->get('barcode')) : '';
       $lot_no = !is_null($request->get('lotNo')) ? Utilities::clean_string($request->get('lotNo')) : '';
+      $cno_filter = !is_null($request->get('cnoFilter')) ? Utilities::clean_string($request->get('cnoFilter')) : '';
+      $bno_filter = !is_null($request->get('bnoFilter')) ? Utilities::clean_string($request->get('bnoFilter')) : '';
+      $item_sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
 
       $search_params = array(
         'pageNo' => $page_no,
@@ -809,6 +832,9 @@ class BarcodeController {
         'brandName' => $brand_name,
         'barcode' => $barcode,
         'lotNo' => $lot_no,
+        'cnoFilter' => $cno_filter,
+        'bnoFilter' => $bno_filter,
+        'itemSku' => $item_sku,
       );
       // dump($search_params, 'search params.....');
     }

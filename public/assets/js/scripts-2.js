@@ -454,6 +454,49 @@ function initializeJS() {
     });
   }
 
+  if( $('#productsList').length > 0 ) {
+    $('.plRackNumbers').Tabledit({
+      url: '/async/updateRackNo',      
+      editButton: false,
+      deleteButton: false,
+      hideIdentifier: false,
+      columns: {
+        identifier: [1,'itemCode'],
+        editable: [
+          [3, 'rackNumber']
+        ]
+      },
+      onDraw: function() {
+        if($('[name="rackNumber"]').length>0) {
+          $('[name="rackNumber"]').attr('title', 'Add / Update Rack no. and hit Enter key to Save.');
+        }
+      },
+      // onAjax: function(action, serialize) {
+      //   var urlParams = new URLSearchParams(serialize);
+      //   var rackNumber = returnNumber(parseFloat(urlParams.get('rackNumber')));
+      //   if(rackNumber.length <= 0) {
+      //     bootbox.alert({
+      //       message: "New MRP should be greater than old MRP. If you want to reduce the current MRP, please use Promocodes or Discount option."
+      //     });
+      //     return false;
+      //   }
+      //   return;
+      // },
+      onSuccess: function(axResponse, textStatus, jqXHR) {
+        if(axResponse.status === 'success') {
+          var responseMessage = axResponse.response.updateMessage;
+        } else if(axResponse.status === 'failed') {
+          var responseMessage = 'Error: ' + axResponse.errorcode + ', ' + axResponse.errortext;
+        } else {
+          var responseMessage = 'Unknown Error.';
+        }
+        bootbox.alert({
+          message: responseMessage
+        });
+      }
+    });  
+  }
+
   if( $('#bulkUpdateSellingPriceFrm').length > 0 ) {
     // $('.itemnames').Tabledit({
     //   url: '/async/change-mrp',      

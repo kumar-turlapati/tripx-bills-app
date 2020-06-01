@@ -82,18 +82,23 @@
         max-width: 100%;
       }
       .productName {
-        text-align: right;
+        text-align: center;
         padding-bottom: 3px;
         padding-right: 10px;
+        padding-top:5px;
+        font-weight: bold;
+        font-size: 15px;
       }
       .barCode {
-        font-size: 12px;
+        font-size: 14px;
         font-weight: bold;
-        padding-left:50px;
+        text-align: center;
+        /*padding-left:50px;*/
       }
       .mfgDate {
-        text-align: left;
-        padding-top: 10px;
+        text-align: center;
+        padding-top: 5px;
+        font-weight: bold;
       }
       .overflowText {
         overflow: hidden;
@@ -135,17 +140,18 @@
     ?>      
       <div>
         <div class="overflowText">
-          <div class="productName"><?php echo $print_item_name ?></div>
+          <div class="mfgDate" style="text-align: center;font-size: 14px;font-weight: bold;"><?php echo $mfg_name ?></div>
           <?php /*<div>MRP: RS.<?php echo $print_item_mrp ?></div>*/?>
-          <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" class="bimg" />
+          <div style="text-align: center;padding-bottom: 5px;"><img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" class="bimg" /></div>
           <div class="barCode"><?php echo $barcode ?></div>
-          <div class="mfgDate"><?php echo 'Case/Batch No.: '.$cno.' - '.$packed_qty.' '.$uom_name ?></div>
+          <div class="mfgDate"><?php echo 'Case No.: '.$cno.' - '.$packed_qty.' '.$uom_name ?></div>
+          <div class="mfgDate"><?php echo 'Batch No.: '.$bno ?></div>
+          <div class="productName"><?php echo $print_item_name ?></div>
           <?php /*
           <?php if($bno !== '' ) : ?> 
             <div class="mfgDate" style="text-align: left;"><?php echo 'Bale No: '.$bno ?></div>
           <?php endif; ?> */?>
           <?php /*<div class="mfgDate" style="text-align: left;font-size: 12px;"><?php echo $lot_no ?>&nbsp;<span style="padding-left:60px;"><?php echo $mfg_name ?></span></div>*/?>
-          <div class="mfgDate" style="text-align: center;font-size: 16px;font-weight: bold;"><?php echo $mfg_name ?></div>
         </div>
       </div>             
       <?php

@@ -65,6 +65,16 @@ class AsyncController {
           echo $response;
         }
       }*/
+    } elseif($api_string==='updateRackNo') {
+      $params['itemCode'] = $request->get('itemCode');
+      $params['rno'] = $request->get('rackNumber');
+      $api_url = 'inventory/update-rack-no';
+      $response = $api_caller->sendRequest('post',$api_url,$params,false);
+      if(is_array($response)){
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     } elseif($api_string==='day-sales') {
       $params['saleDate'] = date("d-m-Y");
       if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 3 || (int)$_SESSION['utype'] === 9) {
