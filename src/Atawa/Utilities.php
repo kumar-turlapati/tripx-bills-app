@@ -1232,6 +1232,12 @@ class Utilities
       }
     }
     return $api_errors;
+  }
+
+  public static function get_logout_url() {
+    $bc = Utilities::get_business_category();
+    $environment = $_SERVER['appEnvironment'];
+    return Config::get_logout_urls($bc, $environment);
   }  
 
 }
