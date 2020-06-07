@@ -119,6 +119,9 @@ class SalesEntryComboController
 
   private function _validate_form_data($form_data=[], $location_names = []) {
 
+    // dump($form_data);
+    // exit;
+
     $cleaned_params = $form_errors = [];
     $tot_bill_value = $tot_discount_amount = $tot_billable_value = $tot_tax_value = $round_off = $net_pay = 0;
 
@@ -220,8 +223,8 @@ class SalesEntryComboController
         $barcode = isset($item_details['barcode'][$item_key]) ? Utilities::clean_string($item_details['barcode'][$item_key]) : '';
         $item_code = Utilities::clean_string($item_details['comboItemCode'][$item_key]);
         $item_name = Utilities::clean_string($item_details['itemName'][$item_key]);
-        $item_ava_qty = Utilities::clean_string($item_details['itemAvailQty'][$item_key]);
-        $item_sold_qty = Utilities::clean_string($item_details['comboItemSoldQty'][$item_key]);
+        $item_ava_qty = $item_details['itemAvailQty'][$item_key] !== '' ? Utilities::clean_string($item_details['itemAvailQty'][$item_key]) : 0;
+        $item_sold_qty = $item_details['comboItemSoldQty'][$item_key] !== '' ? Utilities::clean_string($item_details['comboItemSoldQty'][$item_key]) : 0;
         $item_rate = Utilities::clean_string($item_details['itemRate'][$item_key]);
         $item_discount = Utilities::clean_string($item_details['itemDiscount'][$item_key]);
         $item_tax_amount = 0;

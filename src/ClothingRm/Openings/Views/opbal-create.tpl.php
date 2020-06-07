@@ -4,9 +4,12 @@
 
   $item_name_dis = $update_mode ? ' disabled="disabled"' : '';
 
+  // dump($submitted_data);
+  // exit;
+
   $item_name = isset($submitted_data['itemName']) && $submitted_data['itemName'] !== '' ? $submitted_data['itemName'] : '';
   $opening_rate = isset($submitted_data['opRate']) && $submitted_data['opRate'] !== '' ? $submitted_data['opRate'] : ''; 
-  $opening_qty = isset($submitted_data['openingQty']) && $submitted_data['openingQty'] !== '' ? $submitted_data['openingQty'] : '';
+  $opening_qty = isset($submitted_data['opQty']) && $submitted_data['opQty'] !== '' ? $submitted_data['opQty'] : '';
   $purchase_rate = isset($submitted_data['purchaseRate']) && $submitted_data['purchaseRate'] !== '' ? $submitted_data['purchaseRate'] : '';
   $tax_percent = isset($submitted_data['taxPercent']) && $submitted_data['taxPercent'] !== '' ? $submitted_data['taxPercent'] : '';
   $location_code = isset($submitted_data['locationID']) && isset($location_codes[$submitted_data['locationID']]) ? $location_codes[$submitted_data['locationID']] : '';

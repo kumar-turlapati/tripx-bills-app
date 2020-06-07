@@ -2126,6 +2126,8 @@ class SalesReportsController {
   public function salesDispatchRegister(Request $request) {
     $default_location = $_SESSION['lc'];
     $client_locations = Utilities::get_client_locations();
+    $agents_a = [];
+    
     $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {

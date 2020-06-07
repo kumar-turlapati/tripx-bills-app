@@ -537,7 +537,7 @@ class Utilities
         '/reports/receivables', '/reports/item-master', '/reports/customer-master',
 
         '/reports/item-master-with-barcodes', '/reports/sales-billwise-itemwise', 
-        '/reports/sales-billwise-itemwise-casewise',
+        '/reports/sales-billwise-itemwise-casewise', '/reports/sales-dispatch-register',
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
         '/reports/po-return-register',
@@ -666,7 +666,7 @@ class Utilities
         '/products/update', '/products/create', '/category/create', '/category/update',
         '/mfg/create', '/mfg/update', '/suppliers/create', '/taxes/add', '/taxes/update',
 
-        '/fin/supp-opbal',
+        '/fin/supp-opbal', '/inventory/available-qty',
 
         '/barcode/generate', '/inward-entry/view', '/purchase-return/entry', '/fin/debit-note',
         '/fin/debit-notes',
