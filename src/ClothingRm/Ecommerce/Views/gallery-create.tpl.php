@@ -32,6 +32,16 @@
   } else {
     $item_color = '';
   }
+  if(isset($form_data['billingRate']) && $form_data['billingRate'] !== '' ) {
+    $billing_rate = $form_data['billingRate'];
+  } else {
+    $billing_rate = 'mrp';
+  }
+  if(isset($form_data['itemRate']) && $form_data['itemRate'] !== '' ) {
+    $item_rate = $form_data['itemRate'];
+  } else {
+    $item_rate = '';
+  }
   if(isset($search_params['itemSleeve']) && $search_params['itemSleeve'] !== '' ) {
     $item_sleeve = $search_params['itemSleeve'];
   } else {
@@ -42,6 +52,7 @@
   } else {
     $location_code = $default_location;
   }
+  $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
 
   $input_type_a = ['barcode' => 'Barcode', 'item' => 'Item Name'];
   $entry_mode = 'item';
@@ -157,6 +168,28 @@
                 <span class="error"><?php echo $form_errors['itemColor'] ?></span>
               <?php endif; ?>   
             </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+              <label class="control-label labelStyle">Billing type</label>
+              <div class="select-wrap">
+                <select class="form-control" name="billingRate" id="billingRate">
+                  <?php 
+                    foreach($billing_rates as $key=>$value):
+                      if($key === $billing_rate) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                   <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>   
+            </div>            
+
+
+
             <?php /*
             <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
               <label class="control-label labelStyle">Item sleeve</label>

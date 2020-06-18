@@ -1,4 +1,7 @@
 <?php 
+  use Atawa\Config\Config;
+  $catalog_domain = Config::get_catalog_domain();
+
   $pagination_url = $page_url = '/catalogs/list';
   $query_params = [];
 ?>
@@ -42,6 +45,7 @@
                   $catalog_status = (int)$catalog_details['status'] === 0 ? 'Inactive' : 'Active';
                   $is_default = (int)$catalog_details['isDefault'] === 0 ? 'No' : 'Yes';
                   $catalog_code = $catalog_details['catalogCode'];
+                  $catalog_url = $catalog_domain.$_SESSION['ccode'].$catalog_details['catalogCode'];
               ?>
                 <tr class="text-uppercase text-right font11">
                   <td class="text-right valign-middle"><?php echo $cntr ?></td>
@@ -51,7 +55,10 @@
                   <td class="text-right valign-middle"><?php echo $catalog_status ?></td>
                   <td class="text-right valign-middle"><?php echo $is_default ?></td>
                   <td class="text-right valign-middle">
-                    <div class="btn-actions-group">                    
+                    <div class="btn-actions-group">
+                      <a class="btn btn-info" href="<?php echo $catalog_url ?>" title="Public Url" target="_blank">
+                        <i class="fa fa-share-alt" aria-hidden="true"></i>
+                      </a>                      
                       <a class="btn btn-success" href="/catalog/update/<?php echo $catalog_code ?>" title="Edit Catalog">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                       </a>

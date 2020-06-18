@@ -37,6 +37,21 @@
   } else {
     $item_color = '';
   }
+  if(isset($form_data['billingRate']) && $form_data['billingRate'] !== '' ) {
+    $billing_rate = $form_data['billingRate'];
+  } elseif(isset($existing_gallery_details['billingRate']) && $existing_gallery_details['billingRate'] !== '' ) {
+    $billing_rate = $existing_gallery_details['billingRate'];
+  } else {
+    $billing_rate = '';
+  }
+  if(isset($form_data['itemRate']) && $form_data['itemRate'] !== '' ) {
+    $item_rate = $form_data['itemRate'];
+  } elseif(isset($existing_gallery_details['itemRate']) && $existing_gallery_details['itemRate'] !== '' ) {
+    $item_rate = $existing_gallery_details['itemRate'];
+  } else {
+    $item_rate = '';
+  }  
+
   if(isset($form_data['locationCode']) && $form_data['locationCode'] !== '') {
     $location_code = $form_data['locationCode'];
   } elseif(isset($existing_gallery_details['locationCode']) && $existing_gallery_details['locationCode'] !== '') {
@@ -267,9 +282,28 @@
                 <span class="error"><?php echo $form_errors['itemColor'] ?></span>
               <?php endif; ?>   
             </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+              <label class="control-label labelStyle">Billing type</label>
+              <div class="select-wrap">
+                <select class="form-control" name="billingRate" id="billingRate">
+                  <?php 
+                    foreach($billing_rates as $key=>$value):
+                      if($key === $billing_rate) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                   <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>   
+            </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-12 col-lg-12 m-bot20">
+            <div class="col-sm-12 col-md-9 col-lg-9 m-bot20">
               <label class="control-label labelStyle">Item description* (max 200 chars.)</label>
               <input 
                 type="text" 
@@ -283,6 +317,18 @@
                 <span class="error"><?php echo $form_errors['itemDescription'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+              <label class="control-label labelStyle">Item rate (auto)</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="itemRate" 
+                id="itemRate" 
+                value="<?php echo $item_rate ?>"
+                maxlength="15"
+                readonly
+              >
+            </div>            
             <div style="clear:both;"></div>            
           </div>
           <h4 class="labelStyleOnlyColor">Item images</h4>

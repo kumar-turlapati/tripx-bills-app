@@ -29,6 +29,7 @@ class GalleryController {
   public function createGallery(Request $request) {
     $form_errors = $submitted_data = [];
     $client_locations = Utilities::get_client_locations(false, false, true);
+    $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'purch' => 'Purchase'];
 
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();
@@ -73,6 +74,7 @@ class GalleryController {
       'form_data' => $submitted_data,
       'client_locations' => array(''=>'Choose Store') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
+      'billing_rates' => $billing_rates,
     );
 
     return array($this->template->render_view('gallery-create',$template_vars),$controller_vars);
@@ -81,6 +83,7 @@ class GalleryController {
   // update gallery
   public function updateGallery(Request $request) {
     $form_errors = $submitted_data = $existing_gallery_details = [];
+    $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'purch' => 'Purchase'];
 
     // if form is submitted we don't need location ids.
     if( count($request->request->all())>0 ) {
@@ -161,6 +164,7 @@ class GalleryController {
       'client_locations' => array(''=>'Choose Store') + $client_locations,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'existing_gallery_details' => $existing_gallery_details,
+      'billing_rates' => $billing_rates,
     );
 
     return array($this->template->render_view('gallery-update',$template_vars),$controller_vars);
@@ -282,6 +286,7 @@ class GalleryController {
     $style_code = Utilities::clean_string($form_data['itemStylecode']);
     $item_color =  Utilities::clean_string($form_data['itemColor']);
     $item_description = Utilities::clean_string($form_data['itemDescription']);
+    $billing_rate = Utilities::clean_string($form_data['billingRate']);
 
     if($item_name !== '') {
       $cleaned_params['itemName'] = $item_name;
@@ -300,6 +305,7 @@ class GalleryController {
     }
 
     $cleaned_params['itemColor'] = $item_color;
+    $cleaned_params['billingRate'] = $billing_rate;
 
     foreach($files as $key => $file_details) {
       $file_name = $file_details['name'];
@@ -349,6 +355,7 @@ class GalleryController {
     $style_code = Utilities::clean_string($form_data['itemStylecode']);
     $item_color =  Utilities::clean_string($form_data['itemColor']);
     $item_description = Utilities::clean_string($form_data['itemDescription']);
+    $billing_rate = Utilities::clean_string($form_data['billingRate']);
     $delete_images = isset($form_data['delImage']) && count($form_data['delImage']) > 0 ? $form_data['delImage'] : [];
     $weight_a = isset($form_data['weight']) && count($form_data['weight']) > 0 ? $form_data['weight'] : [];
 
@@ -366,7 +373,9 @@ class GalleryController {
       $cleaned_params['itemDescription'] = $item_description;
     } else {
       $form_errors['itemDescription'] = 'Invalid item description.';
-    }    
+    }
+
+    $cleaned_params['billingRate'] = $billing_rate;
 
     // get uploaded files.
     foreach($files as $key => $file_details) {
