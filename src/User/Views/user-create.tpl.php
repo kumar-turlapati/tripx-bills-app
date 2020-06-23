@@ -87,7 +87,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Mobile No.</label>
               <input 
                 type="text" class="form-control" name="userPhone" id="userPhone" 
@@ -97,7 +97,7 @@
                 <span class="error"><?php echo $form_errors['userPhone'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+            <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">Status</label>
               <select class="form-control" name="status" id="status">
                 <?php 
@@ -137,6 +137,21 @@
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>            
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
+              <label class="control-label">Password (max 15 chars.)</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                name="userPass" 
+                id="userPass" 
+                maxlength="15" 
+              >
+              <?php if(isset($form_errors['userPass'])): ?>
+                <span class="error"><?php echo $form_errors['userPass'] ?></span>
+              <?php endif; ?>
+            </div>
           </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">

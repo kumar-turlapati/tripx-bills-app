@@ -326,6 +326,7 @@ class UserController {
     } else {
       $cleaned_params['emailID'] = Utilities::clean_string($form_data['emailID']);
     }
+    $cleaned_params['userPass'] = Utilities::clean_string($form_data['userPass']);
 
     if(count($errors)>0) {
       return array('status'=>false, 'errors'=>$errors);
