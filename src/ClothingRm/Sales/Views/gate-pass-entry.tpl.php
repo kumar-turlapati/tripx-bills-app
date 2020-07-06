@@ -38,9 +38,8 @@
         <div class="global-links actionButtons clearfix"> 
           <div class="pull-right text-right">
             <a href="/sales/list" class="btn btn-default"><i class="fa fa-book"></i> Sales Register</a>&nbsp;&nbsp;
-            <a href="/sales/entry" class="btn btn-default"><i class="fa fa-inr"></i> Sales Entry W/o Barcode</a>
           </div>
-        </div>        
+        </div>
         <form id="gpEntryForm" method="POST">
           <div class="table-responsive">
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;margin-bottom: 0px;">
