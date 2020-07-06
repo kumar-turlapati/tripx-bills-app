@@ -52,6 +52,16 @@ $routes->add('sales_combo_list', new Routing\Route('/sales-combo/list', array(
 $routes->add('sales_entry_combos', new Routing\Route('/sales-entry/combos', array(
   '_controller' => 'ClothingRm\\Sales\\Controller\\SalesEntryComboController::salesEntryAction',
 )));
+$routes->add('gate_pass_entry', new Routing\Route('/gate-pass/entry', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\GatePassController::gatePassEntryAction',
+)));
+$routes->add('gate_pass_delete', new Routing\Route('/gate-pass/remove/{salesCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\GatePassController::gatePassRemoveAction',
+  'salesCode' => null,
+)));
+$routes->add('get_invoice_no', new Routing\Route('/get-invoice-no', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\GatePassController::getInvoiceNo',
+)));
 
 // discount manager
 $routes->add('discount_manager', new Routing\Route('/discount-manager/{pageNo}', array(

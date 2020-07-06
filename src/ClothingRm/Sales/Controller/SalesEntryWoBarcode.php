@@ -595,7 +595,7 @@ class SalesEntryWoBarcode {
       $search_params['perPage'] = $per_page = (int)$request->get('perPage');
     }
     if(is_null($request->get('fromDate'))) {
-      $search_params['fromDate'] = date("d-m-Y");
+      $search_params['fromDate'] = date("01-m-Y");
     } else {
       $search_params['fromDate'] = Utilities::clean_string($request->get('fromDate'));
     }

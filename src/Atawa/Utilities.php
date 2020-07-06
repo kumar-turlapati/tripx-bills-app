@@ -717,11 +717,11 @@ class Utilities
       13 => [
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
-        '/async/getTrDetailsByCode', '/async/finyDefault',
+        '/async/getTrDetailsByCode', '/async/finyDefault', '/async/getItemDetailsByCode',
 
         '/stock-transfer/validate', '/stock-transfer/register', '/stock-transfer/out',
 
-        '/finy/switch',
+        '/finy/switch', '/gate-pass/entry', '/get-invoice-no', '/sales/list', '/sales/view-invoice',
       ],
 
       15 => [

@@ -10,7 +10,7 @@
     $fromDate = $search_params['fromDate'];
     $query_params[] = 'fromDate='.$fromDate;
   } else {
-    $fromDate = $current_date;
+    $fromDate = date("Y-m-01");
   }
   if(isset($search_params['toDate']) && $search_params['toDate'] !='' ) {
     $toDate = $search_params['toDate'];
@@ -52,6 +52,7 @@
   // dump($search_params);
   // dump($sales);
   // exit;
+  // dump($fromDate, $toDate);
 ?>
 
 <div class="row">
@@ -182,16 +183,21 @@
           <thead>
             <tr>
               <th width="3%"  class="text-center">Sno.</th>
-              <th width="10%" class="text-center">Customer<br />Name</th>
+              <th width="15%" class="text-center">Customer<br />Name</th>
               <?php /*<th width="7%" class="text-center">Mobile<br />Number</th>*/ ?>
-              <th width="5%" class="text-center">Payment<br />Method</th>                
-              <th width="11%" class="text-center">Bill No. &amp; Date</th>
-              <th width="7%" class="text-center">Bill Amount<br />(in Rs.)</th>
+              <th width="7%" class="text-center">Payment<br />Method</th>                
+              <th width="11%" class="text-center">Invoice No. &amp; Date</th>
+              <th width="10%" class="text-center">Invoice Amount<br />(in Rs.)</th>
+              <th width="10%" class="text-center">Gatepass No.</th>
+              <th width="12%" class="text-center">Gatepass Date</th>
+              <th width="10%" class="text-center">Gatepass Status</th>
+              <?php /*
               <th width="6%" class="text-center">Discount<br />(in Rs.)</th>
               <th width="7%" class="text-center">Taxable<br />(in Rs.)</th>
               <th width="7%" class="text-center">GST<br />(in Rs.)</th>                
               <th width="5%" class="text-center">R.off<br />(in Rs.)</th>
               <th width="7%" class="text-center">Net Pay<br />(in Rs.)</th>
+              */ ?>
               <th width="28%" class="text-center">Actions</th>
             </tr>
           </thead>
@@ -210,10 +216,10 @@
                 $location_code = isset($location_codes[$sales_details['locationID']]) ? $location_codes[$sales_details['locationID']] : '';
                 if($sales_details['customerName'] !== '') {
                   $customer_name = $sales_details['customerName'];
-                  $customer_name_short = strlen($customer_name) > 10 ? substr($customer_name,0,10).'..' : $customer_name;
+                  $customer_name_short = strlen($customer_name) > 20 ? substr($customer_name,0,20).'..' : $customer_name;
                 } elseif($sales_details['tmpCustName'] !== '') {
                   $customer_name = $sales_details['tmpCustName'];
-                  $customer_name_short = strlen($customer_name) > 10 ? substr($customer_name,0,10).'..' : $customer_name;
+                  $customer_name_short = strlen($customer_name) > 20 ? substr($customer_name,0,20).'..' : $customer_name;
                 } else {
                   $customer_name = $customer_name_short = '';
                 }
@@ -237,6 +243,10 @@
                 $tot_net_pay += $sales_details['netPay'];
 
                 $tax_calc_option = $sales_details['taxCalcOption'] === 'e' ? 'E' : 'I';
+
+                $gatepass_no = (int)$sales_details['gatePassNo'] > 0 ? $sales_details['gatePassNo'] : '';
+                $gatepass_date = $sales_details['gatePassDateTime'] !== '0000-00-00 00:00:00' ? date("d-m-Y h:ia", strtotime($sales_details['gatePassDateTime'])) : '';
+                $gatepass_status = (int)$sales_details['gatePassStatus'] === 1 ? 'Generated' : 'Pending'; 
             ?>
                 <tr class="text-uppercase text-right font11">
                   <td class="valign-middle"><?php echo $cntr ?></td>
@@ -256,12 +266,17 @@
                       <?php echo $sales_details['billNo'].' / '.$invoice_date ?>
                     </a>
                   </td>
+                  <td class="text-right valign-middle"><?php echo number_format($sales_details['netPay'],2,'.','') ?></td>    
+                  <td class="text-right valign-middle"><?php echo $gatepass_no ?></td>
+                  <td class="text-right valign-middle"><?php echo $gatepass_date ?></td>
+                  <td class="text-right valign-middle"><?php echo $gatepass_status ?></td>                    
+                  <?php /*
                   <td class="text-right valign-middle"><?php echo number_format($bill_amount,2,'.','') ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($discount_amount,2,'.','') ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($taxable_amount,2,'.','') ?></td>                    
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['taxAmount'],2,'.','').' ['. $tax_calc_option.']' ?></td>
                   <td class="text-right valign-middle"><?php echo number_format($sales_details['roundOff'],2,'.','') ?></td>
-                  <td class="text-right valign-middle"><?php echo number_format($sales_details['netPay'],2,'.','') ?></td>    
+                  */ ?>
                   <td>
                     <div class="btn-actions-group">
                       <?php if($sales_code !== ''): ?>
@@ -269,6 +284,7 @@
                         <a class="btn btn-default" href="#" title="Send SMS">
                           <i class="fa fa-phone-square" aria-hidden="true"></i>
                         </a> */ ?>                  
+                        
                         <?php if($tax_calc_option === 'I'): ?>
                           <?php if($is_combo_bill): ?>
                             <a class="btn btn-success" href="javascript: printSalesBillCombo('<?php echo $sales_code ?>')" title="Print Combo Bill on Laser/InkJet Printer - A4 Size">
@@ -283,6 +299,7 @@
                             </a>
                           <?php endif; ?>
                         <?php endif; ?>
+                        
                         <?php if($tax_calc_option === 'E'): ?>
                           <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
                             <i class="fa fa-bold" aria-hidden="true"></i>
@@ -291,10 +308,17 @@
                             <i class="fa fa-truck" aria-hidden="true"></i>
                           </a>                        
                         <?php endif; ?>
+                        
                         <a class="btn btn-info" target="_blank" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">
                           <i class="fa fa-undo" aria-hidden="true"></i>
                         </a>
+
                         <?php if(Utilities::is_admin()): ?>
+                          <?php if($gatepass_no !== ''): ?>
+                            <a class="btn btn-danger delGatepass" href="/gate-pass/remove/<?php echo $sales_code ?>" title="Delete Gatepass">
+                              <i class="fa fa-times" aria-hidden="true"></i>
+                            </a>
+                          <?php endif; ?>
                           <a class="btn btn-warning" target="_blank" href="/sales/update-with-barcode/<?php echo $sales_code ?>" title="Edit Invoice Using Barcode">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
                           </a>
@@ -310,6 +334,7 @@
             $cntr++;
             endforeach; 
           ?>
+          <?php /*
           <tr class="text-uppercase font11">
             <td colspan="4" align="right">PAGE TOTALS</td>
             <td class="text-bold text-right"><?php echo number_format($tot_bill_amount,2,'.','') ?></td>
@@ -329,7 +354,7 @@
             <td class="text-bold text-right"><?php echo isset($query_totals['roundOff']) ? number_format($query_totals['roundOff'],2,'.','') : "0.00" ?></td>
             <td class="text-bold text-right"><?php echo isset($query_totals['netPay']) ? number_format($query_totals['netPay'],2,'.','') : "0.00" ?></td>
             <td>&nbsp;</td>      
-          </tr>
+          </tr>*/ ?>
         </tbody>
         </table>
         <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>

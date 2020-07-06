@@ -53,6 +53,7 @@
               <li><a href="/sales/entry"><i class="fa fa-keyboard-o"></i> Sales Entry - Manual</a></li>
               <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>
               <li><a href="/sales-entry/combos"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Sales Entry - Combos</a></li>
+              <li><a href="/gate-pass/entry"><i class="fa fa-truck" aria-hidden="true"></i> Gatepass Entry</a></li>
             </ul>
           </li>
           <li class="sub-menu">

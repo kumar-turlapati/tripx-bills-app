@@ -65,11 +65,12 @@ class Sales {
 	}
 
 	// get sales transaction details
-	public function get_sales_details($invoice_code='', $by_bill_no=false) {
+	public function get_sales_details($invoice_code='', $by_bill_no=false, $location_code='') {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
 		if($by_bill_no) {
 			$params['billNo'] = $invoice_code;
+			$params['locationCode'] = $location_code;
 		} else {
 			$params['invoiceCode'] = $invoice_code;
 		}
@@ -278,7 +279,6 @@ class Sales {
 	// sales upi payments register
 	public function get_sales_upi_payments_register($search_params=[]) {
 		$end_point = 'reports/sales-upi-payments-register';
-
 		// call api.
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get',$end_point,$search_params);
@@ -294,44 +294,31 @@ class Sales {
 		}
 	}
 
+	// generate gatepass
+	public function generate_gatepass($search_params=[]) {
+		$end_point = 'gatepass';
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post',$end_point,$search_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return ['status' => true, 'gatePassNo' => $response['response']['gatePassNo']];
+		} elseif($status === 'failed') {
+			return ['status' => false, 'apierror' => $response['reason']];
+		}
+	}
+
+	// cancel gatepass
+	public function cancel_gatepass($invoice_code = '') {
+		$params['invoiceCode'] = $invoice_code;
+		$end_point = 'gatepass/cancel';
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post',$end_point,$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true, 'cancelledGatePassNo' => $response['response']['cancelledGatePassNo']);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
 }
-
-
-
-
-// public function get_sales_summary_bymon($search_params) {
-
-// $client_id = Utilities::get_current_client_id();
-// $end_point = 'reports/sales-abs-mon/'.$client_id;
-
-// // call api.
-// $api_caller = new ApiCaller();
-// $response = $api_caller->sendRequest('get',$end_point,$search_params);
-// $status = $response['status'];
-// if ($status === 'success') {
-// return array(
-// 'status' => true,
-// 'summary' => $response['response']['daywiseSales']
-// );
-// } elseif($status === 'failed') {
-// return array('status' => false, 'apierror' => $response['reason']);
-// }
-// }
-
-// public function get_itemwise_sales_report_bymode($search_params=array()) {
-// $client_id = Utilities::get_current_client_id();
-// $end_point = 'reports/daily-item-sales-bymode/'.$client_id;
-
-// // call api.
-// $api_caller = new ApiCaller();
-// $response = $api_caller->sendRequest('get',$end_point,$search_params);
-// $status = $response['status'];
-// if ($status === 'success') {
-// return array(
-// 'status' => true,
-// 'summary' => $response['response']
-// );
-// } elseif($status === 'failed') {
-// return array('status' => false, 'apierror' => $response['reason']);
-// }
-// }
