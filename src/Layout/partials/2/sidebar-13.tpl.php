@@ -16,7 +16,7 @@
         </a>
         <ul class="sub">
           <li><a href="/stock-transfer/register"><i class="fa fa-angle-right"></i> Stock Transfer</a></li>
-          <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales Register</a></li>
+          <li><a href="/gate-pass/register"><i class="fa fa-truck"></i> Gatepass Register</a></li>
         </ul>
       </li>      
     </ul>

@@ -12,23 +12,51 @@
           <i class="fa fa-bars"></i> Masters <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/products/list"><i class="fa fa-cubes"></i> Products</a></li>
-          <li><a href="/hsnsac/list"><i class="fa fa-arrows-h"></i> HSN/SAC Codes</a></li>
-          <li><a href="/categories/list"><i class="fa fa-window-restore"></i> Product Categories</a></li>
-          <li><a href="/mfgs/list"><i class="fa fa-thumbs-o-up"></i> Brands / Mfgs.</a></li>
-          <li><a href="/suppliers/list"><i class="fa fa-address-card"></i> Suppliers</a></li>
-          <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
-          <li><a href="/taxes/list"><i class="fa fa-scissors"></i> Taxes</a></li>
-          <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>
-          <li><a href="/fin/bank/list"><i class="fa fa-university"></i> Banks</a></li>
-          <li><a href="/bu/list"><i class="fa fa-user-circle-o"></i> Business Users</a></li>
-          <li><a href="/fin/cust-opbal/list"><i class="fa fa-line-chart"></i> OpBal - Customers</a></li>
-          <li><a href="/fin/supp-opbal/list"><i class="fa fa-user-circle-o"></i> OpBal - Suppliers</a></li>
-          <li><a href="/stock-adj-reasons/list"><i class="fa fa-adjust"></i> Stock Adj. Reasons</a></li>          
-          <li><a href="/sales-category/list"><i class="fa fa-inr"></i> Sales Categories</a></li>
-          <li><a href="/sales-combo/list"><i class="fa fa-shopping-basket"></i> Sales Combos</a></li>
-          <li><a href="/promo-offers/list"><i class="fa fa-lemon-o"></i> Promo Offers</a></li>
-          <li><a href="/campaigns/list"><i class="fa fa-magic"></i> Marketing Campaigns</a></li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-database"></i> Inventory <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/products/list"><i class="fa fa-cubes"></i> Products</a></li>
+              <li><a href="/hsnsac/list"><i class="fa fa-arrows-h"></i> HSN/SAC Codes</a></li>
+              <li><a href="/categories/list"><i class="fa fa-window-restore"></i> Product Categories</a></li>
+              <li><a href="/mfgs/list"><i class="fa fa-thumbs-o-up"></i> Brands / Mfgs.</a></li>
+              <li><a href="/stock-adj-reasons/list"><i class="fa fa-adjust"></i> Stock Adj. Reasons</a></li>          
+              <li><a href="/sales-category/list"><i class="fa fa-inr"></i> Sales Categories</a></li>
+            </ul> 
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-user-circle"></i> Ledgers <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/suppliers/list"><i class="fa fa-address-card"></i> Suppliers</a></li>
+              <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
+              <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>
+            </ul> 
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/taxes/list"><i class="fa fa-scissors"></i> Taxes</a></li>
+              <li><a href="/fin/bank/list"><i class="fa fa-university"></i> Banks</a></li>
+              <li><a href="/fin/cust-opbal/list"><i class="fa fa-line-chart"></i> OpBal - Customers</a></li>
+              <li><a href="/fin/supp-opbal/list"><i class="fa fa-user-circle-o"></i> OpBal - Suppliers</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-bookmark"></i> Others <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/bu/list"><i class="fa fa-user-circle-o"></i> Business Users</a></li>
+              <li><a href="/sales-combo/list"><i class="fa fa-shopping-basket"></i> Sales Combos</a></li>
+              <li><a href="/promo-offers/list"><i class="fa fa-lemon-o"></i> Promo Offers</a></li>
+              <li><a href="/campaigns/list"><i class="fa fa-magic"></i> Marketing Campaigns</a></li>
+            </ul>
+          </li>          
         </ul>
       </li>
       <li class="sub-menu">
@@ -110,6 +138,7 @@
             </a>
             <ul class="sub">
               <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales Register</a></li>
+              <li><a href="/gate-pass/register"><i class="fa fa-truck"></i> Gatepass Register</a></li>
               <li><a href="/sales-return/list"><i class="fa fa-repeat"></i> Sales Return Register</a></li>
               <li><a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Sales2CB Register</a></li>
             </ul>

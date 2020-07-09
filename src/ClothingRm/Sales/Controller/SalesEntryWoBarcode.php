@@ -714,6 +714,158 @@ class SalesEntryWoBarcode {
     return array($this->template->render_view('sales-register', $template_vars),$controller_vars);
   }
 
+  // sales register
+  public function gatePassRegisterAction(Request $request) {
+
+    $total_pages = $total_records = $record_count = $page_no = 0;
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
+    $page_success = $page_error = '';
+    
+    $search_params = $sales_a = $query_totals = $client_locations = [];
+    $location_ids = $location_codes = [];
+    $page_no = 1; $per_page = 200;
+
+    $payment_methods = Constants::$PAYMENT_METHODS_RC;
+
+    # ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }
+
+    // check for filter variables.
+    if(is_null($request->get('pageNo'))) {
+      $search_params['pageNo'] = 1;
+    } else {
+      $search_params['pageNo'] = $page_no = (int)$request->get('pageNo');
+    }
+    if(is_null($request->get('perPage'))) {
+      $search_params['perPage'] = 200;
+    } else {
+      $search_params['perPage'] = $per_page = (int)$request->get('perPage');
+    }
+    if(is_null($request->get('fromDate'))) {
+      $search_params['fromDate'] = date("01-m-Y");
+    } else {
+      $search_params['fromDate'] = Utilities::clean_string($request->get('fromDate'));
+    }
+    if(is_null($request->get('toDate'))) {
+      $search_params['toDate'] = date("d-m-Y");
+    } else {
+      $search_params['toDate'] = Utilities::clean_string($request->get('toDate'));
+    }        
+    if(is_null($request->get('paymentMethod'))) {
+      $search_params['paymentMethod'] = 99;
+    } elseif( !is_null($request->get('paymentMethod')) && (int)$request->get('paymentMethod')===99) {
+      $search_params['paymentMethod'] = '';
+    } elseif(is_numeric($request->get('paymentMethod'))) {
+      $search_params['paymentMethod'] = Utilities::clean_string($request->get('paymentMethod'));
+    } else {
+      $search_params['paymentMethod'] = '';      
+    }
+    if($search_params['paymentMethod'] === 99) {
+      $search_params['paymentMethod'] = '';
+    }
+    if(is_null($request->get('locationCode'))) {
+      $search_params['locationCode'] = '';
+    } else {
+      $search_params['locationCode'] = Utilities::clean_string($request->get('locationCode'));
+    }
+    if(is_null($request->get('saExecutiveCode'))) {
+      $search_params['saExecutiveCode'] = '';
+    } else {
+      $search_params['saExecutiveCode'] = Utilities::clean_string($request->get('saExecutiveCode'));
+    }
+    if(is_null($request->get('custName'))) {
+      $search_params['custName'] = '';
+    } else {
+      $search_params['custName'] = Utilities::clean_string($request->get('custName'));
+    }
+
+    $search_params['walletID'] = !is_null($request->get('walletID')) ? Utilities::clean_string($request->get('walletID')) : '';
+
+    # ---------- get sales executive names from api -----------------------
+    if($_SESSION['__utype'] !== 3) {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+    } else {
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+    }
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
+      }
+    } else {
+      $sa_executives = [];
+    }
+
+    // hit API.
+    $sales_api_call = $this->sales->get_sales($page_no,$per_page,$search_params);
+    $api_status = $sales_api_call['status'];
+
+    // check api status
+    if($api_status) {
+      if(count($sales_api_call['sales'])>0) {
+        $slno = Utilities::get_slno_start(count($sales_api_call['sales']), $per_page, $page_no);
+        $to_sl_no = $slno+$per_page;
+        $slno++;
+        if($page_no<=3) {
+          $page_links_to_start = 1;
+          $page_links_to_end = 10;
+        } else {
+          $page_links_to_start = $page_no-3;
+          $page_links_to_end = $page_links_to_start+10;
+        }
+        if($sales_api_call['total_pages']<$page_links_to_end) {
+          $page_links_to_end = $sales_api_call['total_pages'];
+        }
+        if($sales_api_call['record_count'] < $per_page) {
+          $to_sl_no = ($slno+$sales_api_call['record_count'])-1;
+        }
+        $sales_a = $sales_api_call['sales'];
+        $total_pages = $sales_api_call['total_pages'];
+        $total_records = $sales_api_call['total_records'];
+        $record_count = $sales_api_call['record_count'];
+        $query_totals = $sales_api_call['query_totals'];
+      } else {
+        $page_error = $sales_api_call['apierror'];
+      }
+    } else {
+      $this->flash->set_flash_message($sales_api_call['apierror'], 1);
+    }
+
+    # prepare form variables.
+    $template_vars = array(
+      'sales' => $sales_a,
+      'payment_methods' => array(99=>'All payment methods')+$payment_methods,
+      'total_pages' => $total_pages,
+      'total_records' => $total_records,
+      'record_count' =>  $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'search_params' => $search_params,            
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'query_totals' => $query_totals,
+      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'sa_executives' =>  array('' => 'All executives') + $sa_executives,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'wallets' => ['99' => 'All UPI/EMI Cards'] + Constants::$WALLETS,
+    );
+
+    # build variables
+    $controller_vars = array(
+      'page_title' => 'Sales Register',
+      'icon_name' => 'fa fa-inr',
+    );
+
+    # render template
+    return array($this->template->render_view('sales-register-gatepass', $template_vars),$controller_vars);
+  }  
+
   // search sale bills
   public function saleBillsSearchAction(Request $request) {
     $search_params = $bills = [];

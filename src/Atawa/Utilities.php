@@ -722,6 +722,8 @@ class Utilities
         '/stock-transfer/validate', '/stock-transfer/register', '/stock-transfer/out',
 
         '/finy/switch', '/gate-pass/entry', '/get-invoice-no', '/sales/list', '/sales/view-invoice',
+
+        '/gate-pass/register',
       ],
 
       15 => [
