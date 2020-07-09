@@ -299,11 +299,12 @@
                         </a>
 
                         <?php if(Utilities::is_admin()): ?>
+                          <?php /*
                           <?php if($gatepass_no !== ''): ?>
                             <a class="btn btn-danger delGatepass" href="/gate-pass/remove/<?php echo $sales_code ?>" title="Delete Gatepass">
                               <i class="fa fa-times" aria-hidden="true"></i>
                             </a>
-                          <?php endif; ?>
+                          <?php endif; ?> */ ?>
                           <a class="btn btn-warning" target="_blank" href="/sales/update-with-barcode/<?php echo $sales_code ?>" title="Edit Invoice Using Barcode">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
                           </a>
