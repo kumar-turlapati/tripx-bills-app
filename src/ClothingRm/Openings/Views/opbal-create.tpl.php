@@ -9,7 +9,6 @@
 
   $item_name = isset($submitted_data['itemName']) && $submitted_data['itemName'] !== '' ? $submitted_data['itemName'] : '';
   $opening_rate = isset($submitted_data['opRate']) && $submitted_data['opRate'] !== '' ? $submitted_data['opRate'] : ''; 
-  $opening_qty = isset($submitted_data['opQty']) && $submitted_data['opQty'] !== '' ? $submitted_data['opQty'] : '';
   $purchase_rate = isset($submitted_data['purchaseRate']) && $submitted_data['purchaseRate'] !== '' ? $submitted_data['purchaseRate'] : '';
   $tax_percent = isset($submitted_data['taxPercent']) && $submitted_data['taxPercent'] !== '' ? $submitted_data['taxPercent'] : '';
   $location_code = isset($submitted_data['locationID']) && isset($location_codes[$submitted_data['locationID']]) ? $location_codes[$submitted_data['locationID']] : '';
@@ -22,13 +21,21 @@
   $item_color = isset($submitted_data['itemColor']) ? $submitted_data['itemColor'] : '';
   $item_sleeve = isset($submitted_data['itemSleeve']) ? $submitted_data['itemSleeve'] : '';
   $batch_no = isset($submitted_data['batchNo']) ? $submitted_data['batchNo'] : '';
-  $expiry_date = isset($submitted_data['expiryDate']) ? date('d-m-Y', strtotime($submitted_data['expiryDate'])) : '';
+  $expiry_date = isset($submitted_data['expiryDate']) && $submitted_data['expiryDate'] != '0000-00-00' ? date('d-m-Y', strtotime($submitted_data['expiryDate'])) : '';
   $wholesale_price = isset($submitted_data['wholesalePrice']) ? $submitted_data['wholesalePrice'] : '';
   $online_price = isset($submitted_data['onlinePrice']) ? $submitted_data['onlinePrice'] : '';
   $barcode = isset($submitted_data['barcode']) ? $submitted_data['barcode'] : '';
 
   if($location_code === '') {
     $location_code = isset($submitted_data['locationCode']) ? $submitted_data['locationCode'] : '';
+  }
+
+  if(isset($submitted_data['opQty']) && $submitted_data['opQty'] !== '') {
+    $opening_qty = $submitted_data['opQty'];
+  } elseif(isset($submitted_data['openingQty']) && $submitted_data['openingQty'] !== '') {
+    $opening_qty = $submitted_data['openingQty'];
+  } else {
+    $opening_qty = '';    
   }
   $current_date = isset($submitted_data['expiryDate']) && $submitted_data['expiryDate']!=='' ? date("d-m-Y", strtotime($submitted_data['expiryDate'])) : '';
 ?>
@@ -131,8 +138,8 @@
               <label class="control-label labelStyle">Expiry date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
-                  <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
-                    <input class="span2" value="<?php echo $current_date ?>" size="16" type="text" readonly name="expiryDate" id="expiryDate" />
+                  <div class="input-append date" data-date="<?php echo $expiry_date ?>" data-date-format="dd-mm-yyyy">
+                    <input class="span2" value="<?php echo $expiry_date ?>" size="16" type="text" readonly name="expiryDate" id="expiryDate" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                   <?php if(isset($errors['expiryDate'])): ?>

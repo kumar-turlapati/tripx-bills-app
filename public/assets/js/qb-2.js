@@ -1,4 +1,5 @@
 $(window).load(function() {
+  var pageUrl = window.location.pathname;
   $(".se-pre-con").fadeOut("slow");
   setTimeout(function(){
     if($('#bQ').length > 0) {
@@ -9,7 +10,7 @@ $(window).load(function() {
       });
     }
   }, 100);
-  if($('#qbMain').length > 0) {
+  if($('#qbMain').length > 0 && pageUrl !== '/forgot-password') {
     var qbTimer = setInterval(function(){$.ajax({type: "POST",url: "/__id__lo",success: function (response) {if(response === 'expired') {clearInterval(qbTimer);window.location.href = '/force-logout';}}});}, 10000);
   }
 });
@@ -3898,7 +3899,9 @@ function sendOTP(fpType) {
     data: $('#forgotPassword').serialize(),
     success: function(response) {
       if(response.status===false) {
-        alert(response.errortext);
+        bootbox.alert({
+          message: response.message
+        });        
         return false;
       }
       if(response.status === true) {
@@ -3908,6 +3911,7 @@ function sendOTP(fpType) {
         $('#submit-fp').attr('disabled', false);
         $('#newpass-fp').attr('disabled', false);
         $('#sendOtpBtn').attr('disabled', true);
+        $('#resendOTPLink').show();
         if(fpType==='resend') {
           alert('OTP has been resent successfully. Please use latest code to reset your password.');
         }

@@ -129,7 +129,7 @@ class LoginController
         unset($response['error']);
       } else {
         $response['status'] = false;
-        $response['message'] = $api_response['errortext'];
+        $response['message'] = $api_response['reason'];
       }
     }
 
@@ -140,7 +140,7 @@ class LoginController
 
   public function resetPasswordAction(Request $request) {
 
-    # check whether the form is submitted.
+    // check whether the form is submitted.
     if(count($request->request->all())>0) {
       $form_data = $request->request->all();
       $email_id = $form_data['emailID'];
@@ -149,7 +149,7 @@ class LoginController
 
       $is_email_valid = Utilities::validateEmail($email_id);
 
-      # check for malformed email before hitting api
+      // check for malformed email before hitting api
       if($is_email_valid === false) {
         return array(
           'status' => false,
@@ -157,7 +157,7 @@ class LoginController
         );
       }
 
-      # check we have proper OTP.
+      // check we have proper OTP.
       if(!is_numeric($otp)) {
         return array(
           'status' => false,
@@ -165,7 +165,7 @@ class LoginController
         );        
       }
 
-      # check we have proper password.
+      // check we have proper password.
       if(strlen($new_password)<6) {
         return array(
           'status' => false,
@@ -173,7 +173,7 @@ class LoginController
         );
       }
 
-      # hit api
+      // hit api
       $api_response = $this->login_model->resetPassword($email_id, $otp, $new_password);
       if($api_response['status']==='failed') {
         $response['status'] = false;
