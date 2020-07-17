@@ -31,6 +31,9 @@
   } else {
     $location_code = '';
   }
+
+  //remove app user from the list
+  unset($user_types[127]);
 ?>
 <!-- Basic form starts -->
 <div class="row">

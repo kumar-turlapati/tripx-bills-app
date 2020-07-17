@@ -28,6 +28,9 @@
   }
 
   $location_code = '';
+
+  //remove app user from the list
+  unset($user_types[127]);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -76,7 +79,7 @@
                       $selected = 'selected="selected"';
                     } else {
                       $selected = '';
-                    }                      
+                    }
                 ?>
                   <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
                 <?php endforeach; ?>              

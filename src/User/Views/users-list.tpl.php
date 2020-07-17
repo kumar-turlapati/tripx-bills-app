@@ -21,7 +21,6 @@
         </div>
         <!-- Right links ends --> 
         
-        <h2 class="hdg-reports text-center">List of all Users</h2>
         <div class="table-responsive">
           <table class="table table-striped table-hover font11">
             <thead>
