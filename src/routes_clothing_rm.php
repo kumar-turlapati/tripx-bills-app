@@ -1100,6 +1100,19 @@ $routes->add('appt_details', new Routing\Route('/appointment/details/{appointmen
   '_controller' => 'Appointments\\Controller\\AppointmentsController::taskDetailsAction',
 )));
 
+// app user routes
+$routes->add('app_user_create', new Routing\Route('/app-user/create', array(
+  '_controller' => 'User\\Controller\\UserController::createAppUserAction',
+)));
+$routes->add('app_user_list', new Routing\Route('/users/app', array(
+  '_controller' => 'User\\Controller\\UserController::listAppUsersAction',
+)));
+$routes->add('app_user_update', new Routing\Route('/app-users/update/{uuid}', array(
+  '_controller' => 'User\\Controller\\UserController::updateUserAction',
+  'uuid' => null,
+)));
+
+
 return $routes;
 
 /*

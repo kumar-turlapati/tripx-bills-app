@@ -470,7 +470,9 @@ class Utilities
       12 => 'Business head',
       13 => 'Dispatch clerk',
       14 => 'Sales Operator - Simple',
-      15 => 'Floor incharge (Godown ops)'
+      15 => 'Floor incharge (Godown ops)',
+      16 => 'Sales Operator - Multi Location/Store',
+      127 => 'App user',
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
       return $user_types[$user_type];
@@ -507,7 +509,7 @@ class Utilities
 
   public static function acls($role_id='', $path='') {
     $path_a = explode('/', $path);
-    if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn' ) {
+    if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn' && $path_a[1] !== 'sales-invoice-b2b') {
       $path = '/'.$path_a[1].'/'.$path_a[2];
     } elseif(is_array($path_a)) {
       $path = '/'.$path_a[1];
@@ -603,7 +605,7 @@ class Utilities
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
         '/sales-entry/combos', '/sales/entry-with-indent',
 
-        '/print-sales-bill-small', '/print-sales-bill', '/sales-invoice-b2b',
+        '/print-sales-bill-small', '/print-sales-bill', '/sales-invoice-b2b', '/sales/shipping-info',
 
         '/sales-return/entry', '/sales-return/view', '/sales-return/list', '/print-sales-return-bill',
 
@@ -885,7 +887,7 @@ class Utilities
           }
         }
       }
-      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12) && !$return_all) {
+      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12 && $utype !== 16) && !$return_all) {
         $client_locations = array_intersect($client_locations, [$_SESSION['lc'] => $_SESSION['lname']]);
       }
     }

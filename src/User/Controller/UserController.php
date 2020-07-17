@@ -170,7 +170,7 @@ class UserController {
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'User management',
+      'page_title' => 'Platform Users',
       'icon_name' => 'fa fa-users',
     );
 
@@ -213,7 +213,7 @@ class UserController {
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Users Online',
+      'page_title' => 'Live Users',
       'icon_name' => 'fa fa-wifi',
     );
 
@@ -280,7 +280,83 @@ class UserController {
     return array($template->render_view('me',$template_vars),$controller_vars);    
   }
 
-  /*********************************** validate form data ********************************/
+  public function createAppUserAction(Request $request) {
+
+    $user_details = $submitted_data = $form_errors = array();
+    $client_locations = [];
+
+    $user_model = new User();
+    $flash = new Flash();
+
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $validate_form = $this->_validate_form_data_app_user($submitted_data,false,$user_model);
+      $status = $validate_form['status'];
+      if($status) {
+        $form_data = $validate_form['cleaned_params'];
+        $result = $user_model->create_user($form_data);
+        if($result['status']) {
+          $message = '<i class="fa fa-check" aria-hidden="true"></i>&nbsp;User created successfully with uid `'.$result['uuid'].'`';
+          $flash->set_flash_message($message);
+          Utilities::redirect('/app-user/create');
+        } else {
+          $message = '<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$result['apierror'];
+          $flash->set_flash_message($message,1);
+        }
+      } else {
+        $form_errors = $validate_form['errors'];
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'submitted_data' => $submitted_data,
+      'user_types' => array(''=>'Choose')+Utilities::get_user_types(),
+      'status_a' => array(''=>'Choose')+Utilities::get_user_status(),
+      'form_errors' => $form_errors,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'User management',
+      'icon_name' => 'fa fa-users',      
+    );
+
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('user-create-app',$template_vars),$controller_vars);
+  }
+
+  public function listAppUsersAction(Request $request) {
+
+    $users = array();
+    $flash = new Flash();
+
+    $user_model = new User();
+    $result = $user_model->get_users(['appUsers' => true]);
+
+    if($result['status']) {
+      $users = $result['users'];
+    } else {
+      $message = $result['apierror'];
+      $flash->set_flash_message($message,1);      
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'users' => $users,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'App Users',
+      'icon_name' => 'fa fa-mobile',
+    );
+
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('users-app-list',$template_vars),$controller_vars);
+  }  
 
   private function _validate_form_data($form_data=array(),$edit_mode=false,$user_model) {
     $errors = $cleaned_params = array();
@@ -334,6 +410,32 @@ class UserController {
       return array('status'=>true, 'cleaned_params'=>$cleaned_params);
     }
   }
+
+  private function _validate_form_data_app_user($form_data=[],$edit_mode=false,$user_model) {
+    $errors = $cleaned_params = array();
+
+    $mobile_no = Utilities::clean_string($form_data['mobileNo']);
+    $status = Utilities::clean_string($form_data['status']);
+    
+    $cleaned_params['userType'] = 299;
+    $cleaned_params['isAppUser'] = 1;
+    if(!is_numeric($mobile_no) && strlen($mobile_no)!==10) {
+      $errors['mobileNo'] = 'Mobile number should contain digits.';
+    } else {
+      $cleaned_params['mobileNo'] = Utilities::clean_string($form_data['mobileNo']);
+    }
+    if(!is_numeric($status)) {
+      $errors['status'] = 'Invalid status';
+    } else {
+      $cleaned_params['status'] = $status;
+    }
+
+    if(count($errors)>0) {
+      return array('status'=>false, 'errors'=>$errors);
+    } else {
+      return array('status'=>true, 'cleaned_params'=>$cleaned_params);
+    }
+  }  
 
   private function _validate_form_data_self_update($form_data=array()) {
     $errors = $cleaned_params = array();

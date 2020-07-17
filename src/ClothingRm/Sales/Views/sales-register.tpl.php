@@ -257,7 +257,7 @@
                     <span style="font-weight:bold;"><?php echo $payment_method ?></span>
                   </td>
                   <td class="valign-middle">
-                    <a href="/sales/view-invoice/<?php echo $sales_code ?>" title="View Invoice" style="font-size:10px;color:#225992;font-weight:bold;">
+                    <a href="/sales/view-invoice/<?php echo $sales_code ?>" title="View Invoice" style="font-size:10px;color:#225992;font-weight:bold;" target="_blank">
                       <?php echo $sales_details['billNo'].' / '.$invoice_date ?>
                     </a>
                   </td>

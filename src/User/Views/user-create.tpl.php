@@ -41,7 +41,7 @@
           <div class="pull-right text-right">
             <a href="/users/list" class="btn btn-default">
               <i class="fa fa-users"></i> Users List
-            </a>
+            </a>            
           </div>
         </div>
         

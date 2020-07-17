@@ -226,97 +226,6 @@
         </ul>
       </li>
       <li class="sub-menu">
-        <a href="javascript:" class="">
-          <i class="fa fa-key"></i> Admin Panel <span class="menu-arrow arrow_carrot-right"></span> 
-        </a>
-        <ul class="sub">
-          <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores</a></li>
-          <li class="sub-menu">
-            <a href="javascript:void(0)">
-              <i class="fa fa-cogs"></i> Settings <span class="menu-arrow arrow_carrot-right"></span>
-            </a>
-            <ul class="sub">
-              <li><a href="/finy/list"><i class="fa fa-angle-right"></i> Financial Years</a></li>          
-              <li><a href="/finy-slnos/list"><i class="fa fa-angle-right"></i> FY Serial Nos.</a></li>
-              <li><a href="/finy/set-active"><i class="fa fa-angle-right"></i> Set Active FY</a></li> 
-              <li><a href="/maintenance-mode"><i class="fa fa-angle-right"></i> Maintenance Mode</a></li> 
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:void(0)">
-              <i class="fa fa-cloud"></i> Yearend Jobs <span class="menu-arrow arrow_carrot-right"></span>
-            </a>
-            <ul class="sub">
-              <li><a href="/year-end-jobs/post-inventory"><i class="fa fa-database"></i> Post Inventory</a></li>          
-              <li><a href="/year-end-jobs/post-barcodes"><i class="fa fa-barcode"></i> Post Barcodes</a></li>
-              <li><a href="/year-end-jobs/post-debtors"><i class="fa fa-plus"></i> Post Debtors</a></li> 
-              <li><a href="/year-end-jobs/post-creditors"><i class="fa fa-minus"></i> Post Creditors</a></li> 
-            </ul>
-          </li>          
-          <li class="sub-menu">
-            <a href="javascript:void(0)">
-              <i class="fa fa-upload"></i> Data Uploads <span class="menu-arrow arrow_carrot-right"></span>
-            </a>
-            <ul class="sub">
-              <li>
-                <a href="/upload-inventory" title="Upload inventory and opening balances">
-                  <i class="fa fa-database"></i> Upload Inventory
-                </a>
-              </li>
-              <li>
-                <a href="/upload-debtors" title="Upload Customers Data with Opening Balances">
-                  <i class="fa fa-smile-o"></i> Upload Customers Data
-                </a>
-              </li>
-              <li>
-                <a href="/upload-creditors" title="Upload Suppliers Data with Opening Balances">
-                  <i class="fa fa-group"></i> Upload Suppliers Data
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:void(0)">
-              <i class="fa fa-times"></i> Delete Vouchers <span class="menu-arrow arrow_carrot-right"></span>
-            </a>
-            <ul class="sub">
-              <li><a href="/admin-options/delete-grn"><i class="fa fa-gavel"></i> Delete GRN</a></li>          
-              <li><a href="/admin-options/delete-po"><i class="fa fa-laptop"></i> Delete PO</a></li>
-              <li><a href="/admin-options/delete-invoice"><i class="fa fa-inr"></i> Delete Invoice</a></li> 
-              <li><a href="/admin-options/delete-sales-return"><i class="fa fa-undo"></i> Delete Sales Return</a></li> 
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:void(0)">
-              <i class="fa fa-level-up"></i> Export Data <span class="menu-arrow arrow_carrot-right"></span>
-            </a>
-            <ul class="sub">
-              <li><a href="/admin-options/export-indents"><i class="fa fa-delicious"></i> Indents</a></li>
-            </ul>
-          </li>          
-          <li>
-            <a href="/devices/list" title="Register devices to access the application">
-              <i class="fa fa-lock"></i> Devices Registered
-            </a>
-          </li>
-          <li>
-            <a href="/admin-options/org-summary" title="Organization Summary">
-              <i class="fa fa-server"></i> Organization Summary
-            </a>
-          </li>          
-          <li>
-            <a href="/users/list" title="Manage users who use this app">
-              <i class="fa fa-user-circle"></i> System Users
-            </a>
-          </li>
-          <li>
-            <a href="/users/online" title="Shows the users who are online">
-              <i class="fa fa-wifi"></i> Online Users
-            </a>
-          </li>          
-        </ul>        
-      </li>
-      <li class="sub-menu">
         <a href="javascript:">
           <i class="fa fa-sitemap fa-3x"></i> Reports <span class="menu-arrow arrow_carrot-right"></span>
         </a>
@@ -405,6 +314,105 @@
             <a href="/deleted-vouchers" style="color:#6f0000;font-weight:bold;"> <i class="fa fa-times" style="color:#6f0000;"></i> Deleted vouchers</a> 
           </li>          
         </ul>
+      </li>
+      <li class="sub-menu">
+        <a href="javascript:" class="">
+          <i class="fa fa-key"></i> Admin Panel <span class="menu-arrow arrow_carrot-right"></span> 
+        </a>
+        <ul class="sub">
+          <li><a href="/locations/list"><i class="fa fa-window-restore"></i> Stores / Locations</a></li>
+          <li><a href="/admin-options/org-summary" title="Organization Summary"><i class="fa fa-server"></i> Organization Summary</a></li>           
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-cogs"></i> Settings <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/finy/list"><i class="fa fa-angle-right"></i> Financial Years</a></li>          
+              <li><a href="/finy-slnos/list"><i class="fa fa-angle-right"></i> FY Serial Nos.</a></li>
+              <li><a href="/finy/set-active"><i class="fa fa-angle-right"></i> Set Active FY</a></li> 
+              <li><a href="/maintenance-mode"><i class="fa fa-angle-right"></i> Maintenance Mode</a></li> 
+              <li>
+                <a href="/devices/list" title="Register devices to access the application">
+                  <i class="fa fa-angle-right"></i> Devices
+                </a>
+              </li>              
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-cloud"></i> Yearend Jobs <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/year-end-jobs/post-inventory"><i class="fa fa-database"></i> Post Inventory</a></li>          
+              <li><a href="/year-end-jobs/post-barcodes"><i class="fa fa-barcode"></i> Post Barcodes</a></li>
+              <li><a href="/year-end-jobs/post-debtors"><i class="fa fa-plus"></i> Post Debtors</a></li> 
+              <li><a href="/year-end-jobs/post-creditors"><i class="fa fa-minus"></i> Post Creditors</a></li> 
+            </ul>
+          </li>          
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-upload"></i> Data Uploads <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li>
+                <a href="/upload-inventory" title="Upload inventory and opening balances">
+                  <i class="fa fa-database"></i> Upload Inventory
+                </a>
+              </li>
+              <li>
+                <a href="/upload-debtors" title="Upload Customers Data with Opening Balances">
+                  <i class="fa fa-smile-o"></i> Upload Customers Data
+                </a>
+              </li>
+              <li>
+                <a href="/upload-creditors" title="Upload Suppliers Data with Opening Balances">
+                  <i class="fa fa-group"></i> Upload Suppliers Data
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-download"></i> Data Downloads <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/admin-options/export-indents"><i class="fa fa-delicious"></i> Indents</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-times"></i> Delete Vouchers <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/admin-options/delete-grn"><i class="fa fa-gavel"></i> Delete GRN</a></li>          
+              <li><a href="/admin-options/delete-po"><i class="fa fa-laptop"></i> Delete PO</a></li>
+              <li><a href="/admin-options/delete-invoice"><i class="fa fa-inr"></i> Delete Invoice</a></li> 
+              <li><a href="/admin-options/delete-sales-return"><i class="fa fa-undo"></i> Delete Sales Return</a></li> 
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:void(0)">
+              <i class="fa fa-users"></i> Users <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li>
+                <a href="/users/list" title="Manage users who use this app">
+                  <i class="fa fa-user-circle"></i> Platform Users
+                </a>
+              </li>
+              <li>
+                <a href="/users/online" title="Shows the users who are online">
+                  <i class="fa fa-wifi"></i> Live Users
+                </a>
+              </li>
+              <li>
+                <a href="/users/app" title="Mobile app users">
+                  <i class="fa fa-mobile"></i> App Users
+                </a>
+              </li>              
+            </ul>
+          </li>
+        </ul>        
       </li>
     </ul>
   </div>
