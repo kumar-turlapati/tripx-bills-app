@@ -887,7 +887,7 @@ class Utilities
           }
         }
       }
-      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12 && $utype !== 16) && !$return_all) {
+      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12 && $utype !== 16 && $utype !== 13) && !$return_all) {
         $client_locations = array_intersect($client_locations, [$_SESSION['lc'] => $_SESSION['lname']]);
       }
     }

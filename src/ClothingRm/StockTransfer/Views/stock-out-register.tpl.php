@@ -149,6 +149,7 @@
 
                   $total_amount += $transfer_value;
                   $total_qty += $transfer_qty;
+
               ?>
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
