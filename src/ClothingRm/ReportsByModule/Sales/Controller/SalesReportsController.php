@@ -401,7 +401,7 @@ class SalesReportsController {
     $pdf->Cell(13,6,'SGST %','RB',0,'C');
     $pdf->Cell(20,6,'SGST (Rs.)','RB',0,'C');
     $pdf->Cell(20,6,'CESS (Rs.)','RB',0,'C');
-    $pdf->Cell(26,6,'TOTAL TAX (Rs.)','RB',0,'C');
+    $pdf->Cell(26,6,'TOTAL GST (Rs.)','RB',0,'C');
     $pdf->Ln();
     $pdf->SetFont('Arial','',8);
 
