@@ -120,6 +120,13 @@ class SalesReportsController {
     $customer_info['custom_invoice_no'] = $sale_details['customBillNo'] !== '' ? $sale_details['customBillNo'] : $sale_details['billNo'];
     $customer_info['bill_no'] = $sale_details['billNo'];
     $customer_info['bill_date'] = date("d-M-Y",strtotime($sale_details['invoiceDate']));
+    $customer_info['location_name'] = $sale_details['locationName'];
+    $customer_info['location_name_short'] = $sale_details['locationNameShort'];
+    $customer_info['executive_name'] = $sale_details['executiveName'];
+    $customer_info['invoice_code'] = $sale_details['invoiceCode'];
+    $customer_info['payment_method'] = $sale_details['paymentMethod'];
+    $customer_info['credit_days'] = $sale_details['saCreditDays'];
+    $customer_info['promo_code'] = $sale_details['promoCode'];
     $customer_info['billing'] = [
       'customer_name' => $customer_name,
       'address' => $sale_details['address'],
@@ -166,6 +173,9 @@ class SalesReportsController {
     $this->_add_b2b_invoice_header($pdf, $customer_info, $item_widths);
     $sno = 0;
     $record_cntr = 0;
+    $items_per_page = 20;
+    $empty_rows_tobe_filled = count($sale_item_details) < $items_per_page ? $items_per_page-count($sale_item_details) : 0;
+    $empty_rows_tobe_filled = 0;
     // dump($sale_item_details);
     // exit;
 /*    
@@ -175,78 +185,133 @@ class SalesReportsController {
     } else {
       $total_pages = 1;
     }
-*/
+*/  
+    $sale_item_details_filled = array_fill(count($sale_item_details)-1, $empty_rows_tobe_filled, []);
+    $sale_item_final = array_merge($sale_item_details, $sale_item_details_filled);
+    $unique_hsn_codes = array_unique(array_column($sale_item_details, 'hsnSacCode')); 
+
+    // dump(count($sale_item_final));
+
     $taxable_values = $tax_amounts = $taxable_gst_value = [];
     $tot_bill_value = $tot_discount = $tot_taxable = $tot_items_qty = 0;
     $tot_tax_amount = 0;
-    $cnos_a = [];
-    foreach($sale_item_details as $item_details) {
-      $item_qty = $amount = $discount = $taxable = $tax_value = 0;
-      $sno++;
-      $item_name = $item_details['itemName'];
-      $hsn_sac_code = $item_details['hsnSacCode'];
-      $item_qty = $item_details['itemQty'];
-      $uom_name = $item_details['uomName'];
-      $discount = $item_details['discountAmount'];
-      $tax_percent = $item_details['taxPercent'];
-      $mrp = $item_details['mrp'];
-      if($item_details['cno'] !== '') {
-        $cnos_a[] = $item_details['cno'];
-      }
+    $hsn_code_qty = $hsn_code_taxable = $hsn_cgst_value = $hsn_sgst_value = 0;
+    $cnos_a = $hsn_codes_array = [];
+    foreach($sale_item_final as $item_details) {
+      if(is_array($item_details) && count($item_details) > 0) {
+        $item_qty = $amount = $discount = $taxable = $tax_value = 0;
+        $hsn_code_qty = $hsn_code_taxable = $hsn_cgst_value = $hsn_sgst_value = 0;
 
-      // $item_rate = $item_details['mrp'];
-      // $tax_amount = $item_details['cgstAmount'] + $item_details['sgstAmount'];
+        $sno++;
 
-      $amount = round($item_qty*$mrp,2);
-      $taxable = round($amount-$discount,2);
-      $tax_value = round(($taxable*$tax_percent/100),2);
+        $item_name = $item_details['itemName'];
+        $hsn_sac_code = $item_details['hsnSacCode'];
+        $item_qty = (float)$item_details['itemQty'];
+        $uom_name = $item_details['uomName'];
+        $discount = $item_details['discountAmount'];
+        $tax_percent = $item_details['taxPercent'];
+        $mrp = $item_details['mrp'];
+        if($item_details['cno'] !== '') {
+          $cnos_a[] = $item_details['cno'];
+        }
 
-      $cgst_percent = $sgst_percent = round($tax_percent/2,2);
-      $cgst_value = $sgst_value = round($tax_value/2,2);
+        $amount = (float)round($item_qty*$mrp,2);
+        $taxable = (float)round($amount-$discount,2);
+        $tax_value = (float)round(($taxable*$tax_percent/100),2);
 
-      $tot_items_qty += $item_qty;
-      $tot_bill_value += $amount;
-      $tot_discount += $discount;
-      $tot_taxable += $taxable;
-      $tot_tax_amount += $tax_value;
+        // dump($tax_value, $taxable);
 
-      if(isset($taxable_values[$tax_percent])) {
-        $taxable_amount = $taxable_values[$tax_percent] + ($taxable);
-        $gst_value = $taxable_gst_value[$tax_percent] + $tax_value;
+        $cgst_percent = $sgst_percent = round($tax_percent/2,2);
+        $cgst_value = $sgst_value = round($tax_value/2,2);
 
-        $taxable_values[$tax_percent] = $taxable_amount;
-        $taxable_gst_value[$tax_percent] = $gst_value;
+        // dump($tax_value, $item_qty, $discount, $tax_percent, $mrp, 'hello...');
+
+        $tot_items_qty += $item_qty;
+        $tot_bill_value += $amount;
+        $tot_discount += $discount;
+        $tot_taxable += $taxable;
+        $tot_tax_amount += $tax_value;
+
+        if(isset($taxable_values[$tax_percent])) {
+          $taxable_amount = $taxable_values[$tax_percent] + ($taxable);
+          $gst_value = $taxable_gst_value[$tax_percent] + $tax_value;
+
+          $taxable_values[$tax_percent] = $taxable_amount;
+          $taxable_gst_value[$tax_percent] = $gst_value;
+        } else {
+          $taxable_values[$tax_percent] = $taxable;
+          $taxable_gst_value[$tax_percent] = $tax_value;
+        }
+
+        if(isset($hsn_codes_array["$hsn_sac_code"])) {
+          // $hsn_code_qty = $hsn_codes_array["$hsn_sac_code"]['qty'];
+          // $hsn_code_taxable = $hsn_codes_array["$hsn_sac_code"]['taxable'];
+          // $hsn_cgst_value = $hsn_codes_array["$hsn_sac_code"]['cgst_value'];
+          // $hsn_sgst_value = $hsn_codes_array["$hsn_sac_code"]['sgst_value'];
+
+          $hsn_codes_array["$hsn_sac_code"]['qty'] = $hsn_codes_array["$hsn_sac_code"]['qty']+$item_qty;
+          $hsn_codes_array["$hsn_sac_code"]['taxable'] = $hsn_codes_array["$hsn_sac_code"]['taxable']+$taxable;
+          $hsn_codes_array["$hsn_sac_code"]['cgst_value'] = (float)$hsn_codes_array["$hsn_sac_code"]['cgst_value']+(float)$cgst_value;
+          $hsn_codes_array["$hsn_sac_code"]['sgst_value'] = (float)$hsn_codes_array["$hsn_sac_code"]['sgst_value']+(float)$sgst_value;
+
+          // dump($hsn_codes_array, 'inside');
+
+        } else {
+          $hsn_codes_array["$hsn_sac_code"]['qty'] = $item_qty;
+          $hsn_codes_array["$hsn_sac_code"]['taxable'] = $taxable;
+          $hsn_codes_array["$hsn_sac_code"]['cgst_percent'] = $cgst_percent;
+          $hsn_codes_array["$hsn_sac_code"]['sgst_percent'] = $sgst_percent;
+          $hsn_codes_array["$hsn_sac_code"]['cgst_value'] = $cgst_value;
+          $hsn_codes_array["$hsn_sac_code"]['sgst_value'] = $sgst_value;
+
+          // dump($hsn_codes_array);          
+        }
+
+        // dump($hsn_codes_array);
+
+        $pdf->SetFont('Arial','',8);
+        $pdf->Cell($item_widths[0],  6,$sno,'LR',0,'R');
+        $pdf->Cell($item_widths[1],  6,$item_name,'R',0,'L');
+        $pdf->Cell($item_widths[2],  6,$hsn_sac_code,'R',0,'L');
+        $pdf->Cell($item_widths[4],  6,$uom_name,'R',0,'R');
+        $pdf->Cell($item_widths[3],  6,number_format($mrp,2,'.',''),'R',0,'R');        
+        $pdf->Cell($item_widths[5],  6,number_format($item_qty,2,'.',''),'R',0,'R');
+        $pdf->Cell($item_widths[6],  6,number_format($amount,2,'.',''),'R',0,'R');
+        $pdf->Cell($item_widths[7],  6,$discount > 0 ? number_format($discount,2,'.','') : '','R',0,'R');
+        $pdf->Cell($item_widths[8],  6,number_format($taxable,2,'.',''),'R',0,'R');
       } else {
-        $taxable_values[$tax_percent] = $taxable;
-        $taxable_gst_value[$tax_percent] = $tax_value;
-      }      
-
-      $pdf->SetFont('Arial','',8);
-      $pdf->Cell($item_widths[0],  6,$sno,'LRB',0,'R');
-      $pdf->Cell($item_widths[1],  6,$item_name,'RB',0,'L');
-      $pdf->Cell($item_widths[2],  6,$hsn_sac_code,'RB',0,'L');
-      $pdf->Cell($item_widths[3],  6,number_format($mrp,2,'.',''),'RB',0,'R');        
-      $pdf->Cell($item_widths[4],  6,$uom_name,'RB',0,'R');
-      $pdf->Cell($item_widths[5],  6,number_format($item_qty,2,'.',''),'RB',0,'R');
-      $pdf->Cell($item_widths[6],  6,number_format($amount,2,'.',''),'RB',0,'R');
-      $pdf->Cell($item_widths[7],  6,$discount > 0 ? number_format($discount,2,'.','') : '','RB',0,'R');
-      $pdf->Cell($item_widths[8],  6,number_format($taxable,2,'.',''),'RB',0,'R');
+        $pdf->Cell($item_widths[0],  6,'','L',0,'R');
+        $pdf->Cell($item_widths[1],  6,'','L',0,'L');
+        $pdf->Cell($item_widths[2],  6,'','L',0,'L');
+        $pdf->Cell($item_widths[4],  6,'','L',0,'R');
+        $pdf->Cell($item_widths[3],  6,'','L',0,'R');        
+        $pdf->Cell($item_widths[5],  6,'','L',0,'R');
+        $pdf->Cell($item_widths[6],  6,'','L',0,'R');
+        $pdf->Cell($item_widths[7],  6,'','L',0,'R');
+        $pdf->Cell($item_widths[8],  6,'','LR',0,'R');
+      }
       $pdf->Ln();
       $record_cntr++;
-      if($record_cntr === 23) {
-        $pdf->AddPage('P','A4');
-        $this->_add_b2b_invoice_header($pdf, $customer_info, $item_widths);
-        $record_cntr = 0;
-      }
+      // dump($record_cntr);
+      // if($record_cntr === $items_per_page) {
+      //   $pdf->AddPage('P','A4');
+      //   $this->_add_b2b_invoice_header($pdf, $customer_info, $item_widths);
+      //   $record_cntr = 0;
+      // }
     }
+
+    // exit;
+
+    // dump($hsn_codes_array);
+    // exit;
 
     // print totals
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4];
     $gst_width = array_sum($item_widths) - $item_widths[8];
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell($totals_width,    6,'Total Qty.','L',0,'R');
-    $pdf->Cell($item_widths[5],  6,number_format($tot_items_qty,2,'.',''),'',0,'R');
-    $pdf->Cell($item_widths[6]+$item_widths[7]+$item_widths[8],  6,'','R',0,'R');
+    $pdf->Cell($totals_width,    6,'Total Qty.','LT',0,'R');
+    $pdf->Cell($item_widths[5],  6,number_format($tot_items_qty,2,'.',''),'T',0,'R');
+    $pdf->Cell($item_widths[6]+$item_widths[7]+$item_widths[8],  6,'','TR',0,'R');
     $pdf->Ln();
 
     // print case nos if exists
@@ -284,9 +349,51 @@ class SalesReportsController {
     $pdf->Cell(190,6,'GST Details','LRB',0,'C');
     $pdf->Ln();
 
+    // $pdf->SetFont('Arial','B',8);
+    // $pdf->Cell(15,6,'TAX %','LRB',0,'C');
+    // $pdf->Cell(30,6,'TAXABLE (Rs.)','RB',0,'C');
+    // $pdf->Cell(13,6,'IGST %','RB',0,'C');
+    // $pdf->Cell(20,6,'IGST (Rs.)','RB',0,'C');
+    // $pdf->Cell(13,6,'CGST %','RB',0,'C');
+    // $pdf->Cell(20,6,'CGST (Rs.)','RB',0,'C');
+    // $pdf->Cell(13,6,'SGST %','RB',0,'C');
+    // $pdf->Cell(20,6,'SGST (Rs.)','RB',0,'C');
+    // $pdf->Cell(20,6,'CESS (Rs.)','RB',0,'C');
+    // $pdf->Cell(26,6,'TOTAL TAX (Rs.)','RB',0,'C');
+    // $pdf->Ln();
+    // $pdf->SetFont('Arial','',8);
+
+    // foreach($gst_percents_a as $gst_percent) {
+    //   if(isset($taxable_values[$gst_percent])) {
+    //     $taxable_amount = $taxable_values[$gst_percent];
+    //     $total_tax = $taxable_gst_value[$gst_percent];
+    //     if($gst_tax_type === 'intra') {
+    //       $cgst_percent = $sgst_percent = round($gst_percent/2,2);
+    //       $cgst_amount = $sgst_amount = round($taxable_gst_value[$gst_percent]/2, 2);
+    //       $igst_percent = $igst_amount = 0;
+    //     } else {
+    //       $cgst_percent = $sgst_percent = $cgst_amount = $sgst_amount = 0;
+    //       $igst_percent = $gst_percent;
+    //       $igst_amount = round($taxable_gst_value[$gst_percent],2);
+    //     }
+
+    //     $pdf->Cell(15,6,number_format($gst_percent,2,'.','').'%','LRB',0,'R');
+    //     $pdf->Cell(30,6,number_format($taxable_amount, 2, '.', ''),'LRB',0,'R');
+    //     $pdf->Cell(13,6,$igst_percent > 0 ? number_format($igst_percent, 2, '.', '').'%' : '','RB',0,'R');
+    //     $pdf->Cell(20,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','RB',0,'R');
+    //     $pdf->Cell(13,6,$cgst_percent > 0 ? number_format($cgst_percent, 2, '.', '').'%' : '','RB',0,'R');
+    //     $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','RB',0,'R');
+    //     $pdf->Cell(13,6,$sgst_percent > 0 ? number_format($sgst_percent, 2, '.', '').'%' : '','RB',0,'R');
+    //     $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','RB',0,'R');
+    //     $pdf->Cell(20,6,'','RB',0,'R');
+    //     $pdf->Cell(26,6,number_format($total_tax, 2, '.', ''),'RB',0,'R');
+    //   }
+    // }
+
     $pdf->SetFont('Arial','B',8);
-    $pdf->Cell(15,6,'TAX %','LRB',0,'C');
-    $pdf->Cell(30,6,'TAXABLE (Rs.)','RB',0,'C');
+    $pdf->Cell(15,6,'HSN/SAC','LRB',0,'C');
+    $pdf->Cell(12,6,'Qty.','RB',0,'C');
+    $pdf->Cell(18,6,'Taxable','RB',0,'C');
     $pdf->Cell(13,6,'IGST %','RB',0,'C');
     $pdf->Cell(20,6,'IGST (Rs.)','RB',0,'C');
     $pdf->Cell(13,6,'CGST %','RB',0,'C');
@@ -298,36 +405,62 @@ class SalesReportsController {
     $pdf->Ln();
     $pdf->SetFont('Arial','',8);
 
-    foreach($gst_percents_a as $gst_percent) {
-      if(isset($taxable_values[$gst_percent])) {
-        $taxable_amount = $taxable_values[$gst_percent];
-        $total_tax = $taxable_gst_value[$gst_percent];
-        if($gst_tax_type === 'intra') {
-          $cgst_percent = $sgst_percent = round($gst_percent/2,2);
-          $cgst_amount = $sgst_amount = round($taxable_gst_value[$gst_percent]/2, 2);
-          $igst_percent = $igst_amount = 0;
-        } else {
-          $cgst_percent = $sgst_percent = $cgst_amount = $sgst_amount = 0;
-          $igst_percent = $gst_percent;
-          $igst_amount = round($taxable_gst_value[$gst_percent],2);
-        }
+    // dump($hsn_codes_array);
+    // exit;
 
-        $pdf->Cell(15,6,number_format($gst_percent,2,'.','').'%','LRB',0,'R');
-        $pdf->Cell(30,6,number_format($taxable_amount, 2, '.', ''),'LRB',0,'R');
-        $pdf->Cell(13,6,$igst_percent > 0 ? number_format($igst_percent, 2, '.', '').'%' : '','RB',0,'R');
-        $pdf->Cell(20,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','RB',0,'R');
-        $pdf->Cell(13,6,$cgst_percent > 0 ? number_format($cgst_percent, 2, '.', '').'%' : '','RB',0,'R');
-        $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','RB',0,'R');
-        $pdf->Cell(13,6,$sgst_percent > 0 ? number_format($sgst_percent, 2, '.', '').'%' : '','RB',0,'R');
-        $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','RB',0,'R');
-        $pdf->Cell(20,6,'','RB',0,'R');
-        $pdf->Cell(26,6,number_format($total_tax, 2, '.', ''),'RB',0,'R');
+    $hsn_tot_billed_qty = $hsn_tot_tax = 0;
+    $hsn_tot_taxable = $hsn_tot_igst_amount = $hsn_tot_cgst_amount = $hsn_tot_sgst_amount = 0;
+    foreach($hsn_codes_array as $hsn_sac_code => $hsn_code_details) {
+      $taxable_amount = $hsn_code_details['taxable'];
+      $total_qty = $hsn_code_details['qty'];
+      $cgst_percent = $hsn_code_details['cgst_percent'];
+      $sgst_percent = $hsn_code_details['sgst_percent'];
+      $cgst_amount = $hsn_code_details['cgst_value'];
+      $sgst_amount = $hsn_code_details['sgst_value'];
+      $total_tax = $hsn_code_details['cgst_value'] + $hsn_code_details['sgst_value'];
+      $gst_percent = $hsn_code_details['cgst_percent'] + $hsn_code_details['sgst_percent'];
+      if($gst_tax_type === 'intra') {
+        $igst_percent = $igst_amount = 0;
+      } else {
+        $igst_percent = $cgst_percent + $sgst_percent;
+        $igst_amount = $cgst_amount+$sgst_amount;
+        $cgst_percent = $sgst_percent = $cgst_amount = $sgst_amount = 0;
       }
+
+      $hsn_tot_igst_amount += $igst_amount;
+      $hsn_tot_cgst_amount += $cgst_amount;
+      $hsn_tot_sgst_amount += $sgst_amount;
+      $hsn_tot_billed_qty += $total_qty;
+      $hsn_tot_taxable += $taxable_amount;
+
+      $hsn_tot_tax += ($igst_amount+$cgst_amount+$sgst_amount);
+
+      $pdf->Cell(15,6,$hsn_sac_code,'LRB',0,'R');
+      $pdf->Cell(12,6,number_format($total_qty, 2, '.', ''),'LB',0,'R');
+      $pdf->Cell(18,6,number_format($taxable_amount, 2, '.', ''),'LRB',0,'R');
+      $pdf->Cell(13,6,$igst_percent > 0 ? number_format($igst_percent, 2, '.', '').'%' : '','RB',0,'R');
+      $pdf->Cell(20,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','RB',0,'R');
+      $pdf->Cell(13,6,$cgst_percent > 0 ? number_format($cgst_percent, 2, '.', '').'%' : '','RB',0,'R');
+      $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','RB',0,'R');
+      $pdf->Cell(13,6,$sgst_percent > 0 ? number_format($sgst_percent, 2, '.', '').'%' : '','RB',0,'R');
+      $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','RB',0,'R');
+      $pdf->Cell(20,6,'','RB',0,'R');
+      $pdf->Cell(26,6,number_format($total_tax, 2, '.', ''),'RB',1,'R');
     }
-
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell(15,6,'Totals','LRB',0,'R');
+    $pdf->Cell(12,6,number_format($hsn_tot_billed_qty, 2, '.', ''),'LB',0,'R');
+    $pdf->Cell(18,6,number_format($hsn_tot_taxable, 2, '.', ''),'LRB',0,'R');
+    $pdf->Cell(13,6,'','RB',0,'R');
+    $pdf->Cell(20,6,$igst_amount > 0 ? number_format($hsn_tot_igst_amount, 2, '.', '') : '','RB',0,'R');
+    $pdf->Cell(13,6,'','RB',0,'R');
+    $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($hsn_tot_cgst_amount, 2, '.', '') : '','RB',0,'R');
+    $pdf->Cell(13,6,'','RB',0,'R');
+    $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($hsn_tot_sgst_amount, 2, '.', '') : '','RB',0,'R');
+    $pdf->Cell(20,6,'','RB',0,'R');
+    $pdf->Cell(26,6,number_format($hsn_tot_tax, 2, '.', ''),'RB',1,'R');    
     // $remarks_invoice = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged';
-
-    $pdf->Ln();
+    // $pdf->Ln();
     $pdf->SetFont('Arial','BU',8);
     $pdf->Cell(190,5,'Invoice Remarks','LR',0,'C');
     $pdf->Ln();
@@ -3395,7 +3528,7 @@ class SalesReportsController {
     $pdf->SetFont('Arial','',10);
     $pdf->Cell(70,6,$customer_info['custom_invoice_no'],'LRB',0,'C');
     $pdf->Cell(25,6,$customer_info['bill_date'],'RB',0,'C');
-    $pdf->Cell(95,6,$customer_info['bill_no'],'RB',1,'C');
+    $pdf->Cell(95,6,$customer_info['bill_no'].' [ '.$customer_info['invoice_code'].' ]','RB',1,'C');
 
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell(95,6,'Billing Address','LR',0,'L');
@@ -3441,6 +3574,8 @@ class SalesReportsController {
     // dump($billing_address, $shipping_address);
     // exit;
 
+    $payment_method_name = Constants::$PAYMENT_METHODS_RC[$customer_info['payment_method']];
+
     $x = $pdf->getX();
     $y = $pdf->getY();
     $pdf->Multicell(95,4,$customer_info['billing']['customer_name'],'LR','L');
@@ -3472,6 +3607,21 @@ class SalesReportsController {
     $pdf->Cell(95,5,'GSTIN: '.$customer_info['shipping']['gst_no'],'RB',0,'L');
     $pdf->Ln();
 
+    // section or location information
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(50,5,'Section','LB',0,'C');
+    $pdf->Cell(60,5,'Excecutive','B',0,'C');
+    $pdf->Cell(40,5,'Scheme','B',0,'C');
+    $pdf->Cell(40,5,'Payment terms','BR',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Cell(50,5,$customer_info['location_name'],'LB',0,'C');
+    $pdf->Cell(60,5,$customer_info['executive_name'],'B',0,'C');
+    $pdf->Cell(40,5,$customer_info['promo_code'],'B',0,'C');
+    $pdf->Cell(40,5,$payment_method_name,'BR',0,'C');
+    $pdf->Ln();
+
+    // transport information
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell(80,5,'Transporter Name','LB',0,'C');
     $pdf->Cell(30,5,'L.R. No.','',0,'C');
@@ -3483,13 +3633,11 @@ class SalesReportsController {
 
     $pdf->Cell(80,5,$customer_info['transport_details']['transporter_name'],'LB',0,'C');
     $pdf->Cell(30,5,$customer_info['transport_details']['lr_no'],'TB',0,'C');
-
     if($customer_info['transport_details']['lr_date'] !== '') {
       $pdf->Cell(20,5,date("d-M-Y",strtotime($customer_info['transport_details']['lr_date'])),'TB',0,'C');
     } else {
       $pdf->Cell(20,5,'','TB',0,'C');
     }
-
     $pdf->Cell(30,5,$customer_info['transport_details']['challan_no'],'TB',0,'C');
     $pdf->Cell(30,5,$customer_info['transport_details']['way_bill_no'],'TRB',0,'C');
     $pdf->Ln();
@@ -3499,10 +3647,10 @@ class SalesReportsController {
     $pdf->Cell($item_widths[0],  6,'Sno.','LRB',0,'C');
     $pdf->Cell($item_widths[1],  6,'Item Name','RB',0,'C');
     $pdf->Cell($item_widths[2],  6,'HSN/SAC','RB',0,'C');
-    $pdf->Cell($item_widths[3],  6,'Rate (Rs.)','RB',0,'C');        
     $pdf->Cell($item_widths[4],  6,'UOM','RB',0,'C');
+    $pdf->Cell($item_widths[3],  6,'Rate (Rs.)','RB',0,'C');        
     $pdf->Cell($item_widths[5],  6,'Qty.','RB',0,'C');
-    $pdf->Cell($item_widths[6],  6,'Gross (Rs.)','RB',0,'C');
+    $pdf->Cell($item_widths[6],  6,'Amount(Rs.)','RB',0,'C');
     $pdf->Cell($item_widths[7],  6,'Disc. (Rs.)','RB',0,'C');
     $pdf->Cell($item_widths[8],  6,'Taxable (Rs.)','RB',0,'C');
     $pdf->Ln();
