@@ -110,8 +110,8 @@
   $is_combo_bill = isset($form_data['isComboBill']) ? $form_data['isComboBill'] : 0; 
   $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
-  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
-  $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Purchase/Ex-rate'];
+  $billing_rate = isset($form_data['billingRate']) ? $billing_rates[$form_data['billingRate']] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 
   $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;

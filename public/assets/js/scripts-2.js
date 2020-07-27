@@ -900,6 +900,8 @@ function initializeJS() {
         var mrp = itemDetails.wholesalePrice;
       } else if(billingRate === 'online') {
         var mrp = itemDetails.onlinePrice;
+      } else if(billingRate === 'ex') {
+        var mrp = itemDetails.mrpDn;
       } else {
         var mrp = itemDetails.mrp;
       }      
@@ -2887,6 +2889,8 @@ function initializeJS() {
             jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].wholesalePrice);
           } else if(billingRate === 'online') {
             jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].onlinePrice);
+          } else if(billingRate === 'ex') {
+            jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].mrpDn);
           } else {
             jQuery('#mrp_'+itemIndex).val(lotNosResponse[lotNo].mrp);
           }

@@ -64,7 +64,7 @@
 
   $form_submit_url = '/sales/entry';
 
-  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Purchase/Ex-rate'];
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 ?>
