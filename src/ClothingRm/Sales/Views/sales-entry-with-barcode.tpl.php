@@ -71,7 +71,7 @@
   // dump($_SESSION);
   $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
   $editable_disc = isset($_SESSION['allow_man_discount']) ? $_SESSION['allow_man_discount'] : 1;
-  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Purchase/Ex-rate'];
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 
@@ -192,7 +192,7 @@
                   <th width="11%" class="text-center">Lot no.</th>
                   <th width="11%" class="text-center">Available<br />qty.</th>                
                   <th width="11%" class="text-center">Ordered<br />qty.</th>
-                  <th width="8%"  class="text-center">M.R.P / Service Price<br />( Rs. )</th>
+                  <th width="8%"  class="text-center">Rate<br />( Rs. )</th>
                   <th width="8%"  class="text-center">Gross Amt.<br />( Rs. )</th>
                   <th width="8%"  class="text-center">Discount<br />( Rs. )</th>                  
                   <th width="8%"  class="text-center">Taxable Amt.<br />( Rs. )</th>

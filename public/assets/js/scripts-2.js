@@ -901,7 +901,7 @@ function initializeJS() {
       } else if(billingRate === 'online') {
         var mrp = itemDetails.onlinePrice;
       } else if(billingRate === 'ex') {
-        var mrp = itemDetails.mrpDn;
+        var mrp = itemDetails.exMill;
       } else {
         var mrp = itemDetails.mrp;
       }      

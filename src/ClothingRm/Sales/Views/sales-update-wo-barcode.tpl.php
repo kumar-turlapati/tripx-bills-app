@@ -110,7 +110,7 @@
   $is_combo_bill = isset($form_data['isComboBill']) ? $form_data['isComboBill'] : 0; 
   $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
-  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Purchase/Ex-rate'];
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
   $billing_rate = isset($form_data['billingRate']) ? $billing_rates[$form_data['billingRate']] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 
@@ -214,7 +214,7 @@
                   <th width="12%" class="text-center">Lot no.</th>
                   <th width="5%"  class="text-center">Available<br />qty.</th>
                   <th width="11%"  class="text-center">Ordered<br />qty.</th>
-                  <th width="8%" class="text-center">M.R.P<br />( in Rs. )</th>
+                  <th width="8%" class="text-center">Rate<br />( in Rs. )</th>
                   <th width="10%" class="text-center">Gross Amt.<br />( in Rs. )</th>
                   <th width="8%" class="text-center">Discount<br />( in Rs. )</th>                  
                   <th width="8%" class="text-center">Taxable Amt.<br />( in Rs. )</th>
