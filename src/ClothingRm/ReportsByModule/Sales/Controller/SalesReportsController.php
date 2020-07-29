@@ -3633,7 +3633,7 @@ class SalesReportsController {
 
     $pdf->Cell(80,5,$customer_info['transport_details']['transporter_name'],'LB',0,'C');
     $pdf->Cell(30,5,$customer_info['transport_details']['lr_no'],'TB',0,'C');
-    if($customer_info['transport_details']['lr_date'] !== '') {
+    if($customer_info['transport_details']['lr_date'] !== '0') {
       $pdf->Cell(20,5,date("d-M-Y",strtotime($customer_info['transport_details']['lr_date'])),'TB',0,'C');
     } else {
       $pdf->Cell(20,5,'','TB',0,'C');

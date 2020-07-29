@@ -23,6 +23,7 @@
   $batch_no = isset($submitted_data['batchNo']) ? $submitted_data['batchNo'] : '';
   $expiry_date = isset($submitted_data['expiryDate']) && $submitted_data['expiryDate'] != '0000-00-00' ? date('d-m-Y', strtotime($submitted_data['expiryDate'])) : '';
   $wholesale_price = isset($submitted_data['wholesalePrice']) ? $submitted_data['wholesalePrice'] : '';
+  $exmill_price = isset($submitted_data['exMillPrice']) ? $submitted_data['exMillPrice'] : '';
   $online_price = isset($submitted_data['onlinePrice']) ? $submitted_data['onlinePrice'] : '';
   $barcode = isset($submitted_data['barcode']) ? $submitted_data['barcode'] : '';
 
@@ -209,23 +210,30 @@
               <?php if(isset($errors['purchaseRate'])): ?>
                 <span class="error"><?php echo $errors['purchaseRate'] ?></span>
               <?php endif; ?>
-            </div>            
+            </div>
             <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label labelStyle">Exmill rate (in Rs.)*</label>
+              <input type="text" class="form-control noEnterKey" name="exmillPrice" id="exmillPrice" value="<?php echo $exmill_price ?>" />
+              <?php if(isset($errors['exmillPrice'])): ?>
+                <span class="error"><?php echo $errors['exmillPrice'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+              <label class="control-label labelStyle">Wholesale rate (in Rs.)</label>
+              <input type="text" class="form-control noEnterKey" name="wholesalePrice" id="wholesalePrice" value="<?php echo $wholesale_price ?>" />
+              <?php if(isset($errors['wholesalePrice'])): ?>
+                <span class="error"><?php echo $errors['wholesalePrice'] ?></span>
+              <?php endif; ?>
+            </div>            
+            <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
               <label class="control-label labelStyle">M.R.P (in Rs.)*</label>
               <input type="text" class="form-control noEnterKey" name="opRate" id="opRate" value="<?php echo $opening_rate ?>" />
               <?php if(isset($errors['openingRate'])): ?>
                 <span class="error"><?php echo $errors['openingRate'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-              <label class="control-label labelStyle">Wholesale price (in Rs.)</label>
-              <input type="text" class="form-control noEnterKey" name="wholesalePrice" id="wholesalePrice" value="<?php echo $wholesale_price ?>" />
-              <?php if(isset($errors['wholesalePrice'])): ?>
-                <span class="error"><?php echo $errors['wholesalePrice'] ?></span>
-              <?php endif; ?>
-            </div>            
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-              <label class="control-label labelStyle">Online price (in Rs.)</label>
+            <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+              <label class="control-label labelStyle">Online rate (in Rs.)</label>
               <input type="text" class="form-control noEnterKey" name="onlinePrice" id="onlinePrice" value="<?php echo $online_price ?>" />
               <?php if(isset($errors['onlinePrice'])): ?>
                 <span class="error"><?php echo $errors['onlinePrice'] ?></span>
