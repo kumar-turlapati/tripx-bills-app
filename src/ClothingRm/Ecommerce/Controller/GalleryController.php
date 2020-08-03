@@ -29,7 +29,7 @@ class GalleryController {
   public function createGallery(Request $request) {
     $form_errors = $submitted_data = [];
     $client_locations = Utilities::get_client_locations(false, false, true);
-    $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'purch' => 'Purchase'];
+    $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'purch' => 'Exmill'];
 
     if( count($request->request->all())>0 ) {
       $submitted_data = $request->request->all();
@@ -83,7 +83,7 @@ class GalleryController {
   // update gallery
   public function updateGallery(Request $request) {
     $form_errors = $submitted_data = $existing_gallery_details = [];
-    $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'purch' => 'Purchase'];
+    $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'purch' => 'Exmill'];
 
     // if form is submitted we don't need location ids.
     if( count($request->request->all())>0 ) {
@@ -287,6 +287,7 @@ class GalleryController {
     $item_color =  Utilities::clean_string($form_data['itemColor']);
     $item_description = Utilities::clean_string($form_data['itemDescription']);
     $billing_rate = Utilities::clean_string($form_data['billingRate']);
+    $packed_qty = Utilities::clean_string($form_data['packedQty']);
 
     if($item_name !== '') {
       $cleaned_params['itemName'] = $item_name;
@@ -302,6 +303,11 @@ class GalleryController {
       $cleaned_params['itemDescription'] = $item_description;
     } else {
       $form_errors['itemDescription'] = 'Invalid item description.';
+    }
+    if(floatval($packed_qty) > 0) {
+      $cleaned_params['packedQty'] = $packed_qty;
+    } else {
+      $form_errors['packedQty'] = 'Invalid packed qty.';
     }
 
     $cleaned_params['itemColor'] = $item_color;
@@ -358,6 +364,7 @@ class GalleryController {
     $billing_rate = Utilities::clean_string($form_data['billingRate']);
     $delete_images = isset($form_data['delImage']) && count($form_data['delImage']) > 0 ? $form_data['delImage'] : [];
     $weight_a = isset($form_data['weight']) && count($form_data['weight']) > 0 ? $form_data['weight'] : [];
+    $packed_qty = Utilities::clean_string($form_data['packedQty']);
 
     if($item_name !== '') {
       $cleaned_params['itemName'] = $item_name;
@@ -374,7 +381,12 @@ class GalleryController {
     } else {
       $form_errors['itemDescription'] = 'Invalid item description.';
     }
-
+    if(floatval($packed_qty) > 0) {
+      $cleaned_params['packedQty'] = $packed_qty;
+    } else {
+      $form_errors['packedQty'] = 'Invalid packed qty.';
+    }
+    
     $cleaned_params['billingRate'] = $billing_rate;
 
     // get uploaded files.

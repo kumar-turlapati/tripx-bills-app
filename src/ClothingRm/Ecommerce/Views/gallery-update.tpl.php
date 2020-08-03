@@ -60,6 +60,14 @@
     $location_code = $default_location;
   }
 
+  if(isset($form_data['packedQty']) && $form_data['packedQty'] !== '') {
+    $packed_qty = $form_data['packedQty'];
+  } elseif(isset($existing_gallery_details['packedQty']) && $existing_gallery_details['packedQty'] !== '') {
+    $packed_qty = $existing_gallery_details['packedQty'];
+  } else {
+    $packed_qty = 1;
+  }
+
   $s3_url = 'https://'.$s3_config['BUCKET_NAME'].'.'.$s3_config['END_POINT_FULL'].'/'.$_SESSION['ccode'].'/'.$location_code.'/';
 
   if(isset($existing_gallery_details['images'][0])) {
@@ -303,7 +311,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-9 col-lg-9 m-bot20">
+            <div class="col-sm-12 col-md-9 col-lg-9">
               <label class="control-label labelStyle">Item description* (max 200 chars.)</label>
               <input 
                 type="text" 
@@ -317,7 +325,7 @@
                 <span class="error"><?php echo $form_errors['itemDescription'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+            <div class="col-sm-12 col-md-3 col-lg-3">
               <label class="control-label labelStyle">Item rate (auto)</label>
               <input 
                 type="text" 
@@ -331,6 +339,23 @@
             </div>            
             <div style="clear:both;"></div>            
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+              <label class="control-label labelStyle">Packed qty.</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="packedQty" 
+                id="packedQty" 
+                value="<?php echo $packed_qty ?>"
+                maxlength="10"
+              >
+              <?php if(isset($form_errors['packedQty'])): ?>
+                <span class="error"><?php echo $form_errors['packedQty'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div style="clear:both;"></div>          
+          </div>          
           <h4 class="labelStyleOnlyColor">Item images</h4>
           <div class="table-responsive">
 

@@ -2,33 +2,33 @@
   use Atawa\Utilities;
   use Atawa\Constants;
   
-  if(isset($search_params['itemName']) && $search_params['itemName'] !== '' ) {
-    $item_name = $search_params['itemName'];
+  if(isset($form_data['itemName']) && $form_data['itemName'] !== '' ) {
+    $item_name = $form_data['itemName'];
   } else {
     $item_name = '';
   }
-  if(isset($search_params['itemDescription']) && $search_params['itemDescription'] !== '' ) {
-    $item_description = $search_params['itemDescription'];
+  if(isset($form_data['itemDescription']) && $form_data['itemDescription'] !== '' ) {
+    $item_description = $form_data['itemDescription'];
   } else {
     $item_description = '';
   }
-  if(isset($search_params['lotNo']) && $search_params['lotNo'] !== '' ) {
-    $lot_no = $search_params['lotNo'];
+  if(isset($form_data['lotNo']) && $form_data['lotNo'] !== '' ) {
+    $lot_no = $form_data['lotNo'];
   } else {
     $lot_no = '';
   }
-  if(isset($search_params['itemSku']) && $search_params['itemSku'] !== '' ) {
-    $item_sku = $search_params['itemSku'];
+  if(isset($form_data['itemSku']) && $form_data['itemSku'] !== '' ) {
+    $item_sku = $form_data['itemSku'];
   } else {
     $item_sku = '';
   }
-  if(isset($search_params['itemStylecode']) && $search_params['itemStylecode'] !== '' ) {
-    $item_style_code = $search_params['itemStylecode'];
+  if(isset($form_data['itemStylecode']) && $form_data['itemStylecode'] !== '' ) {
+    $item_style_code = $form_data['itemStylecode'];
   } else {
     $item_style_code = '';
   }
-  if(isset($search_params['itemColor']) && $search_params['itemColor'] !== '' ) {
-    $item_color = $search_params['itemColor'];
+  if(isset($form_data['itemColor']) && $form_data['itemColor'] !== '' ) {
+    $item_color = $form_data['itemColor'];
   } else {
     $item_color = '';
   }
@@ -52,6 +52,12 @@
   } else {
     $location_code = $default_location;
   }
+  if(isset($form_data['packedQty']) && $form_data['packedQty'] !== '') {
+    $packed_qty = $form_data['packedQty'];
+  } else {
+    $packed_qty = 1;
+  }
+
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
 
   $input_type_a = ['barcode' => 'Barcode', 'item' => 'Item Name'];
@@ -187,9 +193,6 @@
                 </select>
               </div>   
             </div>            
-
-
-
             <?php /*
             <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
               <label class="control-label labelStyle">Item sleeve</label>
@@ -207,7 +210,7 @@
             </div>*/ ?>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-12 col-lg-12 m-bot20">
+            <div class="col-sm-12 col-md-12 col-lg-12">
               <label class="control-label labelStyle">Item description* (max 200 chars.)</label>
               <input 
                 type="text" 
@@ -219,6 +222,23 @@
               >
               <?php if(isset($form_errors['itemDescription'])): ?>
                 <span class="error"><?php echo $form_errors['itemDescription'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div style="clear:both;"></div>          
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+              <label class="control-label labelStyle">Packed qty.</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="packedQty" 
+                id="packedQty" 
+                value="<?php echo $packed_qty ?>"
+                maxlength="10"
+              >
+              <?php if(isset($form_errors['packedQty'])): ?>
+                <span class="error"><?php echo $form_errors['packedQty'] ?></span>
               <?php endif; ?>
             </div>
             <div style="clear:both;"></div>          
