@@ -1910,6 +1910,7 @@ class InventoryReportsController {
       $tax_percent = $item_details['taxPercent'];
       $wholesale_price = $item_details['wholesalePrice'];
       $online_price = $item_details['onlinePrice'];
+      $rack_no = $item_details['rackNo'];
 
       $amount = round($closing_qty * $purchase_rate, 2);
       
@@ -1928,6 +1929,7 @@ class InventoryReportsController {
       $cleaned_params[$key] = [
         'Sno.' => $sno,
         'Item Name' => $item_name,
+        'Rack No' => $rack_no,
         'Category Name' => $category_name,
         'Brand Name'  => $brand_name,
         'Case/Container/Box No.' => $case_no,
@@ -1958,6 +1960,7 @@ class InventoryReportsController {
     $cleaned_params[count($cleaned_params)] = [
         'Sno.'          => '',
         'Item Name'     => '',
+        'Rack No'       => '',
         'Category Name' => '',
         'Brand Name'    => '',
         'Case/Container/Box No.' => '',
