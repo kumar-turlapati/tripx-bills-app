@@ -37,7 +37,8 @@ class InventoryReportsController {
     $default_location = $_SESSION['lc'];
     $page_no = 1; $per_page = 10000;
     $total_records = $categories_a = [];
-    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise', 'barcode' => 'Additional Details'];
+    // $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise', 'barcode' => 'Additional Details'];
+    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise'];
     $neg_a = ['all' => 'All items', 'neg' => 'Negative Balances'];
 
     $client_locations = Utilities::get_client_locations();

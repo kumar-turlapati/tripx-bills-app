@@ -178,14 +178,6 @@ class SalesReportsController {
     $empty_rows_tobe_filled = 0;
     // dump($sale_item_details);
     // exit;
-/*    
-    $total_items_count = count($sale_item_details);
-    if($total_items_count > 20) {
-      $total_pages = ceil($total_items_count/20);
-    } else {
-      $total_pages = 1;
-    }
-*/  
     $sale_item_details_filled = array_fill(count($sale_item_details)-1, $empty_rows_tobe_filled, []);
     $sale_item_final = array_merge($sale_item_details, $sale_item_details_filled);
     $unique_hsn_codes = array_unique(array_column($sale_item_details, 'hsnSacCode')); 
@@ -196,7 +188,7 @@ class SalesReportsController {
     $tot_bill_value = $tot_discount = $tot_taxable = $tot_items_qty = 0;
     $tot_tax_amount = 0;
     $hsn_code_qty = $hsn_code_taxable = $hsn_cgst_value = $hsn_sgst_value = 0;
-    $cnos_a = $hsn_codes_array = [];
+    $cnos_a = $hsn_codes_array = $bnos_a = [];
     foreach($sale_item_final as $item_details) {
       if(is_array($item_details) && count($item_details) > 0) {
         $item_qty = $amount = $discount = $taxable = $tax_value = 0;
@@ -214,6 +206,9 @@ class SalesReportsController {
         if($item_details['cno'] !== '') {
           $cnos_a[] = $item_details['cno'];
         }
+        if($item_details['bno'] !== '') {
+          $bnos_a[] = $item_details['bno'];
+        }        
 
         $amount = (float)round($item_qty*$mrp,2);
         $taxable = (float)round($amount-$discount,2);
@@ -316,8 +311,14 @@ class SalesReportsController {
 
     // print case nos if exists
     if(count($cnos_a)>0) {
-      $pdf->SetFont('Arial','',9);
-      $pdf->MultiCell(190,4,'Case/Container/Box Nos: '.implode(',', $cnos_a),'LRB','L');
+      $pdf->SetFont('Arial','',8);
+      $pdf->MultiCell(190,4,'Case/Container/Box Nos: '.implode(', ', $cnos_a),'LRB','L');
+    }
+
+    // print batch nos if exists
+    if(count($bnos_a) > 0) {
+      $pdf->SetFont('Arial','',8);
+      $pdf->MultiCell(190,7,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRB','L');
     }
 
     // GST total
@@ -537,11 +538,11 @@ class SalesReportsController {
     
     $pdf->setXY($final_x, $final_y);
 
-    $pdf->Ln(20);
-    $pdf->SetFont('Arial','BU',9);
-    $pdf->Cell(63.33,6,'Prepared by','',0,'C');
-    $pdf->Cell(63.33,6,'Verified by','',0,'C');
-    $pdf->Cell(63.33,6,'Authorized by','',0,'C');
+    // $pdf->Ln(20);
+    // $pdf->SetFont('Arial','BU',9);
+    // $pdf->Cell(63.33,6,'Prepared by','',0,'C');
+    // $pdf->Cell(63.33,6,'Verified by','',0,'C');
+    // $pdf->Cell(63.33,6,'Authorized by','',0,'C');
 
     // dump($taxable_values, $taxable_gst_value);
     // exit;
@@ -3331,6 +3332,8 @@ class SalesReportsController {
           'Item Name' => 'BILL TOTALS',
           'Qty.' => number_format($bill_qty,2,'.',''),
           'CASE No.' => '',
+          'Batch No.' => '',
+          'Item SKU' => '',
           'Item Rate' => '',
           'Gross Amt.' => number_format($bill_total,2,'.',''),
           'Discount' => number_format($bill_discount,2,'.',''),
@@ -3346,6 +3349,8 @@ class SalesReportsController {
           'Item Name' => '',
           'Qty.' => '',
           'CASE No.' => '',
+          'Batch No.' => '',
+          'Item SKU' => '',
           'Item Rate' => '',
           'Gross Amt.' => '',
           'Discount' => '',
@@ -3389,6 +3394,8 @@ class SalesReportsController {
         'Item Name' => $record_details['itemName'],
         'Qty.' => number_format($record_details['soldQty'],2,'.',''),
         'CASE No.' => $record_details['cno'],
+        'Batch No.' => $record_details['bno'],
+        'Item SKU' => $record_details['itemSku'],
         'Item Rate' => number_format($record_details['mrp'],2,'.',''),
         'Gross Amt.' => number_format($item_amount,2,'.',''),
         'Discount' => number_format($record_details['itemDiscount'],2,'.',''),
