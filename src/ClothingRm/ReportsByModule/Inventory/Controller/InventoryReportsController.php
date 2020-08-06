@@ -1929,7 +1929,7 @@ class InventoryReportsController {
       $cleaned_params[$key] = [
         'Sno.' => $sno,
         'Item Name' => $item_name,
-        'Rack No' => $rack_no,
+        'Rack No' => str_replace(',', '_', $rack_no),
         'Category Name' => $category_name,
         'Brand Name'  => $brand_name,
         'Case/Container/Box No.' => $case_no,
