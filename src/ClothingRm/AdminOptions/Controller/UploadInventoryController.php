@@ -251,6 +251,9 @@ class UploadInventoryController
         $item_size = isset($imported_record_details['ItemSize']) ? Utilities::clean_string($imported_record_details['ItemSize']) : '';
         $item_color = isset($imported_record_details['ItemColor']) ? Utilities::clean_string($imported_record_details['ItemColor']) : '';
         $item_sleeve = isset($imported_record_details['ItemSleeve']) ? Utilities::clean_string($imported_record_details['ItemSleeve']) : '';
+        $wholesale_price = isset($imported_record_details['WholesalePrice']) ? Utilities::clean_string($imported_record_details['WholesalePrice']) : 0;
+        $online_price = isset($imported_record_details['OnlinePrice']) ? Utilities::clean_string($imported_record_details['OnlinePrice']) : 0;
+        $exmill_price = isset($imported_record_details['ExmillPrice']) ? Utilities::clean_string($imported_record_details['ExmillPrice']) : 0;
 
         if(!is_numeric($closing_qty)) {
           $error_flag = true;
@@ -300,6 +303,9 @@ class UploadInventoryController
           $cleaned_array[$key]['ItemSize'] = $item_size;
           $cleaned_array[$key]['ItemColor'] = $item_color;
           $cleaned_array[$key]['ItemSleeve'] = $item_sleeve;
+          $cleaned_array[$key]['WholesalePrice'] = $wholesale_price;
+          $cleaned_array[$key]['OnlinePrice'] = $online_price;
+          $cleaned_array[$key]['ExmillPrice'] = $exmill_price;
         }
       }
     }
