@@ -57,6 +57,11 @@
   } else {
     $packed_qty = 1;
   }
+  if(isset($form_data['brandUrl']) && $form_data['brandUrl'] !== '') {
+    $brand_url = $form_data['brandUrl'];
+  } else {
+    $brand_url = '';
+  }  
 
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
 
@@ -241,6 +246,20 @@
                 <span class="error"><?php echo $form_errors['packedQty'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-9 col-lg-9 m-bot20">
+              <label class="control-label labelStyle">Brand url</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="brandUrl" 
+                id="brandUrl" 
+                value="<?php echo $brand_url ?>"
+                maxlength="300"
+              >
+              <?php if(isset($form_errors['brandUrl'])): ?>
+                <span class="error"><?php echo $form_errors['brandUrl'] ?></span>
+              <?php endif; ?>
+            </div>            
             <div style="clear:both;"></div>          
           </div>
           <h4 class="labelStyleOnlyColor">Item images</h4>

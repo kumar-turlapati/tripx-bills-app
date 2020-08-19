@@ -288,6 +288,7 @@ class GalleryController {
     $item_description = Utilities::clean_string($form_data['itemDescription']);
     $billing_rate = Utilities::clean_string($form_data['billingRate']);
     $packed_qty = Utilities::clean_string($form_data['packedQty']);
+    $brand_url = Utilities::clean_string($form_data['brandUrl']);
 
     if($item_name !== '') {
       $cleaned_params['itemName'] = $item_name;
@@ -312,6 +313,7 @@ class GalleryController {
 
     $cleaned_params['itemColor'] = $item_color;
     $cleaned_params['billingRate'] = $billing_rate;
+    $cleaned_params['brandUrl'] = $brand_url;
 
     foreach($files as $key => $file_details) {
       $file_name = $file_details['name'];
@@ -365,6 +367,7 @@ class GalleryController {
     $delete_images = isset($form_data['delImage']) && count($form_data['delImage']) > 0 ? $form_data['delImage'] : [];
     $weight_a = isset($form_data['weight']) && count($form_data['weight']) > 0 ? $form_data['weight'] : [];
     $packed_qty = Utilities::clean_string($form_data['packedQty']);
+    $brand_url = Utilities::clean_string($form_data['brandUrl']);
 
     if($item_name !== '') {
       $cleaned_params['itemName'] = $item_name;
@@ -388,6 +391,7 @@ class GalleryController {
     }
     
     $cleaned_params['billingRate'] = $billing_rate;
+    $cleaned_params['brandUrl'] = $brand_url;
 
     // get uploaded files.
     foreach($files as $key => $file_details) {
