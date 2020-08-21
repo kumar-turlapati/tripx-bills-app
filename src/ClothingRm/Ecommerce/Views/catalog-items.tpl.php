@@ -26,13 +26,17 @@
     $query_params[] = 'itemName='.$itemName;
   } else {
     $itemName = '';
-  }  
+  }
+  if(isset($search_params['listType']) && $search_params['listType'] !='') {
+    $listType = $search_params['listType'];
+    $query_params[] = 'listType='.$listType;
+  } else {
+    $listType = '';
+  }   
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
   $page_url = $pagination_url = '/catalog/items/'.$catalog_code;
-
-  // dump($products);
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -94,9 +98,27 @@
                 </div>              
                 <div class="col-sm-12 col-md-2 col-lg-2">
                    <input placeholder="Product name" type="text" name="itemName" id="itemName" class="form-control inameAc" value="<?php echo $itemName ?>">
-                </div>                
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="listType" id="listType">
+                      <?php 
+                        foreach($list_types as $key=>$value):
+                          if($key === $listType) {
+                            $selected = ' selected = "selected"';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                         <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
+              </div>
+              <div class="form-group" style="text-align: center;">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
-            </div>
+              </div>
            </form>
 			    </div>
         </div>

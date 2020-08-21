@@ -251,6 +251,7 @@ class CatalogController {
     $category = !is_null($request->get('category')) ? Utilities::clean_string($request->get('category')) : '';
     $mfg = !is_null($request->get('mfg')) ? Utilities::clean_string($request->get('mfg')) : '';
     $location_code = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
+    $list_type = !is_null($request->get('listType')) ? Utilities::clean_string($request->get('listType')) : 'all';
 
     $search_params = [
       'locationCode' => $location_code,
@@ -259,6 +260,7 @@ class CatalogController {
       'itemName' => $item_name,
       'pageNo' => $page_no,
       'perPage' => $per_page,
+      'listType' => $list_type
     ];
 
     $categories_a = $categories_a + $this->products_model->get_product_categories($location_code);
@@ -267,6 +269,9 @@ class CatalogController {
 
     // hit api.
     $products_list = $this->catalog_model->catalog_items($catalog_code, $search_params);
+    // dump($products_list);
+    // exit;
+
     $api_status = $products_list['status'];
     if($api_status) {
       // check whether we got products or not.
@@ -274,7 +279,6 @@ class CatalogController {
         $slno = Utilities::get_slno_start(count($products_list['response']['items']), $per_page, $page_no);
         $to_sl_no = $slno+$per_page;
         $slno++;
-        // dump('sl no....'.$slno);
         if($page_no<=3) {
           $page_links_to_start = 1;
           $page_links_to_end = 10;
@@ -285,8 +289,8 @@ class CatalogController {
         if($products_list['response']['total_pages']<$page_links_to_end) {
           $page_links_to_end = $products_list['response']['total_pages'];
         }
-        if($products_list['response']['total_records'] < $per_page) {
-          $to_sl_no = ($slno+$products_list['response']['total_records'])-1;
+        if(count($products_list['response']['items']) < $per_page) {
+          $to_sl_no = ($slno + count($products_list['response']['items']))-1;
         }
         $products = $products_list['response']['items'];
         $total_pages = $products_list['response']['total_pages'];
@@ -315,6 +319,7 @@ class CatalogController {
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
       'categories' => ['' => 'All Categories'] + $categories_a,
+      'list_types' => ['all' => 'All Items', 'added' => 'Assigned Items', 'notadded' => 'Unassigned Items'],
       'products' => $products,
       'total_pages' => $total_pages ,
       'total_records' => $total_records,

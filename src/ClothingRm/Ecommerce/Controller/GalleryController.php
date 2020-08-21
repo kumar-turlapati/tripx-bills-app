@@ -230,8 +230,8 @@ class GalleryController {
         if($galleries_list['galleries']['total_pages']<$page_links_to_end) {
           $page_links_to_end = $galleries_list['galleries']['total_pages'];
         }
-        if($galleries_list['galleries']['total_records'] < $per_page) {
-          $to_sl_no = ($slno+$galleries_list['galleries']['total_records'])-1;
+        if(count($galleries_list['galleries']['items']) < $per_page) {
+          $to_sl_no = ($slno+count($galleries_list['galleries']['items']))-1;
         }
         $products = $galleries_list['galleries']['items'];
         $total_pages = $galleries_list['galleries']['total_pages'];
