@@ -49,6 +49,18 @@ class Gallery {
 		}
 	}
 
+	/** delete gallery **/
+	public function gallery_delete($location_code='', $gallery_code='') {
+		$request_uri = 'gallery/'.$location_code.'/'.$gallery_code;
+		$response = $this->api_caller->sendRequest('delete',$request_uri,[]);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return ['status' => true];
+		} elseif($status === 'failed') {
+			return ['status' => false, 'apierror' => $response['reason']];
+		}
+	}	
+
 	/** gallery details **/
 	public function get_gallery_details($location_code = '', $gallery_code = '') {
 		$request_uri = 'gallery/details/'.$location_code.'/'.$gallery_code;

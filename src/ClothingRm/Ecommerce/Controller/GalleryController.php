@@ -170,6 +170,23 @@ class GalleryController {
     return array($this->template->render_view('gallery-update',$template_vars),$controller_vars);
   }
 
+  // delete gallery
+  public function deleteGallery(Request $request) {
+    $gallery_code = !is_null($request->get('galleryCode')) ? Utilities::clean_string($request->get('galleryCode')) : '';
+    $location_code = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
+    $page_no = !is_null($request->get('pageNo')) && is_numeric($request->get('pageNo')) ? Utilities::clean_string($request->get('pageNo')) : 1;
+    if($gallery_code === '' || $location_code === '') {
+      $this->flash->set_flash_message('Invalid Gallery or location');
+      Utilities::redirect('/galleries/list');
+    }
+    $result = $this->gallery_model->gallery_delete($location_code, $gallery_code);
+    if($result['status']) {
+      $this->flash->set_flash_message('<i class="fa fa-times aria-hidden="true"></i>&nbsp;Gallery deleted successfully.');
+    } else {
+      $this->flash->set_flash_message($result['apierror'], 1);
+    }
+    Utilities::redirect('/galleries/list/'.$page_no.'?locationCode='.$location_code);
+  }
 
   // galleries list
   public function galleriesList(Request $request) {
@@ -268,7 +285,9 @@ class GalleryController {
       'client_locations' => array(''=>'All Stores') + $client_locations,
       'default_location' => $default_location,
       'location_ids' => $location_ids,
-      'location_codes' => $location_codes,      
+      'location_code' => $location_code,
+      'location_codes' => $location_codes,
+      'page_no' => $page_no, 
     );
 
     // render template

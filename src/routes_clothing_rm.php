@@ -1004,6 +1004,14 @@ $routes->add('gallery_create', new Routing\Route('/gallery/create', array(
 )));
 $routes->add('gallery_update', new Routing\Route('/gallery/update/{locationCode}/{galleryCode}', array(
   '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::updateGallery',
+  'locationCode' => null,
+  'galleryCode' => null,
+)));
+$routes->add('gallery_delete', new Routing\Route('/gallery/delete/{locationCode}/{galleryCode}/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::deleteGallery',
+  'galleryCode' => null,
+  'locationCode' => null,
+  'pageNo' => null,
 )));
 $routes->add('galleries_list', new Routing\Route('/galleries/list/{pageNo}', array(
   '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::galleriesList',

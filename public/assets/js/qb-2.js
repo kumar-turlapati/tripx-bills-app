@@ -2007,6 +2007,21 @@ function initializeJS() {
     });
   }
 
+  // delete gallery
+  if( $('.delGallery').length>0 ) {
+    jQuery('.delGallery').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Gallery?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }
+
   if( $('.delCNote').length>0 ) {
     jQuery('.delCNote').on("click", function(e){
       e.preventDefault();

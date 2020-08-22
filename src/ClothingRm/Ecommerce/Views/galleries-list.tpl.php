@@ -106,15 +106,16 @@
         <div class="table-responsive">
           <table class="table table-striped table-hover" id="itemnames">
             <thead>
-              <tr class="font12">
+              <tr class="font11">
                 <th width="5%" class="text-center">Sno.</th>
-                <th width="20%" class="text-left">Product name</th>
+                <th width="15%" class="text-left">Product name</th>
                 <th width="10%" class="text-center">Brand name</th>               
                 <th width="10%" class="text-center">Category</th>               
                 <th width="10%" class="text-center">Style code</th>               
                 <th width="10%" class="text-center">Color</th>               
-                <th width="20%" class="text-center">Description</th>               
-                <th width="8%" class="text-center">Images<br />Uploaded</th>                                                
+                <?php /*<th width="15%" class="text-center">Description</th> */ ?>
+                <th width="8%" class="text-center">Images<br />Uploaded</th>                                       
+                <th width="8%" class="text-center">&nbsp;</th>                                       
               </tr>
             </thead>
             <tbody>
@@ -148,8 +149,15 @@
                     <td class="text-left valign-middle" title="<?php echo $category_name ?>"><?php echo substr($category_name,0,20) ?></td>
                     <td class="text-left valign-middle"><?php echo $style_code ?></td>                
                     <td class="text-left valign-middle"><?php echo $item_color ?></td>                
-                    <td class="text-left valign-middle"><?php echo $item_description ?></td>                
-                    <td class="text-right valign-middle"><?php echo $no_of_images ?></td>                
+                    <?php /*<td class="text-left valign-middle"><?php echo $item_description ?></td>*/ ?>
+                    <td class="text-right valign-middle"><?php echo $no_of_images ?></td>
+                    <td>
+                      <div class="btn-actions-group" align="center">
+                        <a class="btn btn-danger delGallery" href="/gallery/delete/<?php echo $location_code ?>/<?php echo $gallery_code ?>/<?php echo $page_no ?>" title="Delete Gallery" id="<?php echo $gallery_code ?>">
+                          <i class="fa fa-times"></i>
+                        </a>
+                      </div>
+                    </td>
                   </tr>
             <?php
               $cntr++;
