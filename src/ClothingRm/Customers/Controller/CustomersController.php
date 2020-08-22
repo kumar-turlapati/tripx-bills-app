@@ -368,7 +368,7 @@ class CustomersController
       $form_errors['customerName'] = 'Invalid customer name.';
     }
     if($mobile_no !== '' && strlen($mobile_no) === 10 && is_numeric($mobile_no)) {
-      $cleaned_params['mobileNo'] = $customer_name;
+      $cleaned_params['mobileNo'] = $mobile_no;
     } else {
       $cleaned_params['mobileNo'] = '';
     }
