@@ -601,6 +601,10 @@ $routes->add('users_update', new Routing\Route('/users/update/{uuid}', array(
   '_controller' => 'User\\Controller\\UserController::updateUserAction',
   'uuid' => null,
 )));
+$routes->add('users_update_app', new Routing\Route('/users/update-app/{uuid}', array(
+  '_controller' => 'User\\Controller\\UserController::updateUserActionApp',
+  'uuid' => null,
+)));
 $routes->add('users_create', new Routing\Route('/users/create', array(
   '_controller' => 'User\\Controller\\UserController::createUserAction',
 )));

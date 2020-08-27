@@ -7,14 +7,14 @@ use Atawa\Utilities;
 
 class User {
 
-	public function get_users($search_params=[]) {
+	public function get_users($search_params=[], $send_all=false) {
 		$client_id = Utilities::get_current_client_id();
 		// call api.
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('get','users/'.$client_id,$search_params);
 		$status = $response['status'];
 		if ($status === 'success') {
-			return array('status'=>true,'users'=>$response['response']['users']);
+			return array('status'=>true,'users'=> $send_all ? $response['response'] : $response['response']['users'] );
 		} elseif($status === 'failed') {
 			return array('status'=>false, 'apierror'=>$response['reason']);
 		}
