@@ -174,9 +174,10 @@
                             <a class="btn btn-primary" href="/users/update-app/<?php echo $uuid ?>" title="Edit user">
                               <i class="fa fa-pencil"></i>
                             </a>
+                            <?php /*
                             <a class="btn btn-danger delUser" href="javascript:void(0)" title="Remove user" uid="<?php echo $uuid ?>">
                               <i class="fa fa-times"></i>
-                            </a>
+                            </a> */ ?>
                           <?php endif; ?>
                         </div>
                       </td>
