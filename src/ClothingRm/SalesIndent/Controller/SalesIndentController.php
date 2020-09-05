@@ -475,7 +475,7 @@ class SalesIndentController {
     // build variables
     $controller_vars = array(
       'page_title' => 'Sales Indent Register',
-      'icon_name' => 'fa fa-inr',
+      'icon_name' => 'fa fa-delicious',
     );
 
     // render template

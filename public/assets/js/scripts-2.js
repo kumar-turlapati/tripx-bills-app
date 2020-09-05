@@ -1649,11 +1649,12 @@ function initializeJS() {
 
     $('#indentBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
-       var barcode = parseInt($(this).val());
-       if(isNaN(barcode)) {
-        alert('Invalid Barcode format...');
-        return false;
-       }
+       // var barcode = parseInt($(this).val());
+       // if(isNaN(barcode)) {
+       //  alert('Invalid Barcode format...');
+       //  return false;
+       // }
+       var barcode = $(this).val();
        var locationCode = $('#locationCode').val();
        var billingRate = $('#billingRate').val();
        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&sl=true&ind=true', {
@@ -1785,6 +1786,8 @@ function initializeJS() {
         var mrp = itemDetails.wholesalePrice;
       } else if(billingRate === 'online') {
         var mrp = itemDetails.onlinePrice;
+      } else if(billingRate === 'ex') {
+        var mrp = itemDetails.exMill;        
       } else {
         var mrp = itemDetails.mrp;
       }

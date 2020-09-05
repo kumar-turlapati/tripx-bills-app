@@ -603,7 +603,7 @@ class Utilities
         '/async/get-tax-percent', '/async/getBillNos',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
-        '/sales-entry/combos', '/sales/entry-with-indent',
+        '/sales-entry/combos', '/sales/entry-with-indent', '/sales-indent/create',
 
         '/print-sales-bill-small', '/print-sales-bill', '/sales-invoice-b2b', '/sales/shipping-info',
 

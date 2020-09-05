@@ -32,7 +32,7 @@
     }
   }
 
-  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
+  $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
 ?>
 
 <div class="row">
@@ -52,7 +52,7 @@
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid; margin-bottom: 0px;">
               <thead>
                 <tr>
-                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:8%;padding-left:5px;">Scan Barcode</td>
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:10%;padding-left:5px;">Scan Barcode</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:10%;">
                     <input
                       type="text"
@@ -64,29 +64,31 @@
                   </td>
 
                   <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;padding-left:5px;">Scanned Qty.</td>
-                  <td id="indentScannedQty" style="width:8%;border-right:none;border-left:none;border-top:none;font-size:20px;font-weight:bold;vertical-align:middle;color:#225992;">&nbsp;</td>
+                  <td style="width:8%;border-right:none;border-left:none;border-top:none;font-size:20px;font-weight:bold;vertical-align:middle;color:#225992;" id="indentScannedQty">&nbsp;</td>
 
-                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Store name</td>
-                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
-                    <select class="form-control" name="locationCode" id="locationCode" disabled>
-                      <?php 
-                        foreach($client_locations as $location_key=>$value):
-                          $location_key_a = explode('`', $location_key);
-                          if($location_code === $location_key_a[0]) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }
-                      ?>
-                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
-                          <?php echo $value ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>                    
+                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;padding-left:5px;">Store name</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:19%;text-align:left;">
+                    <div class="select-wrap">
+                      <select class="form-control" name="locationCode" id="locationCode">
+                        <?php 
+                          foreach($client_locations as $location_key=>$value):
+                            $location_key_a = explode('`', $location_key);
+                            if($location_code === $location_key_a[0]) {
+                              $selected = 'selected="selected"';
+                            } else {
+                              $selected = '';
+                            }
+                        ?>
+                         <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                            <?php echo $value ?>
+                          </option>
+                        <?php endforeach; ?>
+                      </select>
+                    </div>                 
                   </td>
 
                   <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Billing rate</td>
-                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:12%;text-align:left;">
                     <select class="form-control" name="billingRate" id="billingRate">
                       <?php 
                         foreach($billing_rates as $key=>$value):

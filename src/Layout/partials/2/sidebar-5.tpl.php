@@ -21,6 +21,7 @@
           <i class="fa fa-newspaper-o"></i> Vouchers <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
+          <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales Indent</a></li>
           <li><a href="/sales/entry"><i class="fa fa-keyboard-o"></i> Sales Entry - Manual</a></li>
           <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>
           <li><a href="/sales-entry/combos"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Sales Entry - Combos</a></li>
@@ -45,7 +46,7 @@
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>          
           <?php /*<li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li> */ ?>
           <li><a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Sales2CB Register</a></li>
-          <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales Indent Register</a></li>
+          <li><a href="/sales-indents/list"><i class="fa fa-delicious"></i> Sales Indent Register</a></li>
           <li><a href="/indent-vs-sales"><i class="fa fa-compress"></i> Indent Vs Sales</a></li>
           <li><a href="/indent-vs-sales-by-item"><i class="fa fa-compress"></i> Indent vs Sales(Item)</a></li>
           <?php /*<li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li> */ ?>
@@ -63,7 +64,7 @@
           */ ?>
         </ul>
       </li>
-      <li class="active">
+      <li>
         <a href="/tasks/list"><i class="fa fa-tasks"></i> My Tasks</a>
       </li>
       <li class="sub-menu">

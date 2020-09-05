@@ -56,9 +56,11 @@
                   <td class="text-right valign-middle"><?php echo $is_default ?></td>
                   <td class="text-right valign-middle">
                     <div class="btn-actions-group">
+                      <?php /*
                       <a class="btn btn-info" href="<?php echo $catalog_url ?>" title="Public Url" target="_blank">
                         <i class="fa fa-share-alt" aria-hidden="true"></i>
-                      </a>                      
+                      </a>
+                      */ ?>                  
                       <a class="btn btn-success" href="/catalog/update/<?php echo $catalog_code ?>" title="Edit Catalog">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                       </a>
