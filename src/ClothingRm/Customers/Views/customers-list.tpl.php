@@ -18,6 +18,12 @@
     $query_params[] = 'locationCode='.$locationCode;    
   } else {
     $locationCode = '';
+  }
+  if(isset($search_params['mobileNo']) && $search_params['mobileNo'] !== '' ) {
+    $mobileNo = $search_params['mobileNo'];
+    $query_params[] = 'mobileNo='.$mobileNo;    
+  } else {
+    $mobileNo = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -81,6 +87,9 @@
                     </select>
                    </div>
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Mobile No" type="text" name="mobileNo" id="mobileNo" class="form-control" value="<?php echo $mobileNo ?>">
+                </div>                
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
             </form>

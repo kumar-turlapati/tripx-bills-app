@@ -258,6 +258,7 @@ class CustomersController
     $customer_name = is_null($request->get('custName')) ? '' : Utilities::clean_string($request->get('custName'));
     $state_code = is_null($request->get('stateCode')) ? '' : Utilities::clean_string($request->get('stateCode'));
     $location_code = is_null($request->get('locationCode')) ? '' : Utilities::clean_string($request->get('locationCode'));
+    $mobile_no = is_null($request->get('mobileNo')) ? '' : Utilities::clean_string($request->get('mobileNo'));
 
     $search_params = [
       'pageNo' => $page_no,
@@ -265,6 +266,8 @@ class CustomersController
       'custName' => $customer_name,
       'stateCode' => $state_code,
       'locationCode' => $location_code,
+      'mobileNo' => $mobile_no,
+      'wildCardMobileNo' => 1,
     ];
 
     // dump($search_params);
