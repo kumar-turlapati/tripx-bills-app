@@ -199,6 +199,7 @@
                   } else {
                     $status = 'Invalid';
                   }
+                  $remarks2 = isset($indent_details['remarks2']) ? $indent_details['remarks2'] : '';
                   $total += $netpay;
               ?>
                 <tr class="font11">
@@ -224,7 +225,7 @@
                         </a>
                         <a class="btn btn-warning" href="/sales/entry-with-indent/<?php echo $indent_code ?>" title="Create Sales Order with Scan">
                           <i class="fa fa-barcode"></i>
-                        </a>                        
+                        </a>
                       <?php elseif($indent_status === 0): ?>
                         <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
                           <i class="fa fa-pencil"></i>
@@ -234,6 +235,9 @@
                         </a>
                       <?php endif; ?>
                     </div>
+                    <?php if((int)$indent_status === 2):  ?>
+                      <p style="text-align: left; padding-top: 10px; font-weight: bold;"><?php echo $remarks2 ?></p>
+                    <?php endif; ?>
                   </td>
                 </tr>
               <?php

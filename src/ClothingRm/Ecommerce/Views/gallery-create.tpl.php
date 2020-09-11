@@ -42,10 +42,15 @@
   } else {
     $item_rate = '';
   }
-  if(isset($search_params['itemSleeve']) && $search_params['itemSleeve'] !== '' ) {
-    $item_sleeve = $search_params['itemSleeve'];
+  if(isset($form_data['mrp']) && $form_data['mrp'] !== '' ) {
+    $mrp = $form_data['mrp'];
   } else {
-    $item_sleeve = '';
+    $mrp = '';
+  }  
+  if(isset($form_data['itemSize']) && $form_data['itemSize'] !== '' ) {
+    $item_size = $form_data['itemSize'];
+  } else {
+    $item_size = '';
   }
   if(isset($submitted_data['locationCode']) && $submitted_data['locationCode'] !== '') {
     $location_code = $submitted_data['locationCode'];
@@ -137,7 +142,7 @@
           </div>
           <h4 class="labelStyleOnlyColor">Item details</h4>
           <div class="form-group">
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot10">
+            <div class="col-sm-12 col-md-3 col-lg-3">
               <label class="control-label labelStyle">Item name*</label>
               <input
                   type="text" 
@@ -151,7 +156,7 @@
                 <span class="error"><?php echo $form_errors['itemName'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot10">
+            <div class="col-sm-12 col-md-3 col-lg-3">
               <label class="control-label labelStyle">Item stylecode*</label>
               <input 
                 type="text" 
@@ -165,13 +170,13 @@
                 <span class="error"><?php echo $form_errors['itemStylecode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
-              <label class="control-label labelStyle">Item color</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Item color (use comma for multiple)</label>
               <input 
-                type="text" 
-                class="form-control" 
-                name="itemColor" 
-                id="itemColor" 
+                type="text"
+                class="form-control"
+                name="itemColor"
+                id="itemColor"
                 value="<?php echo $item_color ?>"
                 maxlength="50"
               >
@@ -179,7 +184,24 @@
                 <span class="error"><?php echo $form_errors['itemColor'] ?></span>
               <?php endif; ?>   
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Item size (use comma for multiple)</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="itemSize" 
+                id="itemSize" 
+                value="<?php echo $item_size ?>"
+                maxlength="10"
+              >
+              <?php if(isset($form_errors['itemSize'])): ?>
+                <span class="error"><?php echo $form_errors['itemSize'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div style="clear:both;"></div>               
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
               <label class="control-label labelStyle">Billing type</label>
               <div class="select-wrap">
                 <select class="form-control" name="billingRate" id="billingRate">
@@ -197,25 +219,8 @@
                   <?php endforeach; ?>
                 </select>
               </div>   
-            </div>            
-            <?php /*
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
-              <label class="control-label labelStyle">Item sleeve</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                name="itemSleeve" 
-                id="itemSleeve" 
-                value="<?php echo $item_sleeve ?>"
-                maxlength="10"
-              >
-              <?php if(isset($form_errors['itemSleeve'])): ?>
-                <span class="error"><?php echo $form_errors['itemSleeve'] ?></span>
-              <?php endif; ?>
-            </div>*/ ?>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-12 col-lg-12">
+            </div>             
+            <div class="col-sm-12 col-md-6 col-lg-6">
               <label class="control-label labelStyle">Item description* (max 200 chars.)</label>
               <input 
                 type="text" 
@@ -229,10 +234,24 @@
                 <span class="error"><?php echo $form_errors['itemDescription'] ?></span>
               <?php endif; ?>
             </div>
-            <div style="clear:both;"></div>          
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">M.R.P (in Rs.) - Auto</label>
+              <input 
+                type="text"
+                class="form-control"
+                name="mrp"
+                id="mrp"
+                value="<?php echo $mrp ?>"
+                maxlength="50"
+              >
+              <?php if(isset($form_errors['mrp'])): ?>
+                <span class="error"><?php echo $form_errors['mrp'] ?></span>
+              <?php endif; ?>   
+            </div>
+            <div style="clear:both;"></div>            
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+            <div class="col-sm-12 col-md-3 col-lg-3">
               <label class="control-label labelStyle">Packed qty.</label>
               <input 
                 type="text" 
@@ -246,7 +265,7 @@
                 <span class="error"><?php echo $form_errors['packedQty'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-9 col-lg-9 m-bot20">
+            <div class="col-sm-12 col-md-9 col-lg-9">
               <label class="control-label labelStyle">Brand url</label>
               <input 
                 type="text" 
@@ -260,7 +279,7 @@
                 <span class="error"><?php echo $form_errors['brandUrl'] ?></span>
               <?php endif; ?>
             </div>            
-            <div style="clear:both;"></div>          
+            <div style="clear:both;"></div>         
           </div>
           <h4 class="labelStyleOnlyColor">Item images</h4>
           <?php if(count($form_errors) > 0): ?>

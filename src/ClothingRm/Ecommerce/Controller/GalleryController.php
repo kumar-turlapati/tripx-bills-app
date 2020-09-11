@@ -303,11 +303,13 @@ class GalleryController {
 
     $item_name = Utilities::clean_string($form_data['itemName']);
     $style_code = Utilities::clean_string($form_data['itemStylecode']);
-    $item_color =  Utilities::clean_string($form_data['itemColor']);
+    $item_color = Utilities::clean_string($form_data['itemColor']);
+    $item_size = Utilities::clean_string($form_data['itemSize']);
     $item_description = Utilities::clean_string($form_data['itemDescription']);
     $billing_rate = Utilities::clean_string($form_data['billingRate']);
     $packed_qty = Utilities::clean_string($form_data['packedQty']);
     $brand_url = Utilities::clean_string($form_data['brandUrl']);
+    $mrp =  Utilities::clean_string($form_data['mrp']);
 
     if($item_name !== '') {
       $cleaned_params['itemName'] = $item_name;
@@ -329,8 +331,16 @@ class GalleryController {
     } else {
       $form_errors['packedQty'] = 'Invalid packed qty.';
     }
+    if($mrp !== '') {
+      if(floatval($mrp) > 0) {
+        $cleaned_params['mrp'] = $mrp;
+      } else {
+        $form_errors['mrp'] = 'Invalid mrp';
+      }
+    }
 
     $cleaned_params['itemColor'] = $item_color;
+    $cleaned_params['itemSize'] = $item_size;
     $cleaned_params['billingRate'] = $billing_rate;
     $cleaned_params['brandUrl'] = $brand_url;
 
@@ -381,12 +391,14 @@ class GalleryController {
     $item_name = Utilities::clean_string($form_data['itemName']);
     $style_code = Utilities::clean_string($form_data['itemStylecode']);
     $item_color =  Utilities::clean_string($form_data['itemColor']);
+    $item_size = Utilities::clean_string($form_data['itemSize']);
     $item_description = Utilities::clean_string($form_data['itemDescription']);
     $billing_rate = Utilities::clean_string($form_data['billingRate']);
     $delete_images = isset($form_data['delImage']) && count($form_data['delImage']) > 0 ? $form_data['delImage'] : [];
     $weight_a = isset($form_data['weight']) && count($form_data['weight']) > 0 ? $form_data['weight'] : [];
     $packed_qty = Utilities::clean_string($form_data['packedQty']);
     $brand_url = Utilities::clean_string($form_data['brandUrl']);
+    $mrp =  Utilities::clean_string($form_data['mrp']);
 
     if($item_name !== '') {
       $cleaned_params['itemName'] = $item_name;
@@ -408,6 +420,13 @@ class GalleryController {
     } else {
       $form_errors['packedQty'] = 'Invalid packed qty.';
     }
+    if($mrp !== '') {
+      if(floatval($mrp) > 0) {
+        $cleaned_params['mrp'] = $mrp;
+      } else {
+        $form_errors['mrp'] = 'Invalid mrp';
+      }
+    }    
     
     $cleaned_params['billingRate'] = $billing_rate;
     $cleaned_params['brandUrl'] = $brand_url;
@@ -450,6 +469,7 @@ class GalleryController {
     }
 
     $cleaned_params['itemColor'] = $item_color;
+    $cleaned_params['itemSize'] = $item_size;
 
     // dump($cleaned_params);
     // exit;

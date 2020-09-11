@@ -30,7 +30,7 @@
               <i class="fa fa-user-circle"></i> Ledgers <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/suppliers/list"><i class="fa fa-address-card"></i> Suppliers</a></li>
+              <li><a href="/suppliers/list"><i class="fa fa-users"></i> Suppliers</a></li>
               <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
               <li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li>
             </ul> 
