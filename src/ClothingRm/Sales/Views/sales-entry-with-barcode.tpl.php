@@ -219,7 +219,7 @@
                       if($item_qty > 0 && $item_rate > 0) {
                         $item_amount = $item_qty * $item_rate;
                         $taxable_amount = $item_amount - $item_discount;
-                        $tax_amount = round(($taxable_amount*$tax_percent)/100, 2);
+                        $tax_amount = $taxable_amount > 0 && $tax_percent > 0 ?  round(($taxable_amount*$tax_percent)/100, 2) : 0;
 
                         $tot_item_amount += $item_amount;
                         $tot_taxable_amount += $taxable_amount;

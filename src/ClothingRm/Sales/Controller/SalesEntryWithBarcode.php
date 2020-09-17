@@ -194,6 +194,8 @@ class salesEntryWithBarcode {
     } elseif(!is_null($request->get('ic')) && ctype_alnum($request->get('ic'))) {
       $indent_code = Utilities::clean_string($request->get('ic'));
       $indent_details = $this->sindent_model->get_indent_details($indent_code, true);
+      // dump($indent_details);
+      // exit;
       if($indent_details['status']) {
         // map indent data with Sales invoice
         $form_data = $this->_map_indent_data_with_sales_entry($indent_details['response']['indentDetails']);
@@ -1000,7 +1002,7 @@ class salesEntryWithBarcode {
     foreach($indent_items as $key => $item_details) {
       $form_data['itemDetails']['itemName'][$key] = $item_details['itemName'];
       $form_data['itemDetails']['itemSoldQty'][$key] = $item_details['itemQty'];
-      $form_data['itemDetails']['itemRate'][$key] = $item_details['itemRate'];
+      $form_data['itemDetails']['itemRate'][$key] = $item_details['itemRateIndent'];
       $form_data['itemDetails']['itemTaxPercent'][$key] = $item_details['taxPercent'];
       $form_data['itemDetails']['itemAvailQty'][$key] = $item_details['closingQty'];
       $form_data['itemDetails']['lotNo'][$key] = $item_details['lotNo'];

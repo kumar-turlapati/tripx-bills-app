@@ -1050,6 +1050,26 @@ $routes->add('remove_item_from_catalog', new Routing\Route('/async-catalogitem-r
   '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CatalogController::removeItemFromCatalog',
 )));
 
+// create catalog categories
+$routes->add('ecom_category_create', new Routing\Route('/ecom/category/create', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CategoriesController::createCategory',
+)));
+$routes->add('ecom_category_update', new Routing\Route('/ecom/category/update/{categoryID}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CategoriesController::updateCategory',
+  'categoryID' => null,
+)));
+$routes->add('ecom_category_delete', new Routing\Route('/ecom/category/delete/{categoryID}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CategoriesController::deleteCategory',
+  'categoryID' => null,
+)));
+$routes->add('ecom_category_list', new Routing\Route('/ecom/categories/list', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CategoriesController::categoriesList',
+)));
+$routes->add('ecom_sub_category_list', new Routing\Route('/ecom/subcategories/{categoryID}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CategoriesController::subCategoriesList',
+  'categoryID' => null,
+)));
+
 // lead routes.
 $routes->add('lead_create', new Routing\Route('/lead/create', array(
   '_controller' => 'Leads\\Controller\\LeadsController::leadCreateAction',

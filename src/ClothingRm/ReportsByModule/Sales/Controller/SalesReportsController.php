@@ -67,6 +67,9 @@ class SalesReportsController {
     // dump($sale_item_details);
     // exit;
 
+    // dump($sales_response);
+    // exit;
+
     $tax_calc_option = $sale_details['taxCalcOption'];
 
     $business_name  =   isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];

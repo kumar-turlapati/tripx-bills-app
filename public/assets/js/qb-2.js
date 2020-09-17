@@ -1950,6 +1950,8 @@ function initializeJS() {
       window.location.href = '/appointments/list';
     } else if(buttonId === 'genGpCancel') {
       window.location.href = '/get-invoice-no';
+    } else if(buttonId === 'ecomCatCancel') {
+      window.location.href = '/ecom/category/create';      
     }
   });
 
@@ -2024,6 +2026,21 @@ function initializeJS() {
       });
     });
   }
+
+  // delete ecom subcategory
+  if( $('.delEcomSubcat').length>0 ) {
+    jQuery('.delEcomSubcat').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Category?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }  
 
   if( $('.delCNote').length>0 ) {
     jQuery('.delCNote').on("click", function(e){

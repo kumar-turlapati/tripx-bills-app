@@ -102,7 +102,7 @@
             </a>
             <ul class="sub">
               <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales Indent</a></li>
-              <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales Indent (Mobile V.)</a></li>
+              <?php /*<li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales Indent (Mobile V.)</a></li> */ ?>
             </ul>
           </li>
           <li class="sub-menu">
@@ -208,11 +208,12 @@
       </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
-          <i class="fa fa-internet-explorer"></i> Ecommerce <span class="menu-arrow arrow_carrot-right"></span> 
+          <i class="fa fa-internet-explorer"></i> eCommerce <span class="menu-arrow arrow_carrot-right"></span> 
         </a>
         <ul class="sub">
           <li><a href="/galleries/list"><i class="fa fa-picture-o"></i> Product Galleries</a></li>
           <li><a href="/catalog/list"><i class="fa fa-briefcase"></i> Catalogs</a></li>
+          <li><a href="/ecom/categories/list"><i class="fa fa-files-o"></i> Categories</a></li>
         </ul>
       </li>
       <li class="sub-menu">
