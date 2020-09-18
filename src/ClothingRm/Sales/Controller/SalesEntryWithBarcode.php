@@ -999,6 +999,11 @@ class salesEntryWithBarcode {
     $form_data['customerType'] = 'b2b';
     $form_data['taxCalcOption'] = 'e';
     $form_data['billingRate'] = $tran_details['billingRate'];
+    if($tran_details['remarks'] === '') {
+      $form_data['remarksInvoice'] = $tran_details['remarks2'];
+    } else {
+      $form_data['remarksInvoice'] = $tran_details['remarks'];
+    }
     foreach($indent_items as $key => $item_details) {
       $form_data['itemDetails']['itemName'][$key] = $item_details['itemName'];
       $form_data['itemDetails']['itemSoldQty'][$key] = $item_details['itemQty'];
