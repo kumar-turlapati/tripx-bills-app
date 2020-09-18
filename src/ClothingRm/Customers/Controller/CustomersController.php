@@ -72,6 +72,8 @@ class CustomersController
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
       $form_validation = $this->_validate_form_data($submitted_data);
+      // dump($form_validation);
+      // exit;
       if($form_validation['status']) {
         $cleaned_params = $form_validation['cleaned_params'];
         $new_customer = $this->customer_api_call->createCustomer($cleaned_params);
@@ -358,6 +360,7 @@ class CustomersController
     $agent_code = Utilities::clean_string($form_data['agentCode']);
     $ma_exe_code = Utilities::clean_string($form_data['maExecutive']);
     $customer_rating = Utilities::clean_string($form_data['customerRating']);
+    $location_code = Utilities::clean_string($form_data['locationCode']);
 
     $age = Utilities::clean_string($form_data['age']);
     $age_category = Utilities::clean_string($form_data['ageCategory']);
@@ -420,6 +423,7 @@ class CustomersController
     $cleaned_params['agentCode'] = $agent_code;
     $cleaned_params['maExecutive'] = $ma_exe_code;
     $cleaned_params['customerRating'] = $customer_rating;
+    $cleaned_params['locationCode'] = $location_code;
 
     if(count($form_errors)>0) {
       return [
