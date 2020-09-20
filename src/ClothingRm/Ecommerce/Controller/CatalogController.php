@@ -12,6 +12,7 @@ use Atawa\Config\Config;
 
 use ClothingRm\Ecommerce\Model\Catalog;
 use ClothingRm\Products\Model\Products;
+use ClothingRm\Ecommerce\Model\Category;
 
 class CatalogController {
 
@@ -22,6 +23,7 @@ class CatalogController {
     $this->flash = new Flash;
     $this->catalog_model = new Catalog;
     $this->products_model = new Products;
+    $this->category_model = new Category;
   }  
 
   // create gallery
@@ -47,6 +49,10 @@ class CatalogController {
       }
     }
 
+    $cats_and_subcats = $this->get_categories();
+    $categories = isset($cats_and_subcats['categories']) ? $cats_and_subcats['categories'] : [];
+    $subcategories = isset($cats_and_subcats['subcategories']) ? $cats_and_subcats['subcategories'] : [];
+
     // theme variables
     $controller_vars = array(
       'page_title' => 'Create Catalog',
@@ -57,6 +63,8 @@ class CatalogController {
     $template_vars = array(
       'form_errors' => $form_errors,
       'form_data' => $submitted_data,
+      'categories' => ["0" => 'Choose']+$categories,
+      'subcategories' => ["0" => 'Choose']+$subcategories,
     );
 
     return array($this->template->render_view('catalog-create',$template_vars),$controller_vars);
@@ -97,6 +105,10 @@ class CatalogController {
       }
     }
 
+    $cats_and_subcats = $this->get_categories();
+    $categories = isset($cats_and_subcats['categories']) ? $cats_and_subcats['categories'] : [];
+    $subcategories = isset($cats_and_subcats['subcategories']) ? $cats_and_subcats['subcategories'] : [];
+
     // theme variables
     $controller_vars = array(
       'page_title' => 'Update Catalog',
@@ -108,6 +120,8 @@ class CatalogController {
       'form_errors' => $form_errors,
       'form_data' => $submitted_data,
       'existing_catalog_details' => $existing_catalog_details,
+      'categories' => ["0" => 'Choose']+$categories,
+      'subcategories' => ["0" => 'Choose']+$subcategories,
     );
 
     return array($this->template->render_view('catalog-update',$template_vars),$controller_vars);
@@ -523,6 +537,8 @@ class CatalogController {
     $catalog_status = Utilities::clean_string($form_data['status']);
     $catalog_desc_short = Utilities::clean_string($form_data['catalogDescShort']);
     $catalog_desc = Utilities::clean_string($form_data['catalogDesc']);
+    $category_id = Utilities::clean_string($form_data['categoryID']);
+    $subcategory_id = Utilities::clean_string($form_data['subCategoryID']);
 
     if($catalog_name !== '') {
       $cleaned_params['catalogName'] = $catalog_name;
@@ -534,6 +550,8 @@ class CatalogController {
     $cleaned_params['catalogDescShort'] = $catalog_desc_short;
     $cleaned_params['status'] = $catalog_status;
     $cleaned_params['isDefault'] = $is_default;
+    $cleaned_params['categoryID'] = $category_id;
+    $cleaned_params['subCategoryID'] = $subcategory_id;
 
     if(count($form_errors)>0) {
       return array(
@@ -547,5 +565,30 @@ class CatalogController {
       );
     } 
   }
+
+  // get categories from api.
+  private function get_categories() {
+    $categories = $subcategories = [];
+    $categories_list = $this->category_model->categories_list(['returnAll' => true, 'activeOnly' => true]);
+    $api_status = $categories_list['status'];
+    // check api status
+    if($api_status) {
+      // $category_keys = array_column($categories_list['categories']['categories'], 'categoryID');
+      // $category_values = array_column($categories_list['categories']['categories'], 'categoryName');
+      // return array_combine($category_keys, $category_values);
+      foreach($categories_list['categories']['categories'] as $category_details) {
+        $parent_id = $category_details['parentID'];
+        $category_id = $category_details['categoryID'];
+        if($parent_id > 0) {
+          $subcategories[$category_id] = $category_details['categoryName'];
+        } else {
+          $categories[$category_id] = $category_details['categoryName'];
+        }
+      }
+      return ['categories' => $categories, 'subcategories' => $subcategories];
+    } else {
+      return [];
+    }    
+  }  
 
 } // end of class.

@@ -135,6 +135,20 @@ function initializeJS() {
     });
   }
 
+  if($('#appContentRedirectionContainer').length > 0) {
+    $('#enableRedirection').on('change', function(e){
+      var option = $(this).val();
+      if(parseInt(option) === 1) {
+        $('#appContentRedirectionContainer').show();
+      } else {
+        $('#appContentRedirectionContainer').hide();
+        $('#catalogName').val('');
+        $('#itemName').val('');
+      }
+    });    
+  }
+
+
   if($('.postSc2CB').length > 0) {
     $('.postSc2CB').on('click', function(e){
       var buttonObjId = $(this).attr('id');
@@ -1951,7 +1965,9 @@ function initializeJS() {
     } else if(buttonId === 'genGpCancel') {
       window.location.href = '/get-invoice-no';
     } else if(buttonId === 'ecomCatCancel') {
-      window.location.href = '/ecom/category/create';      
+      window.location.href = '/ecom/category/create';
+    } else if(buttonId === 'ecomCreateAppCancel') {
+      window.location.href = '/ecom/app-content/create';       
     }
   });
 
@@ -2033,6 +2049,21 @@ function initializeJS() {
       e.preventDefault();
       var delUrl = jQuery(this).attr('href');
       bootbox.confirm("Are you sure. You want to delete this Category?", function(result) {
+        if(result===true) {
+          window.location.href=delUrl;
+        } else {
+          return;
+        }
+      });
+    });
+  }
+
+  //delete ecom content
+  if( $('.delEcomContent').length>0 ) {
+    jQuery('.delEcomContent').on("click", function(e){
+      e.preventDefault();
+      var delUrl = jQuery(this).attr('href');
+      bootbox.confirm("Are you sure. You want to delete this Content?", function(result) {
         if(result===true) {
           window.location.href=delUrl;
         } else {
@@ -2429,7 +2460,29 @@ function initializeJS() {
         }
       },
       'max': 0,
-    });            
+    });
+  }
+
+  // catalogAC
+  if(jQuery('.catalogAc').length>0) {
+    $('.catalogAc').autocomplete("/async/catalogAc", {
+      width: 342,
+      cacheLength:0,
+      selectFirst:false,
+      minChars:2,
+      'max': 0,
+    });
+  }
+
+  // catalogItemAc
+  if(jQuery('.catalogItemAc').length>0) {
+    $('.catalogItemAc').autocomplete("/async/catalogItemAc", {
+      width: 342,
+      cacheLength:0,
+      selectFirst:false,
+      minChars:2,
+      'max': 0,
+    });
   }
 
   // brand names autocomplete

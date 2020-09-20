@@ -39,13 +39,26 @@ class AsyncController {
       $params['q'] = Utilities::clean_string($request->get('a'));
       $params['locationCode'] = !is_null($request->get('locationCode')) ? Utilities::clean_string($request->get('locationCode')) : '';
       $response = $api_caller->sendRequest('get','products/ac',$params,false);
-      if(count($response)>0 && is_array($response)) {
+      if(is_array($response) && count($response)>0) {
+        echo implode($response,"\n");
+      }
+    } elseif($api_string === 'catalogAc') {
+      $params['q'] = Utilities::clean_string($request->get('a'));
+      $response = $api_caller->sendRequest('get','catalog/ac',$params,false);
+      if(is_array($response) && count($response)>0) {
+        echo implode($response,"\n");
+      }      
+    } elseif($api_string === 'catalogItemAc') {
+      $params['q'] = Utilities::clean_string($request->get('a'));
+      $response = $api_caller->sendRequest('get','catalog/item/ac',$params,false);
+      if(is_array($response) && count($response)>0) {
         echo implode($response,"\n");
       }
     } elseif($api_string==='poDetails') {
       $params['poNo'] = $request->get('poNo');
       $params['clientID'] = $client_id;
       $response = $api_caller->sendRequest('get','purchases',$params,false);
+      header("Content-type: application/json");
       if(is_array($response)){
         echo json_encode($response);
       } else {

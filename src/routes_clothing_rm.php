@@ -1001,7 +1001,6 @@ $routes->add('report_dispatchSummary', new Routing\Route('/indent-dispatch-summa
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentDispatchSummary',
 )));
 
-
 //Ecommerce routes.
 $routes->add('gallery_create', new Routing\Route('/gallery/create', array(
   '_controller' => 'ClothingRm\\Ecommerce\\Controller\\GalleryController::createGallery',
@@ -1068,6 +1067,22 @@ $routes->add('ecom_category_list', new Routing\Route('/ecom/categories/list', ar
 $routes->add('ecom_sub_category_list', new Routing\Route('/ecom/subcategories/{categoryID}', array(
   '_controller' => 'ClothingRm\\Ecommerce\\Controller\\CategoriesController::subCategoriesList',
   'categoryID' => null,
+)));
+
+// app content
+$routes->add('ecom_app_content_create', new Routing\Route('/ecom/app-content/create', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\AppContentController::createContent',
+)));
+$routes->add('ecom_app_content_update', new Routing\Route('/ecom/app-content/update/{contentID}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\AppContentController::updateContent',
+  'categoryID' => null,
+)));
+$routes->add('ecom_app_content_delete', new Routing\Route('/ecom/app-content/delete/{contentID}', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\AppContentController::deleteContent',
+  'categoryID' => null,
+)));
+$routes->add('ecom_app_content_list', new Routing\Route('/ecom/app-content/list', array(
+  '_controller' => 'ClothingRm\\Ecommerce\\Controller\\AppContentController::contentList',
 )));
 
 // lead routes.
@@ -1147,154 +1162,3 @@ $routes->add('app_user_update', new Routing\Route('/app-users/update/{uuid}', ar
 
 
 return $routes;
-
-/*
-// $routes->add('report_printStockReport', new Routing\Route('/stock-report', array(
-//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReport',
-// )));
-// $routes->add('report_openingBalance', new Routing\Route('/opening-balances', array(
-//   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsOpBalController::opBalReport',
-// )));
-
-
-
-// reports
-$routes->add('report_filterOptions', new Routing\Route('/report-options/{reportName}', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::reportOptions',
-  'reportName' => null,
-)));
-
-$routes->add('report_indentItemAvail', new Routing\Route('/indent-item-avail', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemAvailability',
-)));
-$routes->add('report_indentItemwise', new Routing\Route('/indent-itemwise', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentItemwiseBooked',
-)));
-$routes->add('report_indentAgentwise', new Routing\Route('/indent-agentwise', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentAgentwiseBooked',
-)));
-$routes->add('report_indentStatewise', new Routing\Route('/indent-statewise', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentStatewiseBooked',
-)));
-$routes->add('report_indentRegister', new Routing\Route('/indent-register', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentRegister',
-)));
-$routes->add('report_dispatchSummary', new Routing\Route('/indent-dispatch-summary', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::indentDispatchSummary',
-)));
-
-
-
-$routes->add('report_printSalesBillSmall', new Routing\Route('/print-sales-bill-small', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBillSmall',
-)));
-$routes->add('report_printSalesBill', new Routing\Route('/print-sales-bill', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsController::printSalesBill',
-)));
-$routes->add('report_salesabs_month_taxrate', new Routing\Route('/sales-abs-month/taxrate', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesControllerTax::salesAbsMonthTaxRate',
-)));
-$routes->add('report_printDaySales', new Routing\Route('/day-sales-report', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::printDaySalesSummary',
-)));
-$routes->add('report_salesRegister', new Routing\Route('/sales-register', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::salesRegister',
-)));
-$routes->add('report_printItemSalesReport', new Routing\Route('/itemwise-sales-report', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::itemWiseSalesReport',
-)));
-$routes->add('report_sreturnsItemwise', new Routing\Route('/itemwise-sales-returns', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesReturnController::itemwiseSalesReturns',
-)));
-$routes->add('report_salesReturnRegister', new Routing\Route('/sales-return-register', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesReturnController::salesReturnRegister',
-)));
-
-/*
-$routes->add('report_printSalesReturnBill', new Routing\Route('/print-sales-return-bill', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesReturnController::printSalesReturnBill',
-)));
-$routes->add('report_salesReturnRegister', new Routing\Route('/sales-return-register', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesReturnController::salesReturnRegister',
-)));
-$routes->add('report_grnRegister', new Routing\Route('/grn-register', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::grnRegister',
-)));
-$routes->add('report_billSummaryPatient', new Routing\Route('/sales-summary-patient', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::patientBillSummary',
-)));
-$routes->add('report_printStockReportNew', new Routing\Route('/stock-report-new', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::stockReportNew',
-)));
-$routes->add('report_printExpiryReport', new Routing\Route('/expiry-report', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::expiryReport',
-)));
-$routes->add('report_printItemSalesReport', new Routing\Route('/itemwise-sales-report', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::itemWiseSalesReport',
-)));
-$routes->add('report_printItemSalesReportByMode', new Routing\Route('/itemwise-sales-report-bymode', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::itemWiseSalesReportByMode',
-)));
-$routes->add('report_salesByMode', new Routing\Route('/sales-by-mode', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::salesByMode',
-)));
-$routes->add('report_supplierPaymentsSummary', new Routing\Route('/supplier-payments-due', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsFinanceController::supplierPaymentsDue',
-)));
-$routes->add('report_supplierOs', new Routing\Route('/suppliers-os-report', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsFinanceController::supplierOutstanding',
-)));
-$routes->add('report_stockAdjEntries', new Routing\Route('/adj-entries', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::adjEntries',
-)));
-$routes->add('report_materialmovement', new Routing\Route('/material-movement', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::materialMovement',
-)));
-$routes->add('report_printGrn', new Routing\Route('/print-grn/{grnCode}', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsGrnController::printGrn',
-  'grnCode' => null,
-)));
-$routes->add('report_printItemThreshold', new Routing\Route('/print-itemthr-level/{pageNo}', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::printItemthrLevel',
-  'pageNo' => null,
-)));
-$routes->add('report_ioAnalysis', new Routing\Route('/io-analysis', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsAnalysisController::ioAnalysis',
-)));
-$routes->add('report_itemMaster', new Routing\Route('/item-master', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsInventoryController::itemMaster',
-)));
-$routes->add('report_payablesMonthwise', new Routing\Route('/payables-monthwise', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsFinanceController::payablesMonthwise',
-)));
-
-$routes->add('report_momComparison', new Routing\Route('/mom-comparison', array(
-  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsSalesController::momComparison',
-)));
-
-$routes->add('adminOptions_editSalesBill', new Routing\Route('/admin-options/edit-sales-bill', array(
-  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editSalesBillAction',
-)));
-$routes->add('adminOptions_deleteSaleBill', new Routing\Route('/admin-options/delete-sale-bill', array(
-  '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::deleteSaleBill',
-)));
-$routes->add('adminOptions_editPOAfterGRN', new Routing\Route('/admin-options/edit-po', array(
-  '_controller' => 'PharmaRetail\\AdminOptions\\Controller\\AdminOptionsController::editPoAction',
-)));
-// Supplier outstanding
-$routes->add('fin_supp_billwise_outstanding', new Routing\Route('/fin/billwise-outstanding', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierBillwiseOsAction',
-)));
-$routes->add('fin_supp_ason_outstanding', new Routing\Route('/fin/supp-outstanding-ason', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierBillwiseAsonAction',
-)));
-$routes->add('fin_supp_ledger', new Routing\Route('/fin/supplier-ledger', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\FinSuppOpBalController::supplierLedger',
-)));
-$routes->add('fin_receivables', new Routing\Route('/fin/receivables-ason', array(
-'_controller' => 'ClothingRm\\Finance\\Controller\\ReceiptsController::receivablesListAsonAction',
-)));
-// $routes->add('adminOptions_editBusinessInfo', new Routing\Route('/admin-options/edit-business-info', array(
-//   '_controller' => 'ClothingRm\\AdminOptions\\Controller\\AdminOptionsController::editBusinessInfoAction',
-// )));
-*/
