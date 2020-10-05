@@ -354,11 +354,11 @@ class GalleryController {
         // check file type matches and size is under 2mb.
         if($file_size <= 2000000 && in_array($file_type, $file_types_a)) {
           list($width, $height) = getimagesize($tmp_name);
-          if( (int)$width === (int)$height) {
-            $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
-          } else {
-            $form_errors[$key] = 'Image height and width should be same.';
-          }
+          $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
+          // if( (int)$width === (int)$height) {
+          // } else {
+          //   $form_errors[$key] = 'Image height and width should be same.';
+          // }
         } else {
           $form_errors[$key] = 'Invalid file type or size is more than 2mb.';
         }
@@ -442,11 +442,11 @@ class GalleryController {
         // check file type matches and size is under 2mb.
         if($file_size <= 2000000 && in_array($file_type, $file_types_a)) {
           list($width, $height) = getimagesize($tmp_name);
-          if( (int)$width === (int)$height) {
-            $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
-          } else {
-            $form_errors[$key] = 'Image height and width should be same.';
-          }
+          $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
+          // if( (int)$width === (int)$height) {
+          // } else {
+          //   $form_errors[$key] = 'Image height and width should be same.';
+          // }
         } else {
           $form_errors[$key] = 'Invalid file type or size is more than 2mb.';
         }

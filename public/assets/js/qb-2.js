@@ -687,6 +687,18 @@ function initializeJS() {
       $('#showBarcode').show();
     });
 
+    $('#scanWindowMainButton').on('click', function(e) {
+      e.preventDefault();
+      var customerName = $('#name').val();
+      if(customerName.length > 0) {
+        $('#scanWindowMainDiv, #scanWindowTr').show();
+      } else {
+        bootbox.alert({
+          message: "Customer name is mandatory :("
+        });        
+      }
+    });
+
     $('#showBarcode').on('click', function(e) {
       e.preventDefault();
       $('#owBarcode').show();

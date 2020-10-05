@@ -111,7 +111,11 @@ class CategoriesController {
         $result = $this->category_model->category_update($cleaned_params, $category_id);
         if($result['status']) {
           $this->flash->set_flash_message('<i class="fa fa-check aria-hidden="true"></i>&nbsp;Category updated successfully.');
-          Utilities::redirect('/ecom/categories/list');
+          if($parent_id > 0) {
+            Utilities::redirect('/ecom/subcategories/'.$parent_id);
+          } else {
+            Utilities::redirect('/ecom/categories/list');
+          }
         } else {
           $page_error = $result['apierror'];
           $this->flash->set_flash_message($page_error, 1);
@@ -263,6 +267,7 @@ class CategoriesController {
     $parent = Utilities::clean_string($form_data['parent']);
     $category_desc_short = Utilities::clean_string($form_data['categoryDescShort']);
     $category_desc_long = Utilities::clean_string($form_data['categoryDescLong']);
+    $status = Utilities::clean_string($form_data['status']);
 
     if($category_name !== '') {
       $cleaned_params['categoryName'] = $category_name;
@@ -277,6 +282,7 @@ class CategoriesController {
     $cleaned_params['parent'] = $parent;
     $cleaned_params['categoryDescShort'] = $category_desc_short;
     $cleaned_params['categoryDescLong'] = $category_desc_long;
+    $cleaned_params['status'] = $status;
 
     foreach($files as $key => $file_details) {
       $file_name = $file_details['name'];
@@ -288,11 +294,11 @@ class CategoriesController {
         // check file type matches and size is under 2mb.
         if($file_size <= 2000000 && in_array($file_type, $file_types_a)) {
           list($width, $height) = getimagesize($tmp_name);
-          if( (int)$width === (int)$height) {
-            $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
-          } else {
-            $form_errors[$key] = 'Image height and width should be same.';
-          }
+          $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
+          // if( (int)$width === (int)$height) {
+          // } else {
+          //   $form_errors[$key] = 'Image height and width should be same.';
+          // }
         } else {
           $form_errors[$key] = 'Invalid file type or size is more than 2mb.';
         }
@@ -327,6 +333,7 @@ class CategoriesController {
     $parent = Utilities::clean_string($form_data['parent']);
     $category_desc_short = Utilities::clean_string($form_data['categoryDescShort']);
     $category_desc_long = Utilities::clean_string($form_data['categoryDescLong']);
+    $status = Utilities::clean_string($form_data['status']);
 
     if($category_name !== '') {
       $cleaned_params['categoryName'] = $category_name;
@@ -341,7 +348,7 @@ class CategoriesController {
     $cleaned_params['parent'] = $parent;
     $cleaned_params['categoryDescShort'] = $category_desc_short;
     $cleaned_params['categoryDescLong'] = $category_desc_long;
-
+    $cleaned_params['status'] = $status;
 
     foreach($files as $key => $file_details) {
       $file_name = $file_details['name'];
@@ -353,11 +360,11 @@ class CategoriesController {
         // check file type matches and size is under 2mb.
         if($file_size <= 2000000 && in_array($file_type, $file_types_a)) {
           list($width, $height) = getimagesize($tmp_name);
-          if( (int)$width === (int)$height) {
-            $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
-          } else {
-            $form_errors[$key] = 'Image height and width should be same.';
-          }
+          $cleaned_params['files'][] = ['tmp_name' => $tmp_name, 'file_name' => $file_name, 'content_type' => $file_type, 'is_upload' => true];
+          // if( (int)$width === (int)$height) {
+          // } else {
+          //   $form_errors[$key] = 'Image height and width should be same.';
+          // }
         } else {
           $form_errors[$key] = 'Invalid file type or size is more than 2mb.';
         }

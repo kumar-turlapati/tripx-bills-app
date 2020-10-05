@@ -41,7 +41,7 @@
     $weight = 0;
   }  
   $show_redirection = (int)$enable_redirection === 1 ? '' : 'display: none;';
-  $s3_url = 'https://'.$s3_config['BUCKET_NAME'].'.'.$s3_config['END_POINT_FULL'].'/'.$client_code.'/categories/'.$existing_data['imageName'];
+  $s3_url = 'https://'.$s3_config['BUCKET_NAME'].'.'.$s3_config['END_POINT_FULL'].'/'.$client_code.'/app-content/'.$existing_data['imageName'];
   $act_inact_options = [0 => 'Inactive', 1 => 'Active'];  
 ?>
 <div class="row">

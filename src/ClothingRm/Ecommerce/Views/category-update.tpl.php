@@ -34,8 +34,14 @@
   } else {
     $parent = '';
   }
-
+  if(isset($form_data['status']) && $form_data['status'] !== '' ) {
+    $status = $form_data['status'];
+  } else {
+    $status = '-1';
+  }
   $s3_url = 'https://'.$s3_config['BUCKET_NAME'].'.'.$s3_config['END_POINT_FULL'].'/'.$client_code.'/categories/'.$existing_data['imageName'];
+  $status_a = ["-1" => 'Choose', "1" => 'Active', "0" => "Inactive"];
+  // dump($form_data);
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -125,7 +131,7 @@
             <div style="clear:both;"></div>          
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-12 col-lg-12 m-bot15">
+            <div class="col-sm-12 col-md-9 col-lg-9 m-bot15">
               <label class="control-label labelStyle"><?php echo $mod ?> description - Short (max 100 chars.)</label>
               <input 
                 type="text" 
@@ -139,6 +145,26 @@
                 <span class="error"><?php echo $form_errors['categoryDescShort'] ?></span>
               <?php endif; ?>
             </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Status</label>
+              <div class="select-wrap">
+                <select class="form-control" id="status" name="status">
+                  <?php 
+                    foreach($status_a as $key=>$value): 
+                      if((int)$key === (int)$status) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['status'])): ?>
+                <span class="error"><?php echo $form_errors['status'] ?></span>
+              <?php endif; ?>
+            </div>            
             <div class="col-sm-12 col-md-8 col-lg-8">
               <label class="control-label labelStyle"><?php echo $mod ?> description - Long (max 1000 chars.)</label>
               <textarea 
