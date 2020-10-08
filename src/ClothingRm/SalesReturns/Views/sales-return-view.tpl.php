@@ -26,7 +26,7 @@
     $totalReturnAmount = 0;
   }
 
-  if(isset($submitted_data['totalReturnAmountRound']) && $submitted_data['totalReturnAmountRound']>0) {
+  if(isset($submitted_data['totalReturnAmountRound']) && $submitted_data['totalReturnAmountRound'] !== '') {
     $totalReturnAmountRound = $submitted_data['totalReturnAmountRound'];
   } else {
     $totalReturnAmountRound = 0;
@@ -45,6 +45,9 @@
   } else {
     $disable_form_data = '';
   }
+
+  // dump($sale_details);
+  // dump($submitted_data);
 ?>
 
 <!-- Basic form starts -->
@@ -125,10 +128,25 @@
               <tbody>               
                 <?php
                   $item_total = $total_amount = $item_total = $i= 0;
+                  // dump($sale_item_details);
+                  // dump($return_items);
+                  // dump($qtys_a);
+                  $tax_calc_option = $sale_details['taxCalcOption'];
                   foreach($return_items as $return_item_name => $return_qty):
                       $i++;
-                      $sale_item_key = array_search($return_item_name, array_column($sale_item_details,'itemName'));
+                      $sale_item_key = false;
+                      $return_item_name_a = explode('___', $return_item_name);
+                      foreach($sale_item_details as $array_key => $array_values){
+                        if($array_values['itemName'] === $return_item_name_a[0] && 
+                           $array_values['lotNo'] === $return_item_name_a[1]
+                        ) {
+                          $sale_item_key = $array_key;
+                          break;
+                        }
+                      }
+                      // $sale_item_key = array_search($return_item_name, array_column($sale_item_details,'itemName'));
                       if($sale_item_key !== false) {
+                        // dump($sale_item_details[$sale_item_key]);
                         $item_code = $sale_item_details[$sale_item_key]['itemCode'];
                         $item_name = $sale_item_details[$sale_item_key]['itemName'];
                         $item_qty = $sale_item_details[$sale_item_key]['itemQty'];
@@ -136,10 +154,12 @@
                         $igst_amount = $sale_item_details[$sale_item_key]['igstAmount'];
                         $sgst_amount = $sale_item_details[$sale_item_key]['sgstAmount'];
                         $cgst_amount = $sale_item_details[$sale_item_key]['cgstAmount'];
-                        if($igst_amount > 0) {
-                          $item_rate += $igst_amount;
-                        } else {
-                          $item_rate += $cgst_amount + $sgst_amount;
+                        if($tax_calc_option === 'i') {
+                          if($igst_amount > 0) {
+                            $item_rate += $igst_amount;
+                          } else {
+                            $item_rate += $cgst_amount + $sgst_amount;
+                          }
                         }
                         $lot_no = $sale_item_details[$sale_item_key]['lotNo'];
                       } else {
@@ -152,15 +172,15 @@
 
                       $item_string = $item_name.'$'.$item_code.'$';
 
-                      if(isset($return_items[$item_name]) && $return_items[$item_name]>0) {
-                        $return_qty = $return_items[$item_name];
+                      if(isset($return_items[$item_name.'___'.$lot_no]) && $return_items[$item_name.'___'.$lot_no]>0) {
+                        $return_qty = $return_items[$item_name.'___'.$lot_no];
                         $disabled = 'disabled="disabled"';
                       } else {
                         $return_qty = 0;
                         $disabled = '';
                       }
 
-                      $return_qty_a = array_slice($qtys_a,0,($item_qty+1));
+                      // $return_qty_a = array_slice($qtys_a,0,($item_qty+1));
                       $return_value = $item_rate*$return_qty;
                 ?>
                   <tr>

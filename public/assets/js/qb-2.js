@@ -3666,10 +3666,8 @@ function initializeJS() {
 
   // sales return window.
   if( $('#salesReturnWindow').length > 0 ) {
-
     if($('#srBarcode').length > 0) {
       $('#srBarcode').focus();
-
       $('#srBarcode').on('keypress', function(e){
         if (e.keyCode == 13) {
           var barcode = $(this).val();
@@ -3689,7 +3687,7 @@ function initializeJS() {
                 var lotNoId = moQ = '';
                 if(objLength > 0) {
                   var itemName = itemDetails.response.bcDetails.itemName;
-                  var lotNo = itemDetails.response.bcDetails.lotNo;
+                  var lotNo = itemDetails.response.bcDetails[0].lotNo;
                   $('#salesReturnTable tr').each(function() {
                     var lotNoTd = $(this).find(".returnLotNo");
                     if(lotNoTd.text() === lotNo) {
@@ -3720,7 +3718,6 @@ function initializeJS() {
         e.preventDefault();
       });
     }
-
     $('.returnQty').on("blur", function(e){
       var returnItemId = $(this).attr('id').split('_')[1];
       var returnRate = parseFloat(returnNumber($('#returnRate_'+returnItemId).text()));
@@ -3751,6 +3748,11 @@ function initializeJS() {
       jQuery('.roundOff').text(roundOff.toFixed(2));
       jQuery('.netPay').text(netPay.toFixed(2));
     }
+    $('#srActionButton').on('click', function(e){
+      e.preventDefault();
+      $('#srActionButton').attr('disabled', true);
+      $('#salesReturnWindow').submit();
+    });
   }
 
   if( $('#sendOtpBtn').length>0 ) {

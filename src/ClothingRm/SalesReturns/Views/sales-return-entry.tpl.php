@@ -262,7 +262,7 @@
          
           <br />
           <div class="text-center">
-            <button class="btn btn-primary" id="Save" <?php echo $disabled ?>>
+            <button class="btn btn-primary" id="srActionButton" <?php echo $disabled ?>>
               <i class="fa fa-save"></i> <?php echo $btn_label ?>
             </button>
           </div>

@@ -192,86 +192,93 @@ class SalesReturnsController {
     $sales = new Sales;
     $flash = new Flash;
 
-      # get sales details from salesCode
-      if($request->get('salesCode') && $request->get('salesCode')!=='') {
-          $sales_code = Utilities::clean_string($request->get('salesCode'));
-          $sales_response = $sales->get_sales_details($sales_code);
-          if($sales_response['status']===true) {
-              $sale_details = $sales_response['saleDetails'];
-              if(count($sale_details['itemDetails'])>0) {
-                  $sale_item_details = $sale_details['itemDetails'];
-                  unset($sale_details['itemDetails']);
-              } else {
-                  $flash->set_flash_message('No items found to return.',1);
-                  Utilities::redirect('/sales-return/list');
-              }
-          } else {
-              $flash->set_flash_message('Invalid sales code',1);
-              Utilities::redirect('/sales-return/list');
-          }
+    # get sales details from salesCode
+    if($request->get('salesCode') && $request->get('salesCode')!=='') {
+      $sales_code = Utilities::clean_string($request->get('salesCode'));
+      $sales_response = $sales->get_sales_details($sales_code);
+      if($sales_response['status']===true) {
+        $sale_details = $sales_response['saleDetails'];
+        if(count($sale_details['itemDetails'])>0) {
+          $sale_item_details = $sale_details['itemDetails'];
+          unset($sale_details['itemDetails']);
+        } else {
+          $flash->set_flash_message('No items found to return.',1);
+          Utilities::redirect('/sales-return/list');
+        }
       } else {
-          $flash->set_flash_message('Sales code is mandatory',1);
-          Utilities::redirect('/sales-return/list');            
+        $flash->set_flash_message('Invalid sales code',1);
+        Utilities::redirect('/sales-return/list');
       }
+    } else {
+      $flash->set_flash_message('Sales code is mandatory',1);
+      Utilities::redirect('/sales-return/list');            
+    }
 
-      # check to see return code is valid or not.
-      if($request->get('salesReturnCode') && $request->get('salesReturnCode')!=='') {
-          $return_code = $request->get('salesReturnCode');
-          $return_details = $sales_returns->get_sales_return_details($return_code);
-          if($return_details['status']) {
-              $return_items_qtys = array_column($return_details['returnDetails']['itemDetails'],'itemQty');
-              $return_item_names = array_column($return_details['returnDetails']['itemDetails'],'itemName');
-              $return_items_a = array_combine($return_item_names, $return_items_qtys);
-          } else {
-              $flash->set_flash_message('Invalid Sales Return Code.',1);
-              Utilities::redirect('/sales-return/entry/'.$sales_code);                     
-          }
+    // check to see return code is valid or not.
+    if($request->get('salesReturnCode') && $request->get('salesReturnCode')!=='') {
+      $return_code = $request->get('salesReturnCode');
+      $return_details = $sales_returns->get_sales_return_details($return_code);
+      // dump($return_details);
+      if($return_details['status']) {
+        $return_items_qtys = array_column($return_details['returnDetails']['itemDetails'],'itemQty');
+        $return_item_names = array_column($return_details['returnDetails']['itemDetails'],'itemName');
+        $return_lot_nos = array_column($return_details['returnDetails']['itemDetails'],'lotNo');
+        $return_item_names_a = [];
+        foreach($return_item_names as $item_key => $item_name) {
+          $item_name = $item_name.'___'.$return_lot_nos[$item_key];
+          array_push($return_item_names_a, $item_name);
+        }
+        $return_items_a = array_combine($return_item_names_a, $return_items_qtys);
       } else {
-          $flash->set_flash_message('Invalid Sales Return Code.',1);
-          Utilities::redirect('/sales-return/entry/'.$sales_code);                
+        $flash->set_flash_message('Invalid Sales Return Code.',1);
+        Utilities::redirect('/sales-return/entry/'.$sales_code);                     
       }
+    } else {
+      $flash->set_flash_message('Invalid Sales Return Code.',1);
+      Utilities::redirect('/sales-return/entry/'.$sales_code);                
+    }
 
-      $page_title = 'View Sales Return - Bill No - '.$sale_details['billNo'];
-      $submitted_data = $return_details['returnDetails'];
+    $page_title = 'View Sales Return - Bill No - '.$sale_details['billNo'];
+    $submitted_data = $return_details['returnDetails'];
 
-      // build variables
-      $controller_vars = array(
-        'page_title' => $page_title,
-        'icon_name' => 'fa fa-repeat',
-      );
+    // build variables
+    $controller_vars = array(
+      'page_title' => $page_title,
+      'icon_name' => 'fa fa-repeat',
+    );
 
-      $ages_a[0] = 'Choose';
-      for($i=1;$i<=150;$i++) {
-        $ages_a[$i] = $i;
-      }
-      for($i=1;$i<=365;$i++) {
-        $credit_days_a[$i] = $i;
-      }
-      for($i=0;$i<500;$i++) {
-        $qtys_a[$i] = $i;
-      }
+    $ages_a[0] = 'Choose';
+    for($i=1;$i<=150;$i++) {
+      $ages_a[$i] = $i;
+    }
+    for($i=1;$i<=365;$i++) {
+      $credit_days_a[$i] = $i;
+    }
+    for($i=0;$i<500;$i++) {
+      $qtys_a[$i] = $i;
+    }
 
-      // prepare form variables.
-      $template_vars = array(
-        'sale_details' => $sale_details,
-        'sale_item_details' => $sale_item_details,
-        'return_items' => $return_items_a,
-        'status' => Constants::$RECORD_STATUS,
-        'payment_methods' => Constants::$PAYMENT_METHODS_RC,
-        'ages' => $ages_a,
-        'credit_days_a' => array(0=>'Choose') +$credit_days_a,
-        'qtys_a' => $qtys_a,
-        'yes_no_options' => array(''=>'Choose', 1=>'Yes', 0=>'No'),
-        'errors' => $errors,
-        'page_error' => $page_error,
-        'page_success' => $page_success,
-        'submitted_data' => $submitted_data,
-        'flash_obj' => $flash,
-      );
+    // prepare form variables.
+    $template_vars = array(
+      'sale_details' => $sale_details,
+      'sale_item_details' => $sale_item_details,
+      'return_items' => $return_items_a,
+      'status' => Constants::$RECORD_STATUS,
+      'payment_methods' => Constants::$PAYMENT_METHODS_RC,
+      'ages' => $ages_a,
+      'credit_days_a' => array(0=>'Choose') +$credit_days_a,
+      'qtys_a' => $qtys_a,
+      'yes_no_options' => array(''=>'Choose', 1=>'Yes', 0=>'No'),
+      'errors' => $errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'submitted_data' => $submitted_data,
+      'flash_obj' => $flash,
+    );
 
-      // render template
-      $template = new Template($this->views_path);
-      return array($template->render_view('sales-return-view', $template_vars), $controller_vars);
+    // render template
+    $template = new Template($this->views_path);
+    return array($template->render_view('sales-return-view', $template_vars), $controller_vars);
   }
 
   // sales return list
