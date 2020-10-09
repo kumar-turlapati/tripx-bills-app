@@ -173,7 +173,7 @@
               <i class="fa fa-magic"></i> Marketing <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
-              <li><a href="/sales-indents/list"><i class="fa fa-modx"></i> Sales Indent Register</a></li>
+              <li><a href="/sales-indents/list"><i class="fa fa-delicious"></i> Sales Indent Register</a></li>
               <li><a href="/indent-vs-sales"><i class="fa fa-compress"></i> Indent vs Sales</a></li>
               <li><a href="/indent-vs-sales-by-item"><i class="fa fa-compress"></i> Indent vs Sales(Item)</a></li>
             </ul>

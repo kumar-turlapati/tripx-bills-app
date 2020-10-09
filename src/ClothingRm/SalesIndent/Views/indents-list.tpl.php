@@ -203,7 +203,7 @@
                   <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,30) ?></td>                
                   <td class="valign-middle" style="text-align: right;">
                     <?php if($invoice_no > 0): ?>
-                      <a href="<?php echo '/sales/view-invoice/'.$invoice_code ?>" class="hyperlink"><?php echo $invoice_no ?></a>
+                      <a href="<?php echo '/sales/view-invoice/'.$invoice_code ?>" class="hyperlink" target="_blank"><?php echo $invoice_no ?></a>
                     <?php else: ?>
                       &nbsp;
                     <?php endif; ?>
