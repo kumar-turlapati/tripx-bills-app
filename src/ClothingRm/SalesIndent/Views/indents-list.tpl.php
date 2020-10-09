@@ -266,7 +266,7 @@
   (function() {
     setTimeout(function() {
       window.location.reload();
-    }, 60000);    
+    }, 300000);    
   })();
 </script>
 
