@@ -85,25 +85,6 @@
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
-                <?php /*
-                <div class="col-sm-12 col-md-2 col-lg-2">
-                  <div class="select-wrap">
-                    <select class="form-control" name="campaignCode" id="campaignCode">
-                      <?php 
-                        foreach($campaigns as $campaign_code => $campaign_name):
-                          if($campaignCode === $campaign_code) {
-                            $selected = 'selected="selected"';
-                          } else {
-                            $selected = '';
-                          }  
-                      ?>
-                       <option value="<?php echo $campaign_code ?>" <?php echo $selected ?>>
-                          <?php echo $campaign_name ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                   </div>
-                </div>*/?>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input 
                     placeholder="Customer name" 
@@ -132,7 +113,7 @@
                     </select>
                    </div>
                 </div>
-                <div class="col-sm-12 col-md-1 col-lg-1">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">                  
                     <select class="form-control" name="status" id="status">
                       <?php 
@@ -149,7 +130,9 @@
                       <?php endforeach; ?>
                     </select>
                   </div>
-                </div>
+                </div><br />
+              </div>
+              <div style="text-align: center;">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
             </form>
@@ -166,9 +149,9 @@
                 <th width="7%" class="text-center valign-middle">Indent <br />Date</th>
                 <th width="6%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
                 <th width="20%" class="text-center valign-middle">Customer name</span></th>
-                <th width="10%" class="text-center valign-middle">Referred by</th>
+                <th width="10%" class="text-center valign-middle">Invoice no</th>
                 <th width="10%" class="text-center valign-middle">Campaign name</th>                
-                <th width="6%" class="text-center valign-middle">Status</th>
+                <th width="10%" class="text-center valign-middle">Status</th>
                 <th width="20%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
@@ -190,18 +173,24 @@
                   $campaign_name = $indent_details['campaignName'];
                   $agent_name = $indent_details['agentName'];
                   $indent_status = (int)$indent_details['status'];
-                  if($indent_status===1) {
-                    $status = '<span style="color:green;font-weight:bold;font-size:11px;">Approved</span>';
-                  } elseif($indent_status===0) {
-                    $status = '<span style="color:brown;font-weight:bold;font-size:11px;">Pending</span>';
-                  } elseif($indent_status===2) {
-                    $status = '<span style="color:red;font-weight:bold;font-size:11px;">Rejected</span>';
-                  } elseif($indent_status===4) {
-                    $status = '<span style="color:red;font-weight:bold;font-size:11px;">On Hold</span>';
-                  } elseif($indent_status===5) {
-                    $status = '<span style="color:red;font-weight:bold;font-size:11px;">Cancelled</span>';                    
+                  $invoice_no = (int)$indent_details['invoiceNo'];
+                  $invoice_code = $indent_details['invoiceCode'];
+                  if($invoice_no > 0) {
+                    $status = '<span style="color:green;font-weight:bold;font-size:11px;"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Billed</span>';
                   } else {
-                    $status = 'Invalid';
+                    if($indent_status===1) {
+                      $status = '<span style="color:#225992;font-weight:bold;font-size:11px;"><i class="fa fa-gavel" aria-hidden="true"></i>&nbsp;Approved</span>';
+                    } elseif($indent_status===0) {
+                      $status = '<span style="color:brown;font-weight:bold;font-size:11px;"><i class="fa fa-exclamation" aria-hidden="true"></i>&nbsp;Pending</span>';
+                    } elseif($indent_status===2) {
+                      $status = '<span style="color:red;font-weight:bold;font-size:11px;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;Rejected</span>';
+                    } elseif($indent_status===4) {
+                      $status = '<span style="color:red;font-weight:bold;font-size:11px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i>&nbsp;On Hold</span>';
+                    } elseif($indent_status===5) {
+                      $status = '<span style="color:red;font-weight:bold;font-size:11px;"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Cancelled</span>';                 
+                    } else {
+                      $status = 'Invalid';
+                    }
                   }
                   $remarks2 = isset($indent_details['remarks2']) ? $indent_details['remarks2'] : '';
                   $total += $netpay;
@@ -212,7 +201,13 @@
                   <td class="valign-middle"><?php echo $indent_date ?></td>
                   <td align="right" class="valign-middle text-bold"><?php echo number_format($netpay,2,'.','') ?></td>
                   <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,30) ?></td>                
-                  <td class="valign-middle" title="<?php echo $agent_name ?>"><?php echo substr($agent_name,0,15) ?></td>
+                  <td class="valign-middle" style="text-align: right;">
+                    <?php if($invoice_no > 0): ?>
+                      <a href="<?php echo '/sales/view-invoice/'.$invoice_code ?>" class="hyperlink"><?php echo $invoice_no ?></a>
+                    <?php else: ?>
+                      &nbsp;
+                    <?php endif; ?>
+                  </td>
                   <td class="valign-middle"><?php echo $campaign_name ?></td>
                   <td class="valign-middle"><?php echo $status ?></td>
                   <td class="valign-middle" align="right">
@@ -267,3 +262,30 @@
     </section>
   </div>
 </div>
+<script>
+  (function() {
+    setTimeout(function() {
+      window.location.reload();
+    }, 60000);    
+  })();
+</script>
+
+            <?php /*
+            <div class="col-sm-12 col-md-2 col-lg-2">
+              <div class="select-wrap">
+                <select class="form-control" name="campaignCode" id="campaignCode">
+                  <?php 
+                    foreach($campaigns as $campaign_code => $campaign_name):
+                      if($campaignCode === $campaign_code) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }  
+                  ?>
+                   <option value="<?php echo $campaign_code ?>" <?php echo $selected ?>>
+                      <?php echo $campaign_name ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+               </div>
+            </div>*/?>

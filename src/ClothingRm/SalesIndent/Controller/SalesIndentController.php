@@ -375,7 +375,7 @@ class SalesIndentController {
       $status_a = [1=>'Approved'];
       $def_indent_status = 1;
     } else {
-      $status_a = [99 => 'Status', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
+      $status_a = [99 => 'All Statuses', 0=>'Pending', 1=>'Approved', 2=>'Rejected', 4=>'On Hold', 5=>'Cancelled', 6=>'Billed'];
       $def_indent_status = '';
     }
     $total_pages = $total_records = $record_count = $page_no = 0 ;
