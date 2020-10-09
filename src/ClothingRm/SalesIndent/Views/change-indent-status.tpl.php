@@ -151,7 +151,7 @@
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-8 col-lg-8">
-                  <label class="control-label">Approval / Rejected Comments (not more than 300 characters)</label>
+                  <label class="control-label">Notes (not more than 300 characters)</label>
                   <textarea name="arRemarks" id="arRemarks" class="form-control noEnterKey" maxlength="300"><?php echo $indent_remarks ?></textarea>
                   <?php if(isset($errors['arRemarks'])): ?>
                     <span class="error"><?php echo $errors['arRemarks'] ?></span>
