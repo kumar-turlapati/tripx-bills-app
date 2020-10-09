@@ -311,7 +311,7 @@ class SalesIndentController {
     $executives_a = [];
     $list_url = '/sales-indents/list';
     $indent_no = $indent_code = '';
-    $indent_status_a = [-1=>'Choose', 0=>'Pending', 1=>'Approved', 2=>'Rejected'];
+    $indent_status_a = [-1=>'Choose', 0=>'Pending', 1=>'Approved', 2=>'Rejected', 4=>'On Hold', 5=>'Cancel'];
 
     # ------- fetch indent details -----------------------------
     $indent_code = Utilities::clean_string($request->get('indentCode'));
@@ -803,7 +803,7 @@ class SalesIndentController {
     $cleaned_params = $form_errors = [];
     $indent_status = isset($form_data['arStatus']) ? (int)Utilities::clean_string($form_data['arStatus']) : -1;
     $indent_remarks = isset($form_data['arRemarks']) ? Utilities::clean_string($form_data['arRemarks']) : '';
-    if($indent_status === 1 || $indent_status === 2) {
+    if($indent_status === 1 || $indent_status === 2 || $indent_status === 4 || $indent_status === 5) {
       $cleaned_params['arStatus'] = $indent_status;
     } else {
       $form_errors['arStatus'] = 'Invalid Status.';
@@ -949,6 +949,7 @@ class SalesIndentController {
     $form_data['executiveCode'] = $api_data['tranDetails']['executiveCode'];
     $form_data['campaignCode'] = $api_data['tranDetails']['campaignCode'];
     $form_data['remarks'] = $api_data['tranDetails']['remarks'];
+    $form_data['remarks2'] = $api_data['tranDetails']['remarks2'];
     $form_data['indentStatus'] = $api_data['tranDetails']['indentStatus'];
     $form_data['agentName'] = $api_data['tranDetails']['agentName'];
     $form_data['campaignName'] = $api_data['tranDetails']['campaignName'];    

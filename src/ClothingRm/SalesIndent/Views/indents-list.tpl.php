@@ -196,6 +196,10 @@
                     $status = '<span style="color:brown;font-weight:bold;font-size:11px;">Pending</span>';
                   } elseif($indent_status===2) {
                     $status = '<span style="color:red;font-weight:bold;font-size:11px;">Rejected</span>';
+                  } elseif($indent_status===4) {
+                    $status = '<span style="color:red;font-weight:bold;font-size:11px;">On Hold</span>';
+                  } elseif($indent_status===5) {
+                    $status = '<span style="color:red;font-weight:bold;font-size:11px;">Cancelled</span>';                    
                   } else {
                     $status = 'Invalid';
                   }
@@ -219,6 +223,9 @@
                       <a class="btn btn-primary" href="/print-indent-wor?indentNo=<?php echo $indent_no ?>" title="Print Sales Indent without Rate" target="_blank">
                         <i class="fa fa-print"></i>
                       </a>&nbsp;
+                      <a class="btn btn-info" href="/sales-indent/update-status/<?php echo $indent_code ?>" title="Approve / Reject / Cancel Indent">
+                        <i class="fa fa-check"></i>
+                      </a>
                       <?php if($indent_status === 1 && isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 15): ?>
                         <a class="btn btn-danger" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
                           <i class="fa fa-inr"></i>
@@ -227,12 +234,10 @@
                           <i class="fa fa-barcode"></i>
                         </a>
                       <?php elseif($indent_status === 0): ?>
+                        <?php /*
                         <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
                           <i class="fa fa-pencil"></i>
-                        </a>&nbsp;
-                        <a class="btn btn-info" href="/sales-indent/update-status/<?php echo $indent_code ?>" title="Approve / Reject Indent">
-                          <i class="fa fa-check"></i>
-                        </a>
+                        </a>&nbsp; */?>
                       <?php endif; ?>
                     </div>
                     <?php if((int)$indent_status === 2):  ?>

@@ -9,6 +9,15 @@
   $agent_name = isset($form_data['agentName']) ? $form_data['agentName'] : '';
   $executive_name = isset($form_data['executiveName']) ? $form_data['executiveName'] : '';
   $campaign_name = isset($form_data['campaignName']) ? $form_data['campaignName'] : '';
+  $remarks2 = isset($form_data['remarks2']) ? $form_data['remarks2'] : '';
+  if($remarks2 !== '') {
+    $indent_remarks = $remarks2;
+  } elseif($remarks !== '') {
+    $indent_remarks = $remarks;
+  } else {
+    $indent_remarks = '';
+  }
+  // dump($form_data);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -143,7 +152,7 @@
                 </div>
                 <div class="col-sm-12 col-md-8 col-lg-8">
                   <label class="control-label">Approval / Rejected Comments (not more than 300 characters)</label>
-                  <textarea name="arRemarks" id="arRemarks" class="form-control noEnterKey" maxlength="300"></textarea>
+                  <textarea name="arRemarks" id="arRemarks" class="form-control noEnterKey" maxlength="300"><?php echo $indent_remarks ?></textarea>
                   <?php if(isset($errors['arRemarks'])): ?>
                     <span class="error"><?php echo $errors['arRemarks'] ?></span>
                   <?php endif; ?>

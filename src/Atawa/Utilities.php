@@ -555,6 +555,7 @@ class Utilities
         '/finy/switch', '/discount-manager',
 
         '/indent-vs-sales', '/indent-vs-sales-by-item',
+        '/print-indent', '/print-indent-wor',
 
         '/leads/list', '/lead/create', '/lead/update', '/lead/import', '/lead/remove',
         '/tasks/list', '/task/create', '/task/update', '/task/remove',
