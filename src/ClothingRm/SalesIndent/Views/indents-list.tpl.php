@@ -38,8 +38,15 @@
   } else {
     $status = 99;
   }
+  if(isset($search_params['indentType']) && $search_params['indentType'] !== '') {
+    $indent_type = $search_params['indentType'];
+    $query_params[] = 'indentType='.$indent_type;
+  } else {
+    $indent_type = '';
+  }  
   if(isset($search_params['custName']) && $search_params['custName'] !== '' ) {
     $customer_name = $search_params['custName'];
+    $query_params[] = 'customerName='.$customer_name;
   } else {
     $customer_name = '';
   }  
@@ -130,7 +137,27 @@
                       <?php endforeach; ?>
                     </select>
                   </div>
-                </div><br />
+                </div>
+              </div>
+              <div class="form-group" style="padding-left: 92px;">
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="indentType" id="indentType">
+                      <?php 
+                        foreach($indent_types_a as $indent_type_key => $indent_type_value):
+                          if($indent_type_key === $indent_type) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $indent_type_key ?>" <?php echo $selected ?>>
+                          <?php echo $indent_type_value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>                
               </div>
               <div style="text-align: center;">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
@@ -150,7 +177,7 @@
                 <th width="6%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
                 <th width="20%" class="text-center valign-middle">Customer name</span></th>
                 <th width="10%" class="text-center valign-middle">Invoice no</th>
-                <th width="10%" class="text-center valign-middle">Campaign name</th>                
+                <th width="10%" class="text-center valign-middle">Executive name</th>                
                 <th width="10%" class="text-center valign-middle">Status</th>
                 <th width="20%" class="text-center valign-middle">Actions</th>
               </tr>
@@ -159,6 +186,7 @@
               <?php
                 $cntr = $sl_no;
                 $total = 0;
+                // dump($indents);
                 foreach($indents as $indent_details):
                   $indent_date = date("d-m-Y", strtotime($indent_details['indentDate']));
                   $indent_no = $indent_details['indentNo'];
@@ -172,6 +200,7 @@
                   $netpay = $indent_details['netpay'];
                   $campaign_name = $indent_details['campaignName'];
                   $agent_name = $indent_details['agentName'];
+                  $executive_name = $indent_details['executiveName'];
                   $indent_status = (int)$indent_details['status'];
                   $invoice_no = (int)$indent_details['invoiceNo'];
                   $invoice_code = $indent_details['invoiceCode'];
@@ -200,7 +229,7 @@
                   <td align="right" class="valign-middle"><?php echo $indent_no ?></td>
                   <td class="valign-middle"><?php echo $indent_date ?></td>
                   <td align="right" class="valign-middle text-bold"><?php echo number_format($netpay,2,'.','') ?></td>
-                  <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,30) ?></td>                
+                  <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo $customer_name ?></td>                
                   <td class="valign-middle" style="text-align: right;">
                     <?php if($invoice_no > 0): ?>
                       <a href="<?php echo '/sales/view-invoice/'.$invoice_code ?>" class="hyperlink" target="_blank"><?php echo $invoice_no ?></a>
@@ -208,7 +237,7 @@
                       &nbsp;
                     <?php endif; ?>
                   </td>
-                  <td class="valign-middle"><?php echo $campaign_name ?></td>
+                  <td class="valign-middle"><?php echo $executive_name ?></td>
                   <td class="valign-middle"><?php echo $status ?></td>
                   <td class="valign-middle" align="right">
                     <div class="btn-actions-group">                    

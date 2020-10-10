@@ -410,6 +410,7 @@ class SalesIndentController {
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
     $status = $request->get('status') !== null && (int)$request->get('status') !== 99 ? Utilities::clean_string($request->get('status')) : $def_indent_status;
+    $indent_type = $request->get('indentType') !== null && $request->get('indentType') !== '' ? Utilities::clean_string($request->get('indentType')) : '';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -420,6 +421,7 @@ class SalesIndentController {
       'agentCode' => $agent_code,
       'custName' => $customer_name,
       'status' => $status,
+      'indentType' => $indent_type,
     );
 
     $api_response = $this->sindent_model->get_all_indents($search_params);
@@ -470,6 +472,7 @@ class SalesIndentController {
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
       'status_a' => $status_a,
+      'indent_types_a' => ['' => 'All Indent Types', 'online' => 'Online Indents', 'offline' => 'Offline Indents'], 
     );
 
     // build variables
