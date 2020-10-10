@@ -28,6 +28,31 @@
 <div>
   <form id="dfyForm"><input type="hidden" name="dfyDashboard" id="dfyDashboard" /></form>
   <?php if(count($tabs) > 0): ?>
+    <?php if($user_type === 3 || $user_type === 9 || $user_type === 12): ?>
+      <div class="row" style="margin-bottom: 10px;">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+          <label class="control-label" style="font-weight: bold; color: #d9534f; ">Filter by location/store name</label>                  
+          <div class="select-wrap">
+            <select class="form-control" name="dbLocationCode" id="dbLocationCode" style="background-color: #f6f799; border: 1px solid dashed;">
+              <?php
+                $locationCode = '';
+                foreach($client_locations as $key=>$value):
+                  if($sel_location_code === $key) {
+                    $selected = 'selected="selected"';
+                  } else {
+                    $selected = '';
+                  }  
+              ?>
+               <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                  <?php echo $value ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+           </div>
+        </div>            
+      </div>
+    <?php endif; ?>
+
     <ul class="nav nav-tabs" role="tablist" id="dbContainer">
     <?php foreach($tabs as $key => $tab_details): ?>
       <li role="presentation" class="active">
@@ -35,7 +60,6 @@
       </li>
     <?php endforeach; ?>
     </ul>
-
     <div class="tab-content">
       <?php if($user_type === 3 || $user_type === 9 || $user_type === 5 || $user_type === 12 || $user_type === 14 || $user_type === 16): ?>
         <div role="tabpanel" class="tab-pane active" id="tSales">
@@ -143,7 +167,7 @@
             <div class="row" id="salesDayGraph">
               <div class="col-md-12">
                 <div class="widgetSec">
-                  <div class="widgetHeader">Daywise Sales Summary</div>
+                  <div class="widgetHeader">Daywise Sales Summary<?php if($sel_location_code !== '') echo ' - '.$sel_location_name ?></div>
                   <div class="widgetContent">
                     <div class="subHeader">
                     <form class="form-inline" id="salesGraphFilter">
@@ -168,11 +192,12 @@
                         <?php endforeach; ?>
                       </select>
                       <input type="hidden" name="saleMonth" id="saleMonth" value="<?php echo $cur_month ?>" />
-                      <input type="hidden" name="saleYear" id="saleYear" value="<?php echo $cur_year ?>" />                
+                      <input type="hidden" name="saleYear" id="saleYear" value="<?php echo $cur_year ?>" />
+                      <input type="hidden" name="selLc" id="selLc" value="<?php echo $sel_location_code ?>" />                
                       <input class="btn btn-primary" type="button" value="Reload" id="sfGraphReload" name="sfGraphReload" />
                      </form>
                     </div>
-                     <div id="salesGraph"></div>              
+                    <div id="salesGraph"></div>              
                   </div>
                 </div>
               </div>

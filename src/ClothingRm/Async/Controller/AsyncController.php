@@ -90,8 +90,9 @@ class AsyncController {
       }
     } elseif($api_string==='day-sales') {
       $params['saleDate'] = date("d-m-Y");
-      if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 3 || (int)$_SESSION['utype'] === 9) {
-        $params['locationCode'] = '';
+      if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] === 3 || (int)$_SESSION['utype'] === 9 ||  (int)$_SESSION['utype'] === 12) {
+        $location_code = $request->get('lc') !== null ? Utilities::clean_string( $request->get('lc')) : '';
+        $params['locationCode'] = $location_code !== '' ? $location_code : '';
       } elseif(isset($_SESSION['lc']) && $_SESSION['lc'] !== '') {
         $params['locationCode'] = $_SESSION['lc'];
       } else {
@@ -111,11 +112,13 @@ class AsyncController {
       $sale_month = Utilities::clean_string($request->get('saleMonth'));
       $sale_year = Utilities::clean_string($request->get('saleYear'));
       $no_of_days = Utilities::get_number_of_days_in_month($sale_month, $sale_year);
+      $location_code = $request->get('lc') !== null ? Utilities::clean_string( $request->get('lc')) : '';
 
       $params['fromDate'] = '01-'.$sale_month.'-'.$sale_year;
       $params['toDate'] = $no_of_days.'-'.$sale_month.'-'.$sale_year;
-
+      $params['locationCode'] = $location_code;
       $api_url = 'reports/sales-abs-mon/'.$client_id;
+
       $response = $api_caller->sendRequest('get',$api_url,$params,false);
       header("Content-type: application/json");
       if(is_array($response)) {

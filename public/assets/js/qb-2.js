@@ -3807,11 +3807,11 @@ function initializeJS() {
   }
 
   // dashboard actions
-  if($('#dbContainer').length>0 && $('#daySales').length>0) { 
+  if($('#dbContainer').length>0 && $('#daySales').length>0) {
     var saleDates = [];
     var saleAmounts = [];
-    
-    jQuery.ajax("/async/day-sales",{
+    var locationCode = $('#selLc').val();
+    jQuery.ajax("/async/day-sales?lc="+locationCode,{
         method:"GET",
         success: function(apiResponse) {
           if(apiResponse.status === 'success') {
@@ -3845,13 +3845,25 @@ function initializeJS() {
     });
   }
 
-  $('#sfGraphReload').on("click", function(e){
-    var curMonth = $('#sgf-month').val();
-    var curYear =  $('#sgf-year').val();
-    $('#saleMonth').val(curMonth);
-    $('#saleYear').val(curYear);
-    monthWiseSales();
-  });
+  if($('#dbLocationCode').length > 0) {
+    $('#dbLocationCode').on('change', function() {
+      var locationCode = $(this).val();
+      if(locationCode.length > 0)
+        window.location.href = '/dashboard?lc='+locationCode;
+      else
+        window.location.href = '/dashboard';
+    });
+  }
+
+  if($('#salesDayGraph').length > 0) {
+    $('#sfGraphReload').on("click", function(e){
+      var curMonth = $('#sgf-month').val();
+      var curYear =  $('#sgf-year').val();
+      $('#saleMonth').val(curMonth);
+      $('#saleYear').val(curYear);
+      monthWiseSales();
+    });
+  }
 
   // promotional offers
   if( $('#offerEntryForm').length>0 ) {
@@ -4093,11 +4105,12 @@ function resetFilter(url) {
 function monthWiseSales() {
   var sgfMonth = $('#saleMonth').val();
   var sgfYear = $('#saleYear').val();
+  var locationCode = $('#selLc').val();
   var saleDate = [];
   var saleAmounts = [];
   var totCashSales = totSplitSales = totCardSales = totSales = totSalesReturns = totNetSales = 0;
   var totWalletSales = totCreditSales = 0;
-  jQuery.ajax("/async/monthly-sales?saleMonth="+sgfMonth+'&saleYear='+sgfYear, {
+  jQuery.ajax("/async/monthly-sales?saleMonth="+sgfMonth+'&saleYear='+sgfYear+'&lc='+locationCode, {
     method:"GET",
     success: function(apiResponse) {
       if(apiResponse.status==='success') {

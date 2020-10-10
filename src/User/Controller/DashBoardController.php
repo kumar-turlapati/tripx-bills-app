@@ -18,7 +18,12 @@ class DashBoardController
 
   public function indexAction(Request $request) {
 
-    // dump($_SESSION);
+    $sel_location_code = $request->get('lc') !== null && $request->get('lc') !== '' ? Utilities::clean_string($request->get('lc')) : '';
+
+    // ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(false, false, true);
+    // dump($client_locations);
+    // exit;
 
     // prepare form variables.
     $template_vars = array(
@@ -28,6 +33,9 @@ class DashBoardController
       'cur_year' => date('Y'),
       'mon_year_string' => date('F, Y'),
       'today' => date("dS F, Y"),
+      'client_locations' => ["" => 'All Locations / Stores'] + $client_locations,
+      'sel_location_code' => $sel_location_code,
+      'sel_location_name' => $sel_location_code !== '' ? $client_locations[$sel_location_code] : '',
     );
 
     // make session variable to false.
