@@ -32,6 +32,12 @@
   } else {
     $agentCode = '';
   }
+  if(isset($search_params['executiveCode']) && $search_params['executiveCode'] !== '' ) {
+    $executiveCode = $search_params['executiveCode'];
+    $query_params[] = 'executiveCode='.$executiveCode;
+  } else {
+    $executiveCode = '';
+  }  
   if(isset($search_params['status']) && $search_params['status'] !== '') {
     $status = $search_params['status'];
     $query_params[] = 'status='.$status;
@@ -153,6 +159,24 @@
                       ?>
                        <option value="<?php echo $indent_type_key ?>" <?php echo $selected ?>>
                           <?php echo $indent_type_value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <div class="select-wrap">
+                    <select class="form-control" name="executiveCode" id="executiveCode">
+                      <?php 
+                        foreach($executives as $exe_key => $exe_name):
+                          if($exe_key === $executiveCode) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $exe_key ?>" <?php echo $selected ?>>
+                          <?php echo $exe_name ?>
                         </option>
                       <?php endforeach; ?>
                     </select>

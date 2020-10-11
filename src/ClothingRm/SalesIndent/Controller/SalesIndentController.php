@@ -401,6 +401,18 @@ class SalesIndentController {
       $campaigns_a = array_combine($campaign_keys, $campaign_names);
     }
 
+    # ---------- get executives ---------------------------------
+    $executives_response = $this->bu_model->get_business_users(['userType' => 91]);
+    if($executives_response['status']) {
+      foreach($executives_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $executives_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $executives_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }    
+
     // parse request parameters.
     $per_page = 100;
     $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
@@ -408,6 +420,7 @@ class SalesIndentController {
     $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
     $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
+    $executive_code = $request->get('executiveCode') !== null ? Utilities::clean_string($request->get('executiveCode')):'';
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
     $status = $request->get('status') !== null && (int)$request->get('status') !== 99 ? Utilities::clean_string($request->get('status')) : $def_indent_status;
     $indent_type = $request->get('indentType') !== null && $request->get('indentType') !== '' ? Utilities::clean_string($request->get('indentType')) : '';
@@ -419,6 +432,7 @@ class SalesIndentController {
       'perPage' => $per_page,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
+      'executiveCode' => $executive_code,
       'custName' => $customer_name,
       'status' => $status,
       'indentType' => $indent_type,
@@ -469,6 +483,7 @@ class SalesIndentController {
       'search_params' => $search_params,
       'agents' => [''=>'Referred by'] + $agents_a,
       'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
+      'executives' => [''=>'All Executives'] + $executives_a,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
       'status_a' => $status_a,
