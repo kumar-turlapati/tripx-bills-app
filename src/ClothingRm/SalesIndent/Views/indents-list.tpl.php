@@ -179,7 +179,7 @@
                 <th width="10%" class="text-center valign-middle">Invoice no</th>
                 <th width="10%" class="text-center valign-middle">Executive name</th>                
                 <th width="10%" class="text-center valign-middle">Status</th>
-                <th width="20%" class="text-center valign-middle">Actions</th>
+                <th width="28%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -247,9 +247,11 @@
                       <a class="btn btn-primary" href="/print-indent-wor?indentNo=<?php echo $indent_no ?>" title="Print Sales Indent without Rate" target="_blank">
                         <i class="fa fa-print"></i>
                       </a>&nbsp;
-                      <a class="btn btn-info" href="/sales-indent/update-status/<?php echo $indent_code ?>" title="Approve / Reject / Cancel Indent">
-                        <i class="fa fa-check"></i>
-                      </a>
+                      <?php if(isset($_SESSION['utype']) && ((int)$_SESSION['utype'] === 9 || (int)$_SESSION['utype'] === 3)): ?>
+                        <a class="btn btn-info" href="/sales-indent/update-status/<?php echo $indent_code ?>" title="Modify Indent Status">
+                          <i class="fa fa-check"></i>
+                        </a>
+                      <?php endif; ?>
                       <?php if($indent_status === 1 && isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 15): ?>
                         <a class="btn btn-danger" href="/sales/entry-with-barcode?ic=<?php echo $indent_code ?>" title="Create Sales Order">
                           <i class="fa fa-inr"></i>
@@ -257,11 +259,10 @@
                         <a class="btn btn-warning" href="/sales/entry-with-indent/<?php echo $indent_code ?>" title="Create Sales Order with Scan">
                           <i class="fa fa-barcode"></i>
                         </a>
-                      <?php elseif($indent_status === 0): ?>
-                        <?php /*
-                        <a class="btn btn-warning" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
+                      <?php elseif($indent_status === 0 || $indent_status === 4): ?>
+                        <a class="btn btn-link" href="/sales-indent/update/<?php echo $indent_code ?>" title="Update Indent Details">
                           <i class="fa fa-pencil"></i>
-                        </a>&nbsp; */?>
+                        </a>                        
                       <?php endif; ?>
                     </div>
                     <?php if((int)$indent_status === 2):  ?>

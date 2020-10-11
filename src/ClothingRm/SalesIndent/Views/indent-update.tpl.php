@@ -20,6 +20,7 @@
   $executive_code = isset($form_data['executiveCode']) ? $form_data['executiveCode'] : '';  
   $campaign_code = isset($form_data['campaignCode']) ? $form_data['campaignCode'] : '';
   $remarks = isset($form_data['remarks']) ? $form_data['remarks'] : '';
+  $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : '';
 
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
 
@@ -31,6 +32,8 @@
       $indent_print_url = '/print-indent?indentNo='.$last_indent_no;
     }
   }
+
+  // dump($form_data);
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -44,12 +47,12 @@
             </a> 
           </div>
         </div>        
-        <form id="outwardEntryForm" method="POST">
+        <form id="salesIndentForm" method="POST">
           <div class="table-responsive">
             <table class="table table-hover font12" style="border-top:none;border-left:none;border-right:none;border-bottom:1px solid; margin-bottom: 0px;">
               <thead>
                 <tr>
-                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:8%;padding-left:5px;">Scan Barcode</td>
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:left;width:10%;padding-left:5px;">Scan Barcode</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:10%;">
                     <input
                       type="text"
@@ -59,10 +62,12 @@
                       maxlength="13"
                     />
                   </td>
-                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Scanned Qty.</td>
-                  <td id="indentScannedQty" style="width:10%;border-right:none;border-left:none;border-top:none;font-size:20px;font-weight:bold;vertical-align:middle;color:#225992;">&nbsp;</td>
-                  <td style="vertical-align:middle;font-size:20px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Store name</td>
-                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
+
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;padding-left:5px;">Scanned Qty.</td>
+                  <td id="indentScannedQty" style="width:8%;border-right:none;border-left:none;border-top:none;font-size:20px;font-weight:bold;vertical-align:middle;color:#225992;">&nbsp;</td>
+
+                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:8%;padding-left:5px;">Store name</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:19%;text-align:left;">
                     <select class="form-control" name="locationCode" id="locationCode" disabled>
                       <?php 
                         foreach($client_locations as $location_key=>$value):
@@ -78,7 +83,12 @@
                         </option>
                       <?php endforeach; ?>
                     </select>                    
-                  </td>                  
+                  </td>
+
+                  <td style="vertical-align:middle;font-size:16px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Billing rate</td>
+                  <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:12%;text-align:left;">
+                    <?php echo ucwords($billing_rate) ?>
+                  </td>
                 </tr>
               </thead>
             </table>
@@ -117,11 +127,10 @@
                       $barcode = isset($form_data['itemDetails']['barcode'][$i]) ? $form_data['itemDetails']['barcode'][$i] : '';
                       if($item_qty > 0 && $item_rate > 0) {
                         $item_amount = round($item_qty*$item_rate,2);
-
                         $tot_item_amount += $item_amount;
                         $tot_bill_qty += $item_qty;
                       } else {
-                        $item_amount = '';
+                        $item_amount = 0;
                       }
                   ?>
                   <tr id="tr_<?php echo $barcode.'_'.$lot_no ?>" class="bcrow" index="<?php echo $i ?>">
@@ -312,7 +321,7 @@
                     >
                       <?php
                         foreach($executives as $key=>$value):
-                          if($key === $agent_code) {
+                          if($key === $executive_code) {
                             $selected = 'selected="selected"';
                           } else {
                             $selected = '';
@@ -334,10 +343,11 @@
           </div>
           <input type="hidden" name="ic" id="ic" value="<?php echo $indent_code ?>" />
           <input type="hidden" name="in" id="in" value="<?php echo $indent_number ?>" />
+          <input type="hidden" name="billingRate" id="billingRate" value="<?php echo $billing_rate ?>" />
           <div class="text-center" id="saveWindow" style="margin-top: 20px; <?php echo $tot_products > 0 ? '' : 'display:none;' ?>">
-            <button class="btn btn-primary" id="SaveInvoiceWr" name="op" value="printWithOutRate">
-              <i class="fa fa-save"></i> Update Indent
-            </button>            
+            <button class="btn btn-primary saveUpdateIndent" id="SaveInvoiceWr" name="op" value="printWithOutRate">
+              <i class="fa fa-edit"></i> Update Indent
+            </button>&nbsp;
            <button class="btn btn-danger cancelButton" id="ieWithBarcode">
               <i class="fa fa-times"></i> Cancel
            </button>

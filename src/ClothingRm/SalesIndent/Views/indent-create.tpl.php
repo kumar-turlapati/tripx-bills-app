@@ -358,12 +358,12 @@
             </div>
           </div>
           <div class="text-center" id="saveWindow" style="margin-top: 20px; <?php echo $tot_products > 0 ? '' : 'display:none;' ?>">
-            <button class="btn btn-warning" id="SaveInvoice" name="op" value="printWithRate">
+            <button class="btn btn-warning saveUpdateIndent" id="SaveInvoice" name="op" value="printWithRate">
               <i class="fa fa-save"></i> Save &amp; Print with Rate
-            </button>
-            <button class="btn btn-primary" id="SaveInvoiceWr" name="op" value="printWithOutRate">
+            </button>&nbsp;
+            <button class="btn btn-primary saveUpdateIndent" id="SaveInvoiceWr" name="op" value="printWithOutRate">
               <i class="fa fa-save"></i> Save &amp; Print without Rate
-            </button>            
+            </button>&nbsp;
            <button class="btn btn-danger cancelButton" id="ieWithBarcode">
               <i class="fa fa-times"></i> Cancel
            </button>

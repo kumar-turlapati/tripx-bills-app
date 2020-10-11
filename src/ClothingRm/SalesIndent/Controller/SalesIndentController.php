@@ -107,16 +107,16 @@ class SalesIndentController {
       }
       $form_validation = $this->_validate_form_data($form_data);
       if($form_validation['status']===false) {
-        $this->flash->set_flash_message('You have errors in this form. Please fix them before you save', 1);
+        $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;You have errors in this form. Please fix them before you save', 1);
         $form_errors = $form_validation['errors'];
       } else {
         $api_response = $this->sindent_model->create_sindent($form_data);
         if($api_response['status']) {
-          $this->flash->set_flash_message('Sales indent with Indent No. <b>`'.$api_response['indentNo'].'`</b> created successfully.');
+          $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Sales indent with Indent No. <b>`'.$api_response['indentNo'].'`</b> created successfully.');
           Utilities::redirect('/sales-indent/create?lastIndent='.$api_response['indentNo'].'&lc='.$default_location.'&it='.$form_data['op']);
         } else {
           $page_error = $api_response['apierror'];
-          $this->flash->set_flash_message($page_error,1);
+          $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;'.$page_error,1);
         }
       }
     }
@@ -240,16 +240,16 @@ class SalesIndentController {
       }
       $form_validation = $this->_validate_form_data($form_data);
       if($form_validation['status']===false) {
-        $this->flash->set_flash_message('You have errors in this form. Please fix them before you save', 1);
+        $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;You have errors in this form. Please fix them before you save', 1);
         $form_errors = $form_validation['errors'];
       } else {
         $api_response = $this->sindent_model->update_sindent($form_data, $url_indent_code);
         if($api_response['status']) {
-          $this->flash->set_flash_message('Sales Indent No. `' .$submitted_indent_no.'` updated successfully with code [ '.$submitted_indent_code.' ]');
+          $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Sales Indent No. `' .$submitted_indent_no.'` updated successfully with code [ '.$submitted_indent_code.' ]');
           Utilities::redirect($list_url);
         } else {
           $page_error = $api_response['apierror'];
-          $this->flash->set_flash_message($page_error,1);
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$page_error,1);
         }
       }
     } elseif( !is_null($request->get('indentCode')) ) {
@@ -329,18 +329,18 @@ class SalesIndentController {
       $submitted_data = $request->request->all();
       $form_validation = $this->_validate_ar_indent_data($submitted_data);
       if($form_validation['status']===false) {
-        $this->flash->set_flash_message('You have errors in this form. Please fix them before you save', 1);
+        $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;You have errors in this form. Please fix them before you save', 1);
         $form_errors = $form_validation['errors'];
         $form_data['ic'] = $indent_code;
         $form_data['in'] = $indent_number;
       } else {
         $api_response = $this->sindent_model->change_sindent_status($form_validation['cleaned_params'], $indent_code);
         if($api_response['status']) {
-          $this->flash->set_flash_message('Sales indent with Indent No. <b>`'.$indent_number.'`</b> updated successfully.');
+          $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Sales indent with Indent No. <b>`'.$indent_number.'`</b> updated successfully.');
           Utilities::redirect($list_url);
         } else {
           $page_error = $api_response['apierror'];
-          $this->flash->set_flash_message($page_error,1);
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$page_error,1);
         }
       }
     }
@@ -957,6 +957,7 @@ class SalesIndentController {
     $form_data['agentName'] = $api_data['tranDetails']['agentName'];
     $form_data['campaignName'] = $api_data['tranDetails']['campaignName'];    
     $form_data['executiveName'] = $api_data['tranDetails']['executiveName'];
+    $form_data['billingRate'] = $api_data['tranDetails']['billingRate'];
 
     $form_data['itemDetails']['itemName'] = array_column($api_data['itemDetails'], 'itemName');
     $form_data['itemDetails']['lotNo'] = array_column($api_data['itemDetails'], 'lotNo');

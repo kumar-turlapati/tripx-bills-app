@@ -148,6 +148,13 @@ function initializeJS() {
     });    
   }
 
+  if( $('#salesIndentForm').length > 0 ) {
+    $('.saveUpdateIndent').on('click', function(e){
+      e.preventDefault();
+      $('.saveUpdateIndent, .cancelButton, .deleteOwItem').attr('disabled', true);
+      $('#salesIndentForm').submit();
+    });
+  }
 
   if($('.postSc2CB').length > 0) {
     $('.postSc2CB').on('click', function(e){

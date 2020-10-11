@@ -87,7 +87,7 @@
                         $tot_item_amount += $item_amount;
                         $tot_bill_qty += $item_qty;
                       } else {
-                        $item_amount = '';
+                        $item_amount = 0;
                       }
                   ?>
                   <tr>
