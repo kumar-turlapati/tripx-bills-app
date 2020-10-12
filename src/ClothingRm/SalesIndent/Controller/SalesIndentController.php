@@ -977,7 +977,7 @@ class SalesIndentController {
     $form_data['itemDetails']['itemName'] = array_column($api_data['itemDetails'], 'itemName');
     $form_data['itemDetails']['lotNo'] = array_column($api_data['itemDetails'], 'lotNo');
     $form_data['itemDetails']['itemSoldQty'] = array_column($api_data['itemDetails'], 'itemQty');
-    $form_data['itemDetails']['itemRate'] = array_column($api_data['itemDetails'], 'itemRate');
+    $form_data['itemDetails']['itemRate'] = array_column($api_data['itemDetails'], 'itemRateIndent');
     $form_data['itemDetails']['barcode'] = array_column($api_data['itemDetails'], 'barcode');
 
     return $form_data;
