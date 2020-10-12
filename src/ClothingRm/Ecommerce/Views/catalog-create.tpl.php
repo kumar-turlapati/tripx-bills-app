@@ -36,6 +36,11 @@
     $subcategory_id = $form_data['subCategoryID'];
   } else {
     $subcategory_id = 0;
+  }
+  if(isset($form_data['promote']) && $form_data['promote'] !== '' ) {
+    $promote = $form_data['promote'];
+  } else {
+    $promote = 0;
   }  
 
   $yes_no_options = [0 => 'No', 1 => 'Yes'];
@@ -178,7 +183,7 @@
             <div style="clear:both;"></div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-12 col-lg-12 m-bot20">
+            <div class="col-sm-12 col-md-9 col-lg-9 m-bot20">
               <label class="control-label labelStyle">Catalog description long (max 300 chars.)</label>
               <input 
                 type="text" 
@@ -191,6 +196,25 @@
               <?php if(isset($form_errors['catalogDesc'])): ?>
                 <span class="error"><?php echo $form_errors['catalogDesc'] ?></span>
               <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot20">
+              <label class="control-label labelStyle">Promote in Catalogs section?</label>
+              <div class="select-wrap">
+                <select class="form-control" name="promote" id="promote">
+                  <?php 
+                    foreach($yes_no_options as $key=>$value): 
+                      if((int)$promote === (int)$key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
             </div>
             <div style="clear:both;"></div>
           </div>

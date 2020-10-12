@@ -539,6 +539,7 @@ class CatalogController {
     $catalog_desc = Utilities::clean_string($form_data['catalogDesc']);
     $category_id = Utilities::clean_string($form_data['categoryID']);
     $subcategory_id = Utilities::clean_string($form_data['subCategoryID']);
+    $promote = Utilities::clean_string($form_data['promote']);
 
     if($catalog_name !== '') {
       $cleaned_params['catalogName'] = $catalog_name;
@@ -552,6 +553,7 @@ class CatalogController {
     $cleaned_params['isDefault'] = $is_default;
     $cleaned_params['categoryID'] = $category_id;
     $cleaned_params['subCategoryID'] = $subcategory_id;
+    $cleaned_params['promote'] = $promote;
 
     if(count($form_errors)>0) {
       return array(
