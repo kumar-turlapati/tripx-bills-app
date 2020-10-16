@@ -472,6 +472,8 @@ class Utilities
       14 => 'Sales Operator - Simple',
       15 => 'Floor incharge (Godown ops)',
       16 => 'Sales Operator - Multi Location/Store',
+      17 => 'eCommerce Operator',
+      18 => 'Marketing Operations',
       127 => 'App user',
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
@@ -888,7 +890,7 @@ class Utilities
           }
         }
       }
-      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12 && $utype !== 16 && $utype !== 13) && !$return_all) {
+      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12 && $utype !== 16 && $utype !== 17 && $utype !== 18 && $utype !== 13) && !$return_all) {
         $client_locations = array_intersect($client_locations, [$_SESSION['lc'] => $_SESSION['lname']]);
       }
     }
