@@ -52,7 +52,8 @@ class salesEntryWithIndent {
 
     $page_error = $page_success = $promo_key = '';
     $print_format = 'bill';
-    $indent_code = '';
+    $indent_code = !is_null($request->get('indentCode')) && ctype_alnum($request->get('indentCode')) ? 
+                      Utilities::clean_string($request->get('indentCode')) : '';
 
     // get sales categories
     $sa_categories += $this->_get_sa_categories();
@@ -191,7 +192,6 @@ class salesEntryWithIndent {
       }
     // check if indent code already exists and prefill the sales entry form.      
     } elseif(!is_null($request->get('indentCode')) && ctype_alnum($request->get('indentCode'))) {
-      $indent_code = Utilities::clean_string($request->get('indentCode'));
       $indent_details = $this->sindent_model->get_indent_details($indent_code, true);
       if($indent_details['status']) {
         // map indent data with Sales invoice
@@ -613,6 +613,160 @@ class salesEntryWithIndent {
 
     return $processed_data;
   }
+
+  // apply bill discount
+  private function _apply_bill_discount($item_details = [], $offer_details=[]) {
+    $gross_amount = 0;
+
+    $total_rows = count($item_details['itemName']);
+
+    for($i=0; $i < $total_rows; $i++) {
+      $item_rate = $item_details['itemRate'][$i];
+      $item_qty = $item_details['itemSoldQty'][$i];
+      $item_amount = $item_rate*$item_qty;
+      $gross_amount += $item_amount;
+    }
+
+    $discount_allowed_bill_value = $offer_details['billValue'];
+    $discount_percent = $offer_details['discountPercent'];
+
+    if($gross_amount < $discount_allowed_bill_value) {
+      return [
+        'status' => false,
+        'reason' => 'Bill value must be greater than or equal to Rs.'.$discount_allowed_bill_value,
+      ];
+    }
+
+    # apply discount on each item we have.
+    for($i=0; $i < $total_rows; $i++) {
+      $item_rate = $item_details['itemRate'][$i];
+      $item_qty = $item_details['itemSoldQty'][$i];
+      $item_value = $item_rate * $item_qty;
+      if($item_value>0) {
+        $item_discount = round(($item_value*$discount_percent)/100, 2);
+        $item_details['itemDiscount'][$i] = $item_discount;
+      }
+    }
+    return [
+      'status' => true,
+      'processed_data' => $item_details,
+    ];    
+  }
+
+  // apply price off for items
+  private function _apply_price_off_for_items($item_details = [], $offer_details = []) {
+
+    $discount_applied_items = 0;
+
+    $total_qty_per_order = floatval($offer_details['totalQty']);
+    $free_qty_per_order = floatval($offer_details['freeQty']);
+    $total_rows = count($item_details['itemName']);
+    $total_bill_qty = floatval(array_sum($item_details['itemSoldQty']));
+    $min_mrp = floatval(min($item_details['itemRate']));
+
+    $max_mrp_count = floatval(0);
+    $max_mrp_items_required = $total_qty_per_order - $free_qty_per_order;
+
+    // check for promo offer validity.
+    if($total_qty_per_order !== $total_bill_qty) {
+      return [
+        'status' => false,
+        'reason' => 'Total qty. must be [ '.$total_qty_per_order.' ] per bill.',
+      ];
+    }    
+
+    // if total items are one in the bill process and return.
+    if($total_rows === 1) {
+      $item_rate = $item_details['itemRate'][0];
+      $discount_amount = $item_rate * $free_qty_per_order;
+      $item_details['itemDiscount'][0] = $discount_amount;
+      return [
+        'status' => true,
+        'processed_data' => $item_details,
+      ];
+    }
+
+    $new_item_details = $final_item_details = [
+      'itemName' => [],
+      'itemAvailQty' => [],
+      'itemSoldQty' => [],
+      'itemRate' => [],
+      'itemDiscount' => [],
+      'itemTaxPercent' => [],
+      'lotNo' => [],
+    ];
+
+    $item_cntr = 0;
+
+    // loop through item qtys. and expand qtys.
+    foreach($item_details['itemName'] as $item_key => $item_name) {
+      $item_avail_qty = $item_details['itemAvailQty'][$item_key];
+      $sold_qty = $item_details['itemSoldQty'][$item_key];
+      $item_rate = $item_details['itemRate'][$item_key];
+      $item_discount = 0;
+      $item_tax_percent = $item_details['itemTaxPercent'][$item_key];
+      $lot_no = $item_details['lotNo'][$item_key];
+      // expand items for applying promo code.
+      for($j=0; $j < $sold_qty; $j++) {
+        $new_item_details['itemName'][$item_cntr] = $item_name;
+        $new_item_details['itemAvailQty'][$item_cntr] = $item_avail_qty;
+        $new_item_details['itemSoldQty'][$item_cntr] = 1;
+        $new_item_details['itemRate'][$item_cntr] = $item_rate;
+        $new_item_details['itemDiscount'][$item_cntr] = $item_discount;
+        $new_item_details['itemTaxPercent'][$item_cntr] = $item_tax_percent;
+        $new_item_details['lotNo'][$item_cntr] = $lot_no;
+        $item_cntr++;
+      }
+    }
+
+
+    // for($i=0; $i < $total_rows-1; $i++) {
+    //   $item_name = $item_details['itemName'][$i];
+    // }
+
+    // check max mrp criteria met or not.
+    foreach($new_item_details['itemRate'] as $key => $rate) {
+      if($rate > $min_mrp) {
+        $max_mrp_count++;
+      }
+    }
+
+    // throw error if max mrp criteria not met.
+    if($max_mrp_count < $max_mrp_items_required) {
+      return [
+        'status' => false,
+        'reason' => 'Max MRP items must be [ '.$max_mrp_items_required.' ] in this Promo code. We found only [ '.$max_mrp_count.' ] in this Bill.',
+      ];
+    }
+
+    arsort($new_item_details['itemRate']);
+
+    foreach($new_item_details['itemRate'] as $item_key => $item_rate) {
+      $final_item_details['itemName'][$item_key] = $new_item_details['itemName'][$item_key];
+      $final_item_details['itemAvailQty'][$item_key] = $new_item_details['itemAvailQty'][$item_key];
+      $final_item_details['itemSoldQty'][$item_key] = $new_item_details['itemSoldQty'][$item_key];
+      $final_item_details['itemRate'][$item_key] = $new_item_details['itemRate'][$item_key];
+      $final_item_details['itemDiscount'][$item_key] = $new_item_details['itemDiscount'][$item_key];
+      $final_item_details['itemTaxPercent'][$item_key] = $new_item_details['itemTaxPercent'][$item_key];
+      $final_item_details['lotNo'][$item_key] = $new_item_details['lotNo'][$item_key];      
+    }
+
+    $item_rates_reverse = array_reverse($final_item_details['itemRate'], true);
+    foreach($item_rates_reverse as $item_key => $item_rate) {
+      if($discount_applied_items < $free_qty_per_order) {
+        $final_item_details['itemDiscount'][$item_key] = $item_rate;
+        $discount_applied_items++;
+      }      
+    }
+
+    // dump($final_item_details);
+    // exit;
+
+    return [
+      'status' => true,
+      'processed_data' => $final_item_details,
+    ];
+  }  
   
   // maps indent data with sales data
   public function _map_indent_data_with_sales_entry($indent_details=[]) {
