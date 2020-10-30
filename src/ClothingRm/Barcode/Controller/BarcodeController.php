@@ -566,6 +566,7 @@ class BarcodeController {
         $cno_filter = !is_null($request->get('cnoFilter')) ? Utilities::clean_string($request->get('cnoFilter')) : '';
         $bno_filter = !is_null($request->get('bnoFilter')) ? Utilities::clean_string($request->get('bnoFilter')) : '';
         $item_sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
+        $brand_name = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';
         $search_params = array(
           'itemName' => $item_name,
           'locationCode' => $location_code,
@@ -575,6 +576,7 @@ class BarcodeController {
           'cnoFilter' => $cno_filter,
           'bnoFilter' => $bno_filter,
           'itemSku' => $item_sku,
+          'brandName' => $brand_name,
         );
       }
     } else {
@@ -591,7 +593,7 @@ class BarcodeController {
       $cno_filter = !is_null($request->get('cnoFilter')) ? Utilities::clean_string($request->get('cnoFilter')) : '';
       $bno_filter = !is_null($request->get('bnoFilter')) ? Utilities::clean_string($request->get('bnoFilter')) : '';
       $item_sku = !is_null($request->get('itemSku')) ? Utilities::clean_string($request->get('itemSku')) : '';
-     
+      $brand_name = !is_null($request->get('brandName')) ? Utilities::clean_string($request->get('brandName')) : '';
       $search_params = array(
         'pageNo' => $page_no,
         'perPage' => $per_page,
@@ -600,8 +602,11 @@ class BarcodeController {
         'cnoFilter' => $cno_filter,
         'bnoFilter' => $bno_filter,
         'itemSku' => $item_sku,
+        'brandName' => $brand_name,
       );
     }
+
+    // dump
 
     $openings = $this->openings_model->opbal_list($search_params);
     // dump($openings);

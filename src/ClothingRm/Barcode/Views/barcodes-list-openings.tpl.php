@@ -43,7 +43,13 @@
     $query_params[] = 'itemSku='.$item_sku;
   } else {
     $item_sku = '';
-  }  
+  }
+  if(isset($search_params['brandName']) && $search_params['brandName'] !=='' ) {
+    $brand_name = $search_params['brandName'];
+    $query_params[] = 'brandName='.$brand_name;
+  } else {
+    $brand_name = '';
+  }
 
   if(count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -125,6 +131,9 @@
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Item SKU" type="text" name="itemSku" id="itemSku" class="form-control" value="<?php echo $item_sku ?>" size="13" />
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Brand Name" type="text" name="brandName" id="brandName" class="form-control brandAc" value="<?php echo $brand_name ?>" size="13" />
+                </div>                
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
                 </div>
