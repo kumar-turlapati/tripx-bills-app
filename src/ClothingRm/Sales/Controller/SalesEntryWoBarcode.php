@@ -80,13 +80,13 @@ class SalesEntryWoBarcode {
 
     // ---------- get business users --------------------------------
     if($_SESSION['__utype'] !== 3) {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
     } else {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc'], 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);      
     }
 
     # ---------- get agents ----------------------------
-    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90, 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {
         if($user_details['cityName'] !== '') {
@@ -299,9 +299,9 @@ class SalesEntryWoBarcode {
 
     // ---------- get business users --------------------------------
     if($_SESSION['__utype'] !== 3) {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
     } else {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc'], 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
     }
 
     // dump($sexe_response);
@@ -316,7 +316,7 @@ class SalesEntryWoBarcode {
     }
 
     # ---------- get agents ----------------------------
-    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90, 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {
         if($user_details['cityName'] !== '') {

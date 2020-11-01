@@ -26,6 +26,7 @@ class BusinessUsersController {
     $form_errors = $submitted_data = [];
     $page_error = $page_success = $cust_code = '';
     $redirect_url = '/bu/create';
+    $status_a = [1=>'Active', 0=>'Inactive'];
 
     $states_a = Constants::$LOCATION_STATES;
     asort($states_a);
@@ -69,7 +70,8 @@ class BusinessUsersController {
       'states' => [0=>'Choose'] + $states_a,
       'countries' => $countries_a,
       'client_business_state' => $client_business_state,
-      'client_locations' => array(''=>'Choose') + $client_locations,      
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'status_a' => $status_a,
     );
       
     # build variables
@@ -86,6 +88,7 @@ class BusinessUsersController {
   public function buUpdateAction(Request $request) {
     $form_errors = $submitted_data = $customer_details = [];
     $page_error = $page_success = $user_code = '';
+    $status_a = [1=>'Active', 0=>'Inactive'];
 
     $redirect_url = '/bu/list';
 
@@ -150,7 +153,8 @@ class BusinessUsersController {
       'client_business_state' => $client_business_state,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'location_ids' => $location_ids,
-      'location_codes' => $location_codes,      
+      'location_codes' => $location_codes,
+      'status_a' => $status_a,
     );
 
     # build variables
@@ -275,6 +279,7 @@ class BusinessUsersController {
     $pincode = Utilities::clean_string($form_data['pincode']);
     $phone = Utilities::clean_string($form_data['phone']);
     $gst_no = Utilities::clean_string($form_data['gstNo']);
+    $status = Utilities::clean_string($form_data['status']);
 
     // if(ctype_alnum(str_replace([' ', '.'], ['',''], $user_name)) ) {
     if($user_name !== '') {
@@ -331,6 +336,7 @@ class BusinessUsersController {
 
     $cleaned_params['countryID'] = $country_id;
     $cleaned_params['address'] = $address;
+    $cleaned_params['status'] = $status;
 
     if(count($form_errors)>0) {
       return [

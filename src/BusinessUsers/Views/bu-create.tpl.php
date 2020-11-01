@@ -54,7 +54,12 @@
     $location_code = $location_codes[$submitted_data['locationID']];
   } else {
     $location_code = '';
-  }    
+  }
+  if( isset($submitted_data['status']) ) {
+    $status = $submitted_data['status'];
+  } else {
+    $status = 1;
+  }  
 ?>
 <!-- Basic form starts -->
 <div class="row">
@@ -229,6 +234,25 @@
               <?php if(isset($form_errors['locationCode'])): ?>
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">Status</label>
+              <div class="select-wrap">
+                <select class="form-control" name="status" id="status">
+                  <?php 
+                    foreach($status_a as $key=>$value): 
+                      if((int)$status === (int)$key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
             </div>            
           </div>
           <div class="text-center">

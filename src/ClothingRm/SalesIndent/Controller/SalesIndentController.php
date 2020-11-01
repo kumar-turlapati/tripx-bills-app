@@ -51,8 +51,8 @@ class SalesIndentController {
     }
 
     # ---------- get business users ----------------------------
-    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
-    $executives_response = $this->bu_model->get_business_users(['userType' => 91]);
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90, 'returnActiveOnly' => 1]);
+    $executives_response = $this->bu_model->get_business_users(['userType' => 91, 'returnActiveOnly' => 1]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {
         if($user_details['cityName'] !== '') {
@@ -178,8 +178,8 @@ class SalesIndentController {
     }
 
     # ---------- get business users ----------------------------
-    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
-    $executives_response = $this->bu_model->get_business_users(['userType' => 91]);
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90, 'returnActiveOnly' => 1]);
+    $executives_response = $this->bu_model->get_business_users(['userType' => 91, 'returnActiveOnly' => 1]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {
         if($user_details['cityName'] !== '') {
@@ -369,6 +369,7 @@ class SalesIndentController {
   // list indents
   public function listIndents(Request $request) {
     $locations = $vouchers = $search_params = $indents_a = $agents_a = [];
+    $executives_a = [];
     $campaigns_a = [];
     $campaign_code = $page_error = $agent_code = '';
     if(isset($_SESSION['utype']) && (int)$_SESSION['utype']===15) {
@@ -382,7 +383,7 @@ class SalesIndentController {
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
     # ---------- get business users ----------------------------
-    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90, 'returnActiveOnly' => 1]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {
         if($user_details['cityName'] !== '') {
@@ -402,7 +403,7 @@ class SalesIndentController {
     }
 
     # ---------- get executives ---------------------------------
-    $executives_response = $this->bu_model->get_business_users(['userType' => 91]);
+    $executives_response = $this->bu_model->get_business_users(['userType' => 91, 'ignoreLocation' => 1, 'returnActiveOnly' => 1]);
     if($executives_response['status']) {
       foreach($executives_response['users'] as $user_details) {
         if($user_details['cityName'] !== '') {

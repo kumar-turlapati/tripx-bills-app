@@ -645,9 +645,9 @@ class Utilities
 
         '/finy/switch', '/discount-manager',
 
-        '/indent-vs-sales', '/indent-vs-sales-by-item',
+        '/indent-vs-sales', '/indent-vs-sales-by-item', '/print-indent', '/print-indent-wor',
 
-        '/tasks/list', '/task/create', '/task/update', '/task/remove',
+        '/tasks/list', '/task/create', '/task/update', '/task/remove', '/sales-indent/update',
       ],
 
       6  => [
