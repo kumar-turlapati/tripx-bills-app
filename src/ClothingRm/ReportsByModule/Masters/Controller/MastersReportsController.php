@@ -276,7 +276,7 @@ class MastersReportsController {
         $slno++;
 
         $barcode = $item_details['barcode'];
-        $item_name = substr($item_details['itemName'],0,25);
+        $item_name = substr($item_details['itemName'],0,22);
         $lot_no = $item_details['lotNo'];
         $category_name = substr($item_details['categoryName'],0,10);
         $brand_name = substr($item_details['mfgName'],0,10);
@@ -475,8 +475,11 @@ class MastersReportsController {
     } else {
       $cleaned_params['brandName'] = '';
     }
+    if($form_data['barcodeOption']) {
+      $cleaned_params['zeroBarcodes'] = true;
+    }
 
-    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);    
 
     if(count($form_errors) > 0) {
       return ['status' => false, 'form_errors' => $form_errors];

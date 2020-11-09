@@ -2,6 +2,7 @@
   $current_date = date("d-m-Y");
   $page_url = '/reports/item-master-with-barcodes';
   $brand_name = $category_code = '';
+  $barcode_options = ['nonzero' => 'Non Zero Qty.', 'zero' => 'Zero Qty.',]
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -50,6 +51,17 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="barcodeOption" id="barcodeOption">
+                      <?php 
+                        foreach($barcode_options as $key=>$value):
+                      ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>                
       				</div>
               <div class="form-group text-center">
                 <?php include_once __DIR__."/../../../../Layout/helpers/filter-buttons-reports.helper.php" ?>
