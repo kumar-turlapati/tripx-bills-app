@@ -475,7 +475,7 @@ class MastersReportsController {
     } else {
       $cleaned_params['brandName'] = '';
     }
-    if($form_data['barcodeOption']) {
+    if($form_data['barcodeOption'] && $form_data['barcodeOption'] === 'zero') {
       $cleaned_params['zeroBarcodes'] = true;
     }
 
