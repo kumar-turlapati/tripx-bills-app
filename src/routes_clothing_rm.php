@@ -792,6 +792,10 @@ $routes->add('barcode_closing', new Routing\Route('/barcode/cbbal/{pageNo}', arr
   '_controller' => 'ClothingRm\\Barcode\\Controller\\BarcodeController::generateBarcodesClosingbalAction',
   'pageNo' => null,
 )));
+$routes->add('barcode_closing_itemwise', new Routing\Route('/barcode/cbbal-itemwise/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Barcode\\Controller\\BarcodeController::generateBarcodesClosingbalItemwiseAction',
+  'pageNo' => null,
+)));
 
 // sales indent
 $routes->add('create_sindent', new Routing\Route('/sales-indent/create', array(

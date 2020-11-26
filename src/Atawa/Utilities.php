@@ -1084,6 +1084,7 @@ class Utilities
       'indent2' => 'Indent Sticker - By Item',
       'mrp' => 'MRP Sticker',
       'worate' => 'Sticker Without Rate',
+      'worate-sim' => 'Sticker Without Rate - Format 2',
       'sku-small' => 'Warehouse Sticker with Case/Container/Box No.',
       'wh-large' => 'Warehouse Sticker - Large',
     ];
