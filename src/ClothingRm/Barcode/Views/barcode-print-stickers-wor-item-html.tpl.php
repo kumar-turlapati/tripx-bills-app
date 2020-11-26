@@ -121,7 +121,7 @@
     ?>
       <div>
         <div class="productName" style="font-size: 8px;"><?php echo $print_item_name ?></div>
-        <div class="rate">Qty.: <?php echo $packed_qty.' mtrs.' ?></div>
+        <div class="rate">Qty.: <?php echo $packed_qty ?></div>
         <?php /*<div class="productName"><?php echo $print_item_name1 ?></div> */ ?>
         <img src="<?php echo $barcode_image ?>" width="190" height="30" alt="NoImage" />
         <div class="barCode"><?php echo $barcode ?></div>

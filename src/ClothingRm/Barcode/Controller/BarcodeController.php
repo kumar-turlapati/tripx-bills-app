@@ -1201,6 +1201,9 @@ class BarcodeController {
     $avail_barcodes = isset($form_data['opBarcode']) ? $form_data['opBarcode'] : [];
     $requested_qtys = isset($form_data['requestedItems']) ? $form_data['requestedItems'] : [];
 
+    // dump($sticker_qtys, $avail_barcodes, $requested_qtys);
+    // exit;
+
     if(count($requested_qtys)>0) {
       foreach($requested_qtys as $index => $item_key) {
         if( isset($avail_barcodes[$item_key]) && isset($sticker_qtys[$item_key]) &&
@@ -1221,6 +1224,9 @@ class BarcodeController {
     } else {
       $form_errors['itemDetails'] = 'Please check items using Checkboxes for Printing barcodes.';
     }
+
+    // dump($cleaned_params);
+    // exit;
 
     if(count($form_errors)>0) {
       return [
