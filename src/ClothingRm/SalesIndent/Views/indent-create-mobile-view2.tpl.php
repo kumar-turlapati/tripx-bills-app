@@ -39,6 +39,30 @@
                 />
               </div>
               <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom:8px;">
+                <label class="control-label"><b>Campaign name</b></label>
+                <select id="campaignCode" name="campaignCode" class="form-control noEnterKey">
+                  <?php foreach($campaigns as $campaign_id => $campaign_name):?>
+                    <option value="<?php echo $campaign_id ?>"><?php echo $campaign_name ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom:8px;">
+                <label class="control-label"><b>Executive name</b></label>
+                <select 
+                  class="form-control"
+                  id="executiveCode" 
+                  name="executiveCode"
+                >
+                  <?php
+                    foreach($executives as $key=>$value):
+                  ?>
+                    <option value="<?php echo $key ?>">
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>                            
+                </select>
+              </div>              
+              <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom:8px;">
                 <label class="control-label"><b>Remarks</b></label>
                 <input
                   type="text"
@@ -81,7 +105,7 @@
         <div class="input-group login-copyrights" style="padding-bottom:10px;">
           <p>Powered by&nbsp;
             <a href="http://tripexpert.co.in/" target="_blank">
-              <img src="/assets/img/tripexpert-logo.png">
+              QwikBills
             </a>
           </p>
         </div>

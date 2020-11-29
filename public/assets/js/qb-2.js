@@ -1893,7 +1893,7 @@ function initializeJS() {
             }
           },
           error: function(e) {
-            alert('An error occurred while fetching Available Qty.');
+            alert('Out of Stock !');
           }
        });
       } else if(parseInt(itemName.length) === 0){
@@ -1907,6 +1907,7 @@ function initializeJS() {
         var availableQty = returnNumber(parseFloat(lotNosResponse[lotNo].availableQty));
         var mOq = returnNumber(parseFloat(lotNosResponse[lotNo].mOq));
         var mrp = returnNumber(parseFloat(lotNosResponse[lotNo].mrp));
+        var wholesalePrice =  returnNumber(parseFloat(lotNosResponse[lotNo].wholesalePrice));
         orderQty = returnNumber(parseFloat(orderQty*mOq).toFixed(2));
         if(orderQty > availableQty) {
           alert('Order Qty. must be less than or equal to available Qty.');
@@ -1914,7 +1915,11 @@ function initializeJS() {
           $(this).focus();
           return false;
         }
-        $('#mrp').val(mrp);
+        if(wholesalePrice > 0) {
+          $('#mrp').val(wholesalePrice);
+        } else {
+          $('#mrp').val(mrp);
+        }
         $('#orderQty').val(orderQty);
       }
     });

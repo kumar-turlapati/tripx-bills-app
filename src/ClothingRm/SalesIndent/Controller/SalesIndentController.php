@@ -764,22 +764,51 @@ class SalesIndentController {
       $this->flash->set_flash_message('No items are available in indent.', 1);
       Utilities::redirect('/sales-indent/create/mobile');
     }
+
+    $executives_a = $campaigns_a = [];
+
+    # ---------- get live campaigns ---------------------------------
+    $campaigns_response = $this->camp_model->list_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+
+    $executives_response = $this->bu_model->get_business_users(['userType' => 91, 'returnActiveOnly' => 1]);
+    if($executives_response['status']) {
+      foreach($executives_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $executives_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $executives_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
     #------------------------------------- check for form Submission ------------------------
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
       $op = $form_data['op'];
       if($op === 'SaveIndent') {
         $cleaned_params = [];
+        $executive_code = isset($form_data['executiveCode']) ? Utilities::clean_string($form_data['executiveCode']) : '';
         $cleaned_params['name'] = Utilities::clean_string($form_data['customerName']);
         $cleaned_params['remarks'] = Utilities::clean_string($form_data['remarks']);
+        $cleaned_params['campaignCode'] = Utilities::clean_string($form_data['campaignCode']);
+        $cleaned_params['billingRate'] = 'wholesale';
         $cleaned_params['locationCode'] = '';
         $cleaned_params['indentDate'] = date("d-m-Y");
+        $cleaned_params['executiveCode'] = $executive_code;
         foreach($indent_items as $item_key => $indent_item_details) {
           $cleaned_params['itemDetails']['itemName'][$item_key] = $indent_item_details['itemName'];
           $cleaned_params['itemDetails']['itemSoldQty'][$item_key] = $indent_item_details['orderQty'];
           $cleaned_params['itemDetails']['lotNo'][$item_key] = $indent_item_details['lotNo'];
           $cleaned_params['itemDetails']['itemRate'][$item_key] = $indent_item_details['mrp'];          
         }
+
+        // dump($cleaned_params);
+        // exit;
+
         $api_response = $this->sindent_model->create_sindent($cleaned_params);
         if($api_response['status']) {
           unset($_SESSION['indentItemsM']);
@@ -811,6 +840,8 @@ class SalesIndentController {
 
     $template_vars = array(
       'flash_obj' => $this->flash,
+      'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
+      'executives' => ['' => 'Choose'] + $executives_a,
     );
 
     // render template

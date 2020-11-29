@@ -16,7 +16,7 @@
     <form class="login-form" method="POST" autocomplete="off" id="salesIndentMobileV">
       <div class="login-wrap" style="padding-top:10px;">
         <h2 class="text-center" style="margin-bottom:0px;">
-          <b>Sales Indent Entry - Mobile Ver.</b>
+          <b>Sales Indent Entry - Mobile</b>
         </h2>
         <?php echo $flash_obj->print_flash_message(); ?>
         <?php if($total_qty > 0 && $total_items > 0): ?>
@@ -74,8 +74,8 @@
         </div>
         <div class="input-group login-copyrights" style="padding-bottom:10px;">
           <p>Powered by&nbsp;
-            <a href="http://tripexpert.co.in/" target="_blank">
-              <img src="/assets/img/tripexpert-logo.png">
+            <a href="http://www.qwikbills.com/" target="_blank">
+              QwikBills
             </a>
           </p>
         </div>
