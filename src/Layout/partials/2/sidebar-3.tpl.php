@@ -102,7 +102,7 @@
             </a>
             <ul class="sub">
               <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales Indent</a></li>
-              <?php /*<li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales Indent (Mobile V.)</a></li> */ ?>
+              <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales Indent (Mobile V.)</a></li>
             </ul>
           </li>
           <li class="sub-menu">
