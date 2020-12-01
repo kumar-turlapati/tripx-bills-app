@@ -1145,6 +1145,19 @@ class ReportsIndentController {
       $campaign_code = Utilities::clean_string($request->get('campaignCode'));
       $filter_params['campaignCode'] = $campaign_code;
     }
+    if(!is_null($request->get('fromDate')) && $request->get('fromDate') !== '') {
+      $from_date =Utilities::clean_string($request->get('fromDate'));
+      $filter_params['fromDate'] = $from_date;
+    } else {
+      $from_date = date('d-m-Y');
+    }
+    if(!is_null($request->get('toDate')) && $request->get('toDate') !== '') {
+      $to_date = Utilities::clean_string($request->get('toDate'));
+      $filter_params['toDate'] = $to_date;
+    } else {
+      $to_date = date('d-m-Y');
+    }
+    
     #---------------------------------------------------------------------------
     $campaigns_response = $this->camp_model->list_campaigns();
     if($campaigns_response['status']) {
@@ -1226,7 +1239,7 @@ class ReportsIndentController {
       $pdf->Cell($item_widths[2],6,$customer_name,'RTB',0,'L');
       $pdf->Cell($item_widths[3],6,$agent_name,'RTB',0,'L');
       $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
-      $pdf->Cell($item_widths[5],6,$location_ids[$location_id],'RTB',0,'L');
+      $pdf->Cell($item_widths[5],6,isset($location_ids[$location_id]) ? substr($location_ids[$location_id],0,9) : '','RTB',0,'L');
       $pdf->Cell($item_widths[6],6,$indent_value,'RTB',0,'R');
       $pdf->Ln();
       if($remarks !== '') {

@@ -1113,7 +1113,7 @@ class ReportsController
             'reportHook' => '/indent-dispatch-summary',
             'campaigns' => ['' => 'All Campaigns'] + $this->_get_indent_campaigns(),
             'agents' => [],
-            'show_fromto_dates' => false,
+            'show_fromto_dates' => true,
             'show_format' => false,
           );
           $controller_vars = array(
