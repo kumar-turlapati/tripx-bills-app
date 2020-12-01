@@ -121,7 +121,8 @@ class ApiCaller
 			// 	'reason' => 'No response returned by Upstream server.'
 			// );
 			echo '<pre>';
-			var_dump($api_response);
+			// var_dump($api_response);
+			echo 'Something went wrong :(';
 			echo '</pre>';
 			exit; 			
 		}
