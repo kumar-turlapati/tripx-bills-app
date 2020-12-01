@@ -610,8 +610,8 @@ class ReportsIndentController {
 
     $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';
     
-    $item_widths = array(10,100,35,35);
-    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2];
+    $item_widths = array(10,70,35,30,35);
+    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3];
     
     $slno = $tot_qty = 0; 
 
@@ -722,8 +722,9 @@ class ReportsIndentController {
     $pdf->Ln(5);
     $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
     $pdf->Cell($item_widths[1],6,'Item Name','RTB',0,'C');
-    $pdf->Cell($item_widths[2],6,'Category Name','RTB',0,'C');
-    $pdf->Cell($item_widths[3],6,'Indent Qty.','RTB',0,'C');        
+    $pdf->Cell($item_widths[2],6,'Brand Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Category Name','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Indent Qty.','RTB',0,'C');        
     $pdf->SetFont('Arial','',9);
 
     foreach($total_items as $item_details) {
@@ -732,20 +733,22 @@ class ReportsIndentController {
       $item_name = $item_details['itemName'];
       $closing_qty = $item_details['indentQty'];
       $category_name = $item_details['categoryName'];
+      $brand_name = $item_details['brandName'];
 
       $tot_qty += $closing_qty;
       
       $pdf->Ln();
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,$item_name,'RTB',0,'L');
-      $pdf->Cell($item_widths[2],6,$category_name,'RTB',0,'L');
-      $pdf->Cell($item_widths[3],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
+      $pdf->Cell($item_widths[2],6,$brand_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[3],6,$category_name,'RTB',0,'L');
+      $pdf->Cell($item_widths[4],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
     }
 
     $pdf->Ln();
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell($totals_width,6,'T O T A L S','LRTB',0,'R');
-    $pdf->Cell($item_widths[3],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
+    $pdf->Cell($item_widths[4],6,number_format($tot_qty,2,'.',''),'LRTB',0,'R');
     $pdf->SetFont('Arial','B',11);    
 
     $pdf->Output();
