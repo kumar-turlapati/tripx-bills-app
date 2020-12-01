@@ -1312,6 +1312,25 @@ function initializeJS() {
     });
   }
 
+  // refresh balances.
+  if($('#refreshCbForm').length > 0) {
+    $('#refreshCbYes').on('click', function(e){
+      e.preventDefault();
+      $(this).attr('disabled', true);
+      $('#refreshCbWoIndentsCancel').attr('disabled', true);
+      $('#infoText').text('Please wait while the Stock refreshes...');
+      $('#refreshCbForm').submit();
+    });
+
+    $('#refreshCbWithIndentYes').on('click', function(e){
+      e.preventDefault();
+      $(this).attr('disabled', true);
+      $('#refreshCbWithIndentCancel').attr('disabled', true);
+      $('#infoText').text('Please wait while the Stock refreshes...');
+      $('#refreshCbForm').submit();
+    });
+  }
+
   // delete gatepass.
   jQuery('.delGatepass').on("click", function(e){
     e.preventDefault();
@@ -1992,6 +2011,10 @@ function initializeJS() {
       window.location.href = '/ecom/category/create';
     } else if(buttonId === 'ecomCreateAppCancel') {
       window.location.href = '/ecom/app-content/create';       
+    } else if(buttonId === 'refreshCbWoIndentsCancel') {
+      window.location.href = '/dashboard';       
+    } else if(buttonId === 'refreshCbWithIndentCancel') {
+      window.location.href = '/dashboard';       
     }
   });
 

@@ -355,7 +355,6 @@ $routes->add('stock_adjustment_list', new Routing\Route('/inventory/stock-adjust
   'pageNo' => null,
   'perPage' => null,
 )));
-
 $routes->add('add_item_threshold', new Routing\Route('/inventory/item-threshold-add', array(
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::itemThresholdAdd',   
 )));
@@ -371,6 +370,13 @@ $routes->add('list_item_threshold', new Routing\Route('/inventory/item-threshold
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::itemThresholdList',
   'pageNo' => 1,
 )));
+$routes->add('refresh_stock', new Routing\Route('/inventory/refresh-cb', array(
+  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::refreshCb',
+)));
+$routes->add('refresh_stock_with_indents', new Routing\Route('/inventory/refresh-cb-indents', array(
+  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::refreshCbIndents',
+)));
+
 
 // mrp register
 $routes->add('change_mrp', new Routing\Route('/inventory/change-mrp/{pageNo}', array(

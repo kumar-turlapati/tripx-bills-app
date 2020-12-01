@@ -8,6 +8,7 @@ use Atawa\Utilities;
 use Atawa\Constants;
 use Atawa\Template;
 use Atawa\Flash;
+use Atawa\ApiCaller;
 
 use ClothingRm\Inventory\Model\Inventory;
 use ClothingRm\Products\Model\Products;
@@ -424,6 +425,63 @@ class InventoryController {
 
     // render template
     return array($this->template->render_view('track-item', $template_vars),$controller_vars);      
+  }
+
+  public function refreshCb(Request $request) {
+    $refreshed = null;
+
+    if(count($request->request->all()) > 0) {
+      // call api.
+      $api_caller = new ApiCaller();
+      $response = $api_caller->sendRequest('post','refresh/stock/wo-indents',[]);
+      $status = $response['status'];
+      if($status === 'success') {
+        $refreshed = true;
+      } elseif($status === 'failed') {
+        $refreshed = false;
+      }
+    }
+
+   // prepare template
+    $controller_vars = array(
+      'page_title' => 'Refresh Closing Balances',
+      'icon_name' => 'fa fa-refresh',
+    );
+
+    $template_vars = array(
+      'refreshed' => $refreshed,
+    );
+
+    // render template
+    return array($this->template->render_view('refresh-cb', $template_vars),$controller_vars);      
+  }
+
+  public function refreshCbIndents(Request $request) {
+    $refreshed = null;
+    if(count($request->request->all()) > 0) {
+      // call api.
+      $api_caller = new ApiCaller();
+      $response = $api_caller->sendRequest('post','refresh/stock/with-indents',[]);
+      $status = $response['status'];
+      if($status === 'success') {
+        $refreshed = true;
+      } elseif($status === 'failed') {
+        $refreshed = false;
+      }
+    }
+
+   // prepare template
+    $controller_vars = array(
+      'page_title' => 'Refresh Closing Balances - With Indents',
+      'icon_name' => 'fa fa-refresh',
+    );
+
+    $template_vars = array(
+      'refreshed' => $refreshed,
+    );
+
+    // render template
+    return array($this->template->render_view('refresh-cb-indents', $template_vars),$controller_vars); 
   }
 
   private function _validate_data_item_track($form_data = []) {
