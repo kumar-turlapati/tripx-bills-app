@@ -799,6 +799,7 @@ class SalesIndentController {
         $cleaned_params['locationCode'] = '';
         $cleaned_params['indentDate'] = date("d-m-Y");
         $cleaned_params['executiveCode'] = $executive_code;
+        $cleaned_params['isAutoIndent'] = 1;
         foreach($indent_items as $item_key => $indent_item_details) {
           $cleaned_params['itemDetails']['itemName'][$item_key] = $indent_item_details['itemName'];
           $cleaned_params['itemDetails']['itemSoldQty'][$item_key] = $indent_item_details['orderQty'];
