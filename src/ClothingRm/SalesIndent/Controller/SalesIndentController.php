@@ -510,7 +510,7 @@ class SalesIndentController {
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
     # ---------- get business users ----------------------------
-    $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90, 'returnActiveOnly' => 1]);
     if($agents_response['status']) {
       foreach($agents_response['users'] as $user_details) {
         if($user_details['cityName'] !== '') {

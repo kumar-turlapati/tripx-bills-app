@@ -1,6 +1,8 @@
 <?php
+
   use Atawa\Utilities;
   $query_params = [];
+
   if(isset($search_params['custName']) && $search_params['custName'] !='') {
     $custName = $search_params['custName'];
     $query_params[] = 'custName='.$custName;
@@ -27,6 +29,8 @@
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
+  } else {
+    $query_params = '';
   }
   $pagination_url = $page_url = '/customers/list';
 ?>

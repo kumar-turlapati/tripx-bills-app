@@ -693,8 +693,8 @@ class Utilities
       // for Marketing user
       10 => [
 
-        '/async/finyDefault', '/async/getItemDetailsByCode', '/async/itemsAc', '/async/brandAc', '/async/custAc',
-        '/async/getItemBatchesByCode', 
+        '/async/finyDefault', '/async/getItemDetailsByCode', '/async/itemsAc', '/async/brandAc', 
+        '/async/custAc', '/async/getItemBatchesByCode', 
 
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
         

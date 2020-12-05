@@ -121,10 +121,12 @@ class ApiCaller
 			// 	'reason' => 'No response returned by Upstream server.'
 			// );
 			echo '<pre>';
-			// var_dump($api_response);
+			if($_SERVER['appEnvironment'] === 'local') {
+				var_dump($api_response);
+			}
 			echo 'Something went wrong :(';
 			echo '</pre>';
-			exit; 			
+			exit;
 		}
 
 		return $response;
