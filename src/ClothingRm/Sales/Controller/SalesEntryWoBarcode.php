@@ -636,9 +636,9 @@ class SalesEntryWoBarcode {
 
     # ---------- get sales executive names from api -----------------------
     if($_SESSION['__utype'] !== 3) {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92]);
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'returnActiveOnly' => 1]);
     } else {
-      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc']]);      
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 92, 'locationCode' => $_SESSION['lc'], 'returnActiveOnly' => 1]);      
     }
     if($sexe_response['status']) {
       foreach($sexe_response['users'] as $user_details) {
