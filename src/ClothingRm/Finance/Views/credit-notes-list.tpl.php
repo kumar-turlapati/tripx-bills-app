@@ -32,7 +32,7 @@
     $query_params = '?'.implode('&', $query_params);
   }
 
-  $page_url = '/fin/credit-notes';
+  $page_url = $pagination_url =  '/fin/credit-notes';
 ?>
 
 <div class="row">
