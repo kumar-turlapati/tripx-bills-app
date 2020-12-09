@@ -228,6 +228,8 @@ class ReportsIndentController {
 
     $placed_by = isset($indent_tran_details['customerName']) && $indent_tran_details['customerName'] !== '' ? $indent_tran_details['customerName'] : '';
     $referred_by = isset($indent_tran_details['agentName']) && $indent_tran_details['agentName'] !== '' ? $indent_tran_details['agentName'] : '';
+    $exe_name = isset($indent_tran_details['executiveName']) && $indent_tran_details['executiveName'] !== '' ? $indent_tran_details['executiveName'] : '';
+    $exe_mobile_no = isset($indent_tran_details['executiveMobileNo']) && $indent_tran_details['executiveMobileNo'] !== '' ? $indent_tran_details['executiveMobileNo'] : '';
     $mobile_no = isset($indent_tran_details['primaryMobileNo']) && $indent_tran_details['primaryMobileNo'] !== '' ? $indent_tran_details['primaryMobileNo'] : '';
     $campaign_name = $indent_tran_details['campaignName'];
     $print_date_time = date("d/m/Y H:ia");
@@ -254,27 +256,37 @@ class ReportsIndentController {
     $pdf->Ln();
     $pdf->Cell($indent_info_widths[0],6,'Indent No.','LRTB',0,'C');
     $pdf->Cell($indent_info_widths[1],6,'Indent Date','RTB',0,'C');
-    $pdf->Cell($indent_info_widths[2],6,'Retailer Name','RTB',0,'C');
-    $pdf->Cell($indent_info_widths[3],6,'Mobile No.','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,'Executive Name','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,'Executive Mobile No.','RTB',0,'C');
     $pdf->Ln();
     $pdf->SetFont('Arial','B',13);
     $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
     $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
-
-    $pdf->Cell($indent_info_widths[2],6,$placed_by,'RTB',0,'C');
-    $pdf->Cell($indent_info_widths[3],6,$mobile_no,'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,$exe_name,'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,$exe_mobile_no,'RTB',0,'C');
 
     # third row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
-    $pdf->Cell(135,6,'Wholesaler Name','LRTB',0,'C');
-    $pdf->Cell(55,6,'Campaign','RTB',0,'C');
+    $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
+    $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
+    $pdf->Ln();
+
+    # fourth row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(95,6,'Campaign / Event Name','LRTB',0,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell(95,6,'*** Below column left blank intentionally for handnotes ***','LRTB',0,'C');
     $pdf->Ln();
 
     $pdf->SetFont('Arial','',9);
-    $pdf->Cell(135,6,$referred_by,'LRTB',0,'C');
-    $pdf->Cell(55,6,$campaign_name,'RTB',0,'C');
+    $pdf->Cell(95,6,$campaign_name,'LRTB',0,'C');
+    $pdf->Cell(95,6,'','LRTB',0,'C');
 
     # item details
     $pdf->Ln();
@@ -360,6 +372,8 @@ class ReportsIndentController {
 
     $placed_by = isset($indent_tran_details['customerName']) && $indent_tran_details['customerName'] !== '' ? $indent_tran_details['customerName'] : '';
     $referred_by = isset($indent_tran_details['agentName']) && $indent_tran_details['agentName'] !== '' ? $indent_tran_details['agentName'] : '';
+    $exe_name = isset($indent_tran_details['executiveName']) && $indent_tran_details['executiveName'] !== '' ? $indent_tran_details['executiveName'] : '';
+    $exe_mobile_no = isset($indent_tran_details['executiveMobileNo']) && $indent_tran_details['executiveMobileNo'] !== '' ? $indent_tran_details['executiveMobileNo'] : '';
     $mobile_no = isset($indent_tran_details['primaryMobileNo']) && $indent_tran_details['primaryMobileNo'] !== '' ? $indent_tran_details['primaryMobileNo'] : '';
     $print_date_time = date("d/m/Y H:ia");
     $operator_name = $_SESSION['uname'];
@@ -383,31 +397,42 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','B',11);
     $pdf->Ln(5);
 
-    // second row
+    # second row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
     $pdf->Cell($indent_info_widths[0],6,'Indent No.','LRTB',0,'C');
     $pdf->Cell($indent_info_widths[1],6,'Indent Date','RTB',0,'C');
-    $pdf->Cell($indent_info_widths[2],6,'Retailer Name','RTB',0,'C');
-    $pdf->Cell($indent_info_widths[3],6,'Mobile No.','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,'Executive Name','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,'Executive Mobile No.','RTB',0,'C');
     $pdf->Ln();
-    $pdf->SetFont('Arial','B',12);
+    $pdf->SetFont('Arial','B',13);
     $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
     $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
-    $pdf->Cell($indent_info_widths[2],6,$placed_by,'RTB',0,'C');
-    $pdf->Cell($indent_info_widths[3],6,$mobile_no,'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,$exe_name,'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,$exe_mobile_no,'RTB',0,'C');
 
-    // third row
+    # third row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
-    $pdf->Cell(135,6,'Wholesaler Name','LRTB',0,'C');
-    $pdf->Cell(55,6,'Campaign','RTB',0,'C');
+    $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
+    $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
+    $pdf->Ln();
+
+    # fourth row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(95,6,'Campaign / Event Name','LRTB',0,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell(95,6,'*** Below column left blank intentionally for handnotes ***','LRTB',0,'C');
     $pdf->Ln();
 
     $pdf->SetFont('Arial','',9);
-    $pdf->Cell(135,6,$referred_by,'LRTB',0,'C');
-    $pdf->Cell(55,6,$campaign_name,'RTB',0,'C');
+    $pdf->Cell(95,6,$campaign_name,'LRTB',0,'C');
+    $pdf->Cell(95,6,'','LRTB',0,'C');
 
     // item details
     $pdf->Ln();
