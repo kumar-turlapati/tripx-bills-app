@@ -55,6 +55,11 @@
   } else {
     $location_code = '';
   }
+  if( isset($submitted_data['showAllCustomers']) ) {
+    $show_all_customers = $submitted_data['showAllCustomers'];
+  } else {
+    $show_all_customers = '1';
+  } 
   if( isset($submitted_data['status']) ) {
     $status = $submitted_data['status'];
   } else {
@@ -87,8 +92,8 @@
         </div>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="buForm">
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">User type</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">User type</label>
               <div class="select-wrap">
                 <select class="form-control" name="userType" id="userType">
                   <?php 
@@ -107,24 +112,22 @@
                 <span class="error"><?php echo $errors['userType'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">User name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">User name</label>
               <input type="text" class="form-control" name="userName" id="userName" value="<?php echo $customer_name ?>" />
               <?php if(isset($errors['userName'])): ?>
                 <span class="error"><?php echo $errors['userName'] ?></span>
               <?php endif; ?>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Mobile number</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Mobile number</label>
               <input type="text" class="form-control" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
               <?php if(isset($errors['mobileNo'])): ?>
                 <span class="error"><?php echo $errors['mobileNo'] ?></span>
               <?php endif; ?> 
             </div> 
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Country name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Country name</label>
               <div class="select-wrap">
                 <select class="form-control" name="countryID" id="countryID">
                   <?php 
@@ -143,8 +146,10 @@
                 <?php endif; ?>                 
               </div>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">State</label>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">State</label>
               <select class="form-control" name="stateID" id="stateID">
                 <?php 
                   foreach($states as $key=>$value): 
@@ -161,14 +166,12 @@
                 <span class="error"><?php echo $form_errors['stateID'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">City name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">City name</label>
               <input type="text" class="form-control" name="cityName" id="cityName" value="<?php echo $city_name ?>" />
             </div>        
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Address</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Address</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -180,8 +183,8 @@
                 <span class="error"><?php echo $errors['address'] ?></span>
               <?php endif; ?>
             </div>          
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Pincode</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Pincode</label>
               <input type="text" class="form-control" name="pincode" id="pincode"
               value="<?php echo $pincode ?>"              
               >
@@ -189,19 +192,19 @@
                 <span class="error"><?php echo $errors['pincode'] ?></span>
               <?php endif; ?>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Phone</label>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Phone</label>
               <input type="text" class="form-control" name="phone" id="phone"
               value="<?php echo $phone ?>"              
               >
               <?php if(isset($errors['phone'])): ?>
                 <span class="error"><?php echo $errors['phone'] ?></span>
               <?php endif; ?>                
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">GST No.</label>
+            </div>            
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">GST No.</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -213,8 +216,8 @@
                 <span class="error"><?php echo $errors['gstNo'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name (optional)</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Store name (optional)</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
@@ -235,8 +238,8 @@
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Status</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="status" id="status">
                   <?php 
@@ -255,6 +258,30 @@
               </div>
             </div>            
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Customer data</label>
+              <div class="select-wrap">
+                <select class="form-control" name="showAllCustomers" id="showAllCustomers">
+                  <?php 
+                    foreach($show_flag_a as $key=>$value): 
+                      if((int)$show_all_customers === (int)$key) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['showAllCustomers'])): ?>
+                <span class="error"><?php echo $form_errors['showAllCustomers'] ?></span>
+              <?php endif; ?>
+            </div>            
+          </div><br />
           <div class="text-center">
             <button class="btn btn-success" id="Save"><i class="fa fa-save"></i> Save</button>
           </div>

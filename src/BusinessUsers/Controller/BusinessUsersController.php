@@ -72,6 +72,7 @@ class BusinessUsersController {
       'client_business_state' => $client_business_state,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'status_a' => $status_a,
+      'show_flag_a' => [1 =>'Show all customers', 0=>'Show assigned customers', 2=>'Show storewise customers'],
     );
       
     # build variables
@@ -155,6 +156,7 @@ class BusinessUsersController {
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
       'status_a' => $status_a,
+      'show_flag_a' => [1 =>'Show all customers', 0=>'Show assigned customers', 2=>'Show storewise customers'],
     );
 
     # build variables
@@ -280,6 +282,7 @@ class BusinessUsersController {
     $phone = Utilities::clean_string($form_data['phone']);
     $gst_no = Utilities::clean_string($form_data['gstNo']);
     $status = Utilities::clean_string($form_data['status']);
+    $show_all_customers = Utilities::clean_string($form_data['showAllCustomers']);
 
     // if(ctype_alnum(str_replace([' ', '.'], ['',''], $user_name)) ) {
     if($user_name !== '') {
@@ -337,6 +340,7 @@ class BusinessUsersController {
     $cleaned_params['countryID'] = $country_id;
     $cleaned_params['address'] = $address;
     $cleaned_params['status'] = $status;
+    $cleaned_params['showAllCustomers'] = $show_all_customers;
 
     if(count($form_errors)>0) {
       return [
