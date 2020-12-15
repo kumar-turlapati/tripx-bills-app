@@ -119,7 +119,7 @@
         foreach($print_info_print as $print_qty_details):
           $barcode = $print_qty_details[13];
           $print_qty = $print_qty_details[0];
-          $print_item_name = strtoupper(substr($print_qty_details[1],0,25));
+          $print_item_name = strtoupper(substr($print_qty_details[1],0,40));
           $mfg_date = date("m/y", strtotime($print_qty_details[3]));
           $barcode_image = 'data:image/png;base64,'.base64_encode($generator->getBarcode($barcode, $generator::TYPE_EAN_13));
           if($rate_type === 'wholesale') {
