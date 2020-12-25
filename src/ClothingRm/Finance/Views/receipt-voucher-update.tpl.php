@@ -178,7 +178,7 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-3">
-              <label class="control-label labelStyle">Instrument status</label>
+              <label class="control-label labelStyle">Instrument status (for Bank only)</label>
               <div class="select-wrap">
                 <select
                   class="form-control noEnterKey"
