@@ -27,6 +27,8 @@ class ReceiptsController
   public function receiptCreateAction(Request $request) {
     $page_error = $page_success = '';
     $submitted_data = $form_errors = [];
+    $process_status_a = Constants::$CHEQUE_PROCESS_STATUS;
+
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
       $validate_form = $this->_validate_form_data($request->request->all());
@@ -56,6 +58,7 @@ class ReceiptsController
       'form_errors' => $form_errors,
       'submitted_data' => $submitted_data,
       'payment_methods' => array(''=>'Choose') + Utilities::get_fin_payment_methods(),
+      'process_status_a' => $process_status_a,
     );
 
     // build variables
@@ -72,6 +75,8 @@ class ReceiptsController
   public function receiptUpdateAction(Request $request) {
     $page_error = $page_success = '';
     $submitted_data = $form_errors = $form_data = [];
+    $process_status_a = Constants::$CHEQUE_PROCESS_STATUS;
+
     if( is_null($request->get('vocNo')) && is_numeric($request->get('vocNo'))) {
       $this->flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
       Utilities::redirect('/fin/receipt-vouchers');
@@ -102,6 +107,7 @@ class ReceiptsController
     } elseif(!is_null($request->get('vocNo'))) {
       $voc_no = $request->get('vocNo');
       $voucher_details = $this->fin_model->get_receipt_voucher_details($voc_no);
+      // dump($voucher_details);
       if($voucher_details['status']===false) {
         $this->flash->set_flash_message('Invalid voucher number (or) voucher not exists',1);         
         Utilities::redirect('/fin/receipt-vouchers');
@@ -118,6 +124,7 @@ class ReceiptsController
       'submitted_data' => $form_data,
       'payment_methods' => array(''=>'Choose') +  Utilities::get_fin_payment_methods(),
       'voc_no' => $voc_no,
+      'process_status_a' => $process_status_a,      
     );
 
     // build variables
@@ -273,6 +280,11 @@ class ReceiptsController
     $bank_name = Utilities::clean_string($form_data['bankName']);
     $ref_no = Utilities::clean_string($form_data['refNo']);
     $ref_date = Utilities::clean_string($form_data['refDate']);
+    $remarks = Utilities::clean_string($form_data['remarks']);
+    $status = Utilities::clean_string($form_data['processStatus']);
+
+    $cleaned_params['processStatus'] = $status;
+    $cleaned_params['remarks'] = $remarks;
 
     if($party_name === '') {
       $errors['partyName'] = 'Party name is mandatory';

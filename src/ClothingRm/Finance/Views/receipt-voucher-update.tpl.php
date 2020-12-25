@@ -3,6 +3,8 @@
 
   $current_date = date("d-m-Y");
 
+  // dump($submitted_data);
+
   if(isset($submitted_data['tranDate'])) {
     $tran_date = $submitted_data['tranDate'];
   } else {
@@ -42,6 +44,18 @@
     $bank_name = $submitted_data['bankName'];
   } else {
     $bank_name = '';
+  }
+  if(isset($submitted_data['remarks'])) {
+    $remarks = $submitted_data['remarks'];
+  } else {
+    $remarks = '';
+  }
+  if(isset($submitted_data['processStatus'])) {
+    $process_status = $submitted_data['processStatus'];
+  } elseif(isset($submitted_data['isApproved'])) {
+    $process_status = $submitted_data['isApproved'];    
+  } else {
+    $process_status = 0;
   }  
   if($mode==='b' || $mode==='p') {
     $div_style = '';
@@ -65,7 +79,7 @@
         <form class="form-validate form-horizontal" method="POST" id="receiptVocForm">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Voucher date (dd-mm-yyyy)</label>
+              <label class="control-label labelStyle">Voucher date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
                   <div class="input-append date" data-date="<?php echo $tran_date ?>" data-date-format="dd-mm-yyyy">
@@ -78,8 +92,8 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3">
-              <label class="control-label">Party name</label>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label labelStyle">Party name</label>
               <input 
                 type="text" 
                 class="form-control cnameAc noEnterKey" 
@@ -91,12 +105,12 @@
                 <span class="error"><?php echo $form_errors['partyName'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-1 col-lg-1" style="padding:3px 0 0 0;">
+            <div class="col-sm-12 col-md-1 col-lg-1" style="padding:2px 0 0 0;">
               <label>&nbsp;</label>
               <button class="btn btn-sm btn-danger" id="custBillNos">Get Bill Nos.</button>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Bill no.</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Choose bill no.</label>
               <div class="select-wrap">
                 <select
                   class="form-control noEnterKey"
@@ -116,8 +130,8 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Payment method</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Payment method</label>
               <div class="select-wrap">              
                 <select class="form-control" name="paymentMode" id="paymentMode">
                   <?php 
@@ -136,8 +150,8 @@
                 <span class="error"><?php echo $form_errors['paymentMode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Amount</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Amount (in Rs.)</label>
               <input 
                 type="text" 
                 class="form-control noEnterKey" 
@@ -149,8 +163,8 @@
                 <span class="error"><?php echo $form_errors['amount'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Narration</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Narration</label>
               <input 
                 type="text" 
                 class="form-control noEnterKey"
@@ -162,11 +176,35 @@
               <?php if(isset($form_errors['narration'])): ?>
                 <span class="error"><?php echo $form_errors['narration'] ?></span>
               <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-3">
+              <label class="control-label labelStyle">Instrument status</label>
+              <div class="select-wrap">
+                <select
+                  class="form-control noEnterKey"
+                  name="processStatus"
+                  id="processStatus"
+                >
+                  <?php 
+                    foreach($process_status_a as $status => $status_name): 
+                      if((int)$status === (int)$process_status) {
+                        $selected = 'selected=selected';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $status ?>" <?php echo $selected ?>><?php echo $status_name ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?php if(isset($form_errors['processStatus'])): ?>
+                <span class="error"><?php echo $form_errors['processStatus'] ?></span>
+              <?php endif; ?>
             </div>            
           </div>
           <div class="form-group" id="refInfo" style="<?php echo $div_style ?>">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Bank name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Institution name</label>
               <input 
                 class="form-control"
                 name="bankName"
@@ -178,8 +216,8 @@
                 <span class="error"><?php echo $form_errors['bankName'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Reference/Cheque/DD No.</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Instrument no.</label>
               <input 
                 type="text"
                 class="form-control"
@@ -192,8 +230,8 @@
                 <span class="error"><?php echo $form_errors['refNo'] ?></span>
               <?php endif; ?>
             </div>                 
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15"> 
-              <label class="control-label">Reference date (dd-mm-yyyy)</label>
+            <div class="col-sm-12 col-md-3 col-lg-3"> 
+              <label class="control-label labelStyle">Instrument date (dd-mm-yyyy)</label>
               <div class="form-group">
                 <div class="col-lg-12">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
@@ -207,7 +245,24 @@
               </div>
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <label class="control-label labelStyle">Remarks</label>
+              <input 
+                type="text" 
+                class="form-control noEnterKey"
+                name="remarks"
+                id="remarks"
+                value="<?php echo $remarks ?>" 
+                maxlength="300"
+              >
+              <?php if(isset($form_errors['remarks'])): ?>
+                <span class="error"><?php echo $form_errors['remarks'] ?></span>
+              <?php endif; ?>
+            </div>            
+          </div>
           <div class="text-center">
+            <br />
             <button class="btn btn-success" id="Save">
               <i class="fa fa-save"></i> Save
             </button>

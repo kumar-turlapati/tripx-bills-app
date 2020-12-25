@@ -168,6 +168,14 @@ class Constants
     1 => '1 Star',
   ];
 
+  public static $CHEQUE_PROCESS_STATUS = [
+    0=>"Pending", 
+    1=>"Received at HO", 
+    2=>"Submitted to Bank", 
+    3=>"Credited", 
+    4=>"Rejected"
+  ];
+
   public static $GET_SESSION_INACTIVE_PERIOD = 3600;
 
   public static $REPORTS_ERROR_MESSAGE = '<i class="fa fa-exclamation-triangle"></i> No data is available. Change report filters and try again.';

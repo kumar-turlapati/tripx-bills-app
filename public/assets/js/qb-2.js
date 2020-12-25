@@ -1296,14 +1296,16 @@ function initializeJS() {
               } else {
                 alert('Barcode not found');                
               }
+            } else {
+              alert('Barcode ['+barcode+'] not found in the Selected store.');
             }
           },
           error: function(e) {
-            alert('Barcode not found in the Selected store.');
+            alert('Network error. Please try again.');
           }
         });
+        e.preventDefault();
       }
-      e.preventDefault();
     });
     $('#adjSave').on("click", function(e){
       $(this).attr('disabled', true);
@@ -3987,6 +3989,14 @@ function initializeJS() {
       var billNo = $(this).val();
       if(billNo !== '' && Object.keys(billNosResponse[billNo]).length>0) {
         jQuery('#amount').val(billNosResponse[billNo].balAmount);
+      }
+    });
+    $('#processStatus').on('change', function(e) {
+      var processStatus = $(this).val();
+      if(parseInt(processStatus) === 4) {
+        $('#rejectReasonDiv').show();
+      } else {
+        $('#rejectReasonDiv').hide();
       }
     });
   }
