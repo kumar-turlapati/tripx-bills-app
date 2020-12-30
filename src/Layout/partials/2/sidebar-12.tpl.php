@@ -124,9 +124,10 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/inventory-profitability"><i class="fa fa-angle-right"></i> Inventory Profitability</a></li>
-              <li><a href="/reports/material-movement"><i class="fa fa-angle-right"></i> Inventory Movement</a></li>              
+              <li><a href="/reports/material-movement"><i class="fa fa-angle-right"></i> Inventory Movement</a></li>
+              <li><a href="/reports/sales-mis"><i class="fa fa-angle-right"></i> Sales</a></li>              
             </ul>            
-          </li>          
+          </li>
           <li class="sub-menu">
             <a href="javascript:">
               <i class="fa fa-bars"></i> Masters <span class="menu-arrow arrow_carrot-right"></span> 

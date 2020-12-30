@@ -861,6 +861,9 @@ $routes->add('report_billitemwise_report', new Routing\Route('/reports/sales-bil
 $routes->add('report_sales_upi', new Routing\Route('/reports/sales-upi-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesUpiPaymentsRegister',
 )));
+$routes->add('report_sales_mis', new Routing\Route('/reports/sales-mis', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::salesMisByFilter',
+)));
 
 // reports - inventory
 $routes->add('report_stock', new Routing\Route('/reports/stock-report', array(

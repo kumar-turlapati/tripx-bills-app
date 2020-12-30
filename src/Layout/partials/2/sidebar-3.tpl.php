@@ -289,7 +289,8 @@
             <ul class="sub">
               <li><a href="/reports/inventory-profitability"><i class="fa fa-angle-right"></i> Inventory Profitability</a></li>
               <li><a href="/reports/material-movement"><i class="fa fa-angle-right"></i> Inventory Movement</a></li>              
-            </ul>            
+              <li><a href="/reports/sales-mis"><i class="fa fa-angle-right"></i> Sales</a></li>              
+            </ul>
           </li>
           <li class="sub-menu">
             <a href="javascript:">

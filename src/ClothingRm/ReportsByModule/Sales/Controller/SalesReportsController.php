@@ -62,11 +62,9 @@ class SalesReportsController {
 
     // dump($banks);
     // exit;
-
     // dump($sale_details, $_SESSION);
     // dump($sale_item_details);
     // exit;
-
     // dump($sales_response);
     // exit;
 
@@ -2557,6 +2555,357 @@ class SalesReportsController {
     return [$this->template->render_view('sales-upi-payments-register', $template_vars), $controller_vars];
   }
 
+  // sales by mis
+  public function salesMisByFilter(Request $request) {
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $validation = $this->_validate_sales_mis_by_filter($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-mis');        
+      }
+
+      // hit api
+      $sales_api_response = $this->sales_model->get_sales_by_filter($form_data);
+      if($sales_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/sales-mis');
+      } else {
+        // dump($sales_api_response);
+        // exit;
+        $report_type = $form_data['reportType'];
+        if($report_type === 'executive') {
+          $heading1 = 'Sales by Executive';
+          $heading2 = 'from '.$form_data['fromDate'].' to '.$form_data['toDate'];
+          $csv_headings = [ [$heading1], [$heading2] ];
+          // csv format
+          $format = $form_data['format'];
+          if($format === 'csv') {
+            $total_records = $this->_format_sales_by_executive($sales_api_response['sales']);
+            Utilities::download_as_CSV_attachment('SalesByExecutive', $csv_headings, $total_records);
+            return;
+          }
+
+          // PDF Printing
+          $item_widths = array(10,80,30,30);
+          $totals_width = $item_widths[0] + $item_widths[1];
+          $slno = 0;
+
+          $pdf = PDF::getInstance();
+          $pdf->AliasNbPages();
+          $pdf->AddPage('P','A4');
+          $pdf->SetAutoPageBreak(false);
+
+          // Page heading.
+          $this->_add_page_heading_for_sales_by_executive($pdf, $item_widths, $heading1, $heading2);
+
+          $tot_taxable_amount = $tot_bill_value = $slno = 0;
+          $row_cntr = 0;
+          foreach($sales_api_response['sales'] as $record_details) {
+            $slno++;
+            $tot_taxable_amount += $record_details['taxableAmount'];
+            $tot_bill_value += $record_details['billValue'];
+
+            $row_cntr++;
+
+            $executive_name = $record_details['buName'] !== '' ? $record_details['buName'] : '';
+            $taxable_amount = number_format($record_details['taxableAmount'], 2, '.', '');
+            $bill_value =  number_format($record_details['billValue'], 2, '.', '');
+
+            $pdf->Ln();
+            $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+            $pdf->Cell($item_widths[1],6,substr($executive_name,0,40),'RTB',0,'L');
+            $pdf->Cell($item_widths[2],6,$taxable_amount,'RTB',0,'R');
+            $pdf->Cell($item_widths[3],6,$bill_value,'RTB',0,'R');            
+            if($row_cntr === 39) {
+              $pdf->AddPage('P','A4');
+              $this->_add_page_heading_for_sales_by_executive($pdf, $item_widths, $heading1, $heading2);
+              $row_cntr = 0;
+            }
+          }
+
+          $pdf->Ln();
+          $pdf->SetFont('Arial','B',9);
+          $pdf->Cell($totals_width,6,'Totals','LBR',0,'R');
+          $pdf->Cell($item_widths[2],6,number_format($tot_taxable_amount,2,'.',''),'BR',0,'R');
+          $pdf->Cell($item_widths[3],6,number_format($tot_bill_value,2,'.',''),'RB',0,'R');
+
+          $pdf->Output();
+        }
+        if($report_type === 'city') {
+          $heading1 = 'Sales by City';
+          $heading2 = 'from '.$form_data['fromDate'].' to '.$form_data['toDate'];
+          $csv_headings = [ [$heading1], [$heading2] ];
+          // csv format
+          $format = $form_data['format'];
+          if($format === 'csv') {
+            $total_records = $this->_format_sales_by_city($sales_api_response['sales']);
+            Utilities::download_as_CSV_attachment('SalesByCity', $csv_headings, $total_records);
+            return;
+          }
+
+          // PDF Printing
+          $item_widths = array(10, 80, 40, 30,30);
+          $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2];
+          $slno = 0;
+
+          $pdf = PDF::getInstance();
+          $pdf->AliasNbPages();
+          $pdf->AddPage('P','A4');
+          $pdf->SetAutoPageBreak(false);
+
+          // Page heading.
+          $this->_add_page_heading_for_sales_by_city($pdf, $item_widths, $heading1, $heading2);
+
+          $tot_taxable_amount = $tot_bill_value = $slno = 0;
+          $row_cntr = 0;
+          $state_ids = Constants::$LOCATION_STATES;
+          foreach($sales_api_response['sales'] as $record_details) {
+            $slno++;
+            $tot_taxable_amount += $record_details['taxableAmount'];
+            $tot_bill_value += $record_details['billValue'];
+
+            $row_cntr++;
+
+            $city_name = $record_details['cityName'];
+            $state_name = (int)$record_details['stateID'] > 0 ? $state_ids[$record_details['stateID']] : '';
+            $taxable_amount = number_format($record_details['taxableAmount'], 2, '.', '');
+            $bill_value =  number_format($record_details['billValue'], 2, '.', '');
+
+            $pdf->Ln();
+            $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+            $pdf->Cell($item_widths[1],6,$city_name,'RTB',0,'L');
+            $pdf->Cell($item_widths[2],6,$state_name,'RTB',0,'L');
+            $pdf->Cell($item_widths[3],6,$taxable_amount,'RTB',0,'R');            
+            $pdf->Cell($item_widths[4],6,$bill_value,'RTB',0,'R');            
+            if($row_cntr === 39) {
+              $pdf->AddPage('P','A4');
+              $this->_add_page_heading_for_sales_by_city($pdf, $item_widths, $heading1, $heading2);
+              $row_cntr = 0;
+            }
+          }
+
+          $pdf->Ln();
+          $pdf->SetFont('Arial','B',9);
+          $pdf->Cell($totals_width,6,'Totals','LBR',0,'R');
+          $pdf->Cell($item_widths[3],6,number_format($tot_taxable_amount,2,'.',''),'BR',0,'R');
+          $pdf->Cell($item_widths[4],6,number_format($tot_bill_value,2,'.',''),'RB',0,'R');
+
+          $pdf->Output();
+        }
+        if($report_type === 'state') {
+          $heading1 = 'Sales by State/Region';
+          $heading2 = 'from '.$form_data['fromDate'].' to '.$form_data['toDate'];
+          $csv_headings = [ [$heading1], [$heading2] ];
+          // csv format
+          $format = $form_data['format'];
+          if($format === 'csv') {
+            $total_records = $this->_format_sales_by_state($sales_api_response['sales']);
+            Utilities::download_as_CSV_attachment('SalesByStateOrRegion', $csv_headings, $total_records);
+            return;
+          }
+
+          // PDF Printing
+          $item_widths = array(10, 80, 30,30);
+          $totals_width = $item_widths[0] + $item_widths[1];
+          $slno = 0;
+
+          $pdf = PDF::getInstance();
+          $pdf->AliasNbPages();
+          $pdf->AddPage('P','A4');
+          $pdf->SetAutoPageBreak(false);
+
+          // Page heading.
+          $this->_add_page_heading_for_sales_by_state($pdf, $item_widths, $heading1, $heading2);
+
+          $tot_taxable_amount = $tot_bill_value = $slno = 0;
+          $row_cntr = 0;
+          $state_ids = Constants::$LOCATION_STATES;
+          foreach($sales_api_response['sales'] as $record_details) {
+            $slno++;
+            $tot_taxable_amount += $record_details['taxableAmount'];
+            $tot_bill_value += $record_details['billValue'];
+
+            $row_cntr++;
+
+            $state_name = (int)$record_details['stateID'] > 0 ? $state_ids[$record_details['stateID']] : '';
+            $taxable_amount = number_format($record_details['taxableAmount'], 2, '.', '');
+            $bill_value =  number_format($record_details['billValue'], 2, '.', '');
+
+            $pdf->Ln();
+            $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+            $pdf->Cell($item_widths[1],6,$state_name,'RTB',0,'L');
+            $pdf->Cell($item_widths[2],6,$taxable_amount,'RTB',0,'R');            
+            $pdf->Cell($item_widths[3],6,$bill_value,'RTB',0,'R');            
+            if($row_cntr === 39) {
+              $pdf->AddPage('P','A4');
+              $this->_add_page_heading_for_sales_by_city($pdf, $item_widths, $heading1, $heading2);
+              $row_cntr = 0;
+            }
+          }
+
+          $pdf->Ln();
+          $pdf->SetFont('Arial','B',9);
+          $pdf->Cell($totals_width,6,'Totals','LBR',0,'R');
+          $pdf->Cell($item_widths[2],6,number_format($tot_taxable_amount,2,'.',''),'BR',0,'R');
+          $pdf->Cell($item_widths[3],6,number_format($tot_bill_value,2,'.',''),'RB',0,'R');
+
+          $pdf->Output();
+        }
+        if($report_type === 'agent') {
+          $heading1 = 'Sales by Agent';
+          $heading2 = 'from '.$form_data['fromDate'].' to '.$form_data['toDate'];
+          $csv_headings = [ [$heading1], [$heading2] ];
+          // csv format
+          $format = $form_data['format'];
+          if($format === 'csv') {
+            $total_records = $this->_format_sales_by_agent($sales_api_response['sales']);
+            Utilities::download_as_CSV_attachment('SalesByAgent', $csv_headings, $total_records);
+            return;
+          }
+
+          // PDF Printing
+          $item_widths = array(10, 80, 30,30);
+          $totals_width = $item_widths[0] + $item_widths[1];
+          $slno = 0;
+
+          $pdf = PDF::getInstance();
+          $pdf->AliasNbPages();
+          $pdf->AddPage('P','A4');
+          $pdf->SetAutoPageBreak(false);
+
+          // Page heading.
+          $this->_add_page_heading_for_sales_by_agent($pdf, $item_widths, $heading1, $heading2);
+
+          $tot_taxable_amount = $tot_bill_value = $slno = 0;
+          $row_cntr = 0;
+          $state_ids = Constants::$LOCATION_STATES;
+          foreach($sales_api_response['sales'] as $record_details) {
+            $slno++;
+            $tot_taxable_amount += $record_details['taxableAmount'];
+            $tot_bill_value += $record_details['billValue'];
+
+            $row_cntr++;
+
+            $agent_name = $record_details['buName'] !== '' ?  $record_details['buName'] : '';
+            $taxable_amount = number_format($record_details['taxableAmount'], 2, '.', '');
+            $bill_value =  number_format($record_details['billValue'], 2, '.', '');
+
+            $pdf->Ln();
+            $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+            $pdf->Cell($item_widths[1],6,$agent_name,'RTB',0,'L');
+            $pdf->Cell($item_widths[2],6,$taxable_amount,'RTB',0,'R');            
+            $pdf->Cell($item_widths[3],6,$bill_value,'RTB',0,'R');            
+            if($row_cntr === 39) {
+              $pdf->AddPage('P','A4');
+              $this->_add_page_heading_for_sales_by_agent($pdf, $item_widths, $heading1, $heading2);
+              $row_cntr = 0;
+            }
+          }
+
+          $pdf->Ln();
+          $pdf->SetFont('Arial','B',9);
+          $pdf->Cell($totals_width,6,'Totals','LBR',0,'R');
+          $pdf->Cell($item_widths[2],6,number_format($tot_taxable_amount,2,'.',''),'BR',0,'R');
+          $pdf->Cell($item_widths[3],6,number_format($tot_bill_value,2,'.',''),'RB',0,'R');
+
+          $pdf->Output();
+        }
+        if($report_type === 'brand') {
+
+          # ---------- get location codes from api -----------------------
+          $client_locations = Utilities::get_client_locations(true);
+          $location_with_ids_a = [];
+          foreach($client_locations as $location_key => $location_name) {
+            $location_a = explode('`', $location_key);
+            $location_with_ids_a[$location_a[1]] = $location_name;
+          }
+
+          $heading1 = 'Sales by Brand';
+          $heading2 = 'from '.$form_data['fromDate'].' to '.$form_data['toDate'];
+          $csv_headings = [ [$heading1], [$heading2] ];
+          // csv format
+          $format = $form_data['format'];
+          if($format === 'csv') {
+            $total_records = $this->_format_sales_by_brand($sales_api_response['sales'], $location_with_ids_a);
+            Utilities::download_as_CSV_attachment('SalesByBrand', $csv_headings, $total_records);
+            return;
+          }
+
+          // PDF Printing
+          $item_widths = array(10, 60, 60, 30, 30);
+          $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2];
+          $slno = 0;
+
+          $pdf = PDF::getInstance();
+          $pdf->AliasNbPages();
+          $pdf->AddPage('P','A4');
+          $pdf->SetAutoPageBreak(false);
+
+          // Page heading.
+          $this->_add_page_heading_for_sales_by_brand($pdf, $item_widths, $heading1, $heading2);
+
+          $tot_qty = $tot_amount = $slno = 0;
+          $row_cntr = 0;
+          foreach($sales_api_response['sales'] as $record_details) {
+            $slno++;
+            $tot_qty    +=  $record_details['itemQty'];
+            $tot_amount +=  $record_details['itemValue'];
+
+            $row_cntr++;
+
+            $brand_name = $record_details['mfgName'] !== '' ?  $record_details['mfgName'] : '';
+            $location_id = $record_details['locationID'];
+            $brand_qty = number_format($record_details['itemQty'], 2, '.', '');
+            $brand_value = number_format($record_details['itemValue'], 2, '.', '');
+
+            $pdf->Ln();
+            $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+            $pdf->Cell($item_widths[1],6,$brand_name,'RTB',0,'L');
+            $pdf->Cell($item_widths[2],6,$location_with_ids_a[$location_id],'RTB',0,'L');            
+            $pdf->Cell($item_widths[3],6,$brand_qty,'RTB',0,'R');            
+            $pdf->Cell($item_widths[4],6,$brand_value,'RTB',0,'R');            
+            if($row_cntr === 39) {
+              $pdf->AddPage('P','A4');
+              $this->_add_page_heading_for_sales_by_brand($pdf, $item_widths, $heading1, $heading2);
+              $row_cntr = 0;
+            }
+          }
+
+          $pdf->Ln();
+          $pdf->SetFont('Arial','B',9);
+          $pdf->Cell($totals_width,6,'Totals','LBR',0,'R');
+          $pdf->Cell($item_widths[3],6,number_format($tot_qty,2,'.',''),'BR',0,'R');
+          $pdf->Cell($item_widths[4],6,number_format($tot_amount,2,'.',''),'RB',0,'R');
+
+          $pdf->Output();
+        }
+      }
+    }
+
+    // controller variables.
+    $controller_vars = array(
+      'page_title' => 'MIS Reports - Sales',
+      'icon_name' => 'fa fa-money',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'report_types_a' => ['executive' => 'By Executive', 'city' => 'By City', 'state' => 'By State', 'agent' => 'By Agent', 'brand' => 'By Brand'],
+    );
+
+    // render template
+    return [$this->template->render_view('sales-by-mis', $template_vars), $controller_vars];
+  }
+
   private function _add_page_heading_for_sales_upi_payments_register(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
     $pdf->SetFont('Arial','B',16);
     $pdf->Cell(0,0,$heading1,'',1,'C');
@@ -2576,6 +2925,82 @@ class SalesReportsController {
     $pdf->SetFont('Arial','',8);
   }
 
+  private function _add_page_heading_for_sales_by_executive(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Excecutive name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Taxable amount (Rs.)','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Invoice value (Rs.)','RTB',0,'C');
+    $pdf->SetFont('Arial','',8);
+  }
+
+  private function _add_page_heading_for_sales_by_city(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'City name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'State name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Taxable amount (Rs.)','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Invoice value (Rs.)','RTB',0,'C');
+    $pdf->SetFont('Arial','',8);
+  }
+
+  private function _add_page_heading_for_sales_by_state(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'State/Region name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Taxable amount (Rs.)','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Invoice value (Rs.)','RTB',0,'C');
+    $pdf->SetFont('Arial','',8);
+  }
+
+  private function _add_page_heading_for_sales_by_agent(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Agent name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Taxable amount (Rs.)','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Invoice value (Rs.)','RTB',0,'C');
+    $pdf->SetFont('Arial','',8);
+  }
+
+  public function _add_page_heading_for_sales_by_brand(&$pdf=null, $item_widths=[], $heading1='', $heading2='') {
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(0,0,$heading1,'',1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln(5);
+    $pdf->Cell(0,0,$heading2,'',1,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Ln(3);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'Brand Name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Store / Location Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Value (in Rs.)','RTB',0,'C');
+    $pdf->SetFont('Arial','',8);    
+  } 
 
   private function _get_sales_executives() {
     if($_SESSION['__utype'] !== 3) {
@@ -2613,6 +3038,32 @@ class SalesReportsController {
 
     $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
     $cleaned_params['saExecutiveCode'] = Utilities::clean_string($form_data['saExecutiveCode']);
+
+    if(count($form_errors) > 0) {
+      return ['status' => false, 'form_errors' => $form_errors];
+    } else {
+      return ['status' => true, 'cleaned_params' => $cleaned_params];
+    }
+  }
+
+  private function _validate_sales_mis_by_filter($form_data = []) {
+    $cleaned_params = $form_errors = [];
+    if($form_data['reportType'] !== '') {
+      $cleaned_params['reportType'] = Utilities::clean_string($form_data['reportType']);
+    } else {
+      $form_errors['reportType'] = 'Invalid report type.';
+    }
+    if($form_data['fromDate'] !== '') {
+      $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
+    } else {
+      $form_errors['FromDate'] = 'Invalid From Date.';
+    }
+    if($form_data['toDate'] !== '') {
+      $cleaned_params['toDate'] = Utilities::clean_string($form_data['toDate']);
+    } else {
+      $form_errors['ToDate'] = 'Invalid To Date.';
+    }
+    $cleaned_params['format'] =  Utilities::clean_string($form_data['format']);
 
     if(count($form_errors) > 0) {
       return ['status' => false, 'form_errors' => $form_errors];
@@ -3513,6 +3964,142 @@ class SalesReportsController {
     
     return $cleaned_params;    
   }
+
+  private function _format_sales_by_executive($total_records = []) {
+    $tot_taxable_amount = $tot_bill_value = 0;
+    $slno = 0;
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $tot_taxable_amount += $record_details['taxableAmount'];
+      $tot_bill_value += $record_details['billValue'];
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Executive Name' => $record_details['buName'],
+        'Taxable Amount (in Rs.)' => $record_details['taxableAmount'],
+        'Bill Value (in Rs.)' => $record_details['billValue'],
+      ];
+    }
+    $cleaned_params[count($cleaned_params)] = [
+      'SNo.' => '' ,
+      'Executive Name' => 'T O T A L S',
+      'Taxable Amount (in Rs.)' => number_format($tot_taxable_amount,2,'.',''),
+      'Bill Value (in Rs.)' => number_format($tot_bill_value,2,'.',''),      
+    ];
+    
+    return $cleaned_params;    
+  }
+
+  private function _format_sales_by_city($total_records = []) {
+    $tot_taxable_amount = $tot_bill_value = 0;
+    $slno = 0;
+    $state_ids = Constants::$LOCATION_STATES;    
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $city_name = $record_details['cityName'];
+      $state_name = (int)$record_details['stateID'] > 0 ? $state_ids[$record_details['stateID']] : '';
+      $tot_taxable_amount += $record_details['taxableAmount'];
+      $tot_bill_value += $record_details['billValue'];
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'City Name' => $city_name,
+        'State Name' => $state_name,
+        'Taxable Amount (in Rs.)' => $record_details['taxableAmount'],
+        'Bill Value (in Rs.)' => $record_details['billValue'],
+      ];
+    }
+    $cleaned_params[count($cleaned_params)] = [
+      'SNo.' => '' ,
+      'City Name' => '',
+      'State Name' => 'T O T A L S',
+      'Taxable Amount (in Rs.)' => number_format($tot_taxable_amount,2,'.',''),
+      'Bill Value (in Rs.)' => number_format($tot_bill_value,2,'.',''),      
+    ];
+    
+    return $cleaned_params;    
+  }
+
+  private function _format_sales_by_state($total_records = []) {
+    $tot_taxable_amount = $tot_bill_value = 0;
+    $slno = 0;
+    $state_ids = Constants::$LOCATION_STATES;    
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $state_name = (int)$record_details['stateID'] > 0 ? $state_ids[$record_details['stateID']] : '';
+      $tot_taxable_amount += $record_details['taxableAmount'];
+      $tot_bill_value += $record_details['billValue'];
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'State Name' => $state_name,
+        'Taxable Amount (in Rs.)' => $record_details['taxableAmount'],
+        'Bill Value (in Rs.)' => $record_details['billValue'],
+      ];
+    }
+    $cleaned_params[count($cleaned_params)] = [
+      'SNo.' => '' ,
+      'State Name' => 'T O T A L S',
+      'Taxable Amount (in Rs.)' => number_format($tot_taxable_amount,2,'.',''),
+      'Bill Value (in Rs.)' => number_format($tot_bill_value,2,'.',''),      
+    ];
+    
+    return $cleaned_params;    
+  }
+
+  private function _format_sales_by_agent($total_records = []) {
+    $tot_taxable_amount = $tot_bill_value = 0;
+    $slno = 0;
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $agent_name = $record_details['buName'] !== '' ? $record_details['buName'] : '';
+      $tot_taxable_amount += $record_details['taxableAmount'];
+      $tot_bill_value += $record_details['billValue'];
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Agent Name' => $agent_name,
+        'Taxable Amount (in Rs.)' => $record_details['taxableAmount'],
+        'Bill Value (in Rs.)' => $record_details['billValue'],
+      ];
+    }
+    $cleaned_params[count($cleaned_params)] = [
+      'SNo.' => '' ,
+      'Agent Name' => 'T O T A L S',
+      'Taxable Amount (in Rs.)' => number_format($tot_taxable_amount,2,'.',''),
+      'Bill Value (in Rs.)' => number_format($tot_bill_value,2,'.',''),      
+    ];
+    
+    return $cleaned_params;    
+  }
+
+  private function _format_sales_by_brand($total_records = [], $location_with_ids_a=[]) {
+    $tot_qty = $tot_amount = 0;
+    $slno = 0;
+
+    foreach($total_records as $key => $record_details) {
+      $slno++;
+      $tot_qty    +=  $record_details['itemQty'];
+      $tot_amount +=  $record_details['itemValue'];
+      $brand_name = $record_details['mfgName'] !== '' ?  $record_details['mfgName'] : '';
+      $location_id = $record_details['locationID'];
+      $brand_qty = number_format($record_details['itemQty'], 2, '.', '');
+      $brand_value = number_format($record_details['itemValue'], 2, '.', '');      
+      $cleaned_params[$key] = [
+        'Sno.' => $slno,
+        'Brand Name' => $brand_name,
+        'Store / Location Name' => $location_with_ids_a[$location_id],
+        'Qty.' => $brand_qty,
+        'Value (in Rs.)' => $brand_value,
+      ];
+    }
+
+    $cleaned_params[count($cleaned_params)] = [
+      'Sno.' => '',
+      'Brand Name' => '',
+      'Store / Location Name' => 'T O T A L S',
+      'Qty.' => $tot_qty,
+      'Value (in Rs.)' => $tot_amount,
+    ];
+    
+    return $cleaned_params;    
+  }  
 
   private function _add_b2b_invoice_header(&$pdf=null, $customer_info=[], $item_widths=[]) {
 

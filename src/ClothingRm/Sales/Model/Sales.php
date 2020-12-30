@@ -321,4 +321,19 @@ class Sales {
 			return array('status' => false, 'apierror' => $response['reason']);
 		}
 	}
+
+	// sales by filter
+	public function get_sales_by_filter($search_params=[]) {
+		$end_point = 'reports/sales-by-filter';
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$end_point,$search_params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return ['status' => true, 'sales' => $response['response']];
+		} elseif($status === 'failed') {
+			return ['status' => false, 'apierror' => $response['reason']];
+		}		
+	}
+
 }

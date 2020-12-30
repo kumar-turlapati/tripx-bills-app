@@ -583,7 +583,7 @@ class Utilities
         '/reports/day-sales', '/reports/sales-by-tax-rate', '/reports/po-register', '/reports/po-register-itemwise', '/reports/payables',
         '/reports/receivables', '/reports/item-master', '/reports/customer-master', 
 
-        '/reports/inventory-profitability', '/reports/material-movement',
+        '/reports/inventory-profitability', '/reports/material-movement', '/reports/sales-mis',
 
         '/reports/item-master-with-barcodes', '/reports/sales-billwise-itemwise', 
         '/reports/sales-billwise-itemwise-casewise',
@@ -593,7 +593,7 @@ class Utilities
 
         '/finy/switch', '/discount-manager',
 
-        '/indent-vs-sales', '/indent-vs-sales-by-item',
+        '/indent-vs-sales', '/indent-vs-sales-by-item', 
       ],      
 
       // for Sales Operator
