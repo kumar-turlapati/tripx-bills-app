@@ -1085,8 +1085,11 @@ class Utilities
       'mrp' => 'MRP Sticker',
       'worate' => 'Sticker Without Rate',
       'worate-sim' => 'Sticker Without Rate - Format 2',
-      'sku-small' => 'Warehouse Sticker with Case/Container/Box No.',
+      'sku-small' => 'Warehouse Sticker with Case/Cont./Box No.',
       'wh-large' => 'Warehouse Sticker - Large',
+      'indent2-bprinter' => 'Indent Sticker - By Item { Barcode Printer }',
+      'sku-small-bprinter' => 'Warehouse Sticker with Case/Cont./Box No. { Barcode Printer }',
+      'wh-large-bprinter' => 'Warehouse Sticker - Large { Barcode Printer }',
     ];
   }
 

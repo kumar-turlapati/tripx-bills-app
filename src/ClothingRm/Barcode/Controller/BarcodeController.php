@@ -282,6 +282,15 @@ class BarcodeController {
         break;        
       case 'wh-large':
         $print_tpl = 'barcode-print-stickers-wh-large-html';
+        break;
+      case 'indent2-bprinter':
+        $print_tpl = 'barcode-print-stickers-item-bprinter-html';
+        break;
+      case 'sku-small-bprinter':
+        $print_tpl = 'barcode-print-stickers-sku-small-bprinter-html';
+        break;
+      case 'wh-large-bprinter':
+        $print_tpl = 'barcode-print-stickers-wh-large-bprinter-html';
         break;        
     }
 
