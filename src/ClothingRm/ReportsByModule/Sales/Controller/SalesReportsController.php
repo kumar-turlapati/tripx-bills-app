@@ -592,7 +592,7 @@ class SalesReportsController {
           }
         }
 
-        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+        if(is_array($client_locations) && count($client_locations)>0 && isset($form_data['locationCode']) && $form_data['locationCode'] !== '') {
           $location_name = $client_locations[$form_data['locationCode']];
         } else {
           $location_name = '';
@@ -3020,11 +3020,11 @@ class SalesReportsController {
 
   private function _validate_form_data($form_data = []) {
     $cleaned_params = $form_errors = [];
-    if($form_data['locationCode'] !== '') {
-      $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
-    } else {
-      $form_errors['StoreName'] = 'Invalid Store Name.';
-    }
+    // if($form_data['locationCode'] !== '') {
+    //   $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+    // } else {
+    //   $form_errors['StoreName'] = 'Invalid Store Name.';
+    // }
     if($form_data['fromDate'] !== '') {
       $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
     } else {
