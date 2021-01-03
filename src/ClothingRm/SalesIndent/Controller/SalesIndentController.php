@@ -537,6 +537,7 @@ class SalesIndentController {
     $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
+    $qty_type = $request->get('qtyType') !== null ? Utilities::clean_string($request->get('qtyType')) : 'all';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -546,7 +547,11 @@ class SalesIndentController {
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
       'custName' => $customer_name,
+      'qtyType' => $qty_type,
     );
+
+    // dump($search_params);
+    // exit;
 
     $api_response = $this->sindent_model->indent_vs_sales($search_params);
     // dump($api_response);
@@ -597,6 +602,7 @@ class SalesIndentController {
       'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
+      'qty_types' => ['all' => 'Pending And Completed', 'pending' => 'Pending', 'completed' => 'Completed'],
     );
 
     // build variables
@@ -645,6 +651,7 @@ class SalesIndentController {
     $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
+    $qty_type = $request->get('qtyType') !== null ? Utilities::clean_string($request->get('qtyType')) : 'all';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -655,6 +662,7 @@ class SalesIndentController {
       'agentCode' => $agent_code,
       'custName' => $customer_name,
       'infoType' => 'item',
+      'qtyType' => $qty_type,
     );
 
     $api_response = $this->sindent_model->indent_vs_sales($search_params);
@@ -706,6 +714,7 @@ class SalesIndentController {
       'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
+      'qty_types' => ['all' => 'Pending And Completed', 'pending' => 'Pending', 'completed' => 'Completed'],
     );
 
     // build variables

@@ -40,8 +40,15 @@
   }
   if(isset($search_params['custName']) && $search_params['custName'] !== '' ) {
     $customer_name = $search_params['custName'];
+    $query_params[] = 'custName='.$search_params['custName'];    
   } else {
     $customer_name = '';
+  }
+  if(isset($search_params['qtyType']) && $search_params['qtyType'] !== '' ) {
+    $qty_type = $search_params['qtyType'];
+    $query_params[] = 'qtyType='.$search_params['qtyType'];    
+  } else {
+    $qty_type = 'all';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -105,7 +112,27 @@
                     class="form-control" 
                     value="<?php //echo $brand_name ?>"
                   />
-                </div>*/ ?>              
+                </div>*/ ?>
+
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="qtyType" id="qtyType">
+                      <?php 
+                        foreach($qty_types as $key => $value):
+                          if($key === $qty_type) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
+
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="agentCode" id="agentCode">
@@ -124,7 +151,10 @@
                     </select>
                    </div>
                 </div>
-                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                
+                <div align="center"><br /><br />
+                  <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                </div>
                 <?php /*<br /><div style="margin-top: 20px; margin-left: 75px;">
                   <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
                 </div> */ ?>
