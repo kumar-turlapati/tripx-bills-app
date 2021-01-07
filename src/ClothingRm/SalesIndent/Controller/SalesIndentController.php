@@ -505,6 +505,7 @@ class SalesIndentController {
 
     $sales = $search_params = $sales_a = $agents_a = $campaigns_a = [];
     $campaign_code = $page_error = $agent_code = '';
+    $sa_executives = [];
 
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
@@ -529,6 +530,14 @@ class SalesIndentController {
       $campaigns_a = array_combine($campaign_keys, $campaign_names);
     }
 
+    // sales exe response
+    $sexe_response = $this->bu_model->get_business_users(['userType' => 91, 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
+      }
+    }
+
     // parse request parameters.
     $per_page = 100;
     $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
@@ -538,6 +547,7 @@ class SalesIndentController {
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
     $qty_type = $request->get('qtyType') !== null ? Utilities::clean_string($request->get('qtyType')) : 'all';
+    $exe_code = $request->get('executiveCode') !== null ? Utilities::clean_string($request->get('executiveCode')) : '';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -548,6 +558,7 @@ class SalesIndentController {
       'agentCode' => $agent_code,
       'custName' => $customer_name,
       'qtyType' => $qty_type,
+      'executiveCode' => $exe_code,
     );
 
     // dump($search_params);
@@ -603,6 +614,7 @@ class SalesIndentController {
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
       'qty_types' => ['all' => 'Pending And Completed', 'pending' => 'Pending', 'completed' => 'Completed'],
+      'sa_executives' => ['All Executives'] + $sa_executives,      
     );
 
     // build variables
@@ -643,6 +655,14 @@ class SalesIndentController {
       $campaigns_a = array_combine($campaign_keys, $campaign_names);
     }
 
+    // sales exe response
+    $sexe_response = $this->bu_model->get_business_users(['userType' => 91, 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
+    if($sexe_response['status']) {
+      foreach($sexe_response['users'] as $user_details) {
+        $sa_executives[$user_details['userCode']] = $user_details['userName'];
+      }
+    }    
+
     // parse request parameters.
     $per_page = 100;
     $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
@@ -652,6 +672,7 @@ class SalesIndentController {
     $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
     $qty_type = $request->get('qtyType') !== null ? Utilities::clean_string($request->get('qtyType')) : 'all';
+    $exe_code = $request->get('executiveCode') !== null ? Utilities::clean_string($request->get('executiveCode')) : '';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -663,6 +684,7 @@ class SalesIndentController {
       'custName' => $customer_name,
       'infoType' => 'item',
       'qtyType' => $qty_type,
+      'executiveCode' => $exe_code,
     );
 
     $api_response = $this->sindent_model->indent_vs_sales($search_params);
@@ -715,6 +737,7 @@ class SalesIndentController {
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
       'qty_types' => ['all' => 'Pending And Completed', 'pending' => 'Pending', 'completed' => 'Completed'],
+      'sa_executives' => ['All Executives'] + $sa_executives,      
     );
 
     // build variables

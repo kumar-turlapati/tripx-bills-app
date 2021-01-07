@@ -50,6 +50,12 @@
   } else {
     $qty_type = 'all';
   }
+  if(isset($search_params['executiveCode']) && $search_params['executiveCode'] !== '' ) {
+    $exe_code = $search_params['executiveCode'];
+    $query_params[] = 'executiveCode='.$search_params['executiveCode'];    
+  } else {
+    $exe_code = '';
+  }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
@@ -80,12 +86,14 @@
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1 labelStyle" style="padding-top:9px;">Filter by</div>
+                
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
+
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" value="<?php echo $toDate ?>" />
@@ -111,50 +119,27 @@
                     </select>
                    </div>
                 </div>
-                
-                <?php /*                
-                <div class="col-sm-12 col-md-2 col-lg-2">
-                  <input 
-                    placeholder="Customer name" 
-                    type="text" 
-                    name="custName" 
-                    id="custName" 
-                    class="form-control cnameAc" 
-                    value="<?php echo $customer_name ?>"
-                  />
-                </div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
-                  <input 
-                    placeholder="Brand name" 
-                    type="text" 
-                    name="brandName" 
-                    id="brandName" 
-                    class="form-control" 
-                    value="<?php //echo $brand_name ?>"
-                  />
-                </div>
+
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
-                    <select class="form-control" name="agentCode" id="agentCode">
+                    <select class="form-control" name="executiveCode" id="executiveCode">
                       <?php 
-                        foreach($agents as $agent_code => $agent_name):
-                          if($agentCode === $agent_code) {
+                        foreach($sa_executives as $key => $exe_name):
+                          if($key === $exe_code) {
                             $selected = 'selected="selected"';
                           } else {
                             $selected = '';
                           }  
                       ?>
-                       <option value="<?php echo $agent_code ?>" <?php echo $selected ?>>
-                          <?php echo $agent_name ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $exe_name ?>
                         </option>
                       <?php endforeach; ?>
                     </select>
                    </div>
-                </div> */ ?>
+                </div>
+                
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
-                <?php /*<br /><div style="margin-top: 20px; margin-left: 75px;">
-                  <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
-                </div> */ ?>
               </div>
             </form>
 			    </div>
