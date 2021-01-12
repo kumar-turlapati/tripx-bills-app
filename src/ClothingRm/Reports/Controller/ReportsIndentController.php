@@ -507,7 +507,7 @@ class ReportsIndentController {
     
     $slno = $tot_qty = 0; 
     
-    $filter_params['perPage'] = 100;
+    $filter_params['perPage'] = 1000;
     $filter_params['pageNo'] = 1;
 
     $format = !is_null($request->get('format')) && $request->get('format') !== '' ? Utilities::clean_string($request->get('format')) : 'pdf';

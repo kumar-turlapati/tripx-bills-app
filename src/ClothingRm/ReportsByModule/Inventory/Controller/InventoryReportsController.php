@@ -39,7 +39,7 @@ class InventoryReportsController {
     $total_records = $categories_a = [];
     // $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise', 'barcode' => 'Additional Details'];
     $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise'];
-    $neg_a = ['all' => 'All items', 'neg' => 'Negative Balances', 'cbg0' => 'In stock items', 'zero' => 'Out of Stock Items'];
+    $neg_a = ['all' => 'All items', 'neg' => 'Negative Balances', 'cbg0' => 'In stock items', 'zero' => 'Out of stock items', 'dayzero' => 'Day zero items'];
 
     $client_locations = Utilities::get_client_locations();
     $categories_a = $this->products_api->get_product_categories();
