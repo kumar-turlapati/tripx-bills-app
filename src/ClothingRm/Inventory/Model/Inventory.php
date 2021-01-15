@@ -109,6 +109,24 @@ class Inventory
 		}	
 	}
 
+	public function get_stock_report_indent($params=[]) {
+		$request_uri = 'reports/stock-report-indent';
+		// call api.
+		$response = $this->api_caller->sendRequest('get',$request_uri,$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array(
+				'status' => true,  
+				'results' => $response['response'],
+			);				
+		} elseif($status === 'failed') {
+			return array(
+				'status' => false, 
+				'apierror' => $response['reason']
+			);
+		}	
+	}	
+
 	public function get_expiry_report($params=array(),$page_no=1) {
 
 		// fetch client id

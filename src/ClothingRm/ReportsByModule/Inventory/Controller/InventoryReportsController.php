@@ -332,6 +332,306 @@ class InventoryReportsController {
     return [$this->template->render_view('stock-report', $template_vars), $controller_vars];
   }
 
+  public function stockReportIndent(Request $request) {
+   
+    $default_location = $_SESSION['lc'];
+    $page_no = 1; $per_page = 15000;
+    $total_records = $categories_a = [];
+    // $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise', 'barcode' => 'Additional Details'];
+    $group_by_a = ['item' => 'Itemwise', 'lot' => 'Lotwise', 'case' => 'Casewise/Containerwise/Boxwise'];
+    $neg_a = ['all' => 'All items', 'neg' => 'Negative Balances', 'cbg0' => 'In stock items', 'zero' => 'Out of stock items', 'dayzero' => 'Day zero items'];
+
+    $client_locations = Utilities::get_client_locations();
+    $categories_a = $this->products_api->get_product_categories();
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data = $request->request->all();
+      $group_by_original = Utilities::clean_string($form_data['groupBy']);
+
+      $validation = $this->_validate_stock_report_data($form_data);
+      if($validation['status']) {
+        $form_data = $validation['cleaned_params'];
+        $form_data['pageNo'] = $page_no;
+        $form_data['perPage'] = $per_page;
+      } else {
+        $error_message = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error: '.json_encode($validation['form_errors']);
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/stock-report');        
+      }
+
+      // hit api
+      $inven_api_response = $this->inven_api->get_stock_report_indent($form_data);
+      if($inven_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/stock-report');
+      } else {
+        $total_records = $inven_api_response['results']['results'];
+        $total_pages = $inven_api_response['results']['total_pages'];
+        if($total_pages>1) {
+          for($i=2;$i<=$total_pages;$i++) {
+            $form_data['pageNo'] = $i;
+            $inven_api_response = $this->inven_api->get_stock_report($form_data);
+            if($inven_api_response['status']) {
+              $total_records = array_merge($total_records, $inven_api_response['results']['results']);
+            }
+          }
+        }
+
+        // dump($total_records, $form_data);
+        // exit;
+
+        // $total_records = $this->_format_data_for_sales_register($total_records);
+        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+          $location_name = $client_locations[$form_data['locationCode']];
+        } else {
+          $location_name = '';
+        }
+
+        if($group_by_original === 'lot') {
+          $report_string = 'Lotwise';
+        } elseif($group_by_original === 'item') {
+          $report_string = 'Itemwise';
+        } elseif($group_by_original === 'case') {
+          $report_string = 'Case/Container/Box wise';
+        } elseif($group_by_original === 'barcode') {
+          $report_string = 'Additional Details';
+        }
+
+        $heading1 = $report_string.' Stock Report - '.$location_name;
+        $heading2 = '( from '.date("d-M-Y", strtotime($form_data['fromDate'])).' to '. date("d-M-Y", strtotime($form_data['toDate'])) .' )';
+        $heading3 = '';
+        if($form_data['brandName'] !== '') {
+          $heading3 .= 'Brand Name: '.$form_data['brandName'];
+        }
+        if($form_data['categoryCode'] !== '') {
+          $category_name = $categories_a[$form_data['categoryCode']];
+          if($heading3 !== '') {
+            $heading3 .= ', ';
+          }
+          $heading3 .= 'Category Name: '.$category_name;
+        }
+        $csv_headings = [ [$heading1], [$heading2], [$heading3] ];
+      }
+
+      $format = $form_data['format'];
+      if($format === 'csv') {
+        if($group_by_original === 'barcode') {
+          $total_records = $this->_format_stock_report_barcode_for_csv($total_records,$group_by_original);
+        } else {
+          $total_records = $this->_format_stock_report_for_csv($total_records,$group_by_original);
+        }
+        Utilities::download_as_CSV_attachment('StockReport', $csv_headings, $total_records);
+        return;
+      }
+
+      // start PDF printing.
+      $item_widths = array(10,38,23,20,25,12,14,14,14,16,12,12,12,13,12,18,12);
+      //                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16
+
+      $item_widths_bc = array(10,49,13,25,25,10,12,16,21,17,18,18,16,26,12,18,12);
+      //                       0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16
+
+      $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + $item_widths[3] + $item_widths[4]  + $item_widths[5];
+      $totals_width_bc = $item_widths_bc[0] + $item_widths_bc[1] + $item_widths_bc[2] + $item_widths_bc[3] + $item_widths_bc[4] + $item_widths_bc[5] +
+                         $item_widths_bc[6] + $item_widths_bc[7] + $item_widths_bc[8];
+
+      $slno = 0; $tot_amount = 0;
+      $tot_op_qty = $tot_pu_qty = $tot_sr_qty = $tot_aj_qty = $tot_st_qty = $tot_sa_qty = $tot_pr_qty = $tot_cl_qty = 0;
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->SetAutoPageBreak(false);
+      $pdf->AddPage('L','A4');
+      $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,5,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',12);
+      $pdf->Cell(0,5,$heading2,'',1,'C');
+      if($heading3 !== '') {
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Cell(0,5,$heading3,'B',1,'C');
+      }
+
+      if($group_by_original === 'barcode') {
+        $this->_add_page_heading_for_barcodewise_stock_report($pdf, $item_widths_bc, $group_by_original);
+      } else {
+        $this->_add_page_heading_for_stock_report($pdf, $item_widths, $group_by_original);
+      }
+
+      $first_page = true;
+      $row_cntr = 0;
+      foreach($total_records as $item_details) {
+        $slno++;
+
+        // for barcode write seperate logic even though we get all output in same query.
+        if($group_by_original === 'barcode') {
+
+          $row_cntr++;
+
+          $item_name = substr($item_details['itemName'], 0, 22);
+          $lot_no = $item_details['lotNo'];
+          $tax_percent = $item_details['taxPercent'];
+          $barcode = $item_details['defBarcode'] !== '' ? $item_details['defBarcode'] : $item_details['createdBarcode'];
+          $cno = $item_details['cno'];
+          $style_code = $item_details['itemStyleCode'];
+          $size = $item_details['itemSize'];
+          $color = $item_details['itemColor'];
+          $sleeve = $item_details['itemSleeve'];
+          $sku = $item_details['itemSku'];
+          $closing_qty = $item_details['closingQty'];
+          $purchase_rate = $item_details['purchaseRate'];
+          $amount = round($closing_qty*$purchase_rate, 2);
+          $mrp = $item_details['mrp'];
+
+          $tot_cl_qty += $closing_qty;
+          $tot_amount += $amount;
+
+          $pdf->Ln();
+          $pdf->Cell($item_widths_bc[0],6,$slno,'LRTB',0,'R');
+          $pdf->Cell($item_widths_bc[1],6,$item_name,'RTB',0,'L');
+          $pdf->Cell($item_widths_bc[2],6,$tax_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths_bc[3],6,$cno,'RTB',0,'L');
+          $pdf->Cell($item_widths_bc[4],6,$style_code,'RTB',0,'L');
+          $pdf->Cell($item_widths_bc[5],6,$size,'RTB',0,'R');
+          $pdf->Cell($item_widths_bc[6],6,$color,'RTB',0,'R');            
+          $pdf->Cell($item_widths_bc[7],6,$sleeve,'RTB',0,'R');
+          $pdf->Cell($item_widths_bc[8],6,$sku,'RTB',0,'R');
+          $pdf->Cell($item_widths_bc[9],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths_bc[10],6,number_format($purchase_rate,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths_bc[11],6,number_format($amount,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths_bc[12],6,number_format($mrp,2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths_bc[13],6,$lot_no,'RTB',0,'L');
+          if($first_page && $row_cntr === 23) {
+            $pdf->AddPage('L','A4');
+            $this->_add_page_heading_for_barcodewise_stock_report($pdf, $item_widths_bc, $form_data['groupBy']);
+            $first_page = false; $row_cntr = 0;
+          } elseif ($row_cntr === 26) {
+            $pdf->AddPage('L','A4');
+            $this->_add_page_heading_for_barcodewise_stock_report($pdf, $item_widths_bc, $form_data['groupBy']);
+            $row_cntr = 0;
+          }
+
+        } else {
+          $item_name = substr($item_details['itemName'], 0, 20);
+          $category_name = substr($item_details['categoryName'], 0, 12);
+          $brand_name = substr( strtolower($item_details['brandName']), 0, 12);
+          $lot_no = $item_details['lotNo'];
+
+          $row_cntr++;
+
+          $opening_qty = $item_details['openingQty'];
+          $purchased_qty = $item_details['purchasedQty'];
+          $sales_return_qty = $item_details['salesReturnQty'];
+          $adjusted_qty = $item_details['adjustedQty'];
+          $transfer_qty = $item_details['transferQty'];
+          $purchase_return_qty = $item_details['purchaseReturnQty'];
+          $sold_qty = $item_details['soldQty'];
+          $closing_qty = $item_details['closingQty'];
+          $mrp = $item_details['mrp'];
+          $purchase_rate = $item_details['purchaseRate'];
+          $tax_percent = $item_details['taxPercent'];
+          $cno = $item_details['cno'];
+
+          $amount = round($closing_qty * $purchase_rate, 2);
+          
+          $tot_op_qty += $opening_qty;
+          $tot_pu_qty += $purchased_qty;
+          $tot_sr_qty += $sales_return_qty;
+          $tot_aj_qty += $adjusted_qty;
+          $tot_st_qty += $transfer_qty;
+          $tot_sa_qty += $sold_qty;
+          $tot_pr_qty += $purchase_return_qty;
+          $tot_cl_qty += $closing_qty;
+          $tot_amount += $amount;
+
+          if($group_by_original === 'item') {
+            $lot_no = '';
+          } elseif($group_by_original === 'case') {
+            $lot_no = $cno;
+          }
+          
+          $pdf->Ln();
+          $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+          $pdf->Cell($item_widths[1],6,$item_name,'RTB',0,'L');
+          $pdf->Cell($item_widths[2],6,$category_name,'RTB',0,'L');
+          $pdf->Cell($item_widths[3],6,$brand_name,'RTB',0,'L');
+          $pdf->Cell($item_widths[4],6,$lot_no,'RTB',0,'L');
+          $pdf->Cell($item_widths[5],6,$tax_percent,'RTB',0,'R');
+          $pdf->Cell($item_widths[6],6,number_format($opening_qty,2,'.',''),'RTB',0,'R');            
+          $pdf->Cell($item_widths[7],6,number_format($purchased_qty,2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[8],6,number_format($sales_return_qty,2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[9],6,number_format($adjusted_qty,2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[10],6,number_format($transfer_qty,2,'.',''),'RTB',0,'R');
+          $pdf->Cell($item_widths[11],6,number_format($sold_qty,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths[12],6,number_format($purchase_return_qty,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths[13],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths[14],6,number_format($purchase_rate,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths[15],6,number_format($amount,2,'.',''),'RTB',0,'R');      
+          $pdf->Cell($item_widths[16],6,number_format($mrp,2,'.',''),'RTB',0,'R');
+          if($first_page && $row_cntr === 23) {
+            $pdf->AddPage('L','A4');
+            $this->_add_page_heading_for_stock_report($pdf, $item_widths, $form_data['groupBy']);
+            $first_page = false; $row_cntr = 0;
+          } elseif ($row_cntr === 26) {
+            $pdf->AddPage('L','A4');
+            $this->_add_page_heading_for_stock_report($pdf, $item_widths, $form_data['groupBy']);
+            $row_cntr = 0;
+          }
+        }
+      }
+
+      // print totals....
+      if($group_by_original === 'barcode') {
+        $pdf->Ln();
+        $pdf->SetFont('Arial','B',8);
+        $pdf->Cell($totals_width_bc,6,'REPORT TOTALS','LRTB',0,'R');
+        $pdf->Cell($item_widths_bc[9],6,number_format($tot_cl_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths_bc[10],6,'','RTB',0,'R');      
+        $pdf->Cell($item_widths_bc[11],6,number_format($tot_amount,2,'.',''),'RTB',0,'R');      
+      } else {
+        $pdf->Ln();
+        $pdf->SetFont('Arial','B',8);
+        $pdf->Cell($totals_width,6,'REPORT TOTALS','LRTB',0,'R');
+        $pdf->Cell($item_widths[6],6,number_format($tot_op_qty,2,'.',''),'RTB',0,'R');            
+        $pdf->Cell($item_widths[7],6,number_format($tot_pu_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[8],6,number_format($tot_sr_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[9],6,number_format($tot_aj_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[10],6,number_format($tot_st_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[11],6,number_format($tot_sa_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[12],6,number_format($tot_pr_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[13],6,number_format($tot_cl_qty,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[14],6,'','RTB',0,'R');      
+        $pdf->Cell($item_widths[15],6,number_format($tot_amount,2,'.',''),'RTB',0,'R');      
+        $pdf->Cell($item_widths[16],6,'','RTB',0,'R');
+      }
+
+      $pdf->Output();
+    }
+
+    $controller_vars = array(
+      'page_title' => 'Print Stock Report for Indents',
+      'icon_name' => 'fa fa-print',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'All Stores') + $client_locations,
+      'categories' => array(''=>'All Categories') + $categories_a,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+      'group_by_a' => $group_by_a,
+      'neg_a' => $neg_a,
+      'inven_type_a' => ['' => 'Products and Services (Both)', 'product' => 'Products only', 'service' => 'Services only'],
+    );
+
+    // render template
+    return [$this->template->render_view('stock-report-indent', $template_vars), $controller_vars];
+  }
+
   public function openingBalances(Request $request) {
 
     $default_location = $_SESSION['lc'];

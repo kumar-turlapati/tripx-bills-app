@@ -991,7 +991,7 @@ class ReportsController
           );
           break;
         case 'indent-item-avail':
-          $template_name = 'template-indent-1';
+          $template_name = 'template-indent-3';
           $locations_a = ['' => 'All Stores'] + Utilities::get_client_locations();
           $template_vars = array(
             'title' => 'Item Availability Report For Indents',

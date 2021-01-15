@@ -98,6 +98,7 @@
             </a>
             <ul class="sub">
               <li><a href="/reports/stock-report"><i class="fa fa-angle-right"></i> Stock Report</a></li>
+              <li><a href="/reports/stock-report-indent"><i class="fa fa-angle-right"></i> Stock Report (Indent)</a></li>
               <li><a href="/reports/opbal"><i class="fa fa-angle-right"></i> Opening Balances</a></li>              
             </ul>
           </li>
