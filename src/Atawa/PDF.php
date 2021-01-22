@@ -12,18 +12,23 @@ class PDF extends FPDF {
   private static $client_details = null;
   private static $skip_footer = null;
   private static $loc_address = null;
+  private static $token = null;
+  private static $client_code = null;
 
-  public static function getInstance($skip_footer = false, $loc_address=[]) {
+  public static function getInstance($skip_footer = false, $loc_address=[], $token='', $client_code='') {
     if(self::$pdf == null) {
       self::$pdf = new PDF;
     }
     self::$skip_footer = $skip_footer;
     self::$loc_address = $loc_address;
+    self::$token = $token;
+    self::$client_code = $client_code;
+
     return self::$pdf;
   }
 
   public function get_client_details() {
-    return Utilities::get_client_details();
+    return Utilities::get_client_details(self::$token, self::$client_code);
   }
 
   public function Header() {

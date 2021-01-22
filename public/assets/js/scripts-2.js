@@ -1652,6 +1652,80 @@ function initializeJS() {
        e.preventDefault();
      }
     });
+  }
+
+  if( $('#samplesBarcode').length>0 ) {
+    $('#samplesBarcode').on('keypress', function (e) {
+     if (e.keyCode == 13) {
+      var barcode = $(this).val();
+      jQuery.ajax("/async/samplesCheck?barcode="+barcode, {
+        beforeSend: function() {
+          $('#samplesBarcode').attr('disabled', true);
+          $('#samplesBarcode').val('Validating Barcode. Please wait...');              
+        },
+        success: function(itemDetails) {
+          if(itemDetails.status === 'success') {
+            var itemName = itemDetails.response.itemName;
+            var brandName = itemDetails.response.brandName;
+            var closingQty =  itemDetails.response.closingQty;
+            var categoryName = itemDetails.response.categoryName;
+            var exMill = itemDetails.response.exmillPrice;
+            var wholesale = itemDetails.response.wholesalePrice;
+            var onlinePrice = itemDetails.response.onlinePrice;
+            var mrp = itemDetails.response.mrp;
+            $('#itemName').text(itemName);
+            $('#avaQty').text(closingQty);
+            $('#brandName').text(brandName);
+            $('#categoryName').text(categoryName);
+            $('#exMill').text(parseFloat(exMill).toFixed(2));
+            $('#wholesale').text(parseFloat(wholesale).toFixed(2));
+            $('#mrp').text(parseFloat(mrp).toFixed(2));
+            $('#online').text(parseFloat(onlinePrice).toFixed(2));
+
+            $('#sampleShower').show();
+
+            $('#samplesBarcode').attr('disabled', false);
+            $('#samplesBarcode').val('');
+            $('#samplesBarcode').focus();
+          } else {
+            $('#samplesBarcode').focus();
+            bootbox.alert({
+              message: 'Invalid Barcode (or) Out of stock!'
+            });
+            $('#samplesBarcode').attr('disabled', false);
+            $('#samplesBarcode').val('');
+            $('#itemName').text('');
+            $('#avaQty').text('');
+            $('#brandName').text('');
+            $('#categoryName').text('');
+            $('#exMill').text('');
+            $('#wholesale').text('');
+            $('#mrp').text('');
+            $('#online').text('');
+            $('#sampleShower').hide();
+          }
+        },
+        error: function(e) {
+          bootbox.alert({
+            message: "Barcode not found"
+          });
+          $('#samplesBarcode').attr('disabled', false);
+          $('#samplesBarcode').val('');
+          $('#samplesBarcode').focus();
+          $('#itemName').text('');
+          $('#avaQty').text('');
+          $('#brandName').text('');
+          $('#categoryName').text('');
+          $('#exMill').text('');
+          $('#wholesale').text('');
+          $('#mrp').text('');
+          $('#online').text('');          
+          $('#sampleShower').hide();
+        }
+      });
+       e.preventDefault();
+     }
+    });
   }  
 
   if( $('#indentBarcode').length>0 ) {

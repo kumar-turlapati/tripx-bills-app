@@ -194,6 +194,7 @@
           <li><a href="/barcode/cbbal"><i class="fa fa-barcode"></i> Print Barcodes-CB (lot)</a></li>
           <li><a href="/barcode/cbbal-itemwise"><i class="fa fa-barcode"></i> Print Barcodes-CB (item)</a></li>
           <li><a href="/inventory/change-selling-price"><i class="fa fa-edit"></i> Update Selling Price</a></li>
+          <li><a href="/inventory/sample-checker"><i class="fa fa-search-plus"></i> Samples Checker</a></li>
           <li><a href="/inventory/refresh-cb"><i class="fa fa-refresh"></i> Refresh CB</a></li>
           <li><a href="/inventory/refresh-cb-indents"><i class="fa fa-refresh"></i> Refresh CB - Indents</a></li>
           <?php /*

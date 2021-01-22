@@ -330,11 +330,13 @@ class Utilities
     }
   }  
 
-  public static function get_client_details() {
-    $client_code = Utilities::get_current_client_id();
+  public static function get_client_details($token='', $client_code='') {
+    if($client_code === '') {
+      $client_code = Utilities::get_current_client_id();
+    }
     // call api.
     $api_caller = new ApiCaller();
-    $response = $api_caller->sendRequest('get','clients/details/'.$client_code);
+    $response = $api_caller->sendRequest('get','clients/details/'.$client_code,[],true,false,$token);
     $status = $response['status'];
     if($status === 'success') {
       return $response['response']['clientDetails'];
@@ -694,7 +696,7 @@ class Utilities
       10 => [
 
         '/async/finyDefault', '/async/getItemDetailsByCode', '/async/itemsAc', '/async/brandAc', 
-        '/async/custAc', '/async/getItemBatchesByCode', 
+        '/async/custAc', '/async/getItemBatchesByCode', '/async/samplesCheck',
 
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
         
@@ -712,7 +714,7 @@ class Utilities
         '/indent-item-avail', '/indent-itemwise', '/indent-agentwise', '/indent-statewise',
         '/print-indents-agentwise', '/indent-register', '/indent-dispatch-summary',
 
-        '/indent-vs-sales', '/indent-vs-sales-by-item',
+        '/indent-vs-sales', '/indent-vs-sales-by-item', '/inventory/sample-checker',
 
         '/leads/list', '/lead/create', '/lead/update', '/lead/import', '/lead/remove',
         '/tasks/list', '/task/create', '/task/update', '/task/remove',

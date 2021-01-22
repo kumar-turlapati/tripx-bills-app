@@ -34,7 +34,9 @@ class Framework {
     $path = $request->getPathInfo();
 
     // validate access token before loading any route except listed routes here.
-    if(in_array($path, $this->_skip_routes_for_token_validation()) === false) {
+    // dump($this->_is_auth_route($path));
+    // exit;
+    if($this->_is_auth_route($path)) {
       // check device information.
       Utilities::check_device_name();
 
@@ -86,13 +88,17 @@ class Framework {
     }
   }
 
-  private function _skip_routes_for_token_validation() {
-    return [
+  private function _is_auth_route($path = '') {
+    $anon_routes =  [
       '/login', '/forgot-password', '/send-otp',
       '/reset-password', '/error-device', '',
-      '/id__mapper',
-      '/force-logout',
-      '/__id__lo',
+      '/id__mapper', '/force-logout',
+      '/__id__lo', '/app-print-indent', '/app-print-indent-wor', 
     ];
+    if(in_array($path, $anon_routes)) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

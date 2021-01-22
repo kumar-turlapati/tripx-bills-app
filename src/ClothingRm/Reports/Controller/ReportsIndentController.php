@@ -201,7 +201,6 @@ class ReportsIndentController {
     }
 
     $pdf->Output();
-
   }
 
   public function printIndent(Request $request) {
@@ -1312,4 +1311,319 @@ class ReportsIndentController {
     $pdf->Cell($item_widths[6],6,'Indent Value','RTB',0,'C');    
     $pdf->Ln();
   }
+
+  public function printIndentApp(Request $request) {
+
+    $indent_no = $request->get('indentNo');
+    $token = $request->get('token');
+    $client_code = $request->get('clientCode');
+    $slno = 0;
+
+    // echo $indent_no;
+    // echo $token;
+    // exit;
+
+    $indent_info_widths = [30,20,85,55];
+    $customer_info_widths = [95,95];
+    $item_widths = [10,35,60,37,27,24,24];
+    $final_tot_width = [23,23,23,25,20,30,23,23];
+
+    $indent_details = $this->indent_model->get_indent_details($indent_no, false, $token);
+    if(is_array($indent_details) && isset($indent_details['status']) && $indent_details['status'] ===false ) {
+      $response = ['status' => false, 'error' => 'Invalid token'];
+      header("Content-type: application/json");      
+      echo json_encode($response);
+      exit;
+    } elseif(!is_array($indent_details) || count($indent_details)<0) {
+      die('Invalid Indent No.');
+    } else {
+      $indent_tran_details = $indent_details['response']['indentDetails']['tranDetails'];
+      $indent_item_details = $indent_details['response']['indentDetails']['itemDetails'];
+    }
+
+    // dump($indent_tran_details);
+    // dump($indent_item_details);
+    // exit;
+
+    $placed_by = isset($indent_tran_details['customerName']) && $indent_tran_details['customerName'] !== '' ? $indent_tran_details['customerName'] : '';
+    $referred_by = isset($indent_tran_details['agentName']) && $indent_tran_details['agentName'] !== '' ? $indent_tran_details['agentName'] : '';
+    $exe_name = isset($indent_tran_details['executiveName']) && $indent_tran_details['executiveName'] !== '' ? $indent_tran_details['executiveName'] : '';
+    $exe_mobile_no = isset($indent_tran_details['executiveMobileNo']) && $indent_tran_details['executiveMobileNo'] !== '' ? $indent_tran_details['executiveMobileNo'] : '';
+    $mobile_no = isset($indent_tran_details['primaryMobileNo']) && $indent_tran_details['primaryMobileNo'] !== '' ? $indent_tran_details['primaryMobileNo'] : '';
+    $campaign_name = $indent_tran_details['campaignName'];
+    $print_date_time = date("d/m/Y H:ia");
+    $operator_name = 'ExeApp';
+    $remarks = isset($indent_tran_details['remarks']) && $indent_tran_details['remarks'] !== '' ? $indent_tran_details['remarks'] : '';
+    $remarks2 = isset($indent_tran_details['remarks2']) && $indent_tran_details['remarks2'] !== '' ? $indent_tran_details['remarks2'] : '';
+    if($remarks === '') {
+      $remarks = $remarks2;
+    }    
+
+    # start PDF printing.
+    $pdf = PDF::getInstance(false, [], $token, $client_code);
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P','A4');
+
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Ln(2);    
+    $pdf->Cell(0,0,'SALES INDENT','',1,'C');
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Ln(5);
+
+    # second row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln();
+    $pdf->Cell($indent_info_widths[0],6,'Indent No.','LRTB',0,'C');
+    $pdf->Cell($indent_info_widths[1],6,'Indent Date','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,'Executive Name','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,'Executive Mobile No.','RTB',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',13);
+    $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
+    $pdf->SetFont('Arial','',10);
+    $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,$exe_name,'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,$exe_mobile_no,'RTB',0,'C');
+
+    # third row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln();
+    $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
+    $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
+    $pdf->Ln();
+
+    # fourth row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(95,6,'Campaign / Event Name','LRTB',0,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell(95,6,'*** Below column left blank intentionally for handnotes ***','LRTB',0,'C');
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(95,6,$campaign_name,'LRTB',0,'C');
+    $pdf->Cell(95,6,'','LRTB',0,'C');
+
+    # item details
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'GDR No.','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Product Name','RTB',0,'C');
+    $pdf->Cell($item_widths[3],6,'Brand Name','RTB',0,'C');    
+    // $pdf->Cell($item_widths[4],6,'HSN/SAC Code','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[6],6,'Rate/Unit','RTB',0,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Ln();
+
+    $tot_bill_value = $tot_items_qty = 0;
+    foreach($indent_item_details as $item_details) {
+      $slno++;
+      if($item_details['itemQty'] > 0 && $item_details['itemRateIndent'] > 0) {
+        $amount = round($item_details['itemQty']*$item_details['itemRateIndent'], 2);
+        $moq = $item_details['mOq'];
+        if($moq > 0 && $item_details['itemQty'] > 0) {
+          $order_qty = round($item_details['itemQty']/$moq,0);
+        } else {
+          $order_qty = $item_details['itemQty'];
+        }
+      } else {
+        $amount = $order_qty = 0;
+      }
+
+      $tot_bill_value += $amount;
+      $tot_items_qty += $order_qty;
+
+      $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+      $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
+      $pdf->SetFont('Arial','',8);
+      $pdf->Cell($item_widths[2],6,$item_details['itemName'],'RTB',0,'L');
+      $pdf->SetFont('Arial','',9);
+      $pdf->Cell($item_widths[3],6,substr($item_details['brandName'],0,25),'RTB',0,'L');      
+      // $pdf->Cell($item_widths[4],6,$item_details['hsnSacCode'],'RTB',0,'L');
+      $pdf->Cell($item_widths[5],6,$order_qty,'RTB',0,'R');
+      $pdf->Cell($item_widths[6],6,$item_details['itemRateIndent'],'RTB',0,'R');
+      $pdf->Ln();
+    }
+    
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Cell(142,6,'Total Qty.','LRTB',0,'R');
+    $pdf->Cell(24,6,number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(24,6,'','LRTB',0,'R');    
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','IB',7);
+    $pdf->MultiCell(190,4,'REMARKS: '.$remarks,'LTR','');
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(60,10,'Buyer Signature','LRTB',0,'R');
+    $pdf->Cell(130,10,'','LRTB',0,'R');
+
+    $pdf->Ln();    
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(60,10,'Print date & time: '.$print_date_time,'LRTB',0,'L');
+    $pdf->Cell(60,10,'Prepared by: '.$operator_name,'RTB',0,'L');
+    $pdf->Cell(70,10,'Authorized Signature: ','RTB',0,'L');
+
+    $pdf->Output();
+    exit;
+  }
+
+  public function printIndentWoRateApp(Request $request) {
+    $indent_no = $request->get('indentNo');
+    $token = $request->get('token');
+    $client_code = $request->get('clientCode');    
+    $slno = 0;
+
+    $indent_info_widths = [30,20,85,55];
+    $customer_info_widths = [95,95];
+    $item_widths = [10,35,90,30,20,35,25];
+    $final_tot_width = [23,23,23,25,20,30,23,23];    
+
+    $indent_details = $this->indent_model->get_indent_details($indent_no, false, $token);
+    if(is_array($indent_details) && isset($indent_details['status']) && $indent_details['status'] ===false ) {
+      $response = ['status' => false, 'error' => 'Invalid token'];
+      header("Content-type: application/json");      
+      echo json_encode($response);
+      exit;
+    } elseif(!is_array($indent_details) || count($indent_details)<0) {
+      die('Invalid Indent No.');
+    } else {
+      $indent_tran_details = $indent_details['response']['indentDetails']['tranDetails'];
+      $indent_item_details = $indent_details['response']['indentDetails']['itemDetails'];
+    }    
+
+    $placed_by = isset($indent_tran_details['customerName']) && $indent_tran_details['customerName'] !== '' ? $indent_tran_details['customerName'] : '';
+    $referred_by = isset($indent_tran_details['agentName']) && $indent_tran_details['agentName'] !== '' ? $indent_tran_details['agentName'] : '';
+    $exe_name = isset($indent_tran_details['executiveName']) && $indent_tran_details['executiveName'] !== '' ? $indent_tran_details['executiveName'] : '';
+    $exe_mobile_no = isset($indent_tran_details['executiveMobileNo']) && $indent_tran_details['executiveMobileNo'] !== '' ? $indent_tran_details['executiveMobileNo'] : '';
+    $mobile_no = isset($indent_tran_details['primaryMobileNo']) && $indent_tran_details['primaryMobileNo'] !== '' ? $indent_tran_details['primaryMobileNo'] : '';
+    $print_date_time = date("d/m/Y H:ia");
+    $operator_name = 'ExeApp';
+    $remarks = isset($indent_tran_details['remarks']) && $indent_tran_details['remarks'] !== '' ? $indent_tran_details['remarks'] : '';
+    $remarks2 = isset($indent_tran_details['remarks2']) && $indent_tran_details['remarks2'] !== '' ? $indent_tran_details['remarks2'] : '';
+    $campaign_name = $indent_tran_details['campaignName'];
+    if($remarks === '') {
+      $remarks = $remarks2;
+    }
+    // dump($indent_details);
+    // exit;
+
+    # start PDF printing.
+    $pdf = PDF::getInstance(false, [], $token, $client_code);
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P','A4');
+
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Ln(2);    
+    $pdf->Cell(0,0,'SALES INDENT','',1,'C');
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Ln(5);
+
+    # second row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln();
+    $pdf->Cell($indent_info_widths[0],6,'Indent No.','LRTB',0,'C');
+    $pdf->Cell($indent_info_widths[1],6,'Indent Date','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,'Executive Name','RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,'Executive Mobile No.','RTB',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',13);
+    $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
+    $pdf->SetFont('Arial','',10);
+    $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[2],6,$exe_name,'RTB',0,'C');
+    $pdf->Cell($indent_info_widths[3],6,$exe_mobile_no,'RTB',0,'C');
+
+    # third row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Ln();
+    $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
+    $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
+    $pdf->Ln();
+
+    # fourth row
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(95,6,'Campaign / Event Name','LRTB',0,'C');
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell(95,6,'*** Below column left blank intentionally for handnotes ***','LRTB',0,'C');
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(95,6,$campaign_name,'LRTB',0,'C');
+    $pdf->Cell(95,6,'','LRTB',0,'C');
+
+    // item details
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],6,'GDR No.','RTB',0,'C');
+    $pdf->Cell($item_widths[2],6,'Product Name','RTB',0,'C');
+    // $pdf->Cell($item_widths[3],6,'HSN/SAC Code','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Brand Name','RTB',0,'C');
+    $pdf->SetFont('Arial','',9);
+    $pdf->Ln();
+
+    $tot_bill_value = $tot_items_qty = 0;
+    foreach($indent_item_details as $item_details) {
+      $slno++;
+      if($item_details['itemQty'] > 0 && $item_details['itemRateIndent'] > 0) {
+        $amount = round($item_details['itemQty']*$item_details['itemRateIndent'], 2);
+        $moq = $item_details['mOq'];
+        if($moq > 0 && $item_details['itemQty'] > 0) {
+          $order_qty = round($item_details['itemQty']/$moq,0);
+        } else {
+          $order_qty = $item_details['itemQty'];
+        }
+      } else {
+        $amount = $order_qty = 0;
+      }
+
+      $tot_bill_value += $amount;
+      $tot_items_qty += $order_qty;
+
+      $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+      $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
+      $pdf->SetFont('Arial','',8);
+      $pdf->Cell($item_widths[2],6,$item_details['itemName'],'RTB',0,'L');
+      $pdf->SetFont('Arial','',9);
+      // $pdf->Cell($item_widths[3],6,$item_details['hsnSacCode'],'RTB',0,'L');
+      $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,$item_details['brandName'],'RTB',0,'L');
+      $pdf->Ln();
+    }
+
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Cell(135,6,'Total Qty.','LR',0,'R');
+    $pdf->Cell(20,6,number_format($tot_items_qty,2,'.',''),'R',0,'R');
+    $pdf->Cell(70,6,'','R',0,'R');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','IB',7);
+    $pdf->MultiCell(190,4,'REMARKS: '.$remarks,'LTR','');
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(60,10,'Buyer Signature','LRTB',0,'R');
+    $pdf->Cell(130,10,'','LRTB',0,'R');       
+
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(60,10,'Print date & time: '.$print_date_time,'LRTB',0,'L');
+    $pdf->Cell(60,10,'Prepared by: '.$operator_name,'RTB',0,'L');
+    $pdf->Cell(70,10,'Authorized Signature: ','RTB',0,'L');
+
+    $pdf->Output();
+    exit;
+  }
+
+
 }

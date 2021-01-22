@@ -23,6 +23,24 @@ class InventoryController {
     $this->flash = new Flash;
   }
 
+  public function productSampleChecker(Request $request) {
+
+
+
+    // template variables.
+    $template_vars = array(
+    );
+
+    // controller variables.
+    $controller_vars = array(
+      'page_title' => 'Inventory - Samples Checker for Indents',
+      'icon_name' => 'fa fa-database',
+    );         
+
+    // render template
+    return array($this->template->render_view('product-sample-checker', $template_vars),$controller_vars);
+  }
+
   public function addStockAdjustment(Request $request) {
 
     $page_error = $page_success = '';

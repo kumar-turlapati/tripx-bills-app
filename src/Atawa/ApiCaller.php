@@ -23,20 +23,24 @@ class ApiCaller
     }
 	}
 
-	public function sendRequest($method='',$uri='',$param_array=array(),$process_response=true,$debug=false) {
+	public function sendRequest($method='',$uri='',$param_array=[],$process_response=true,$debug=false,$app_token='') {
 
-		# prepare headers.
+		// prepare headers.
 		self::$instance->setHeader('Content-Type', 'application/json');
 		if($uri !== 'authorize' && $uri !== 'send-otp' && $uri !== 'forgot-password' && $uri !== 'reset-password') {
-			# get access token
-			$access_token = Utilities::getAuthToken();
+			// get access token
+			if($app_token !== '') {
+				$access_token = $app_token;
+			} else {
+				$access_token = Utilities::getAuthToken();
+			}
 			self::$instance->setHeader('Access-Token', $access_token);
 		}
 
-		# get api environment
+		// get api environment
 		$this->api_url = Utilities::get_api_environment();
 
-		# prepare end point
+		// prepare end point
 		$end_point = $this->api_url.'/'.$uri;
 		// dump($param_array);
 		// echo 'end point is....'.$end_point;

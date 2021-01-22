@@ -292,6 +292,17 @@ class AsyncController {
       } else {
         echo $response;
       }
+    } elseif($api_string === 'samplesCheck') {
+      $params['scanCode'] = Utilities::clean_string($request->get('barcode'));
+      $params['returnClosing'] = 1;
+      $api_url = 'inventory/get-item-details-by-barcode';
+      $response = $api_caller->sendRequest('get',$api_url,$params,false);
+      header("Content-type: application/json");
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     } elseif($api_string === 'getComboItemDetails') {
       $form_data = $_POST;
       if(is_array($form_data) && count($form_data)>0) {

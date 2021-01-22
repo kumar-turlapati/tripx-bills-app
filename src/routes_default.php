@@ -25,4 +25,17 @@ $routes->add('error_device', new Routing\Route('/error-device', array(
 $routes->add('qbId', new Routing\Route('/id__mapper', array(
   '_controller' => 'User\\Controller\\LoginController::idMapper',
 )));
+$routes->add('logout', new Routing\Route('/logout', array(
+  '_controller' => 'User\\Controller\\LoginController::logoutAction',
+)));
+
+// additional routes for apps
+$routes->add('report_printIndent_app', new Routing\Route('/app-print-indent', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentApp'
+)));
+
+$routes->add('report_printIndentWr_app', new Routing\Route('/app-print-indent-wor', array(
+  '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentWoRateApp'
+)));
+
 return $routes;

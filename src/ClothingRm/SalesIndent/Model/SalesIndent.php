@@ -53,12 +53,12 @@ class SalesIndent {
     }
   }  
 
-  public function get_indent_details($needle='', $by_code=false) {
+  public function get_indent_details($needle='', $by_code=false, $access_token='') {
     $filter_params['indentNo'] = $needle;
     if($by_code) {
       $filter_params['byCode'] = true;
     }
-    $response = $this->api_caller->sendRequest('get','sindent/details',$filter_params);
+    $response = $this->api_caller->sendRequest('get','sindent/details',$filter_params,true,false,$access_token);
     $status = $response['status'];
     if($status === 'success') {
       return array('status'=>true,'response' => $response['response']);

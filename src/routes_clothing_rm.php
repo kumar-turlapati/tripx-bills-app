@@ -376,7 +376,9 @@ $routes->add('refresh_stock', new Routing\Route('/inventory/refresh-cb', array(
 $routes->add('refresh_stock_with_indents', new Routing\Route('/inventory/refresh-cb-indents', array(
   '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::refreshCbIndents',
 )));
-
+$routes->add('inventory_sample_check', new Routing\Route('/inventory/sample-checker', array(
+  '_controller' => 'ClothingRm\\Inventory\\Controller\\InventoryController::productSampleChecker',   
+)));
 
 // mrp register
 $routes->add('change_mrp', new Routing\Route('/inventory/change-mrp/{pageNo}', array(
@@ -1175,6 +1177,5 @@ $routes->add('app_user_update', new Routing\Route('/app-users/update/{uuid}', ar
   '_controller' => 'User\\Controller\\UserController::updateUserAction',
   'uuid' => null,
 )));
-
 
 return $routes;

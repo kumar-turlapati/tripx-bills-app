@@ -13,8 +13,9 @@
         </a>
         <ul class="sub">
           <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
+          <li><a href="/inventory/sample-checker"><i class="fa fa-search-plus"></i> Samples Checker</a></li>
         </ul>
-      </li>      
+      </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
           <i class="fa fa-book"></i> Registers <span class="menu-arrow arrow_carrot-right"></span> 
