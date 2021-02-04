@@ -55,6 +55,24 @@
     $query_params[] = 'executiveCode='.$search_params['executiveCode'];    
   } else {
     $exe_code = '';
+  }
+  if(isset($search_params['itemName']) && $search_params['itemName'] !== '') {
+    $psName = $search_params['itemName'];
+    $query_params[] = 'psName='.$psName;
+  } else {
+    $psName = '';
+  }
+  if(isset($search_params['brandName']) && $search_params['brandName'] !== '') {
+    $brandName = $search_params['brandName'];
+    $query_params[] = 'brandName='.$brandName;
+  } else {
+    $brandName = '';
+  }
+  if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
+    $locationCode = $search_params['locationCode'];
+    $query_params[] = 'locationCode='.$locationCode;    
+  } else {
+    $locationCode = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -86,21 +104,18 @@
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1 labelStyle" style="padding-top:9px;">Filter by</div>
-                
-                <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
-
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="toDate" id="toDate" value="<?php echo $toDate ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
                   </div>
                 </div>
-
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="qtyType" id="qtyType">
@@ -119,8 +134,7 @@
                     </select>
                    </div>
                 </div>
-
-                <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="select-wrap">
                     <select class="form-control" name="executiveCode" id="executiveCode">
                       <?php 
@@ -138,7 +152,44 @@
                     </select>
                    </div>
                 </div>
-                
+              </div>
+              <div class="form-group" style="padding-left: 92px;">
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <div class="select-wrap">
+                    <select class="form-control" name="locationCode" id="locationCode">
+                      <?php 
+                        foreach($client_locations as $location_key=>$value):
+                          $location_key_a = explode('`', $location_key);
+                          $location_ids[$location_key_a[1]] = $location_key_a[0];
+                          if($locationCode === $location_key_a[0]) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $location_key_a[0] ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <input 
+                    placeholder="Brand" 
+                    type="text" 
+                    name="brandName" 
+                    id="brandName" 
+                    class="form-control brandAc" 
+                    value="<?php echo $brandName ?>"
+                    title="Choose Location to get brand names"
+                  />
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <input placeholder="Product Name" type="text" name="psName" id="psName" class="form-control" value="<?php echo $psName ?>">
+                </div>                
+              </div>
+              <div class="text-center">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
               </div>
             </form>

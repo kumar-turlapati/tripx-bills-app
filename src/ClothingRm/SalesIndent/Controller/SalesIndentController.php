@@ -635,6 +635,8 @@ class SalesIndentController {
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
 
+    $client_locations = Utilities::get_client_locations(true, false, true);
+
     # ---------- get business users ----------------------------
     $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
     if($agents_response['status']) {
@@ -673,6 +675,9 @@ class SalesIndentController {
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
     $qty_type = $request->get('qtyType') !== null ? Utilities::clean_string($request->get('qtyType')) : 'all';
     $exe_code = $request->get('executiveCode') !== null ? Utilities::clean_string($request->get('executiveCode')) : '';
+    $item_name = $request->get('psName') !== null ? Utilities::clean_string($request->get('psName')):'';
+    $brand_name = $request->get('brandName') !== null ? Utilities::clean_string($request->get('brandName')):'';
+    $location_code = $request->get('locationCode') !== null ? Utilities::clean_string($request->get('locationCode')):'';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -685,7 +690,12 @@ class SalesIndentController {
       'infoType' => 'item',
       'qtyType' => $qty_type,
       'executiveCode' => $exe_code,
+      'itemName' => $item_name,
+      'brandName' => $brand_name,
+      'locationCode' => $location_code,
     );
+
+    // dump($search_params);
 
     $api_response = $this->sindent_model->indent_vs_sales($search_params);
     // dump($api_response);
@@ -737,7 +747,8 @@ class SalesIndentController {
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
       'qty_types' => ['all' => 'Pending And Completed', 'pending' => 'Pending', 'completed' => 'Completed'],
-      'sa_executives' => ['All Executives'] + $sa_executives,      
+      'sa_executives' => ['All Executives'] + $sa_executives,
+      'client_locations' => [''=>'All Locations / Stores'] + $client_locations,
     );
 
     // build variables
