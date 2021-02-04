@@ -46,7 +46,7 @@
           </li>
           <li class="sub-menu">
             <a href="javascript:void(0)">
-              <i class="fa fa-database"></i> Inventory <span class="menu-arrow arrow_carrot-right"></span>
+              <i class="fa fa-database"></i> Inventory Operations<span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
               <li><a href="/stock-transfer/register"><i class="fa fa-angle-right"></i> Stock Transfer</a></li>
@@ -54,6 +54,7 @@
               <li><a href="/sales-indents/list"><i class="fa fa-angle-right"></i> Sales Indents</a></li>
               <li><a href="/inventory/available-qty"><i class="fa fa-angle-right"></i> Stock In Hand</a></li>
               <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
+              <li><a href="/release-indent-items"><i class="fa fa-wrench"></i> Release Indent Items</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -94,12 +95,12 @@
         <ul class="sub">
           <li class="sub-menu">
             <a data-toggle="modal" href="javascript:">
-              <i class="fa fa-database"></i> Inventory&nbsp;&amp;&nbsp;Stores <span class="menu-arrow arrow_carrot-right"></span>
+              <i class="fa fa-database"></i> Inventory <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
               <li><a href="/reports/stock-report"><i class="fa fa-angle-right"></i> Stock Report</a></li>
               <li><a href="/reports/stock-report-indent"><i class="fa fa-angle-right"></i> Stock Report (Indent)</a></li>
-              <li><a href="/reports/opbal"><i class="fa fa-angle-right"></i> Opening Balances</a></li>              
+              <li><a href="/reports/opbal"><i class="fa fa-angle-right"></i> Opening Balances</a></li>
             </ul>
           </li>
           <li class="sub-menu">

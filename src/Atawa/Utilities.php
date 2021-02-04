@@ -513,7 +513,9 @@ class Utilities
 
   public static function acls($role_id='', $path='') {
     $path_a = explode('/', $path);
-    if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn' && $path_a[1] !== 'sales-invoice-b2b') {
+    if(is_array($path_a) && count($path_a) >= 3 && $path_a[1] !== 'print-grn' && 
+       $path_a[1] !== 'sales-invoice-b2b' && $path_a[1] !== 'release-indent-items'
+      ) {
       $path = '/'.$path_a[1].'/'.$path_a[2];
     } elseif(is_array($path_a)) {
       $path = '/'.$path_a[1];
@@ -559,7 +561,7 @@ class Utilities
         '/finy/switch', '/discount-manager',
 
         '/indent-vs-sales', '/indent-vs-sales-by-item',
-        '/print-indent', '/print-indent-wor',
+        '/print-indent', '/print-indent-wor', '/release-indent-items',
 
         '/leads/list', '/lead/create', '/lead/update', '/lead/import', '/lead/remove',
         '/tasks/list', '/task/create', '/task/update', '/task/remove',

@@ -135,6 +135,26 @@ class SalesIndent {
     } elseif($status === 'failed') {
       return array('status'=>false, 'apierror' => $response['reason']);
     }
+  }
+
+  public function indent_unused_items($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('get','indent-items-unused',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
+  }
+
+  public function delete_indent_unused_items($filter_params=[]) {
+    $response = $this->api_caller->sendRequest('post','delete-indent-items-unused',$filter_params);
+    $status = $response['status'];
+    if($status === 'success') {
+      return array('status'=>true,'response' => $response['response']);
+    } elseif($status === 'failed') {
+      return array('status'=>false, 'apierror' => $response['reason']);
+    }
   }  
 
 }

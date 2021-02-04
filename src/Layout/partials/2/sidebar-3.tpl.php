@@ -182,7 +182,7 @@
       </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
-          <i class="fa fa-database"></i> Inventory <span class="menu-arrow arrow_carrot-right"></span>
+          <i class="fa fa-database"></i> Inventory Operations<span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
           <?php /*
@@ -197,6 +197,7 @@
           <li><a href="/inventory/sample-checker"><i class="fa fa-search-plus"></i> Samples Checker</a></li>
           <li><a href="/inventory/refresh-cb"><i class="fa fa-refresh"></i> Refresh CB</a></li>
           <li><a href="/inventory/refresh-cb-indents"><i class="fa fa-refresh"></i> Refresh CB - Indents</a></li>
+          <li><a href="/release-indent-items"><i class="fa fa-wrench"></i> Release Indent Items</a></li>
           <?php /*
           <li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li> */ ?>
         </ul>

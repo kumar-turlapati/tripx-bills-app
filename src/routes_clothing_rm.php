@@ -297,6 +297,10 @@ $routes->add('indent_vs_sales_by_item', new Routing\Route('/indent-vs-sales-by-i
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::indentVsSalesByItem',
   'pageNo' => null,
 )));
+$routes->add('release_indent_items', new Routing\Route('/release-indent-items/{pageNo}', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::releaseIndentItems',
+  'pageNo' => null,
+)));
 
 // Sales Return routes
 $routes->add('sales_return_entry', new Routing\Route('/sales-return/entry/{salesCode}', array(

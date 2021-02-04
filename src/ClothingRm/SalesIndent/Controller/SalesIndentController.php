@@ -789,6 +789,7 @@ class SalesIndentController {
     return array($this->template->render_view('indent-create-mobile-view', $template_vars), $controller_vars);    
   }
 
+  // indent mobile step2
   public function createIndentMobileViewStep2(Request $request) {
     if(isset($_SESSION['indentItemsM']) && count($_SESSION['indentItemsM']) > 0) {
       $indent_items = $_SESSION['indentItemsM'];
@@ -879,6 +880,152 @@ class SalesIndentController {
 
     // render template
     return array($this->template->render_view('indent-create-mobile-view2', $template_vars), $controller_vars);    
+  }
+
+  public function releaseIndentItems(Request $request) {
+
+    $unused_items = $search_params = $unused_items_a = $agents_a = $campaigns_a = [];
+    $campaign_code = $page_error = $agent_code = '';
+
+    $total_pages = $total_records = $record_count = $page_no = 0 ;
+    $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
+
+    $client_locations = Utilities::get_client_locations(true, false, true);
+
+    if( count($request->request->all()) > 0 && isset($request->request->all()['op']) && 
+        $request->request->all()['op'] === 'deleteItems'
+      ) {
+      $submitted_data = $request->request->all();
+      if(!isset($submitted_data['requestedItems'])) {
+        $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;Please selecte items to release :(', 1);
+      } else {
+        $api_response = $this->sindent_model->delete_indent_unused_items(['primaryIds' => $submitted_data['requestedItems']]);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('<i class="fa fa-wrench" aria-hidden="true"></i>&nbsp;Indent items released successfully :)');
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$page_error,1);    
+        }        
+      }
+      Utilities::redirect('/release-indent-items');
+    } else {
+      // ----------------------- get business users ----------------------------
+      $agents_response = $this->bu_model->get_business_users(['userType' => 90]);
+      if($agents_response['status']) {
+        foreach($agents_response['users'] as $user_details) {
+          if($user_details['cityName'] !== '') {
+            $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+          } else {
+            $agents_a[$user_details['userCode']] = $user_details['userName'];
+          }
+        }
+      }
+
+      // ---------- get live campaigns ---------------------------------
+      $campaigns_response = $this->camp_model->list_campaigns();
+      if($campaigns_response['status']) {
+        $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+        $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
+        $campaigns_a = array_combine($campaign_keys, $campaign_names);
+      }
+
+      // sales exe response
+      $sexe_response = $this->bu_model->get_business_users(['userType' => 91, 'returnActiveOnly' => 1, 'ignoreLocation' => 1]);
+      if($sexe_response['status']) {
+        foreach($sexe_response['users'] as $user_details) {
+          $sa_executives[$user_details['userCode']] = $user_details['userName'];
+        }
+      }    
+
+      // parse request parameters.
+      $per_page = 100;
+      $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
+      $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')):'01-'.date('m').'-'.date("Y");
+      $to_date = $request->get('toDate') !== null ? Utilities::clean_string($request->get('toDate')):date("d-m-Y");
+      $campaign_code = $request->get('campaignCode') !== null ? Utilities::clean_string($request->get('campaignCode')):'';
+      $agent_code = $request->get('agentCode') !== null ? Utilities::clean_string($request->get('agentCode')):'';
+      $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
+      $exe_code = $request->get('executiveCode') !== null ? Utilities::clean_string($request->get('executiveCode')) : '';
+      $item_name = $request->get('psName') !== null ? Utilities::clean_string($request->get('psName')):'';
+      $brand_name = $request->get('brandName') !== null ? Utilities::clean_string($request->get('brandName')):'';
+      $location_code = $request->get('locationCode') !== null ? Utilities::clean_string($request->get('locationCode')):'';
+
+      $search_params = array(
+        'fromDate' => $from_date,
+        'toDate' => $to_date,
+        'pageNo' => $page_no,
+        'perPage' => $per_page,
+        'campaignCode' => $campaign_code,
+        'agentCode' => $agent_code,
+        'custName' => $customer_name,
+        'executiveCode' => $exe_code,
+        'itemName' => $item_name,
+        'brandName' => $brand_name,
+        'locationCode' => $location_code,
+      );
+
+      $api_response = $this->sindent_model->indent_unused_items($search_params);
+      if($api_response['status']) {
+        if(count($api_response['response']['unusedItems'])>0) {
+          $slno = Utilities::get_slno_start(count($api_response['response']['unusedItems']),$per_page,$page_no);
+          $to_sl_no = $slno+$per_page;
+          $slno++;
+          if($page_no<=3) {
+            $page_links_to_start = 1;
+            $page_links_to_end = 10;
+          } else {
+            $page_links_to_start = $page_no-3;
+            $page_links_to_end = $page_links_to_start+10;        
+          }
+          if($api_response['response']['total_pages'] < $page_links_to_end) {
+            $page_links_to_end = $api_response['response']['total_pages'];
+          }
+          if($api_response['response']['this_page'] < $per_page) {
+            $to_sl_no = ($slno+$api_response['response']['this_page'])-1;
+          }
+          $unused_items_a = $api_response['response']['unusedItems'];
+          $total_pages = $api_response['response']['total_pages'];
+          $total_records = $api_response['response']['total_records'];
+          $record_count = $api_response['response']['this_page'];
+        } else {
+          $page_error = $api_response['apierror'];
+        }
+      } else {
+        $page_error = $api_response['apierror'];
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'page_error' => $page_error,
+      'unused_items' => $unused_items_a,
+      'total_pages' => $total_pages ,
+      'total_records' => $total_records,
+      'record_count' => $record_count,
+      'sl_no' => $slno,
+      'to_sl_no' => $to_sl_no,
+      'page_links_to_start' => $page_links_to_start,
+      'page_links_to_end' => $page_links_to_end,
+      'current_page' => $page_no,
+      'search_params' => $search_params,
+      'agents' => [''=>'Agent/Wholesaler'] + $agents_a,
+      'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
+      'campaignCode' => $campaign_code,
+      'agentCode' => $agent_code,
+      'psName' => $item_name,
+      'brandName' => $brand_name,
+      'client_locations' => [''=>'Choose'] + $client_locations,
+      'sa_executives' => ['All Executives'] + $sa_executives,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Release Unused Indent Items',
+      'icon_name' => 'fa fa-wrench',
+    );
+
+    // render template
+    return array($this->template->render_view('unused-indent-items', $template_vars), $controller_vars);    
   }
 
   // validate ar data
