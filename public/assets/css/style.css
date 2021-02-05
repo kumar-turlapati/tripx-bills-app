@@ -450,7 +450,7 @@ ul.sidebar-menu li {
 
 ul.sidebar-menu li.sub-menu {
     line-height: 15px;
-    font-size: 16px;
+    font-size: 14px;
 }
 ul.sidebar-menu li a span {
     display: inline-block;
@@ -461,7 +461,7 @@ ul.sidebar-menu li a {
     display: block;
     padding: 12px 15px 12px 10px;
     position: relative;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     outline: none;
     -webkit-transition: all 0.3s ease;

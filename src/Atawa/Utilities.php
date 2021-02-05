@@ -466,16 +466,17 @@ class Utilities
       3 => 'Administrator',
       9 => 'Manager',
       5 => 'Sales operator',
-      6 => 'Stores operator',
+      14 => 'Sales operator - Simple',
+      16 => 'Sales operator - Multi Location/Store',
+      6 => 'Stores perator',
       7 => 'Purchase operator',
       10 => 'Marketing user',
       12 => 'Business head',
       13 => 'Dispatch clerk',
-      14 => 'Sales Operator - Simple',
       15 => 'Floor incharge (Godown ops)',
-      16 => 'Sales Operator - Multi Location/Store',
-      17 => 'eCommerce Operator',
-      18 => 'Marketing Operations',
+      17 => 'eCommerce operator',
+      18 => 'Marketing operations',
+      19 => 'Barcode operator',
       127 => 'App user',
     );
     if(is_numeric($user_type) && isset($user_types[$user_type])) {
@@ -732,21 +733,36 @@ class Utilities
 
         '/finy/switch', '/gate-pass/entry', '/get-invoice-no', '/sales/list', '/sales/view-invoice',
 
-        '/gate-pass/register',
+        '/gate-pass/register', '/finy/list',
       ],
 
       15 => [
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
+
         '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/updateRackNo',
         '/async/finyDefault',
 
         '/sales-indents/list', '/campaigns/list', '/inventory/available-qty', '/products/list',
         '/products/update',
 
-        '/finy/switch',
+        '/finy/switch', '/finy/list',
 
         '/print-indent', '/print-indent-wor',
       ],
+
+      19 => [
+        '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
+
+        '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/finyDefault',
+        '/async/itd', '/async/samplesCheck',
+
+        '/barcodes/list', '/barcodes/print', '/barcode/opbal', '/barcode/cbbal-itemwise', '/barcode/cbbal',
+        '/barcodes/list', '/barcode/generate',
+
+        '/tasks/list', '/task/create', '/task/update', '/task/remove',        
+
+        '/finy/switch', '/inventory/sample-checker', '/inward-entry/list', '/finy/list',
+      ],      
 
     ];
 

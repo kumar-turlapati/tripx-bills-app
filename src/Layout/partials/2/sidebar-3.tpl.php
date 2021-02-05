@@ -182,14 +182,14 @@
       </li>
       <li class="sub-menu">
         <a href="javascript:void(0)">
-          <i class="fa fa-database"></i> Inventory Operations<span class="menu-arrow arrow_carrot-right"></span>
+          <i class="fa fa-database"></i> Inventory operations<span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
           <?php /*
           <li><a href="/inventory/item-threshold-list"><i class="fa fa-list-ol"></i> Threshold Qtys.</a></li>*/ ?>
           <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
-          <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Inventory Openings</a></li>          
-          <li><a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a></li>
+          <li><a href="/opbal/list"><i class="fa fa-inbox"></i> Opening Balances</a></li>          
+          <li><a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock Availability</a></li>
           <li><a href="/barcode/opbal"><i class="fa fa-barcode"></i> Generate Barcodes (OB)</a></li>          
           <li><a href="/barcode/cbbal"><i class="fa fa-barcode"></i> Print Barcodes-CB (lot)</a></li>
           <li><a href="/barcode/cbbal-itemwise"><i class="fa fa-barcode"></i> Print Barcodes-CB (item)</a></li>

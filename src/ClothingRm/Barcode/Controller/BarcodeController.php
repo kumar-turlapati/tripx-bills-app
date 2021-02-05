@@ -41,7 +41,8 @@ class BarcodeController {
 
     $page_error = $inward_entry_no = $mfg_date = $po_location_code = '';
 
-    if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 3 && (int)$_SESSION['utype'] !== 7) {
+    if(isset($_SESSION['utype']) && (int)$_SESSION['utype'] !== 3 && 
+      (int)$_SESSION['utype'] !== 7 && (int)$_SESSION['utype'] !== 19) {
       $this->flash->set_flash_message("Permission Error: You are not authorized to generate Barcodes against this PO", 1);
       Utilities::redirect('/inward-entry/list');
     }    
