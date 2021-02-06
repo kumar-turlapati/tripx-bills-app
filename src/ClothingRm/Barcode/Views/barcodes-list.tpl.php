@@ -69,7 +69,12 @@
         <?php endif; ?>
   		  <div class="filters-block">
     		  <div id="filters-form">
-            <form class="form-validate form-horizontal" method="POST" autocomplete="off">
+            <form 
+              class="form-validate form-horizontal" 
+              method="POST" 
+              autocomplete="off"
+              action="<?php echo $page_url ?>"
+            >
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1"><b>Filter by</b></div>
                 <div class="col-sm-12 col-md-2 col-lg-2">

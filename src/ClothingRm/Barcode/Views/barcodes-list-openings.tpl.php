@@ -75,7 +75,12 @@
             </a>            
           </div>
         </div>
-        <form id="openingBarcodes" method="POST" class="form-validate form-horizontal">
+        <form 
+          id="openingBarcodes" 
+          method="POST" 
+          class="form-validate form-horizontal"
+          action="<?php echo $page_url ?>"
+        >
           <div class="filters-block">
             <div id="filters-form">
               <div class="form-group">
