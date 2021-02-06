@@ -22,6 +22,7 @@
         </a>
         <ul class="sub">
           <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales Indent</a></li>
+          <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales Indent (Mobile V.)</a></li>
           <li><a href="/sales/entry"><i class="fa fa-keyboard-o"></i> Sales Entry - Manual</a></li>
           <li><a href="/sales/entry-with-barcode"><i class="fa fa-barcode"></i> Sales Entry - Barcode</a></li>
           <li><a href="/sales-entry/combos"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Sales Entry - Combos</a></li>
@@ -38,11 +39,11 @@
         </a>
         <ul class="sub">
           <li><a href="/sales/list"><i class="fa fa-inr"></i> Sales Register</a></li>
-          <li><a href="/sales-return/list"><i class="fa fa-inr"></i> Sales Return Register</a></li>
+          <li><a href="/sales-return/list"><i class="fa fa-undo"></i> Sales Return Register</a></li>
           <li><a href="/fin/credit-notes"><i class="fa fa-sign-out"></i> Credit Notes Register</a></li>
           <li><a href="/stock-transfer/register"><i class="fa fa-truck"></i> Stock Transfer Register</a></li>
           <li><a href="/fin/cash-vouchers"><i class="fa fa-money"></i> Cash Register</a></li>
-          <li><a href="/fin/cash-book"><i class="fa fa-inr"></i> Cash Book</a></li>
+          <li><a href="/fin/cash-book"><i class="fa fa-book"></i> Cash Book</a></li>
           <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>          
           <?php /*<li><a href="/discount-manager"><i class="fa fa-hand-peace-o"></i> Discount Manager</a></li> */ ?>
           <li><a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Sales2CB Register</a></li>

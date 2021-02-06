@@ -228,10 +228,8 @@ class SalesEntryWoBarcode {
   // update sales transaction
   public function salesUpdateAction(Request $request) {
 
-    if(!Utilities::is_admin()) {
-      $this->flash->set_flash_message(Constants::$ACCESS_DENIED, 1);
-      Utilities::redirect('/sales/list');
-    }
+    $edays_invoice = isset($_SESSION['edays_invoice']) ? (int)$_SESSION['edays_invoice'] : 0;
+    $user_type = (int)$_SESSION['utype'];
 
     // -------- initialize variables ---------------------------
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
@@ -241,7 +239,6 @@ class SalesEntryWoBarcode {
     $sa_categories = ['' => 'Choose'];
 
     $customer_types = Constants::$CUSTOMER_TYPES;    
-
     $page_error = $page_success = $promo_key = '';
 
     if($request->get('salesCode') && $request->get('salesCode')!=='') {
@@ -250,9 +247,30 @@ class SalesEntryWoBarcode {
       if($sales_response['status']) {
         // check no of items. if items are more than 15 redirect to barcode mode.
         if(isset($sales_response['itemDetails']) && count($sales_response['itemDetails']) > 15) {
-          $flash->set_flash_message('There are more than 15 products in this Invoice. You should edit this invoice using Barcode only.', 1);
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>There are more than 15 products in this Invoice. You should edit this invoice using Barcode only.', 1);
           Utilities::redirect('/sales/list');
         }
+
+        /* check sales operator privileges */
+        if($user_type === 5 || $user_type === 14 || $user_type === 16) {
+          if($edays_invoice > 0) {
+            $invoice_date = strtotime($sales_response['saleDetails']['invoiceDate']);
+            $current_date = time();
+            $diff_days = (int)round(($current_date-$invoice_date)/(60*60*24));
+            if($diff_days > $edays_invoice) {
+              $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>You are not permitted to edit this invoice after [ '.$edays_invoice.' ] days. Please contact Administrator.', 1);
+              Utilities::redirect('/sales/list');            
+            }
+          } else {
+            $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>You are not permitted to edit this invoice. Please contact Administrator.', 1);
+            Utilities::redirect('/sales/list');            
+          }
+        } elseif(!Utilities::is_admin()) {
+          $this->flash->set_flash_message(Constants::$ACCESS_DENIED, 1);
+          Utilities::redirect('/sales/list');
+        }
+        /* end of checking sales operator priviledges */
+
         $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
       } else {
         $page_error = $sales_response['apierror'];
@@ -262,7 +280,7 @@ class SalesEntryWoBarcode {
       // dump($sales_response, $form_data);
       // exit;
     } else {
-      $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
+      $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>Invalid Invoice No. (or) Invoice No. does not exist.',1);
       Utilities::redirect('/sales/list');
     }    
 

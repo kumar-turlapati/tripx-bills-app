@@ -36,7 +36,7 @@
                 <tr>
                   <td id="itemName" align="center" style="font-size:20px;color:#225992;vertical-align:middle">&nbsp;</td>
                   <td id="categoryName" align="center" style="font-size:20px;color:#225992;vertical-align:middle">&nbsp;</td>
-                  <td id="avaQty" align="center" style="font-size:60px;vertical-align:middle;color:#5CDB95">&nbsp;</td>
+                  <td id="avaQty" align="center" style="font-size:50px;vertical-align:middle;color:#5CDB95">&nbsp;</td>
                   <td id="brandName" align="center" style="font-size:20px;vertical-align:middle;color:#FC4445">&nbsp;</td>
                 </tr>
                 <tr>

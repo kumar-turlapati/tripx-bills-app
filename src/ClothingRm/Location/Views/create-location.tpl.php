@@ -93,6 +93,16 @@
     $tac_b2c = $submitted_data['tacB2C'];
   } else {
     $tac_b2c = ''; 
+  }
+  if(isset($submitted_data['edaysInvoice']) && $submitted_data['edaysInvoice'] !== '' ) {
+    $edays_invoice = $submitted_data['edaysInvoice'];
+  } else {
+    $edays_invoice = '';
+  }
+  if(isset($submitted_data['edaysIndent']) && $submitted_data['edaysIndent'] !== '' ) {
+    $edays_indent = $submitted_data['edaysIndent'];
+  } else {
+    $edays_indent = '';
   }  
 ?>
 <div class="row">
@@ -353,6 +363,39 @@
               <?php endif; ?>
             </div>            
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-keyboard-o" aria-hidden="true"></i>&nbsp;Sales Operator - Invoice edit days allowed</label>
+              <input
+                type="text"
+                class="form-control" 
+                name="edaysInvoice" 
+                id="edaysInvoice"
+                value="<?php echo $edays_invoice ?>"
+                maxlength="20"
+              >
+              <?php if(isset($form_errors['edaysInvoice'])): ?>
+                <span class="error"><?php echo $form_errors['edaysInvoice'] ?></span>
+              <?php endif; ?>
+            </div>
+            <?php /*
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-delicious" aria-hidden="true"></i>&nbsp;Sales Operator - Indent edit days allowed</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                name="edaysIndent"
+                id="edaysIndent"
+                value="<?php echo $edays_indent ?>"
+                maxlength="6"
+              >
+              <?php if(isset($form_errors['edaysIndent'])): ?>
+                <span class="error"><?php echo $form_errors['edaysIndent'] ?></span>
+              <?php endif; ?>
+            </div> */ ?>
+          </div>          
           <div class="form-group">
             <div class="col-sm-12 col-md-6 col-lg-6 m-bot15">
               <label class="control-label">

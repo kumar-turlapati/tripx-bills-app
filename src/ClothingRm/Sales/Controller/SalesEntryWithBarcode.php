@@ -247,10 +247,8 @@ class salesEntryWithBarcode {
   // update sales transaction
   public function salesUpdateAction(Request $request) {
 
-    if(!Utilities::is_admin()) {
-      $this->flash->set_flash_message(Constants::$ACCESS_DENIED, 1);
-      Utilities::redirect('/sales/list');
-    }
+    $edays_invoice = isset($_SESSION['edays_invoice']) ? (int)$_SESSION['edays_invoice'] : 0;
+    $user_type = (int)$_SESSION['utype'];
 
     // -------- initialize variables ---------------------------
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
@@ -269,6 +267,25 @@ class salesEntryWithBarcode {
       $sales_code = Utilities::clean_string($request->get('salesCode'));
       $sales_response = $this->sales->get_sales_details($sales_code);
       if($sales_response['status']) {
+        /* check sales operator privileges */
+        if($user_type === 5 || $user_type === 14 || $user_type === 16) {
+          if($edays_invoice > 0) {
+            $invoice_date = strtotime($sales_response['saleDetails']['invoiceDate']);
+            $current_date = time();
+            $diff_days = (int)round(($current_date-$invoice_date)/(60*60*24));
+            if($diff_days > $edays_invoice) {
+              $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>You are not permitted to edit this invoice after [ '.$edays_invoice.' ] days. Please contact Administrator.', 1);
+              Utilities::redirect('/sales/list');            
+            }
+          } else {
+            $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>You are not permitted to edit this invoice. Please contact Administrator.', 1);
+            Utilities::redirect('/sales/list');            
+          }
+        } elseif(!Utilities::is_admin()) {
+          $this->flash->set_flash_message(Constants::$ACCESS_DENIED, 1);
+          Utilities::redirect('/sales/list');
+        }
+        /* end of checking sales operator priviledges */
         $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
       } else {
         $page_error = $sales_response['apierror'];
@@ -276,7 +293,7 @@ class salesEntryWithBarcode {
         Utilities::redirect('/sales/list');
       }
     } else {
-      $this->flash->set_flash_message('Invalid Invoice No. (or) Invoice No. does not exist.',1);
+      $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>Invalid Invoice No. (or) Invoice No. does not exist.',1);
       Utilities::redirect('/sales/list');
     }
 

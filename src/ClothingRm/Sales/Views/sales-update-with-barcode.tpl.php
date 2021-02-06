@@ -109,7 +109,7 @@
   $editable_disc = isset($_SESSION['allow_man_discount']) ? $_SESSION['allow_man_discount'] : 1;
 
   $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
-  $billing_rate = isset($form_data['billingRate']) ? $billing_rates[$form_data['billingRate']] : 'mrp';
+  $billing_rate = isset($form_data['billingRate']) ? $billing_rates[strtolower($form_data['billingRate'])] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 ?>
 

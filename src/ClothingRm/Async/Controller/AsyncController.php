@@ -295,6 +295,7 @@ class AsyncController {
     } elseif($api_string === 'samplesCheck') {
       $params['scanCode'] = Utilities::clean_string($request->get('barcode'));
       $params['returnClosing'] = 1;
+      $params['exMill'] = 0;
       $api_url = 'inventory/get-item-details-by-barcode';
       $response = $api_caller->sendRequest('get',$api_url,$params,false);
       header("Content-type: application/json");

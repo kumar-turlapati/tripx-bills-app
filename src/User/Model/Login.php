@@ -99,7 +99,8 @@ class Login
 											 '##'.$response['cname'].'##'.$response['ccode'].'##'.$response['uid'].
 											 '##'.$response['uname'].'##'.$response['utype'].'##'.$response['bc'].
 											 '##'.$response['lc'].'##'.$response['lname'].'##'.$response['mrpEditable'].
-											 '##'.$response['uidn'].'##'.$response['allowManDiscount'];
+											 '##'.$response['uidn'].'##'.$response['allowManDiscount'].
+											 '##'.$response['edaysInvoice'].'##'.$response['edaysIndent'];
 
 			if(isset($_SESSION['__allowed_devices'])) {
 				unset($_SESSION['__allowed_devices']);

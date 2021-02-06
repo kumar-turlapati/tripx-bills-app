@@ -111,7 +111,7 @@
   $agent_code = isset($form_data['agentCode']) ? $form_data['agentCode'] : '';
 
   $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
-  $billing_rate = isset($form_data['billingRate']) ? $billing_rates[$form_data['billingRate']] : 'mrp';
+  $billing_rate = isset($form_data['billingRate']) ? $billing_rates[strtolower($form_data['billingRate'])] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
 
   $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;

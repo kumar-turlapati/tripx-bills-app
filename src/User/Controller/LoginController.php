@@ -67,7 +67,7 @@ class LoginController
       unset($_SESSION);
       $_SESSION['__logged_out'] = true;
       // hit api and log out user completely.
-      $api_response = $this->login_model->logout();      
+      $api_response = $this->login_model->logout();
       Utilities::redirect($logout_url);
     } else {
       $flash->set_flash_message('Unable to Logout. Please contact administrator',1);

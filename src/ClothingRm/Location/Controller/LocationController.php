@@ -67,7 +67,7 @@ class LocationController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Create a Store',
+      'page_title' => 'Create a Location / Store',
       'icon_name' => 'fa fa-location-arrow',
     );
 
@@ -143,7 +143,7 @@ class LocationController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Update a Store',
+      'page_title' => 'Update a Location / Store',
       'icon_name' => 'fa fa-location-arrow',
     );
 
@@ -170,7 +170,7 @@ class LocationController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Stores',
+      'page_title' => 'Stores / Locations',
       'icon_name' => 'fa fa-location-arrow',
     );
 
@@ -200,6 +200,8 @@ class LocationController
     $tac_b2b = Utilities::clean_string($form_data['tacB2B'], true);
     $tac_b2c = Utilities::clean_string($form_data['tacB2C'], true);
     $status = isset($form_data['status']) && ((int)$form_data['status'] === 0 || (int)$form_data['status'] === 1) ? $form_data['status'] : 0; 
+    $edays_invoice = isset($form_data['edaysInvoice']) && (int)$form_data['edaysInvoice'] > 0 ? $form_data['edaysInvoice'] : 0; 
+    $edays_indent = isset($form_data['edaysIndent']) && (int)$form_data['edaysIndent'] > 0 ? $form_data['edaysIndent'] : 0; 
 
     if($sms_sender_id !== '') {
       if(strlen($sms_sender_id) === 6 && ctype_alpha($sms_sender_id)) {
@@ -291,7 +293,17 @@ class LocationController
       $cleaned_params['allowManualDiscount'] = $allow_man_discount;
     } else {
       $errors['allowManualDiscount'] = 'Invalid choice.';
-    }    
+    }
+    if($edays_indent >= 0 && $edays_indent <= 365) {
+      $cleaned_params['edaysIndent'] = $edays_indent;
+    } else {
+      $errors['edaysIndent'] = 'Must be between 1 to 365.';
+    }
+    if($edays_invoice >= 0 && $edays_invoice <= 365) {
+      $cleaned_params['edaysInvoice'] = $edays_invoice;
+    } else {
+      $errors['edaysInvoice'] = 'Must be between 1 to 365.';
+    }
 
     $cleaned_params['bankCode'] = $bank_code;
     $cleaned_params['tacB2B'] = $tac_b2b;

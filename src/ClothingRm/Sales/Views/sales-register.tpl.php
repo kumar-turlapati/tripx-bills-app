@@ -298,7 +298,7 @@
                           <i class="fa fa-undo" aria-hidden="true"></i>
                         </a>
 
-                        <?php if(Utilities::is_admin()): ?>
+                        <?php //if(Utilities::is_admin()): ?>
                           <?php /*
                           <?php if($gatepass_no !== ''): ?>
                             <a class="btn btn-danger delGatepass" href="/gate-pass/remove/<?php echo $sales_code ?>" title="Delete Gatepass">
@@ -311,7 +311,7 @@
                           <a class="btn btn-info" target="_blank" href="/sales/update/<?php echo $sales_code ?>" title="Edit Invoice Without Barcode">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
                           </a>
-                        <?php endif; ?>
+                        <?php //endif; ?>
                       <?php endif; ?>
                     </div>
                   </td>

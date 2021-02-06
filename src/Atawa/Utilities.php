@@ -435,6 +435,8 @@ class Utilities
       $_SESSION['editable_mrps'] = $cookie_string_a[11];
       $_SESSION['uidn'] = $cookie_string_a[12];
       $_SESSION['allow_man_discount'] = $cookie_string_a[13];
+      $_SESSION['edays_indent'] = $cookie_string_a[14];
+      $_SESSION['edays_invoice'] = $cookie_string_a[15];
       $_SESSION['token_valid'] = true;
       $_SESSION['last_access_time'] = $current_time;
       return true;
@@ -608,7 +610,7 @@ class Utilities
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
         '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd', '/async/getComboItemDetails',
-        '/async/get-tax-percent', '/async/getBillNos',
+        '/async/get-tax-percent', '/async/getBillNos', '/async/getItemBatchesByCode',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
         '/sales-entry/combos', '/sales/entry-with-indent', '/sales-indent/create',
@@ -622,7 +624,7 @@ class Utilities
 
         '/products/list', '/categories/list',
 
-        '/mfgs/list',
+        '/mfgs/list', '/sales/update-with-barcode', '/sales/update',
 
         '/inventory/track-item', '/inventory/search-products', 
 
@@ -910,7 +912,7 @@ class Utilities
           }
         }
       }
-      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12 && $utype !== 16 && $utype !== 17 && $utype !== 18 && $utype !== 13) && !$return_all) {
+      if( ($utype !== 3 && $utype !== 9 && $utype !== 7 && $utype !== 12 && $utype !== 16 && $utype !== 17 && $utype !== 18 && $utype !== 13 && $utype !== 19) && !$return_all) {
         $client_locations = array_intersect($client_locations, [$_SESSION['lc'] => $_SESSION['lname']]);
       }
     }

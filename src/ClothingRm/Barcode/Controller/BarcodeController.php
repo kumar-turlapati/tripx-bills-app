@@ -325,12 +325,13 @@ class BarcodeController {
     $page_no = $request->get('pageNo') !== null ? Utilities::clean_string($request->get('pageNo')):1;
     $barcode = $request->get('barcode') !== null ? Utilities::clean_string($request->get('barcode')):'';
     $po_no = $request->get('poNo') !== null ? Utilities::clean_string($request->get('poNo')):'';
-    $lot_no = $request->get('lotNo')!== null ? Utilities::clean_string($request->get('lotNo')) : '';
-    $item_name = $request->get('itemName')!== null ? Utilities::clean_string($request->get('itemName')) : '';
-    $location_code = $request->get('locationCode')!== null ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
-    $cno = $request->get('cno')!== null ? Utilities::clean_string($request->get('cno')) : '';
-    $bno = $request->get('bno')!== null ? Utilities::clean_string($request->get('bno')) : '';
+    $lot_no = $request->get('lotNo') !== null ? Utilities::clean_string($request->get('lotNo')) : '';
+    $item_name = $request->get('itemName') !== null ? Utilities::clean_string($request->get('itemName')) : '';
+    $location_code = $request->get('locationCode') !== null ? Utilities::clean_string($request->get('locationCode')) : $_SESSION['lc'];
+    $cno = $request->get('cno') !== null ? Utilities::clean_string($request->get('cno')) : '';
+    $bno = $request->get('bno') !== null ? Utilities::clean_string($request->get('bno')) : '';
     $itemSku = $request->get('itemSku')!== null ? Utilities::clean_string($request->get('itemSku')) : '';
+
     $search_params = array(
       'barcode' => $barcode,
       'poNo' => $po_no,
