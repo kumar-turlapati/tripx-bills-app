@@ -1007,7 +1007,7 @@ function initializeJS() {
         // var hiddenHsnSacRow = '';       
         var tableRowEnd = '</tr>';
         var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyAvailableInput + qtyOrderedInput + mrpInput + grossAmount + discounInput + taxableInput + gstInput + deleteRow + hiddenGrossAmountRow + hiddenItemTypeRow + hiddenHsnSacRow + tableRowEnd;
-        $('#tBodyowItems').append(tableRow);
+        $('#tBodyowItems').prepend(tableRow);
       }
 
       // trigger change
@@ -1207,7 +1207,7 @@ function initializeJS() {
         var mrpInput = '<td style="vertical-align:middle;font-size:14px;text-align:right;">'+mrp+'</td>';
         var tableRowEnd = '</tr>';
         var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyOrderedInput + mrpInput + lotNoInputHidden + tableRowEnd;
-        $('#tBodyowItems').append(tableRow);
+        $('#tBodyowItems').prepend(tableRow);
       }
       // updateSaleItemRow(nextIndex);
     }
@@ -1951,7 +1951,7 @@ function initializeJS() {
         var barcodeInput = '<input type="hidden" class="noEnterKey" name="itemDetails[barcode][]" id="barcode_' + nextIndex + '" index="' + nextIndex + '" value="'+barcode+'" size="13" />';        
         var tableRowEnd = '</tr>';
         var tableRow = tableRowBegin + itemSlno + itemNameInput + lotNoInput + qtyOrderedInput + mrpInput + grossAmount + deleteRow + barcodeInput + tableRowEnd;
-        $('#tBodyowItems').append(tableRow);
+        $('#tBodyowItems').prepend(tableRow);
       }
       $('#locationCode').val(locationCode);
       updateIndentFormTotals();
