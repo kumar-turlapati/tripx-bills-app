@@ -24,9 +24,6 @@ class InventoryController {
   }
 
   public function productSampleChecker(Request $request) {
-
-
-
     // template variables.
     $template_vars = array(
     );
