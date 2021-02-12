@@ -2052,11 +2052,11 @@ class InventoryReportsController {
       }
 
       $format = $form_data_submitted['format'];
-      // if($format === 'csv') {
-      //   $total_records = $this->_format_stock_report_brand_for_csv($total_records,$group_by_original);
-      //   Utilities::download_as_CSV_attachment('StockReport', $csv_headings, $total_records);
-      //   return;
-      // }
+      if($format === 'csv') {
+        $total_records = $this->_format_stock_report_brand_for_csv($total_records);
+        Utilities::download_as_CSV_attachment('StockReport-Brandwise', $csv_headings, $total_records);
+        return;
+      }
 
       // start PDF printing.
       $item_widths = array(10,100,50);
@@ -2403,6 +2403,30 @@ class InventoryReportsController {
 
     return $cleaned_params;
   }
+
+  private function _format_stock_report_brand_for_csv($total_records = []) {
+    $cleaned_params = [];
+    $sno = $tot_qty = 0;
+    foreach($total_records as $key => $item_details) {
+      $sno++;
+      $brand_name = $item_details['brandName'];
+      $closing_qty = $item_details['closingQty'];
+      $tot_qty += $closing_qty;
+      $cleaned_params[$key] = [
+        'Sno.' => $sno,
+        'Brand Name' => $brand_name,
+        'Closing Qty.'     => number_format($closing_qty,2,'.',''),
+      ];
+    }
+
+    $cleaned_params[count($cleaned_params)] = [
+      'Sno.' => '',
+      'Brand Name'  => '',
+      'Closing Qty.' => number_format($tot_qty,2,'.',''),
+    ];
+
+    return $cleaned_params;
+  }  
 
   private function _format_stock_report_barcode_for_csv($total_records = []) {
     $cleaned_params = [];
