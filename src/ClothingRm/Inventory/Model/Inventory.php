@@ -125,7 +125,19 @@ class Inventory
 				'apierror' => $response['reason']
 			);
 		}	
-	}	
+	}
+
+	public function get_stock_report_by_brand($params=[]) {
+		$request_uri = 'reports/stock-report-brand';
+		// call api.
+		$response = $this->api_caller->sendRequest('get',$request_uri,$params);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return ['status' => true, 'results' => $response['response']];
+		} elseif($status === 'failed') {
+			return ['status' => false, 'apierror' => $response['reason']];
+		}		
+	}
 
 	public function get_expiry_report($params=array(),$page_no=1) {
 

@@ -19,7 +19,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/location/create" class="btn btn-default">
-              <i class="fa fa-location-arrow"></i> New Store
+              <i class="fa fa-location-arrow"></i> New Store / Location
             </a> 
           </div>
         </div>

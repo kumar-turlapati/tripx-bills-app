@@ -115,8 +115,12 @@
     $edays_indent = $submitted_data['edaysIndent'];
   } else {
     $edays_indent = '';
+  }
+  if(isset($submitted_data['forwardStore']) && $submitted_data['forwardStore'] !== '' ) {
+    $forward_store = $submitted_data['forwardStore'];
+  } else {
+    $forward_store = 0;
   }  
-
   $disabled_status_class = $location_status === 0 ? 'disabled' : '';
   $active_inactive_a = [0=>'Inactive', 1=>'Active'];
 ?>
@@ -129,7 +133,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/locations/list" class="btn btn-default">
-              <i class="fa fa-location-arrow"></i> Stores List 
+              <i class="fa fa-location-arrow"></i> Stores / Locations List 
             </a> 
           </div>
         </div>
@@ -393,23 +397,27 @@
                 <span class="error"><?php echo $form_errors['edaysInvoice'] ?></span>
               <?php endif; ?>
             </div>
-            <?php /*
+
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-delicious" aria-hidden="true"></i>&nbsp;Sales Operator - Indent edit days allowed</span>
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Is a Forward/Temporary location?</span>
               </label>
-              <input
-                type="text"
-                class="form-control"
-                name="edaysIndent"
-                id="edaysIndent"
-                value="<?php echo $edays_indent ?>"
-                maxlength="6"
-              >
-              <?php if(isset($form_errors['edaysIndent'])): ?>
-                <span class="error"><?php echo $form_errors['edaysIndent'] ?></span>
+              <select class="form-control" name="forwardStore" id="forwardStore">
+                <?php 
+                  foreach($forward_store_options_a as $key => $value):
+                    if((int)$forward_store === (int)$key) {
+                      $selected = 'selected = "selected"';
+                    } else {
+                      $selected = '';
+                    }
+                ?>
+                  <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                <?php endforeach; ?>
+              </select>
+              <?php if(isset($errors['forwardStore'])): ?>
+                <span class="error"><?php echo $errors['forwardStore'] ?></span>
               <?php endif; ?>
-            </div>*/ ?>
+            </div>
           </div>          
           <div class="form-group">
             <div class="col-sm-12 col-md-6 col-lg-6">

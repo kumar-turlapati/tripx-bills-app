@@ -2010,6 +2010,120 @@ class InventoryReportsController {
     return [$this->template->render_view('stock-adj-register', $template_vars), $controller_vars];    
   }
 
+  public function stockReportBrandwise(Request $request) {
+   
+    $default_location = $_SESSION['lc'];
+    $page_no = 1; $per_page = 300;
+    $total_records = $categories_a = [];
+
+    if(count($request->request->all()) > 0) {
+      // validate form data.
+      $form_data_submitted = $request->request->all();
+      $form_data['pageNo'] = $page_no;
+      $form_data['perPage'] = $per_page;
+      $form_data['startDate'] = Utilities::clean_string($form_data_submitted['fromDate']);
+      $form_data['endDate'] = Utilities::clean_string($form_data_submitted['toDate']);
+
+      // hit api
+      $inven_api_response = $this->inven_api->get_stock_report_by_brand($form_data);
+      if($inven_api_response['status'] === false) {
+        $error_message = Constants::$REPORTS_ERROR_MESSAGE;
+        $this->flash->set_flash_message($error_message, 1);
+        Utilities::redirect('/reports/stock-report-brandwise');
+      } else {
+        $total_records = $inven_api_response['results']['results'];
+        $total_pages = $inven_api_response['results']['total_pages'];
+        if($total_pages>1) {
+          for($i=2;$i<=$total_pages;$i++) {
+            $form_data['pageNo'] = $i;
+            $inven_api_response = $this->inven_api->get_stock_report_by_brand($form_data);
+            if($inven_api_response['status']) {
+              $total_records = array_merge($total_records, $inven_api_response['results']['results']);
+            }
+          }
+        }
+
+        // dump($total_records, $form_data);
+        // exit;
+
+        $heading1 = 'Stock Report - Brandwise';
+        $heading2 = '( from '.date("d-M-Y", strtotime($form_data_submitted['fromDate'])).' to '. date("d-M-Y", strtotime($form_data_submitted['toDate'])) .' )';
+        $csv_headings = [ [$heading1], [$heading2] ];
+      }
+
+      $format = $form_data_submitted['format'];
+      // if($format === 'csv') {
+      //   $total_records = $this->_format_stock_report_brand_for_csv($total_records,$group_by_original);
+      //   Utilities::download_as_CSV_attachment('StockReport', $csv_headings, $total_records);
+      //   return;
+      // }
+
+      // start PDF printing.
+      $item_widths = array(10,100,50);
+      $totals_width = $item_widths[0] + $item_widths[1];
+      $slno = 0; $tot_qty = 0;
+
+      $pdf = PDF::getInstance();
+      $pdf->AliasNbPages();
+      $pdf->SetAutoPageBreak(false);
+      $pdf->AddPage('L','A4');
+      $pdf->setTitle($heading1.' - '.date('jS F, Y'));
+
+      $pdf->SetFont('Arial','B',16);
+      $pdf->Cell(0,5,$heading1,'',1,'C');
+      $pdf->SetFont('Arial','B',12);
+      $pdf->Cell(0,5,$heading2,'',1,'C');
+      $this->_add_page_heading_for_stock_report_by_brand($pdf, $item_widths, '');
+
+      $first_page = true;
+      $row_cntr = 0;
+      foreach($total_records as $item_details) {
+        $slno++;
+        $brand_name = substr($item_details['brandName'], 0, 40);
+        $closing_qty = $item_details['closingQty'];
+        $tot_qty += $closing_qty;
+        $row_cntr++;
+          
+        $pdf->Ln();
+        $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
+        $pdf->Cell($item_widths[1],6,$brand_name,'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');            
+        if($first_page && $row_cntr === 23) {
+          $pdf->AddPage('L','A4');
+          $this->_add_page_heading_for_stock_report_by_brand($pdf, $item_widths);
+          $first_page = false; $row_cntr = 0;
+        } elseif ($row_cntr === 26) {
+          $pdf->AddPage('L','A4');
+          $this->_add_page_heading_for_stock_report_by_brand($pdf, $item_widths);
+          $row_cntr = 0;
+        }
+      }
+
+      // print totals....
+      $pdf->Ln();
+      $pdf->SetFont('Arial','B',11);
+      $pdf->Cell($totals_width,6,'REPORT TOTALS','LRTB',0,'R');
+      $pdf->Cell($item_widths[2],6,number_format($tot_qty,2,'.',''),'RTB',0,'R');            
+
+      $pdf->Output();
+    }
+
+    $controller_vars = array(
+      'page_title' => 'Print Stock Report - Brandwise Available Qtys.',
+      'icon_name' => 'fa fa-print',
+    );
+
+    // prepare form variables.
+    $template_vars = array(
+      'flash_obj' => $this->flash,
+      'default_location' => $default_location,
+      'format_options' => ['pdf'=>'PDF Format', 'csv' => 'CSV Format'],
+    );
+
+    // render template
+    return [$this->template->render_view('stock-report-brandwise', $template_vars), $controller_vars];
+  }
+
   private function _validate_stock_report_data($form_data = []) {
     $cleaned_params = $form_errors = [];
     $group_by = Utilities::clean_string($form_data['groupBy']);
@@ -2646,6 +2760,14 @@ class InventoryReportsController {
     $pdf->Cell($item_widths[16], 6,'M.R.P','RTB',0,'C');
     $pdf->SetFont('Arial','',8);
   }
+
+  private function _add_page_heading_for_stock_report_by_brand(&$pdf=null, $item_widths=[]) {
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell($item_widths[0],  6,'Sno.','LRTB',0,'C');
+    $pdf->Cell($item_widths[1],  6,'Brand Name','RTB',0,'C');
+    $pdf->Cell($item_widths[2],  6,'Closing Qty.','RTB',0,'C');
+    $pdf->SetFont('Arial','',10);
+  }  
 
   private function _add_page_heading_for_barcodewise_stock_report(&$pdf=null, $item_widths=[], $group_by= '') {
     $pdf->SetFont('Arial','B',8);

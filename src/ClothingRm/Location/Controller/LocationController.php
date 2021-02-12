@@ -63,6 +63,7 @@ class LocationController
       'client_business_state' => $client_business_state,
       'mrp_editing_a' => $mrp_editing_a,
       'banks' => [''=>'Choose'] + $banks_a,
+      'forward_store_options_a' => [0 => 'No', 1=> 'Yes'],
     );
 
     // build variables
@@ -139,6 +140,7 @@ class LocationController
       'sel_location_code' => $sel_location_code,
       'mrp_editing_a' => $mrp_editing_a,
       'banks' => [''=>'Choose'] + $banks_a,
+      'forward_store_options_a' => [0 => 'No', 1=> 'Yes'],
     );
 
     // build variables
@@ -202,6 +204,7 @@ class LocationController
     $status = isset($form_data['status']) && ((int)$form_data['status'] === 0 || (int)$form_data['status'] === 1) ? $form_data['status'] : 0; 
     $edays_invoice = isset($form_data['edaysInvoice']) && (int)$form_data['edaysInvoice'] > 0 ? $form_data['edaysInvoice'] : 0; 
     $edays_indent = isset($form_data['edaysIndent']) && (int)$form_data['edaysIndent'] > 0 ? $form_data['edaysIndent'] : 0; 
+    $is_forward_store = isset($form_data['forwardStore']) && (int)$form_data['forwardStore'] > 0 ? $form_data['forwardStore'] : 0;
 
     if($sms_sender_id !== '') {
       if(strlen($sms_sender_id) === 6 && ctype_alpha($sms_sender_id)) {
@@ -309,6 +312,7 @@ class LocationController
     $cleaned_params['tacB2B'] = $tac_b2b;
     $cleaned_params['tacB2C'] = $tac_b2c;
     $cleaned_params['status'] = $status;
+    $cleaned_params['forwardStore'] = $is_forward_store;
 
     if(count($errors)>0) {
       return array('status' => false, 'errors' => $errors);

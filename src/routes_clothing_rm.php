@@ -875,6 +875,9 @@ $routes->add('report_sales_mis', new Routing\Route('/reports/sales-mis', array(
 $routes->add('report_stock', new Routing\Route('/reports/stock-report', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::stockReport',
 )));
+$routes->add('report_stock_brandwise', new Routing\Route('/reports/stock-report-brandwise', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::stockReportBrandwise',
+)));
 $routes->add('report_stock_indent', new Routing\Route('/reports/stock-report-indent', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Inventory\\Controller\\InventoryReportsController::stockReportIndent',
 )));

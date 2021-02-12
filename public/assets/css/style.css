@@ -209,7 +209,7 @@ table tr th {color: #2F7192;}
 }
 .login-form {
     max-width: 350px;
-    margin: 35px auto 0;
+    margin: 10px auto 0;
     background: #F7F7F7;
     border-radius: 2px;
     -moz-border-radius: 2px;
@@ -269,7 +269,7 @@ table tr th {color: #2F7192;}
     z-index: 2;
 }
 .login-form .login-wrap h2 {
-    margin: 10px 0 15px;
+    margin: 10px 0 10px;
   font-size: 22px;
   font-weight: normal;
 }
@@ -280,7 +280,7 @@ table tr th {color: #2F7192;}
     height: auto;
 }
 .login-form .input-group {
-    padding-bottom: 15px;
+    padding-bottom: 5px;
 }
 .login-form .input-group-addon {
     padding: 6px 12px;
@@ -332,7 +332,7 @@ table tr th {color: #2F7192;}
     color: #00a0df;
 }
 .login-wrap {
-    padding: 20px 20px 0px 20px;
+    padding: 10px 20px 0px 20px;
 }
 .login-social-link {
     display: inline-block;
@@ -4888,9 +4888,9 @@ input[name^="itemDetails"] {
  vertical-align: middle;
 }
 
-.g-recaptcha{margin-bottom: 15px;}
+.g-recaptcha{margin-bottom: 10px;}
 .forgot-pass{text-align: right; width: 100%;}
-.forgot-pass a {font-size: 13px;}
+.forgot-pass a {font-size: 11px;}
 .copy-rights p{margin-top: 7px;}
 .footer-logo{text-align: right;}
 .input-group.login-copyrights {border-top: 1px solid #d9d9d9; margin: 16px 0 0; padding-top: 15px; text-align: center; width: 100%;}
@@ -4937,4 +4937,29 @@ input[name^="itemDetails"] {
 .sr-value-style {
   color:#2E1114;
   font-weight:bold;
+}
+.whatsappNotifications {
+  background-color: #00bfa5;
+  display: flex;
+  align-items: center;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  padding: 8px 15px;
+  margin-bottom: 10px;
+}
+.whatsappNotifications span:first-child {
+  padding-right: 10px;
+}
+.whatsappNotifications span:first-child svg{
+  width: 20px;
+  height: 20px;
+}
+.whatsappNotifications span:last-child {
+  padding-left: 15px;
+}
+.whatsappNotifications input[type=checkbox] {
+  width: 20px;
+  height: 20px;
+  margin-top: 0;
+  visibility: visible !important;
 }

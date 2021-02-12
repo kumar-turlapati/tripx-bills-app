@@ -103,6 +103,11 @@
     $edays_indent = $submitted_data['edaysIndent'];
   } else {
     $edays_indent = '';
+  }
+  if(isset($submitted_data['forwardStore']) && $submitted_data['forwardStore'] !== '' ) {
+    $forward_store = $submitted_data['forwardStore'];
+  } else {
+    $forward_store = '0';
   }  
 ?>
 <div class="row">
@@ -114,14 +119,14 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/locations/list" class="btn btn-default">
-              <i class="fa fa-location-arrow"></i> Stores List 
+              <i class="fa fa-location-arrow"></i> Stores / Locations List 
             </a> 
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Location name (only digits and alphabets allowed)</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Location name (only digits and alphabets allowed)</label>
               <input
                 type="text" 
                 class="form-control" 
@@ -135,7 +140,7 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Address1</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Address1</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -149,7 +154,7 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Address2</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Address2</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -165,7 +170,7 @@
           </div>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Country name</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Country name</label>
               <div class="select-wrap">
                 <select class="form-control" name="countryID" id="countryID">
                   <?php 
@@ -185,7 +190,7 @@
               </div>              
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">State</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">State</label>
               <select class="form-control" name="stateID" id="stateID">
                 <?php 
                   foreach($states as $key=>$value): 
@@ -218,7 +223,7 @@
           </div>
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Pincode</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Pincode</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -240,7 +245,7 @@
               <?php endif; ?>                
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">GST no.</label>
+              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">GST no.</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -378,6 +383,28 @@
                 <span class="error"><?php echo $form_errors['edaysInvoice'] ?></span>
               <?php endif; ?>
             </div>
+
+            <div class="col-sm-12 col-md-4 col-lg-4">
+              <label class="control-label">
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Is a Forward/Temporary location?</span>
+              </label>
+              <select class="form-control" name="forwardStore" id="forwardStore">
+                <?php 
+                  foreach($forward_store_options_a as $key => $value):
+                    if((int)$forward_store === (int)$key) {
+                      $selected = 'selected = "selected"';
+                    } else {
+                      $selected = '';
+                    }
+                ?>
+                  <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                <?php endforeach; ?>
+              </select>
+              <?php if(isset($errors['forwardStore'])): ?>
+                <span class="error"><?php echo $errors['forwardStore'] ?></span>
+              <?php endif; ?>
+            </div>
+
             <?php /*
             <div class="col-sm-12 col-md-4 col-lg-4">
               <label class="control-label">

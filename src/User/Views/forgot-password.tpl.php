@@ -13,7 +13,7 @@
 	                  <div class="form-group">
 	                     <div class="input-group">
 	                        <input 
-	                        	placeholder="Username (ex: joe@example.com)" 
+	                        	placeholder="Username (or) Mobile No." 
 	                        	name="emailID" 
 	                        	id="emailID"
 	                        	class="form-control" 
