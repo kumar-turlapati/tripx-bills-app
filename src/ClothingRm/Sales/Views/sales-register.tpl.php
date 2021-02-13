@@ -202,8 +202,6 @@
               $tot_bill_amount = $tot_disc_amount = $tot_amount = $tot_tax_amount = 0;
               $tot_round_off = $tot_net_pay = 0;
               foreach($sales as $sales_details):
-                // dump($sales_details);
-                // exit;
                 $sales_code = $sales_details['invoiceCode'];
                 $invoice_date = date("d-m-Y", strtotime($sales_details['invoiceDate']));
                 $mobile_number = $sales_details['mobileNo'];
@@ -224,24 +222,20 @@
                   $payment_method = 'Invalid';
                 }
                 $customer_code = $sales_details['customerCode'];
-
                 $bill_amount = $sales_details['billAmount'];
                 $discount_amount = $sales_details['discountAmount'];
                 $taxable_amount = $bill_amount - $discount_amount;
-                
                 $tot_bill_amount += $bill_amount;
                 $tot_disc_amount += $discount_amount;
                 $tot_amount += $taxable_amount;
-
                 $tot_tax_amount += $sales_details['taxAmount'];
                 $tot_round_off += $sales_details['roundOff'];
                 $tot_net_pay += $sales_details['netPay'];
-
                 $tax_calc_option = $sales_details['taxCalcOption'] === 'e' ? 'E' : 'I';
-
                 $gatepass_no = (int)$sales_details['gatePassNo'] > 0 ? $sales_details['gatePassNo'] : '';
                 $gatepass_date = $sales_details['gatePassDateTime'] !== '0000-00-00 00:00:00' ? date("d-m-Y h:ia", strtotime($sales_details['gatePassDateTime'])) : '';
                 $gatepass_status = (int)$sales_details['gatePassStatus'] === 1 ? 'Generated' : 'Pending'; 
+                $transporter_name = $sales_details['transporterName'];
             ?>
                 <tr class="text-uppercase text-right font11">
                   <td class="valign-middle"><?php echo $cntr ?></td>
@@ -289,9 +283,14 @@
                           <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
                             <i class="fa fa-bold" aria-hidden="true"></i>
                           </a>
-                          <a class="btn btn-danger" target="_blank" href="/sales/shipping-info/<?php echo $sales_code ?>" title="Update Shipping Information">
+                          <a 
+                            class="btn <?php echo strlen($transporter_name) > 0 ? 'btn-success' : 'btn-danger' ?>" 
+                            target="_blank" 
+                            href="/sales/shipping-info/<?php echo $sales_code ?>" 
+                            title="Update Shipping Information"
+                          >
                             <i class="fa fa-truck" aria-hidden="true"></i>
-                          </a>                        
+                          </a>
                         <?php endif; ?>
                         
                         <a class="btn btn-info" target="_blank" href="/sales-return/entry/<?php echo $sales_code ?>" title="Sales Return">

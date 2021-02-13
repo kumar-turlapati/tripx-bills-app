@@ -39,7 +39,7 @@
                   <div class="log-arrow-up"></div>
                   <li class="eborder-top ff-contact red"><b>Feel free to contact us:</b></li>
                   <li> <a href="#"><i class="fa fa-phone"></i> 91 98490 11005</a> </li>
-                  <li> <a href="mailto:support@qwikbills.com"><i class="fa fa-envelope"></i> support@qwikbills.com</a> </li>
+                  <li> <a href="mailto:care@qwikbills.com"><i class="fa fa-envelope"></i> care@qwikbills.com</a> </li>
                 </ul>
               </li>
               <li id="user-info" class="dropdown"> 
