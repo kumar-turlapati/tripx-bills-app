@@ -772,7 +772,7 @@ function initializeJS() {
       $('#dualLotModal').modal('hide');
       var billingRate = $('#billingRate').val();
       var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
-      var barcode = $('#owBarcode').val();
+      var barcode = $('#owBarcode').val().split('+').join("");
       var selectedLotNoDetails = lotNosResponse[selectedLotNo];
       var barCodeItem = '[ '+barcode+' ] '+selectedLotNoDetails.itemName;
       if(selectedLotNoDetails.cno !== '') {
@@ -796,11 +796,8 @@ function initializeJS() {
     $('#owBarcode').on('keypress', function (e) {
        var billingRate = $('#billingRate').val();
        if (e.keyCode == 13) {
-         var barcode = $(this).val();
-         // if(barcode.length > 13) {
-         //  alert('Invalid barcode');
-         //  return false;
-         // }
+         var barcodeOriginal = $(this).val();
+         var barcode = $(this).val().split('+').join("");
          var locationCode = $('#locationCode').val();
          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
             success: function(itemDetails) {
@@ -869,7 +866,7 @@ function initializeJS() {
                   alert('Barcode not found');                
                 }
               } else {
-                alert('[ '+barcode + ' ] Barcode is not available or out of stock.');
+                alert('[ '+barcodeOriginal + ' ] Barcode is not available or out of stock.');
                 $('#owBarcode').val('');
               }
             },
@@ -1031,7 +1028,7 @@ function initializeJS() {
       $('#dualLotModal').modal('hide');
       var billingRate = $('#billingRate').val();
       var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
-      var barcode = $('#gpBarcode').val();
+      var barcode = $('#gpBarcode').val().split('+').join("");
       var selectedLotNoDetails = lotNosResponse[selectedLotNo];
       var barCodeItem = '[ '+barcode+' ] '+selectedLotNoDetails.itemName;
       if(selectedLotNoDetails.cno !== '') {
@@ -1049,7 +1046,7 @@ function initializeJS() {
 
     $('#gpBarcode').on('keypress', function (e) {
        if (e.keyCode == 13) {
-         var barcode = $(this).val();
+         var barcode = $(this).val().split('+').join("");
          var locationCode = $('#locationCode').val();
          jQuery.ajax("/async/getItemDetailsByCode?qtyZero=true&bc="+barcode+'&locationCode='+$('#locationCode').val(), {
             success: function(itemDetails) {
@@ -1220,7 +1217,7 @@ function initializeJS() {
       $('#modalAdustment').modal('hide');
       var billingRate = $('#billingRate').val();
       var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
-      var barcode = $('#adjBarcode').val();
+      var barcode = $('#adjBarcode').val().split('+').join("");
       var selectedLotNoDetails = lotNosResponse[selectedLotNo];
       $('#itemName').val(selectedLotNoDetails.itemName);
       $('#lotNo').val(selectedLotNoDetails.lotNo);
@@ -1235,7 +1232,7 @@ function initializeJS() {
 
     $('#adjBarcode').on('keypress', function(e){
       if (e.keyCode == 13) {
-        var barcode = $(this).val();
+        var barcode = $(this).val().split('+').join("");
         var locationCode = $('#locationCode').val();
         if(locationCode === '') {
           alert('Choose a Store first.');
@@ -1349,7 +1346,7 @@ function initializeJS() {
   if( $('#galleryForm').length > 0) {
     $('#imgBarcode').on('keypress', function(e){
       if (e.keyCode == 13) {
-        var barcode = $(this).val();
+        var barcode = $(this).val().split('+').join("");
         var locationCode = $('#locationCode').val();
         if(barcode.length !== 13) {
           alert('Invalid barcode');
@@ -1509,13 +1506,9 @@ function initializeJS() {
 
     $('.transBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
-          barcode = $(this).val();
-          barcodeId = $(this).attr('id');
-          rowId = parseInt(barcodeId.split('_')[1]);
-       // if(barcode.length !== 13) {
-       //  alert('Invalid barcode');
-       //  return false;
-       // }
+        barcode = $(this).val().split('+').join("");
+        barcodeId = $(this).attr('id');
+        rowId = parseInt(barcodeId.split('_')[1]);
        var locationCode = $('#fromLocation').val();
        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
           success: function(itemDetails) {
@@ -1581,7 +1574,7 @@ function initializeJS() {
   if( $('#stBarcode').length>0 ) {
     $('#stBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
-       var barcode = $(this).val();
+       var barcode = $(this).val().split('+').join("");
        // if(barcode.length !== 13) {
        //  alert('Invalid barcode');
        //  return false;
@@ -1657,7 +1650,7 @@ function initializeJS() {
   if( $('#samplesBarcode').length>0 ) {
     $('#samplesBarcode').on('keypress', function (e) {
      if (e.keyCode == 13) {
-      var barcode = $(this).val();
+      var barcode = $(this).val().split('+').join("");
       jQuery.ajax("/async/samplesCheck?barcode="+barcode, {
         beforeSend: function() {
           $('#samplesBarcode').attr('disabled', true);
@@ -1785,7 +1778,7 @@ function initializeJS() {
        //  alert('Invalid Barcode format...');
        //  return false;
        // }
-       var barcode = $(this).val();
+       var barcode = $(this).val().split('+').join("");
        var locationCode = $('#locationCode').val();
        var billingRate = $('#billingRate').val();
        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&sl=true&ind=true', {
@@ -3548,7 +3541,7 @@ function initializeJS() {
       });    
 
       $('.transBarcode').on('blur', function(e){
-        var barcode = $(this).val();
+        var barcode = $(this).val().split('+').join("");
         var barcodeId = $(this).attr('id');
         var rowId = barcodeId.split('_')[1];
         if(barcode === '') {
@@ -3692,7 +3685,7 @@ function initializeJS() {
       var itemName = jQuery(this).val();
       var itemIndex = jQuery(this).attr('index');
       var lotNoRef = $('#lotNo_'+itemIndex);
-      var barcode = $('#barcode_'+itemIndex).val();
+      var barcode = $('#barcode_'+itemIndex).val().split('+').join("");
       var bnoFirstOption = jQuery("<option></option>").attr("value","").text("Choose");
       if(itemName.length > 0 && barcode.length === 0) {
        var locationCode = $('#locationCode').val();
@@ -3784,7 +3777,7 @@ function initializeJS() {
       $('#srBarcode').focus();
       $('#srBarcode').on('keypress', function(e){
         if (e.keyCode == 13) {
-          var barcode = $(this).val();
+          var barcode = $(this).val().split('+').join("");
           var locationCode = $('#locationCode').val();
           if(barcode.length !== 13) {
             alert('Invalid barcode');

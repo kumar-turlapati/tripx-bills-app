@@ -306,8 +306,8 @@ class ReportsIndentController {
       if($item_details['itemQty'] > 0 && $item_details['itemRateIndent'] > 0) {
         $amount = round($item_details['itemQty']*$item_details['itemRateIndent'], 2);
         $moq = $item_details['mOq'];
-        if($moq > 0 && $item_details['itemQty'] > 0) {
-          $order_qty = round($item_details['itemQty']/$moq,0);
+        if($moq > 0 && $item_details['itemQty'] > 1) {
+          $order_qty = round($item_details['itemQty']/$moq,2);
         } else {
           $order_qty = $item_details['itemQty'];
         }
@@ -451,8 +451,8 @@ class ReportsIndentController {
       if($item_details['itemQty'] > 0 && $item_details['itemRateIndent'] > 0) {
         $amount = round($item_details['itemQty']*$item_details['itemRateIndent'], 2);
         $moq = $item_details['mOq'];
-        if($moq > 0 && $item_details['itemQty'] > 0) {
-          $order_qty = round($item_details['itemQty']/$moq,0);
+        if($moq > 0 && $item_details['itemQty'] > 1) {
+          $order_qty = round($item_details['itemQty']/$moq,2);
         } else {
           $order_qty = $item_details['itemQty'];
         }
