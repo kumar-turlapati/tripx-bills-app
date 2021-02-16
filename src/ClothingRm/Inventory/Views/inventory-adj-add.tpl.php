@@ -64,7 +64,7 @@
                 type="text"
                 id="adjBarcode"
                 style="font-size:16px;font-weight:bold;border:2px dashed #225992;padding-left:5px;font-weight:bold;background-color:#f7f705;height:35px;"
-                maxlength="13"
+                maxlength="15"
               />
             </div>
             <div class="col-sm-12 col-md-3 col-lg-3">

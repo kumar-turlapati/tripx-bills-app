@@ -260,7 +260,7 @@
                 type="text"
                 class="form-control"
                 id="imgBarcode"
-                maxlength="13"
+                maxlength="15"
                 style="font-size:16px;font-weight:bold;border:1px dashed #225992;padding-left:5px;font-weight:bold;"
               /> 
             </div>

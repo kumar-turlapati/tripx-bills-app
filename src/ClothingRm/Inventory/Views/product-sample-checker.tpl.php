@@ -16,7 +16,7 @@
                     id="samplesBarcode"
                     class="samplesBarcode"
                     style="font-size:16px;font-weight:bold;border:1px dashed #225992;padding-left:5px;font-weight:bold;width:70%"
-                    maxlength="13"
+                    maxlength="15"
                   />
                 </div>
               </div>

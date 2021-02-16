@@ -51,7 +51,7 @@
                       type="text"
                       id="gpBarcode"
                       style="font-size:16px;font-weight:bold;border:1px dashed #225992;padding-left:5px;font-weight:bold;width:150px;"
-                      maxlength="13"
+                      maxlength="15"
                     />
                   </td>
                   <td style="border-top:none; border-left:none; border-right:none; border-bottom:none; text-align: right; width: 30%; color: #225992; font-weight: bold; font-size: 14px; vertical-align: middle;">Last item scanned:</td>
