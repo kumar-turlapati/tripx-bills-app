@@ -55,6 +55,7 @@
               <li><a href="/inventory/available-qty"><i class="fa fa-angle-right"></i> Stock In Hand</a></li>
               <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
               <li><a href="/release-indent-items"><i class="fa fa-wrench"></i> Release Indent Items</a></li>
+              <li><a href="/inventory/sample-checker"><i class="fa fa-search-plus"></i> Samples Checker</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -75,7 +76,8 @@
         </a>
         <ul class="sub">
           <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Sale Bills</a></li>
-          <li><a href="/purchases/search-bills"><i class="fa fa-compass"></i> Purchase Bills</a></li>          
+          <li><a href="/purchases/search-bills"><i class="fa fa-compass"></i> Purchase Bills</a></li>
+          <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
         </ul>
       </li>
       <li class="sub-menu">

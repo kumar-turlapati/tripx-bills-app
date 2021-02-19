@@ -534,7 +534,7 @@ class Utilities
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
 
         '/async/day-sales', '/async/monthly-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc',
-        '/async/finyDefault', '/async/itd', '/async/sdiscount',
+        '/async/finyDefault', '/async/itd', '/async/sdiscount', '/async/samplesCheck',
 
         '/sales/list', '/sales-return/view', '/sales-return/list', '/sales/view-invoice', 
         '/promo-offers/list', '/loyalty-members/list', '/inward-entry/list', '/inward-entry/view',
@@ -563,7 +563,7 @@ class Utilities
 
         '/finy/switch', '/discount-manager',
 
-        '/indent-vs-sales', '/indent-vs-sales-by-item',
+        '/indent-vs-sales', '/indent-vs-sales-by-item', '/inventory/sample-checker',
         '/print-indent', '/print-indent-wor', '/release-indent-items',
 
         '/leads/list', '/lead/create', '/lead/update', '/lead/import', '/lead/remove',

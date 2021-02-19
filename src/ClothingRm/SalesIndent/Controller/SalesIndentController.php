@@ -224,6 +224,9 @@ class SalesIndentController {
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
 
+      // dump($form_data);
+      // exit;
+
       // validate submitted indent code and url indent code is same. otherwise 
       // redirect user to indents list with error message.
       $submitted_indent_code = Utilities::clean_string($form_data['ic']);
@@ -251,6 +254,8 @@ class SalesIndentController {
           $page_error = $api_response['apierror'];
           $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$page_error,1);
         }
+        $indent_code = $submitted_indent_code;
+        $indent_number = $submitted_indent_no;
       }
     } elseif( !is_null($request->get('indentCode')) ) {
       $indent_code = Utilities::clean_string($request->get('indentCode'));
