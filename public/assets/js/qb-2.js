@@ -3918,7 +3918,7 @@ function initializeJS() {
     var saleDates = [];
     var saleAmounts = [];
     var locationCode = $('#selLc').val();
-    if (typeof locationCode !== 'undefined') {
+    if (typeof locationCode === 'undefined') {
       locationCode = '';
     }
     jQuery.ajax("/async/day-sales?lc="+locationCode,{
