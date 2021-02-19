@@ -12,7 +12,8 @@
           <i class="fa fa-bars"></i> Masters <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
-          <li><a href="/customers/list"><i class="fa fa-smile-o"></i> Customers</a></li>
+          <li><a href="/customers/list"><i class="fa fa-smile-o"></i>&nbsp;Customers</a></li>
+          <li><a href="/products/list"><i class="fa fa-cubes"></i>&nbsp;Products</a></li>
           <?php /*<li><a href="/loyalty-members/list"><i class="fa fa-diamond"></i> Loyalty Members</a></li> */ ?>
         </ul>
       </li>

@@ -64,7 +64,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
               <a href="/products/create" class="btn btn-default">
-                <i class="fa fa-file-text-o"></i> New Product
+                <i class="fa fa-file-text-o"></i> New Product / Service
               </a>
           </div>
         </div>

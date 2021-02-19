@@ -152,7 +152,7 @@ class ReportsIndentController {
       $pdf->Cell($item_widths[0],6,'Sno.','LRTB',0,'C');
       $pdf->Cell($item_widths[1],6,'Product Name','RTB',0,'C');
       $pdf->Cell($item_widths[2],6,'HSN/SAC Code','RTB',0,'C');
-      $pdf->Cell($item_widths[3],6,'Qty.','RTB',0,'C');
+      $pdf->Cell($item_widths[3],6,'Qty.*','RTB',0,'C');
       $pdf->Cell($item_widths[4],6,'Comments/Notes','RTB',0,'C');
       $pdf->SetFont('Arial','',9);
       $pdf->Ln();
@@ -262,7 +262,9 @@ class ReportsIndentController {
     $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
     $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
+    $pdf->SetFont('Arial','B',12);
     $pdf->Cell($indent_info_widths[2],6,$exe_name,'RTB',0,'C');
+    $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[3],6,$exe_mobile_no,'RTB',0,'C');
 
     # third row
@@ -271,8 +273,9 @@ class ReportsIndentController {
     $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
     $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
     $pdf->Ln();
-    $pdf->SetFont('Arial','',8);
+    $pdf->SetFont('Arial','B',9);
     $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->SetFont('Arial','',8);
     $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
     $pdf->Ln();
 
@@ -295,7 +298,7 @@ class ReportsIndentController {
     $pdf->Cell($item_widths[2],6,'Product Name','RTB',0,'C');
     $pdf->Cell($item_widths[3],6,'Brand Name','RTB',0,'C');    
     // $pdf->Cell($item_widths[4],6,'HSN/SAC Code','RTB',0,'C');
-    $pdf->Cell($item_widths[5],6,'Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[5],6,'Order Qty.*','RTB',0,'C');
     $pdf->Cell($item_widths[6],6,'Rate/Unit','RTB',0,'C');
     $pdf->SetFont('Arial','',9);
     $pdf->Ln();
@@ -306,17 +309,19 @@ class ReportsIndentController {
       if($item_details['itemQty'] > 0 && $item_details['itemRateIndent'] > 0) {
         $amount = round($item_details['itemQty']*$item_details['itemRateIndent'], 2);
         $moq = $item_details['mOq'];
-        if($moq > 0 && $item_details['itemQty'] > 1) {
-          $order_qty = round($item_details['itemQty']/$moq,2);
-        } else {
-          $order_qty = $item_details['itemQty'];
-        }
+        // if($moq > 0 && $item_details['itemQty'] > 1) {
+        //   $order_qty = round($item_details['itemQty']/$moq,2);
+        // } else {
+        //   $order_qty = $item_details['itemQty'];
+        // }
+        $order_qty = $item_details['itemQty'];
       } else {
         $amount = $order_qty = 0;
       }
 
       $tot_bill_value += $amount;
       $tot_items_qty += $order_qty;
+      $uom_name = $item_details['uomName'];
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
@@ -325,7 +330,7 @@ class ReportsIndentController {
       $pdf->SetFont('Arial','',9);
       $pdf->Cell($item_widths[3],6,substr($item_details['brandName'],0,25),'RTB',0,'L');      
       // $pdf->Cell($item_widths[4],6,$item_details['hsnSacCode'],'RTB',0,'L');
-      $pdf->Cell($item_widths[5],6,$order_qty,'RTB',0,'R');
+      $pdf->Cell($item_widths[5],6,$order_qty.' '.strtolower($uom_name),'RTB',0,'R');
       $pdf->Cell($item_widths[6],6,$item_details['itemRateIndent'],'RTB',0,'R');
       $pdf->Ln();
     }
@@ -347,8 +352,9 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','',9);
     $pdf->Cell(60,10,'Print date & time: '.$print_date_time,'LRTB',0,'L');
     $pdf->Cell(60,10,'Prepared by: '.$operator_name,'RTB',0,'L');
-    $pdf->Cell(70,10,'Authorized Signature: ','RTB',0,'L');
-
+    $pdf->Cell(70,10,'Authorized Signature: ','RTB',1,'L');
+    $pdf->SetFont('Arial','BI',8);
+    $pdf->Cell(190,5,'*Order Qty. may vary based on the availability','',0,'L');  
     $pdf->Output();
   }
 
@@ -408,7 +414,9 @@ class ReportsIndentController {
     $pdf->Cell($indent_info_widths[0],6,$indent_tran_details['indentNo'],'LRTB',0,'C');
     $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[1],6,date('d/m/Y', strtotime($indent_tran_details['indentDate'])),'RTB',0,'C');
+    $pdf->SetFont('Arial','B',12);
     $pdf->Cell($indent_info_widths[2],6,$exe_name,'RTB',0,'C');
+    $pdf->SetFont('Arial','',10);
     $pdf->Cell($indent_info_widths[3],6,$exe_mobile_no,'RTB',0,'C');
 
     # third row
@@ -417,8 +425,9 @@ class ReportsIndentController {
     $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
     $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
     $pdf->Ln();
-    $pdf->SetFont('Arial','',8);
+    $pdf->SetFont('Arial','B',9);
     $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->SetFont('Arial','',8);
     $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
     $pdf->Ln();
 
@@ -440,7 +449,7 @@ class ReportsIndentController {
     $pdf->Cell($item_widths[1],6,'GDR No.','RTB',0,'C');
     $pdf->Cell($item_widths[2],6,'Product Name','RTB',0,'C');
     // $pdf->Cell($item_widths[3],6,'HSN/SAC Code','RTB',0,'C');
-    $pdf->Cell($item_widths[4],6,'Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[4],6,'Order Qty.*','RTB',0,'C');
     $pdf->Cell($item_widths[5],6,'Brand Name','RTB',0,'C');
     $pdf->SetFont('Arial','',9);
     $pdf->Ln();
@@ -451,17 +460,19 @@ class ReportsIndentController {
       if($item_details['itemQty'] > 0 && $item_details['itemRateIndent'] > 0) {
         $amount = round($item_details['itemQty']*$item_details['itemRateIndent'], 2);
         $moq = $item_details['mOq'];
-        if($moq > 0 && $item_details['itemQty'] > 1) {
-          $order_qty = round($item_details['itemQty']/$moq,2);
-        } else {
-          $order_qty = $item_details['itemQty'];
-        }
+        // if($moq > 0 && $item_details['itemQty'] > 1) {
+        //   $order_qty = round($item_details['itemQty']/$moq,2);
+        // } else {
+        //   $order_qty = $item_details['itemQty'];
+        // }
+        $order_qty = $item_details['itemQty'];
       } else {
         $amount = $order_qty = 0;
       }
 
       $tot_bill_value += $amount;
       $tot_items_qty += $order_qty;
+      $uom_name = $item_details['uomName'];
 
       $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
       $pdf->Cell($item_widths[1],6,$item_details['rackNo'],'RTB',0,'L');
@@ -469,7 +480,7 @@ class ReportsIndentController {
       $pdf->Cell($item_widths[2],6,$item_details['itemName'],'RTB',0,'L');
       $pdf->SetFont('Arial','',9);
       // $pdf->Cell($item_widths[3],6,$item_details['hsnSacCode'],'RTB',0,'L');
-      $pdf->Cell($item_widths[4],6,$order_qty,'RTB',0,'R');
+      $pdf->Cell($item_widths[4],6,$order_qty.' '.strtolower($uom_name),'RTB',0,'R');
       $pdf->Cell($item_widths[5],6,$item_details['brandName'],'RTB',0,'L');
       $pdf->Ln();
     }
@@ -491,7 +502,9 @@ class ReportsIndentController {
     $pdf->SetFont('Arial','',9);
     $pdf->Cell(60,10,'Print date & time: '.$print_date_time,'LRTB',0,'L');
     $pdf->Cell(60,10,'Prepared by: '.$operator_name,'RTB',0,'L');
-    $pdf->Cell(70,10,'Authorized Signature: ','RTB',0,'L');
+    $pdf->Cell(70,10,'Authorized Signature: ','RTB',1,'L');
+    $pdf->SetFont('Arial','BI',8);
+    $pdf->Cell(190,5,'*Order Qty. may vary based on the availability','',0,'L');  
 
     $pdf->Output();
   }

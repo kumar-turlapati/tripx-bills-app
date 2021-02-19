@@ -610,7 +610,7 @@ class Utilities
 
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
         '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd', '/async/getComboItemDetails',
-        '/async/get-tax-percent', '/async/getBillNos', '/async/getItemBatchesByCode',
+        '/async/get-tax-percent', '/async/getBillNos', '/async/getItemBatchesByCode', '/async/updateRackNo',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
         '/sales-entry/combos', '/sales/entry-with-indent', '/sales-indent/create',

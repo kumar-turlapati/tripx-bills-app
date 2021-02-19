@@ -33,6 +33,17 @@ class ProductsController {
     $update_url = '/products/update';
     $list_url = '/products/list';
 
+    // initiate classes.
+    $products_api_call = new Products;
+    $flash = new Flash;    
+
+    $user_type = isset($_SESSION['utype']) ? (int)$_SESSION['utype'] : 0;
+    if($user_type === 15 || $user_type === 5 || 
+       $user_type === 16 || $user_type === 14) {
+      $flash->set_flash_message("<i class='fa fa-times' aria-hidden='true'></i>&nbsp;You are not authorized to create / update a product (or) service.",1);
+      Utilities::redirect($list_url);      
+    }
+
     # ---------- get location codes from api -----------------------
     $client_locations = Utilities::get_client_locations(true);
     foreach($client_locations as $location_key => $location_value) {
@@ -40,10 +51,6 @@ class ProductsController {
       $location_ids[$location_key_a[1]] = $location_value;
       $location_codes[$location_key_a[1]] = $location_key_a[0];      
     }
-
-    // initiate classes.
-    $products_api_call = new Products;
-    $flash = new Flash;
 
     for($i=1;$i<=1000;$i++) {
       $upp_a[$i] = $i;
@@ -181,7 +188,8 @@ class ProductsController {
 
     // show different view for Godown op. based on this flag
     // the query will change in backend.
-    if($user_type === 15) {
+    if($user_type === 15 || $user_type === 5 || 
+       $user_type === 16 || $user_type === 14) {
       $search_params['rackUpdate'] = true;
       $search_params['cno'] = $cno;
       $search_params['bno'] = $bno;
