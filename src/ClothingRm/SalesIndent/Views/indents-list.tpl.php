@@ -55,6 +55,12 @@
     $query_params[] = 'customerName='.$customer_name;
   } else {
     $customer_name = '';
+  }
+  if(isset($search_params['brandName']) && $search_params['brandName'] !== '' ) {
+    $brand_name = $search_params['brandName'];
+    $query_params[] = 'brandName='.$brand_name;
+  } else {
+    $brand_name = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -181,7 +187,17 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
-                </div>                
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <input 
+                    placeholder="Brand name" 
+                    type="text" 
+                    name="brandName" 
+                    id="brandName" 
+                    class="form-control" 
+                    value="<?php echo $brand_name ?>"
+                  />
+                </div>                               
               </div>
               <div style="text-align: center;">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
@@ -198,12 +214,13 @@
                 <th width="5%" class="text-center valign-middle">Sno</th>
                 <th width="7%" class="text-center valign-middle">Indent <br />No.</th>
                 <th width="7%" class="text-center valign-middle">Indent <br />Date</th>
-                <th width="6%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
-                <th width="20%" class="text-center valign-middle">Customer name</span></th>
+                <th width="5%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
+                <th width="16%" class="text-center valign-middle">Customer name</span></th>
                 <th width="10%" class="text-center valign-middle">Invoice no</th>
-                <th width="10%" class="text-center valign-middle">Executive name</th>                
+                <th width="10%" class="text-center valign-middle">Executive name</th>             
+                <th width="10%" class="text-center valign-middle">Brand name</th>             
                 <th width="10%" class="text-center valign-middle">Status</th>
-                <th width="28%" class="text-center valign-middle">Actions</th>
+                <th width="25%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -246,14 +263,15 @@
                     }
                   }
                   $remarks2 = isset($indent_details['remarks2']) ? $indent_details['remarks2'] : '';
+                  $brand_name = $indent_details['brandName'];
                   $total += $netpay;
               ?>
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle"><?php echo $indent_no ?></td>
                   <td class="valign-middle"><?php echo $indent_date ?></td>
-                  <td align="right" class="valign-middle text-bold"><?php echo number_format($netpay,2,'.','') ?></td>
-                  <td align="left" class="valign-middle" title="<?php echo $customer_name ?>"><?php echo $customer_name ?></td>                
+                  <td align="right" class="valign-middle"><?php echo number_format($netpay,2,'.','') ?></td>
+                  <td align="left" class="valign-middle text-bold" title="<?php echo $customer_name ?>"><?php echo $customer_name ?></td>                
                   <td class="valign-middle" style="text-align: right;">
                     <?php if($invoice_no > 0): ?>
                       <a href="<?php echo '/sales/view-invoice/'.$invoice_code ?>" class="hyperlink" target="_blank"><?php echo $invoice_no ?></a>
@@ -262,6 +280,7 @@
                     <?php endif; ?>
                   </td>
                   <td class="valign-middle"><?php echo $executive_name ?></td>
+                  <td class="valign-middle" style="color: #4287f5; font-weight: bold;"><?php echo $brand_name ?></td>
                   <td class="valign-middle"><?php echo $status ?></td>
                   <td class="valign-middle" align="right">
                     <div class="btn-actions-group">                    

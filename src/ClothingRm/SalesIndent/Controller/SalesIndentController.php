@@ -430,6 +430,7 @@ class SalesIndentController {
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
     $status = $request->get('status') !== null && (int)$request->get('status') !== 99 ? Utilities::clean_string($request->get('status')) : $def_indent_status;
     $indent_type = $request->get('indentType') !== null && $request->get('indentType') !== '' ? Utilities::clean_string($request->get('indentType')) : '';
+    $brand_name = $request->get('brandName') !== null ? Utilities::clean_string($request->get('brandName')):'';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -440,6 +441,7 @@ class SalesIndentController {
       'agentCode' => $agent_code,
       'executiveCode' => $executive_code,
       'custName' => $customer_name,
+      'brandName' => $brand_name,
       'status' => $status,
       'indentType' => $indent_type,
     );
