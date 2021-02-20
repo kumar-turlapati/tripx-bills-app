@@ -219,8 +219,8 @@
                 <th width="10%" class="text-center valign-middle">Invoice no</th>
                 <th width="10%" class="text-center valign-middle">Executive name</th>             
                 <th width="10%" class="text-center valign-middle">Brand name</th>             
-                <th width="10%" class="text-center valign-middle">Status</th>
-                <th width="25%" class="text-center valign-middle">Actions</th>
+                <th width="8%" class="text-center valign-middle">Status</th>
+                <th width="27%" class="text-center valign-middle">Actions</th>
               </tr>
             </thead>
             <tbody>
