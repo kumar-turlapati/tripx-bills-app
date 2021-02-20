@@ -196,6 +196,7 @@
                     id="brandName" 
                     class="form-control" 
                     value="<?php echo $brand_name ?>"
+                    title="Seperate brand name with ,(comma) to see multiple brands"
                   />
                 </div>                               
               </div>
