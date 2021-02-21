@@ -1334,14 +1334,27 @@ function initializeJS() {
   jQuery('.delGatepass').on("click", function(e){
     e.preventDefault();
     var delUrl = jQuery(this).attr('href');
-    bootbox.confirm("Are you sure. You want to remove this Gatepass?", function(result) {
+    bootbox.confirm("Are you sure. You want to delete this Gatepass?", function(result) {
       if(result===true) {
         window.location.href=delUrl;
       } else {
         return;
       }
     });
-  });   
+  });
+
+  // delete user
+  jQuery('.delUser').on("click", function(e){
+    e.preventDefault();
+    var delUrl = jQuery(this).attr('href');
+    bootbox.confirm("Are you sure. You want to delete this User?", function(result) {
+      if(result === true) {
+        window.location.href=delUrl;
+      } else {
+        return;
+      }
+    });
+  });
 
   if( $('#galleryForm').length > 0) {
     $('#imgBarcode').on('keypress', function(e){

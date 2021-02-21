@@ -35,7 +35,7 @@
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Create User</h2>
+      <h2 class="hdg-reports text-center">Create New Platform User</h2>
       <div class="panel-body">
 
         <?php echo Utilities::print_flash_message() ?>
@@ -43,7 +43,7 @@
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/users/list" class="btn btn-default">
-              <i class="fa fa-users"></i> Users List
+              <i class="fa fa-users"></i> Platform Users List
             </a>            
           </div>
         </div>
@@ -119,7 +119,7 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name</label>
+              <label class="control-label">Default Store / Location name</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
@@ -158,7 +158,7 @@
           </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save">
-              <i class="fa fa-save"></i> Save
+              <i class="fa fa-save"></i> Create
             </button>
           </div>      
         </form>

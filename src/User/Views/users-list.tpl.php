@@ -1,26 +1,96 @@
 <?php
   use Atawa\Utilities;
+
+  $query_params = [];
+  if(isset($search_params['userType']) && $search_params['userType'] !='') {
+    $user_type = $search_params['userType'];
+    $query_params[] = 'userType='.$user_type;
+  } else {
+    $user_type = '';
+  }
+  if(isset($search_params['mobileNo']) && $search_params['mobileNo'] !='' ) {
+    $mobile_no = $search_params['mobileNo'];
+    $query_params[] = 'mobileNo='.$mobile_no;
+  } else {
+    $mobile_no = '';
+  }
+  if(isset($search_params['status']) && $search_params['status'] !='' ) {
+    $status = $search_params['status'];
+    $query_params[] = 'status='.$status;
+  } else {
+    $status = '-1';
+  }  
+  if(is_array($query_params) && count($query_params)>0) {
+    $query_params = '?'.implode('&', $query_params);
+  }
+  $page_url = $pagination_url = '/users/list';
 ?>
-<!-- Basic form starts -->
 <div class="row">
   <div class="col-lg-12">
-    
-    <!-- Panel starts -->
     <section class="panelBox">
       <div class="panelBody">
-
         <?php echo Utilities::print_flash_message() ?>
-
-        <!-- Right links starts -->
         <div class="global-links actionButtons clearfix">
           <div class="pull-right text-right">
             <a href="/users/create" class="btn btn-default">
-              <i class="fa fa-user"></i> Add New User 
-            </a> 
+              <i class="fa fa-user"></i> Create New Platform User 
+            </a>
           </div>
         </div>
-        <!-- Right links ends --> 
-        
+        <div class="filters-block">
+          <div id="filters-form">
+            <form 
+              class="form-validate form-horizontal" 
+              method="POST" 
+              action="<?php echo $page_url ?>" 
+              autocomplete="off"
+            >
+              <div class="form-group">
+                <div class="col-sm-12 col-md-1 col-lg-1" style="font-weight: bold; font-size: 14px; margin-top: 9px; text-align: right;">Filter by</div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="userType" id="userType">
+                      <?php 
+                        foreach($user_types as $key=>$value):
+                          if((int)$user_type === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="status" id="status">
+                      <?php 
+                        foreach($user_status as $key=>$value):
+                          if((int)$status === (int)$key) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                          <?php echo $value ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>                
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input type="text" class="form-control noEnterKey" name="mobileNo" id="mobileNo" placeholder="Mobile No." value="<?php echo $mobile_no ?>" />
+                </div>                
+                <?php include_once __DIR__."/../../Layout/helpers/filter-buttons.helper.php" ?>
+              </div>
+            </form>
+          </div>
+        </div>  
         <div class="table-responsive">
           <table class="table table-striped table-hover font11">
             <thead>
@@ -69,10 +139,9 @@
                             <a class="btn btn-primary" href="/users/update/<?php echo $uuid ?>" title="Edit user">
                               <i class="fa fa-pencil"></i>
                             </a>
-                            <?php /*
-                            <a class="btn btn-danger delUser" href="javascript:void(0)" title="Remove user" uid="<?php echo $uuid ?>">
+                            <a class="btn btn-danger delUser" href="/users/delete/<?php echo $uuid ?>" title="Delete user">
                               <i class="fa fa-times"></i>
-                            </a>*/ ?>
+                            </a>
                           <?php endif; ?>
                         </div>
                       </td>
@@ -94,6 +163,5 @@
         </div>
       </div>
     </section>
-    <!-- Panel ends -->
   </div>
 </div>

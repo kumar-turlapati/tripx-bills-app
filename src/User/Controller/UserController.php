@@ -148,6 +148,33 @@ class UserController {
     return array($template->render_view('user-update',$template_vars),$controller_vars);    
   }
 
+  public function deleteUserAction(Request $request) {
+    $user_details = [];
+    $uuid = $page_error = $page_success = '';
+    $user_model = new User();
+    $flash = new Flash();
+
+    $uuid = Utilities::clean_string($request->get('uuid'));
+    $user_details = $user_model->get_user_details($uuid);
+    if(!$user_details['status']) {
+      $flash->set_flash_message('Invalid user details. Please contact administrator.',1);
+      Utilities::redirect('/users/list');        
+    } else {
+      $user_name = $user_details['userDetails']['userName'];
+    }
+
+    $delete_response = $user_model->delete_user($uuid);
+
+    /* delete user */
+    if($delete_response['status']) {
+      $flash->set_flash_message('<i class="fa fa-check aria-hidden="true"></i>&nbsp;User [ '.$user_name.' ] deleted successfully!');
+    } else {
+      $flash->set_flash_message('<i class="fa fa-times aria-hidden="true"></i>&nbsp;'.$user_details['apierror'], 1);
+    }
+
+    Utilities::redirect('/users/list');        
+  }
+
   public function updateUserActionApp(Request $request) {
     $user_details = $submitted_data = $form_errors = array();
     $uuid = $page_error = $page_success = '';
@@ -223,11 +250,26 @@ class UserController {
 
   public function listUsersAction(Request $request) {
 
-    $users = array();
+    $users = [];
     $flash = new Flash();
-
     $user_model = new User();
-    $result = $user_model->get_users();
+
+    // parse request parameters.
+    $mobile_no = $request->get('mobileNo')!==null ? Utilities::clean_string($request->get('mobileNo')) : '';
+    $user_type = $request->get('userType')!==null ? Utilities::clean_string($request->get('userType')) : '';
+    $status = $request->get('status') !== null ? Utilities::clean_string($request->get('status')) : '-1';
+    $page_no = $request->get('pageNo')!==null ? Utilities::clean_string($request->get('pageNo')) : 1;
+    $per_page = 500;
+
+    $search_params = array(
+      'mobileNo' => $mobile_no,
+      'userType' => $user_type,
+      'status' => $status,
+      'pageNo' => $page_no,
+      'perPage' => $per_page,
+    );
+
+    $result = $user_model->get_users($search_params);
 
     if($result['status']) {
       $users = $result['users'];
@@ -239,6 +281,9 @@ class UserController {
     // prepare form variables.
     $template_vars = array(
       'users' => $users,
+      'user_types' => ['' => 'All User Types'] + Utilities::get_user_types(),
+      'user_status' => ['-1' => 'All statuses', 1 => 'Active', 0 => 'Inactive'],
+      'search_params' => $search_params,
     );
 
     // build variables
@@ -497,7 +542,7 @@ class UserController {
     $user_phone = Utilities::clean_string($form_data['userPhone']);
     $status = Utilities::clean_string($form_data['status']);
     $location_code = Utilities::clean_string($form_data['locationCode']);
-    $app_user = Utilities::clean_string($form_data['appUser']);
+    $app_user = isset($form_data['appUser']) ? (int)Utilities::clean_string($form_data['appUser']) : 0;
 
     if(!$app_user) {
       if($user_name == '') {

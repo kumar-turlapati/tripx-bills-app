@@ -41,7 +41,7 @@
     
     <!-- Panel starts -->
     <section class="panel">
-      <h2 class="hdg-reports text-center">Update User</h2>
+      <h2 class="hdg-reports text-center">Update Platform User</h2>
       <div class="panel-body">
 
         <?php echo Utilities::print_flash_message() ?>
@@ -139,7 +139,7 @@
               <?php endif; ?>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name</label>
+              <label class="control-label">Default Store / Location name</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
@@ -180,7 +180,7 @@
           <input type="hidden" id="hEmail" name="hEmail" value="<?php echo $email_id ?>" />          
           <div class="text-center">
             <button class="btn btn-success" id="Save">
-              <i class="fa fa-save"></i> Save
+              <i class="fa fa-edit"></i> Update
             </button>
           </div>      
         </form>

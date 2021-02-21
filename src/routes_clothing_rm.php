@@ -613,6 +613,10 @@ $routes->add('users_update', new Routing\Route('/users/update/{uuid}', array(
   '_controller' => 'User\\Controller\\UserController::updateUserAction',
   'uuid' => null,
 )));
+$routes->add('users_delete', new Routing\Route('/users/delete/{uuid}', array(
+  '_controller' => 'User\\Controller\\UserController::deleteUserAction',
+  'uuid' => null,
+)));
 $routes->add('users_update_app', new Routing\Route('/users/update-app/{uuid}', array(
   '_controller' => 'User\\Controller\\UserController::updateUserActionApp',
   'uuid' => null,
