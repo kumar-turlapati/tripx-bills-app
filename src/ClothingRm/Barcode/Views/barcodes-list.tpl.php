@@ -150,7 +150,7 @@
                 $total = 0;
                 foreach($barcodes as $barcode_details):
                   $barcode = $barcode_details['barcode'];
-                  $item_name = substr($barcode_details['itemName'], 0, 20);
+                  $item_name = $barcode_details['itemName'];
                   $supp_name = substr($barcode_details['supplierName'], 0, 25);
                   $lot_no = $barcode_details['lotNo'];
                   $cno = $barcode_details['cno'];

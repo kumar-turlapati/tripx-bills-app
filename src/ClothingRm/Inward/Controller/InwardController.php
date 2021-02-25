@@ -988,11 +988,11 @@ class InwardController
           $cleaned_params['itemDetails']['onlinePrice'][] = $online_price;
 
           if($barcode !== '') {
-            if(is_numeric($barcode)) {
-              $cleaned_params['itemDetails']['barcode'][$key] = $barcode;
-            } else {
-              $form_errors['itemDetails'][$key]['barcode'] = 'Invalid Barcode';
-            }
+            $cleaned_params['itemDetails']['barcode'][$key] = $barcode;
+            // if(is_numeric($barcode)) {
+            // } else {
+            //   $form_errors['itemDetails'][$key]['barcode'] = 'Invalid Barcode';
+            // }
           }
 
           if( !is_numeric($inward_qty) ) {
