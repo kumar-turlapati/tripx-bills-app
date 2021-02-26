@@ -105,8 +105,8 @@
   $ow_items_class = $tot_products > 0 ? '' : 'style="display:none;"';
   $form_submit_url = '/sales/update-with-barcode/'.$ic;
 
-  $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
-  $editable_disc = isset($_SESSION['allow_man_discount']) ? $_SESSION['allow_man_discount'] : 1;
+  // $editable_mrps = isset($_SESSION['editable_mrps']) ? $_SESSION['editable_mrps'] : 0;
+  // $editable_disc = isset($_SESSION['allow_man_discount']) ? $_SESSION['allow_man_discount'] : 1;
 
   $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
   $billing_rate = isset($form_data['billingRate']) ? $billing_rates[strtolower($form_data['billingRate'])] : 'mrp';
@@ -323,7 +323,7 @@
                     </td>
                     <td style="vertical-align:middle;" align="center">
                       <input 
-                        readonly
+                        <?php echo $allowMrpEdit ? '' : 'readonly' ?>
                         class = "mrp text-right noEnterKey"
                         id = "mrp_<?php echo $i+1 ?>"
                         index = "<?php echo $i+1 ?>"
@@ -422,8 +422,8 @@
               </tfoot>
             </table>
             <input type="hidden" name="promoKey" id="promoKey" value="<?php echo $promo_key ?>" />
-            <input type="hidden" name="editKey" id="editKey" value="<?php echo $editable_mrps ?>" />
-            <input type="hidden" name="dKey" id="dKey" value="<?php echo $editable_disc ?>" />
+            <input type="hidden" name="editKey" id="editKey" value="<?php echo $allowMrpEdit ?>" />
+            <input type="hidden" name="dKey" id="dKey" value="<?php echo $allowDiscEdit ?>" />
             <input type="hidden" name="isComboBill" id="isComboBill" value="<?php echo $is_combo_bill ?>" />
           </div>
           <div class="panel" style="margin-bottom:15px;<?php echo $tot_products > 0  && $customer_type === 'b2b' ? '' : 'display:none;' ?>" id="siOtherInfoWindow">

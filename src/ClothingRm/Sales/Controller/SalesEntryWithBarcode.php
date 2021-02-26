@@ -17,7 +17,8 @@ use ClothingRm\PromoOffers\Model\PromoOffers;
 use ClothingRm\SalesIndent\Model\SalesIndent;
 use BusinessUsers\Model\BusinessUsers;
 use User\Model\User;
-use SalesCategory\Model\SalesCategory; 
+use SalesCategory\Model\SalesCategory;
+use ClothingRm\Location\Model\Location;
 
 class salesEntryWithBarcode {
 
@@ -36,6 +37,7 @@ class salesEntryWithBarcode {
     $this->sindent_model = new SalesIndent;
     $this->bu_model = new BusinessUsers;
     $this->sc_model = new SalesCategory;
+    $this->loc_model = new Location;
   }
 
   // create sales transaction
@@ -261,7 +263,9 @@ class salesEntryWithBarcode {
 
     $page_error = $page_success = $promo_key = '';
     $print_format = 'bill';
-    $indent_code = '';    
+    $indent_code = '';
+    $allow_mrp_edit = false;
+    $allow_disc_edit = false; 
 
     if($request->get('salesCode') && $request->get('salesCode')!=='') {
       $sales_code = Utilities::clean_string($request->get('salesCode'));
@@ -286,6 +290,12 @@ class salesEntryWithBarcode {
           Utilities::redirect('/sales/list');
         }
         /* end of checking sales operator priviledges */
+        $invoice_location_details = $this->loc_model->get_client_location_details($sales_response['saleDetails']['locationID']);
+        if(is_array($invoice_location_details) && count($invoice_location_details) > 0 && $invoice_location_details['status']) {
+          // dump($invoice_location_details);
+          $allow_mrp_edit = (int)$invoice_location_details['locationDetails']['allowMrpEditing'];
+          $allow_disc_edit =  (int)$invoice_location_details['locationDetails']['allowManualDiscount'];
+        }
         $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
       } else {
         $page_error = $sales_response['apierror'];
@@ -468,6 +478,8 @@ class salesEntryWithBarcode {
       'sa_categories' => $sa_categories,
       'wallets' => array(''=>'Choose') + Constants::$WALLETS,
       'agents' => [''=>'Choose']+$agents_a,
+      'allowMrpEdit' => $allow_mrp_edit,
+      'allowDiscEdit' => $allow_disc_edit,
     );
 
     return array($this->template->render_view('sales-update-with-barcode', $template_vars),$controller_vars);
