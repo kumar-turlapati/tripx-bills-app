@@ -237,7 +237,8 @@ class ReportsIndentController {
     $remarks2 = isset($indent_tran_details['remarks2']) && $indent_tran_details['remarks2'] !== '' ? $indent_tran_details['remarks2'] : '';
     if($remarks === '') {
       $remarks = $remarks2;
-    }    
+    }
+    $customer_gst_no = isset($indent_tran_details['customerGstNo']) && $indent_tran_details['customerGstNo'] !== '' ? $indent_tran_details['customerGstNo'] : '';
 
     # start PDF printing.
     $pdf = PDF::getInstance();
@@ -270,24 +271,26 @@ class ReportsIndentController {
     # third row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
-    $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
-    $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
+    $pdf->Cell(120,6,'Customer Name','LRTB',0,'C');
+    $pdf->Cell(70,6,'Wholesaler / Agent Name','RTB',0,'C');
     $pdf->Ln();
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->Cell(120,6,$placed_by,'LRTB',0,'C');
     $pdf->SetFont('Arial','',8);
-    $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
+    $pdf->Cell(70,6,$referred_by,'RTB',0,'C');
     $pdf->Ln();
 
     # fourth row
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(95,6,'Campaign / Event Name','LRTB',0,'C');
+    $pdf->Cell(50,6,'Customer GST No.','LRTB',0,'C');
+    $pdf->Cell(45,6,'Campaign / Event Name','LRTB',0,'C');
     $pdf->SetFont('Arial','B',8);
-    $pdf->Cell(95,6,'*** Below column left blank intentionally for handnotes ***','LRTB',0,'C');
+    $pdf->Cell(95,6,'*** For handnotes ***','LRTB',0,'C');
     $pdf->Ln();
 
-    $pdf->SetFont('Arial','',9);
-    $pdf->Cell(95,6,$campaign_name,'LRTB',0,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell(50,6,$customer_gst_no,'LRTB',0,'C');
+    $pdf->Cell(45,6,$campaign_name,'LRTB',0,'C');
     $pdf->Cell(95,6,'','LRTB',0,'C');
 
     # item details
@@ -388,6 +391,7 @@ class ReportsIndentController {
     if($remarks === '') {
       $remarks = $remarks2;
     }
+    $customer_gst_no = isset($indent_tran_details['customerGstNo']) && $indent_tran_details['customerGstNo'] !== '' ? $indent_tran_details['customerGstNo'] : '';
     // dump($indent_details);
     // exit;
 
@@ -422,24 +426,26 @@ class ReportsIndentController {
     # third row
     $pdf->SetFont('Arial','B',9);
     $pdf->Ln();
-    $pdf->Cell(95,6,'Retailer / Customer Name','LRTB',0,'C');
-    $pdf->Cell(95,6,'Wholesaler / Agent Name','RTB',0,'C');
+    $pdf->Cell(120,6,'Customer Name','LRTB',0,'C');
+    $pdf->Cell(70,6,'Wholesaler / Agent Name','RTB',0,'C');
     $pdf->Ln();
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(95,6,$placed_by,'LRTB',0,'C');
+    $pdf->Cell(120,6,$placed_by,'LRTB',0,'C');
     $pdf->SetFont('Arial','',8);
-    $pdf->Cell(95,6,$referred_by,'RTB',0,'C');
+    $pdf->Cell(70,6,$referred_by,'RTB',0,'C');
     $pdf->Ln();
 
     # fourth row
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(95,6,'Campaign / Event Name','LRTB',0,'C');
+    $pdf->Cell(50,6,'Customer GST No.','LRTB',0,'C');
+    $pdf->Cell(45,6,'Campaign / Event Name','LRTB',0,'C');
     $pdf->SetFont('Arial','B',8);
-    $pdf->Cell(95,6,'*** Below column left blank intentionally for handnotes ***','LRTB',0,'C');
+    $pdf->Cell(95,6,'*** For handnotes ***','LRTB',0,'C');
     $pdf->Ln();
 
-    $pdf->SetFont('Arial','',9);
-    $pdf->Cell(95,6,$campaign_name,'LRTB',0,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell(50,6,$customer_gst_no,'LRTB',0,'C');
+    $pdf->Cell(45,6,$campaign_name,'LRTB',0,'C');
     $pdf->Cell(95,6,'','LRTB',0,'C');
 
     // item details
