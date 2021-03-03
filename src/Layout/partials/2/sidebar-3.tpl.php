@@ -278,7 +278,7 @@
             </ul>
           </li>
           <li class="sub-menu">
-            <a href="javascript:">
+            <a href="javascript:void(0)">
               <i class="fa fa-money"></i> Finance <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">

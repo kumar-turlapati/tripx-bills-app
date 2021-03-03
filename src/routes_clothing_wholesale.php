@@ -664,14 +664,14 @@ $routes->add('upload_creditors', new Routing\Route('/upload-creditors', array(
 
 // Taxes Management
 $routes->add('add_tax', new Routing\Route('/taxes/add', array(
-  '_controller' => 'ClothingRm\\Taxes\\Controller\\TaxesController::addTax',
+  '_controller' => 'Taxes\\Controller\\TaxesController::addTax',
 )));
 $routes->add('update_tax', new Routing\Route('/taxes/update/{taxCode}', array(
-  '_controller' => 'ClothingRm\\Taxes\\Controller\\TaxesController::updateTax',
+  '_controller' => 'Taxes\\Controller\\TaxesController::updateTax',
   'taxCode' => null,
 )));
 $routes->add('list_taxes', new Routing\Route('/taxes/list', array(
-  '_controller' => 'ClothingRm\\Taxes\\Controller\\TaxesController::listTaxes',
+  '_controller' => 'Taxes\\Controller\\TaxesController::listTaxes',
 )));
 
 // HSN / SAC codes Management
@@ -777,14 +777,14 @@ $routes->add('show_device_name', new Routing\Route('/device/show-name', array(
 
 // stores management
 $routes->add('create_location', new Routing\Route('/location/create', array(
-  '_controller' => 'ClothingRm\\Location\\Controller\\LocationController::addLocation',
+  '_controller' => 'Location\\Controller\\LocationController::addLocation',
 )));
 $routes->add('update_location', new Routing\Route('/location/update/{locationCode}', array(
-  '_controller' => 'ClothingRm\\Location\\Controller\\LocationController::updateLocation',
+  '_controller' => 'Location\\Controller\\LocationController::updateLocation',
   'locationCode' => null,
 )));
 $routes->add('list_locations', new Routing\Route('/locations/list/{pageNo}', array(
-  '_controller' => 'ClothingRm\\Location\\Controller\\LocationController::listLocations',
+  '_controller' => 'Location\\Controller\\LocationController::listLocations',
   'pageNo' => null,
 )));
 

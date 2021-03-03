@@ -14,7 +14,7 @@ use ClothingRm\Barcode\Model\Barcode;
 use ClothingRm\Grn\Model\GrnNew;
 use ClothingRm\Inward\Model\Inward;
 use ClothingRm\Suppliers\Model\Supplier;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 use ClothingRm\Openings\Model\Openings;
 use ClothingRm\Inventory\Model\Inventory;
 

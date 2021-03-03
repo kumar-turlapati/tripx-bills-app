@@ -120,6 +120,7 @@ class SalesReportsController {
     // customer array
     $customer_info['custom_invoice_no'] = $sale_details['customBillNo'] !== '' ? $sale_details['customBillNo'] : $sale_details['billNo'];
     $customer_info['bill_no'] = $sale_details['billNo'];
+    $customer_info['indent_no'] = $sale_details['indentNo'];
     $customer_info['bill_date'] = date("d-M-Y",strtotime($sale_details['invoiceDate']));
     $customer_info['location_name'] = $sale_details['locationName'];
     $customer_info['location_name_short'] = $sale_details['locationNameShort'];
@@ -4116,7 +4117,8 @@ class SalesReportsController {
     $pdf->SetTextColor(255,255,255);
     $pdf->Cell(70,6,'GST Invoice No.','LBT',0,'C',true);
     $pdf->Cell(25,6,'Invoice Date','BT',0,'C',true);
-    $pdf->Cell(95,6,'Internal Tracking Number','RBT',0,'C',true);
+    $pdf->Cell(70,6,'Internal Tracking Number','RBT',0,'C',true);
+    $pdf->Cell(25,6,'Order No.','RBT',0,'C',true);
     $pdf->SetFillColor(0,0,0);
     $pdf->Ln();
     $pdf->SetTextColor(0,0,0);
@@ -4125,7 +4127,10 @@ class SalesReportsController {
     $pdf->SetFont('Arial','',10);
     $pdf->Cell(70,6,$customer_info['custom_invoice_no'],'LRB',0,'C');
     $pdf->Cell(25,6,$customer_info['bill_date'],'RB',0,'C');
-    $pdf->Cell(95,6,$customer_info['bill_no'].' [ '.$customer_info['invoice_code'].' ]','RB',1,'C');
+    // $pdf->Cell(70,6,$customer_info['bill_no'].' [ '.$customer_info['invoice_code'].' ]','RB',0,'C');
+    $pdf->Cell(70,6,$customer_info['bill_no'],'RB',0,'C');
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Cell(25,6,$customer_info['indent_no'],'RB',1,'C');
 
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell(95,6,'Billing Address','LR',0,'L');

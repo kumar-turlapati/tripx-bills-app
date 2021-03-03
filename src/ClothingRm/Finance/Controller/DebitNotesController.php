@@ -13,7 +13,7 @@ use Atawa\Flash;
 use ClothingRm\Suppliers\Model\Supplier;
 use ClothingRm\Finance\Model\DebitNote;
 use ClothingRm\Inward\Model\Inward;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 use ClothingRm\Inventory\Model\Inventory;
 
 class DebitNotesController {

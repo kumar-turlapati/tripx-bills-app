@@ -10,7 +10,7 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Products\Model\Products;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 
 class ProductsController {
 

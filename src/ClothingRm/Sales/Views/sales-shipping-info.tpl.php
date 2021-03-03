@@ -154,15 +154,29 @@
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Transporter Name</label>
-                  <input type="text" class="form-control noEnterKey" name="transporterName" id="transporterName" value="<?php echo $transporter_name ?>">
+                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Transporter Name (max 15 chars.)</label>
+                  <input 
+                    type="text" 
+                    class="form-control noEnterKey" 
+                    name="transporterName" 
+                    id="transporterName" 
+                    value="<?php echo $transporter_name ?>"
+                    maxlength="15"
+                  />
                   <?php if(isset($errors['transporterName'])): ?>
                     <span class="error"><?php echo $errors['transporterName'] ?></span>
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">L.R.No.</label>
-                  <input type="text" class="form-control noEnterKey" name="lrNo" id="lrNo" value="<?php echo $lr_no ?>">
+                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">L.R.No. (max 15 chars.)</label>
+                  <input 
+                    type="text" 
+                    class="form-control noEnterKey" 
+                    name="lrNo" 
+                    id="lrNo" 
+                    value="<?php echo $lr_no ?>"
+                    maxlength="15"
+                  />
                   <?php if(isset($errors['lrNo'])): ?>
                     <span class="error"><?php echo $errors['lrNo'] ?></span>
                   <?php endif; ?>
@@ -189,15 +203,29 @@
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Way Bill No.</label>
-                  <input type="text" class="form-control noEnterKey" name="wayBillNo" id="wayBillNo" value="<?php echo $way_bill_no ?>" />
+                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Way Bill No. (max 12 chars.)</label>
+                  <input 
+                    type="text" 
+                    class="form-control noEnterKey" 
+                    name="wayBillNo" 
+                    id="wayBillNo" 
+                    value="<?php echo $way_bill_no ?>"
+                    maxlength="12"
+                  />
                   <?php if(isset($errors['wayBillNo'])): ?>
                     <span class="error"><?php echo $errors['wayBillNo'] ?></span>
                   <?php endif; ?>
                 </div>
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Invoice No. (this will be sent in Message)</label>
-                  <input type="text" class="form-control noEnterKey" name="billNo" id="billNo" value="<?php echo $invoice_no ?>" />
+                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Invoice No. (sent in Message) (max 20 chars.)</label>
+                  <input 
+                    type="text" 
+                    class="form-control noEnterKey" 
+                    name="billNo" 
+                    id="billNo" 
+                    value="<?php echo $invoice_no ?>" 
+                    maxlength="20"
+                  />
                   <?php if(isset($errors['billNo'])): ?>
                     <span class="error"><?php echo $errors['billNo'] ?></span>
                   <?php endif; ?>

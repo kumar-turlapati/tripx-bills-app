@@ -12,7 +12,7 @@ if(isset($_COOKIE['__ata__'])) {
 	$bc = (int)$cookie_string_a[8];
 	switch ($bc) {
 		case 2:
-			$route_file_name = 'routes_clothing_rm.php';
+			$route_file_name = 'routes_clothing_wholesale.php';
 			break;
 		default:
 			$route_file_name = 'routes_default.php';

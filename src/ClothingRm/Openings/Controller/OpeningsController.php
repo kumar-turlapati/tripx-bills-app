@@ -10,7 +10,7 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Openings\Model\Openings;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 
 class OpeningsController {
   

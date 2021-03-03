@@ -1,6 +1,6 @@
 <?php 
 
-namespace ClothingRm\Location\Controller;
+namespace Location\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,7 +10,7 @@ use Atawa\Template;
 use Atawa\Flash;
 use Atawa\Constants;
 
-use ClothingRm\Location\Model\Location;
+use Location\Model\Location;
 use ClothingRm\Finance\Model\Finance;
 
 class LocationController

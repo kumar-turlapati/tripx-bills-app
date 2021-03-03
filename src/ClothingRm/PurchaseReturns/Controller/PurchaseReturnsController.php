@@ -10,7 +10,7 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Suppliers\Model\Supplier;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 use ClothingRm\Inward\Model\Inward;
 use ClothingRm\PurchaseReturns\Model\PurchaseReturns;
 use User\Model\User;

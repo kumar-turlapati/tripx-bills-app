@@ -75,7 +75,7 @@
         </a>
         <ul class="sub">
           <li class="sub-menu">
-            <a href="javascript:">
+            <a href="javascript:void(0);">
               <i class="fa fa-inr"></i> Sales <span class="menu-arrow arrow_carrot-right"></span> 
             </a>
             <ul class="sub">

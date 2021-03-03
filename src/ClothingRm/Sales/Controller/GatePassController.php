@@ -11,7 +11,7 @@ use Atawa\Flash;
 
 use ClothingRm\Sales\Model\Sales;
 use ClothingRm\Suppliers\Model\Supplier;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 use ClothingRm\Finance\Model\CreditNote;
 use ClothingRm\PromoOffers\Model\PromoOffers;
 use ClothingRm\SalesIndent\Model\SalesIndent;

@@ -12,7 +12,7 @@ use Atawa\Flash;
 use ClothingRm\StockTransfer\Model\StockOut;
 use ClothingRm\Inventory\Model\Inventory;
 use ClothingRm\Products\Model\Products;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 
 class StockOutController
 {

@@ -10,7 +10,7 @@ use Atawa\Template;
 use Atawa\Flash;
 
 use ClothingRm\Finance\Model\CreditNote;
-use ClothingRm\Taxes\Model\Taxes;
+use Taxes\Model\Taxes;
 use ClothingRm\Inventory\Model\Inventory;
 
 class CreditNotesController
