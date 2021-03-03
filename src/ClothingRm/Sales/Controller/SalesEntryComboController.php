@@ -62,21 +62,35 @@ class SalesEntryComboController
       $status = $validate_form['status'];
       if($status) {
         $combo_array = $this->_assign_lotnos($validate_form['cleaned_params']);
-        $sales_array = $combo_array;
-        $sales_array['itemDetails']['itemSoldQty'] = $sales_array['itemDetails']['comboItemSoldQty'];
-        unset($sales_array['itemDetails']['comboItemCode']);
-        unset($sales_array['itemDetails']['comboItemSoldQty']);
-        $sales_api_response = $this->sales->create_sale($sales_array);
-        // dump($sales_api_response, $sales_array);
-        // exit;
-        if($sales_api_response['status']) {
-          $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i> Sales transaction with Bill No. <b>`'.$sales_api_response['billNo'].'`</b> created successfully.');
-          Utilities::redirect('/sales-entry/combos?lastBill='.$sales_api_response['invoiceCode'].'&format=combo');
+        // check if stock is available.
+        if(isset($combo_array['errors']) && count($combo_array['errors']) > 0) {
+          $error_message = '';
+          foreach($combo_array['errors'] as $item_name => $item_error) {
+            if($error_message === '') {
+              $error_message  = $item_name.' { '.$item_error.' }';
+            } else {
+              $error_message .= '_____'.$item_name.'{ '.$item_error.' }';
+            }
+          }
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i> '.$error_message,1);
+          $form_data = $combo_array;            
         } else {
-          $page_error = $sales_api_response['apierror'];
-          $this->flash->set_flash_message($page_error,1);
-          $form_data = $combo_array;  
-        }        
+          $sales_array = $combo_array;
+          $sales_array['itemDetails']['itemSoldQty'] = $sales_array['itemDetails']['comboItemSoldQty'];
+          unset($sales_array['itemDetails']['comboItemCode']);
+          unset($sales_array['itemDetails']['comboItemSoldQty']);
+
+          $sales_api_response = $this->sales->create_sale($sales_array);
+          if($sales_api_response['status']) {
+            $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i> Sales transaction with Bill No. <b>`'.$sales_api_response['billNo'].'`</b> created successfully.');
+            Utilities::redirect('/sales-entry/combos?lastBill='.$sales_api_response['invoiceCode'].'&format=combo');
+          } else {
+            $page_error = $sales_api_response['apierror'];
+            $this->flash->set_flash_message($page_error,1);
+            $form_data = $combo_array;  
+          }
+        }
+
       } else {
         $form_errors = $validate_form['errors'];
       }
@@ -374,6 +388,8 @@ class SalesEntryComboController
             break;
           }
         }
+      } else {
+        $cleaned_params['errors'][$item_name] = $response['reason'];
       }
     }
 

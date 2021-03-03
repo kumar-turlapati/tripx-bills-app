@@ -126,7 +126,7 @@ class ApiCaller
 			// );
 			echo '<pre>';
 			if($_SERVER['appEnvironment'] === 'local') {
-				var_dump($api_response);
+				var_dump($api_response, '...');
 			}
 			echo 'Something went wrong :(';
 			echo '</pre>';
