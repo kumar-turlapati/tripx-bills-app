@@ -42,7 +42,12 @@
     $email_comm = $submitted_data['emailComm'];
   } else {
     $email_comm = '';
-  }  
+  }
+  if(isset($submitted_data['uuid'])) {
+    $uuid = $submitted_data['uuid'];
+  } else {
+    $uuid = '';
+  }
   //remove app user from the list
   unset($user_types[127]);
 ?>

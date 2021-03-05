@@ -116,6 +116,7 @@ class UserController {
         }
       } else {
         $form_errors = $validate_form['errors'];
+        dump($form_errors);
         $submitted_data = $request->request->all();
       }
     } else {
@@ -555,7 +556,6 @@ class UserController {
                             '5555555555', '6666666666', '7777777777', '8888888888',
                             '9999999999',
                           ];
-
     $user_name = Utilities::clean_string($form_data['userName']);
     $user_type = Utilities::clean_string($form_data['userType']);
     $user_phone = Utilities::clean_string($form_data['userPhone']);
@@ -608,9 +608,8 @@ class UserController {
       $user_details = $user_model->get_user_details($uuid);
       if($user_details['status']===false) {
         $errors['userCode'] = 'Invalid user information.';
-      } else {
-        $cleaned_params['uuid'] = $uuid;
       }
+      $cleaned_params['uuid'] = $uuid;
     }
     $cleaned_params['emailComm'] = Utilities::clean_string($form_data['emailComm']);
     $cleaned_params['userPass'] = Utilities::clean_string($form_data['userPass']);
