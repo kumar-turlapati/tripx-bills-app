@@ -493,7 +493,7 @@ class Utilities
   public static function get_user_status($status='') {
     $status_a = array(
       1 => 'Active',
-      2 => 'Blocked',
+      // 2 => 'Blocked',
       0 => 'Inactive',
     );
     if(is_numeric($status) && isset($status_a[$status])) {

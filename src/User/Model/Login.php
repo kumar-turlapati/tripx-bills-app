@@ -9,16 +9,20 @@ use Atawa\Utilities;
 class Login
 {
 
-	public function validateUser($user_id, $password) {
+	public function validateUser($user_id='', $password='', $whatsapp_optin = 0) {
 
 		$api_caller = new ApiCaller();
 
 		$ip_address = Utilities::get_real_user_ip();
 		$req_source = Utilities::is_mobile_device() ? 'mobile' : 'computer';
 
+		// dump($user_id, $password, $whatsapp_optin);
+		// exit;
+
 		$request_array = array(
 			'username' => $user_id,
 			'password' => $password,
+			'whatsappOptIn' => $whatsapp_optin,
 			'grant_type' => 'password',
 			'ip_address' => $ip_address,
 			'req_source' => $req_source,

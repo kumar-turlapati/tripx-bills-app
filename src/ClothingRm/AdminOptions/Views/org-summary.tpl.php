@@ -5,6 +5,7 @@
     $db_size = $org_summary['dbSize'];
     $active_users = $org_summary['activeUsers'];
     $active_devices = $org_summary['totalDevices'];
+    $org_identifier = $org_summary['orgName'];
 ?>
   <div class="col-md-6">
     <div class="widgetSec">
@@ -30,7 +31,7 @@
         <table class="table priceTable">
           <tbody>
             <tr>
-              <td>Active Stores</td>
+              <td>Active Stores / Locations</td>
               <td align="right"><?php echo $locations_count ?></td>
             </tr>
             <tr>
@@ -60,6 +61,20 @@
         </table>
       </div>
     </div>
+  </div>
+  <div class="col-md-6">
+    <div class="widgetSec">
+      <div class="widgetHeader"><i class="fa fa-building"></i> Organization Identifier</div>
+      <div class="widgetContent">
+        <table class="table priceTable">
+          <tbody>
+            <tr>
+              <td align="center" style="font-size: 40px;font-weight: bold;"><?php echo $org_identifier ?></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>    
   </div>
 <?php } else {  ?>
   <div class="row">

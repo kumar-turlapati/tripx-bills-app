@@ -43,7 +43,12 @@
                  I want to receive otps, inventory updates and sales updates on <b>WhatsApp</b>.
               </span>
               <span>
-                <input type="checkbox" class="form-control" name="accessWhatsapp" title="Click here to subscribe for WhatsApp updates." />
+                <input 
+                  type="checkbox" 
+                  class="form-control" 
+                  name="whatsappOptIn" 
+                  title="Click here to subscribe for WhatsApp updates."
+                />
               </span>
             </div>
             <div align="center">

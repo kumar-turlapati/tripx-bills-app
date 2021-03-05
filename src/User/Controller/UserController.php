@@ -19,13 +19,14 @@ class UserController {
 
   public function createUserAction(Request $request) {
 
-    $user_details = $submitted_data = $form_errors = array();
+    $user_details = $submitted_data = $form_errors = [];
     $client_locations = [];
+    $whatsapp_opt_in_a = [0=>'No', 1=>'Yes'];
 
     $user_model = new User();
     $flash = new Flash();
 
-    # get client locations
+    // get client locations
     $client_locations_resp = $user_model->get_client_locations();
     if($client_locations_resp['status']) {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
@@ -61,11 +62,12 @@ class UserController {
       'status_a' => array(''=>'Choose')+Utilities::get_user_status(),
       'client_locations' => array(''=>'Choose') + $client_locations,
       'form_errors' => $form_errors,
+      'whatsapp_opt_in_a' => $whatsapp_opt_in_a,      
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'User management',
+      'page_title' => 'User management - Create New Platform User',
       'icon_name' => 'fa fa-users',      
     );
 
@@ -76,14 +78,15 @@ class UserController {
 
   public function updateUserAction(Request $request) {
 
-    $user_details = $submitted_data = $form_errors = array();
+    $user_details = $submitted_data = $form_errors = [];
     $uuid = $page_error = $page_success = '';
     $client_locations = [];
+    $whatsapp_opt_in_a = [0=>'No', 1=>'Yes'];
 
     $user_model = new User();
     $flash = new Flash();
 
-    # get client locations
+    // get client locations
     $client_locations_resp = $user_model->get_client_locations();
     if($client_locations_resp['status']) {
       foreach($client_locations_resp['clientLocations'] as $loc_details) {
@@ -92,13 +95,14 @@ class UserController {
     }    
 
     if(count($request->request->all()) > 0) {
+      // dump($request->request->all());
       $validate_form = $this->_validate_form_data($request->request->all(),true,$user_model);
       $status = $validate_form['status'];
       if($status) {
         $form_data = $validate_form['cleaned_params'];
         $result = $user_model->update_user($form_data,$form_data['uuid']);
         if($result['status']) {
-          $message = 'User details were updated successfully';
+          $message = '<i class="fa fa-check aria-hidden="true"></i>&nbsp;User details were updated successfully';
           $flash->set_flash_message($message);
           Utilities::redirect('/users/list');
         } elseif($result['status']===false) {
@@ -106,7 +110,7 @@ class UserController {
           $submitted_data = $request->request->all();
           $submitted_data['email'] = $request->get('hEmail');
         } else {
-          $message = 'An error occurred while updating user details.';
+          $message = '<i class="fa fa-times aria-hidden="true"></i>&nbsp;An error occurred while updating user details.';
           $flash->set_flash_message($message,1);
           Utilities::redirect('/users/list');          
         }
@@ -117,6 +121,7 @@ class UserController {
     } else {
       $uuid = Utilities::clean_string($request->get('uuid'));
       $user_details = $user_model->get_user_details($uuid);
+      // dump($user_details);
       if($user_details['status']) {
         $submitted_data = $user_details['userDetails'];
       } else {
@@ -134,12 +139,13 @@ class UserController {
       'form_errors' => $form_errors,
       'page_error' => $page_error,
       'page_success' => $page_success,
-      'client_locations' => array(''=>'Choose') + $client_locations,      
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'whatsapp_opt_in_a' => $whatsapp_opt_in_a,    
     );
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'User management',
+      'page_title' => 'User management - Update platform user',
       'icon_name' => 'fa fa-users',      
     );
 
@@ -156,11 +162,19 @@ class UserController {
 
     $uuid = Utilities::clean_string($request->get('uuid'));
     $user_details = $user_model->get_user_details($uuid);
+
     if(!$user_details['status']) {
-      $flash->set_flash_message('Invalid user details. Please contact administrator.',1);
+      $flash->set_flash_message('<i class="fa fa-times aria-hidden="true"></i>&nbsp;Invalid user details. Please contact administrator.',1);
       Utilities::redirect('/users/list');        
     } else {
       $user_name = $user_details['userDetails']['userName'];
+      $user_email = $user_details['userDetails']['email'];
+      $status = (int)$user_details['userDetails']['status'];
+    }
+
+    if($status === 1) {
+      $flash->set_flash_message('<i class="fa fa-times aria-hidden="true"></i>&nbsp;You are not permitted to Delete the active user [ '.$user_name.'__'.$user_email.' ]',1);
+      Utilities::redirect('/users/list');
     }
 
     $delete_response = $user_model->delete_user($uuid);
@@ -536,13 +550,24 @@ class UserController {
 
   private function _validate_form_data($form_data=array(),$edit_mode=false,$user_model) {
     $errors = $cleaned_params = array();
+    $disallowed_numbers = [
+                            '1111111111', '2222222222', '3333333333', '4444444444',
+                            '5555555555', '6666666666', '7777777777', '8888888888',
+                            '9999999999',
+                          ];
 
     $user_name = Utilities::clean_string($form_data['userName']);
     $user_type = Utilities::clean_string($form_data['userType']);
     $user_phone = Utilities::clean_string($form_data['userPhone']);
-    $status = Utilities::clean_string($form_data['status']);
+    $status = isset($form_data['status']) ? Utilities::clean_string($form_data['status']) : 1;
     $location_code = Utilities::clean_string($form_data['locationCode']);
     $app_user = isset($form_data['appUser']) ? (int)Utilities::clean_string($form_data['appUser']) : 0;
+    $whatsapp_opt_in = isset($form_data['whatsappOptIn']) ? (int)Utilities::clean_string($form_data['whatsappOptIn']) : 0;
+
+    /* disallow reserved numbers */
+    if(in_array($user_phone, $disallowed_numbers)) {
+      $errors['userPhone'] = 'You are not allowed to create this number.';
+    }
 
     if(!$app_user) {
       if($user_name == '') {
@@ -574,7 +599,10 @@ class UserController {
     }
     if($location_code !== '' && ctype_alnum($location_code)) {
       $cleaned_params['locationCode'] = $location_code;
+    } else {
+      $errors['locationCode'] = 'Default store / location required.';
     }
+
     if($edit_mode) {
       $uuid = Utilities::clean_string($form_data['uuid']);
       $user_details = $user_model->get_user_details($uuid);
@@ -583,11 +611,11 @@ class UserController {
       } else {
         $cleaned_params['uuid'] = $uuid;
       }
-    } else {
-      $cleaned_params['emailID'] = Utilities::clean_string($form_data['emailID']);
     }
+    $cleaned_params['emailComm'] = Utilities::clean_string($form_data['emailComm']);
     $cleaned_params['userPass'] = Utilities::clean_string($form_data['userPass']);
     $cleaned_params['appUser'] = $app_user;
+    $cleaned_params['whatsappOptIn'] = $whatsapp_opt_in;
 
     // dump($errors);
     // exit;

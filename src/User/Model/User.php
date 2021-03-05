@@ -64,6 +64,7 @@ class User {
 	public function delete_user($uuid='') {
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'users/'.$uuid.'/'.$client_id;
+
 		// call api.
 		$api_caller = new ApiCaller();
 		$response = $api_caller->sendRequest('delete',$request_uri,[]);

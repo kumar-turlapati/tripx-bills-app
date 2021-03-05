@@ -35,6 +35,7 @@ class LoginController
     if( count($request->request->all()) > 0) {
       $user_id = Utilities::clean_string($request->request->get('userid'));
       $password = Utilities::clean_string($request->request->get('pass'));
+      $whatsapp_consent = !is_null($request->request->get('whatsappOptIn')) ? 1 : 0;
       $g_captcha_response = Utilities::clean_string($request->request->get('g-recaptcha-response'));
       if($g_captcha_response !== '') {
         $site_private_key = Utilities::get_captcha_keys($environment,'private');
@@ -42,7 +43,7 @@ class LoginController
         if($gcaptcha_response === false) {
           $error = 'Invalid captcha challenge. Try again.';
         } elseif($user_id !== '' && $password !== '') {
-          $login_response = $login->validateUser($user_id, $password);
+          $login_response = $login->validateUser($user_id, $password, $whatsapp_consent);
           if(is_array($login_response) && count($login_response) > 0) {
             $error = $login_response['reason'];
           } else {
