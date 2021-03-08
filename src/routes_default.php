@@ -38,4 +38,9 @@ $routes->add('report_printIndentWr_app', new Routing\Route('/app-print-indent-wo
   '_controller' => 'ClothingRm\\Reports\\Controller\\ReportsIndentController::printIndentWoRateApp'
 )));
 
+// whatsapp callback hook
+$routes->add('whatsapp_message_delivery_callback', new Routing\Route('/whatsapp/callback-hook', array(
+  '_controller' => 'Whatsapp\\Controller\\WhatsappController::callBackHook',
+)));
+
 return $routes;

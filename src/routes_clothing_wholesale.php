@@ -1189,4 +1189,9 @@ $routes->add('app_user_update', new Routing\Route('/app-users/update/{uuid}', ar
   'uuid' => null,
 )));
 
+// whatsapp routes
+$routes->add('whatsapp_shipping_update', new Routing\Route('/whatsapp/shipping-update', array(
+  '_controller' => 'Whatsapp\\Controller\\WhatsappController::pushShippingUpdate',
+)));
+
 return $routes;

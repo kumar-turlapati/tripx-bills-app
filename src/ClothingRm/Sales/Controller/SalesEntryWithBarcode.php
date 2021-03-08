@@ -814,6 +814,9 @@ class salesEntryWithBarcode {
     $cleaned_params['indentCode'] = $ic;
     $cleaned_params['indentNo'] = $indent_no;
 
+    // dump($cleaned_params, $form_data);
+    // exit;
+
     # return response.
     if(count($form_errors)>0) {
       return [

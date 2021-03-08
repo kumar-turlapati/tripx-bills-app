@@ -150,7 +150,7 @@
                         $item_amount = 0;
                       }
                   ?>
-                  <tr id="tr_<?php echo $barcode ?>" class="bcrow" index="<?php echo $i ?>">
+                  <tr id="tr_<?php echo $barcode.'_'.$lot_no ?>" class="bcrow" index="<?php echo $i ?>">
                     <td align="right" style="vertical-align:middle;" class="itemSlno"><?php echo $i+1 ?></td>
                     <td style="vertical-align:middle;">
                       <input 
@@ -200,7 +200,7 @@
                     </td>
                     <td style="vertical-align:middle;text-align:center;">
                       <div class="btn-actions-group">
-                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode ?>">
+                        <a class="btn btn-danger deleteOwItem" href="javascript:void(0)" title="Delete Row" id="delrow_<?php echo $barcode.'_'.$lot_no ?>">
                           <i class="fa fa-times"></i>
                         </a>
                       </div>

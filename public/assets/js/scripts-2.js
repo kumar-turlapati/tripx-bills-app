@@ -2099,7 +2099,7 @@ function initializeJS() {
     } else if(buttonId === 'refreshCbWoIndentsCancel') {
       window.location.href = '/dashboard';       
     } else if(buttonId === 'refreshCbWithIndentCancel') {
-      window.location.href = '/dashboard';       
+      window.location.href = '/dashboard';  
     }
   });
 

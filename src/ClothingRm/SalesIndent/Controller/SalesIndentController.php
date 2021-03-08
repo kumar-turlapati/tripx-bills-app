@@ -116,7 +116,7 @@ class SalesIndentController {
           Utilities::redirect('/sales-indent/create?lastIndent='.$api_response['indentNo'].'&lc='.$default_location.'&it='.$form_data['op']);
         } else {
           $page_error = $api_response['apierror'];
-          $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;'.$page_error,1);
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$page_error,1);
         }
       }
     }

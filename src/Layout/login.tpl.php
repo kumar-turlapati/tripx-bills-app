@@ -22,7 +22,7 @@
               <span class="input-group-addon">
                 <i class="icon_profile"></i>
               </span>
-              <input type="text" class="form-control" placeholder="Username (or) Mobile No." autofocus name="userid" id="userid" />
+              <input type="text" class="form-control" placeholder="User name" autofocus name="userid" id="userid" />
             </div>
             <div class="input-group">
               <span class="input-group-addon"><i class="icon_key_alt"></i></span>
