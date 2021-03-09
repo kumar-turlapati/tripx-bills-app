@@ -372,10 +372,12 @@ class MastersReportsController {
         }
 
         $total_records = $this->_add_state_name($total_records, $states_a);
-        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+        if( isset($form_data['locationCode']) && is_array($client_locations) && 
+            count($client_locations)>0 && $form_data['locationCode'] !== ''
+          ) {
           $location_name = $client_locations[$form_data['locationCode']];
         } else {
-          $location_name = '';
+          $location_name = 'All Stores / Locations';
         }
 
         $heading1 = 'Customer Master';
@@ -426,8 +428,8 @@ class MastersReportsController {
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,$customer_type,'RTB',0,'R');
-        $pdf->Cell($item_widths[2],6,substr($record_details['customerName'], 0, 25),'RTB',0,'L');
-        $pdf->Cell($item_widths[3],6,substr($record_details['address'], 0, 24),'RTB',0,'L');
+        $pdf->Cell($item_widths[2],6,substr($record_details['customerName'], 0, 20),'RTB',0,'L');
+        $pdf->Cell($item_widths[3],6,substr($record_details['address'], 0, 18),'RTB',0,'L');
         $pdf->Cell($item_widths[4],6,substr($record_details['cityName'], 0, 10),'RTB',0,'L');
         $pdf->Cell($item_widths[5],6,substr($record_details['stateName'],0,10),'RTB',0,'L');
         $pdf->Cell($item_widths[6],6,$record_details['pincode'],'RTB',0,'R');
@@ -492,8 +494,8 @@ class MastersReportsController {
     $cleaned_params = $form_errors = [];
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
-    } else {
-      $form_errors['StoreName'] = 'Invalid Store Name.';
+    // } else {
+    //   $form_errors['StoreName'] = 'Invalid Store Name.';
     }
     if($form_data['customerType'] !== '') {
       $cleaned_params['customerType'] = Utilities::clean_string($form_data['customerType']);

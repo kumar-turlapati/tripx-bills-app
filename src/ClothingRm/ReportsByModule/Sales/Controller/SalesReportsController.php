@@ -2308,12 +2308,14 @@ class SalesReportsController {
 
         // dump($sales_api_response);
         // dump($total_records);
-        // exit;        
+        // exit;
 
-        if(is_array($client_locations) && count($client_locations)>0 && $form_data['locationCode'] !== '') {
+        if( isset($form_data['locationCode']) && $form_data['locationCode'] !== '' && 
+            is_array($client_locations) && count($client_locations)>0
+          ) {
           $location_name = $client_locations[$form_data['locationCode']];
         } else {
-          $location_name = '';
+          $location_name = 'All Stores/Locations';
         }
         if($form_data['agentCode'] !== '' && isset($agents_a[$form_data['agentCode']])) {
           $agent_name = $agents_a[$form_data['agentCode']];
@@ -3207,8 +3209,8 @@ class SalesReportsController {
     $cleaned_params = $form_errors = [];
     if($form_data['locationCode'] !== '') {
       $cleaned_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
-    } else {
-      $form_errors['StoreName'] = 'Invalid Store Name.';
+    // } else {
+    //   $form_errors['StoreName'] = 'Invalid Store Name.';
     }
     if($form_data['fromDate'] !== '') {
       $cleaned_params['fromDate'] = Utilities::clean_string($form_data['fromDate']);
@@ -3940,6 +3942,7 @@ class SalesReportsController {
         'Customer Name' => $record_details['customerName'],
         'GST Invoice No.' => $record_details['gstInvoiceNo'],
         'Internal Tracking No.' => $record_details['qbInvoiceNo'],
+        'Order / Indent No.' => $record_details['indentNo'],
         'Invoice Date' => date('d/m/Y', strtotime($record_details['invoiceDate'])), 
         'Amount' => number_format($record_details['netpay'],2,'.',''),
         'City Name' => ucwords(strtolower($record_details['cityName'])),
@@ -3954,6 +3957,7 @@ class SalesReportsController {
       'Customer Name' => 'T O T A L S',
       'GST Invoice No.' => '',
       'Internal Tracking No.' => '',
+      'Order / Indent No.' => '',
       'Invoice Date' => '', 
       'Amount' => number_format($tot_amount,2,'.',''),
       'City Name' => '',
