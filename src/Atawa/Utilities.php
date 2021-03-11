@@ -1271,6 +1271,42 @@ class Utilities
     $bc = Utilities::get_business_category();
     $environment = $_SERVER['appEnvironment'];
     return Config::get_logout_urls($bc, $environment);
+  }
+
+  public static function validate_multiple_mobile_numbers($seperator=',', $string='') {
+    $mobile_numbers_a = explode($seperator, $string);
+    $is_valid = false;
+    if(is_array($mobile_numbers_a) && count($mobile_numbers_a) > 0) {
+      foreach($mobile_numbers_a as $mobile_number) {
+        $mobile_number = Utilities::clean_string($mobile_number);
+        if(is_numeric($mobile_number) && strlen($mobile_number) === 10) {
+          $is_valid = true;
+        } else {
+          break;
+        }
+      }
+    } elseif(is_numeric($mobile_numbers_a) && strlen($mobile_numbers_a) === 10) {
+      $is_valid = true;
+    }
+    return $is_valid;
+  }
+
+  public static function validate_multiple_order_numbers($seperator=',', $string='') {
+    $order_numbers_a = explode($seperator, $string);
+    $is_valid = false;
+    if(is_array($order_numbers_a) && count($order_numbers_a) > 0) {
+      foreach($order_numbers_a as $order_number) {
+        $order_number = Utilities::clean_string($order_number);
+        if(is_numeric($order_number)) {
+          $is_valid = true;
+        } else {
+          break;
+        }
+      }
+    } elseif(is_numeric($order_numbers_a)) {
+      $is_valid = true;
+    }
+    return $is_valid;
   }  
 
 }

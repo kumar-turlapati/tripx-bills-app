@@ -230,15 +230,23 @@
           <li><a href="/leads/list"><i class="fa fa-users"></i> Leads</a></li>          
           <li><a href="/tasks/list"><i class="fa fa-tasks"></i> Tasks</a></li>
           <li><a href="/appointments/list"><i class="fa fa-calendar"></i> Appointments</a></li> 
+          <li class="sub-menu">
+            <a data-toggle="modal" href="javascript: void(0);">
+              <i class="fa fa-whatsapp"></i> Push Whatsapp Updates <span class="menu-arrow arrow_carrot-right"></span>
+            </a>
+            <ul class="sub">
+              <li><a href="/whatsapp/shipping-update"><i class="fa fa-truck"></i> Shipping update</a></li>
+            </ul>
+          </li> 
         </ul>
       </li>
       <li class="sub-menu">
-        <a href="javascript:">
+        <a href="javascript:void(0);">
           <i class="fa fa-sitemap fa-3x"></i> Reports <span class="menu-arrow arrow_carrot-right"></span>
         </a>
         <ul class="sub">
           <li class="sub-menu">
-            <a data-toggle="modal" href="javascript:">
+            <a data-toggle="modal" href="javascript:void(0);">
               <i class="fa fa-database"></i> Inventory&nbsp;&amp;&nbsp;Stores <span class="menu-arrow arrow_carrot-right"></span>
             </a>
             <ul class="sub">
