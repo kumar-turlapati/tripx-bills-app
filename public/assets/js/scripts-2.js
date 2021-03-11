@@ -156,6 +156,8 @@ function initializeJS() {
     });
   }
 
+
+
   if($('.postSc2CB').length > 0) {
     $('.postSc2CB').on('click', function(e){
       var buttonObjId = $(this).attr('id');
@@ -1311,6 +1313,23 @@ function initializeJS() {
     });
   }
 
+  if($('#waShippingUpdateFrm').length > 0) {
+    $('#waShippingUpdate').on("click", function(e){
+      e.preventDefault();
+      $(this).attr('disabled', true);
+      $('#waShippingUpdateCancel, #waShippingUpdate').attr('disabled', true);
+      $('#waShippingUpdateFrm').submit();
+    });
+    $('#showDisclaimer').on("change", function(e){
+      var showDisclaimer = $(this).val();
+      if(parseInt(showDisclaimer) === 1) {
+        $('#disclaimerMessageDiv').show();
+      } else {
+        $('#disclaimerMessageDiv').hide();
+      }
+    });
+  }
+
   // refresh balances.
   if($('#refreshCbForm').length > 0) {
     $('#refreshCbYes').on('click', function(e){
@@ -2099,7 +2118,9 @@ function initializeJS() {
     } else if(buttonId === 'refreshCbWoIndentsCancel') {
       window.location.href = '/dashboard';       
     } else if(buttonId === 'refreshCbWithIndentCancel') {
-      window.location.href = '/dashboard';  
+      window.location.href = '/dashboard';
+    } else if(buttonId === 'waShippingUpdateCancel') {
+      window.location.href = '/dashboard';        
     }
   });
 
