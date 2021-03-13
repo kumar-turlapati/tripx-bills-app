@@ -156,7 +156,7 @@
                 <div class="col-sm-12 col-md-4 col-lg-4">
                   <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Transporter Name (max 15 chars.)</label>
                   <input 
-                    type="text" 
+                    type="text"
                     class="form-control noEnterKey" 
                     name="transporterName" 
                     id="transporterName" 

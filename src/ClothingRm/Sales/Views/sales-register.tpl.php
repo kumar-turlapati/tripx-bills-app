@@ -278,8 +278,11 @@
                             </a>
                           <?php endif; ?>
                         <?php endif; ?>
-                        
+
                         <?php if($tax_calc_option === 'E'): ?>
+                          <a class="btn btn-primary" target="_blank" href="/whatsapp/shipping-update?ic=<?php echo $sales_code ?>" title="Push Whatsapp shipping update">
+                            <i class="fa fa-whatsapp" aria-hidden="true"></i>
+                          </a>                        
                           <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
                             <i class="fa fa-bold" aria-hidden="true"></i>
                           </a>

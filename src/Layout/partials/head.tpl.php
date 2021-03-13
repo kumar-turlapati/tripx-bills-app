@@ -10,6 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?php echo $page_title_browser ?></title>
 <link href="/assets/css/bootstrap-theme.css" rel="stylesheet">
+<!-- <link href="/assets/css/bootstrap-4.0.min.css" rel="stylesheet"-->
 <link rel="icon" href="../assets/img/favicon.ico" />
 <link href="/assets/css/elegant-icons-style.css" rel="stylesheet" />
 <link href="/assets/css/font-awesome.min.css" rel="stylesheet" />

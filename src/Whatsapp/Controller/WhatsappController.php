@@ -11,6 +11,7 @@ use Atawa\Importer;
 use Atawa\CrmUtilities;
 
 use Whatsapp\Model\Whatsapp;
+use ClothingRm\Sales\Model\Sales;
 
 class WhatsappController
 {
@@ -19,16 +20,29 @@ class WhatsappController
     $this->template = new Template(__DIR__.'/../Views/');
     $this->whatsapp_model = new Whatsapp;
     $this->flash = new Flash;
+    $this->sales = new Sales;    
 	}
 
 	// shipping update action
 	public function pushShippingUpdate(Request $request) {
 
 		$page_error = $page_success = '';
-    $form_data = $form_errors = [];
+    $form_data = $form_errors = $sales_data = [];
     $client_details = Utilities::get_client_details();
 
-    # form submit
+    $sales_code = !is_null($request->get('ic')) ? Utilities::clean_string($request->get('ic')) : '';
+    if($sales_code !== '') {
+      $sales_response = $this->sales->get_sales_details($sales_code);
+      if($sales_response['status']) {
+        $sales_data = $sales_response['saleDetails'];
+      } else {
+        $page_error = $sales_response['apierror'];
+        $this->flash->set_flash_message($page_error,1);
+        Utilities::redirect('/sales/list');
+      }
+    }
+
+    // form submit
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
       # validate form data
@@ -41,6 +55,7 @@ class WhatsappController
         // dump($form_data);
         // exit;
         # hit api and get the status.
+        $form_data['ic'] = $sales_code;
         $api_action = $this->whatsapp_model->push_shipping_update($form_data);
         // dump($api_action);
         // exit;
@@ -48,7 +63,7 @@ class WhatsappController
           $sent_messages = $api_action['sentMessages'];
           $message = '<i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;'.$sent_messages.' message(s) pushed successfully.';
           $this->flash->set_flash_message($message);
-          Utilities::redirect('/whatsapp/shipping-update');
+          Utilities::redirect('/sales/list');
         } else {
           // $form_errors = $api_action['errortext'];
           // $message = 'You have errors in the Form. Please fix them before you send the message.';
@@ -64,6 +79,7 @@ class WhatsappController
       'form_errors' => $form_errors,
       'form_data' => $form_data,
       'flash' => $this->flash,
+      'sales_data' => $sales_data,
       'delivery_contact' => isset($client_details['deliveryContact']) ? $client_details['deliveryContact'] : '',
     );
 
@@ -218,7 +234,11 @@ class WhatsappController
       $errors['contactNoForQueries'] = 'Invalid input.';
     } else {
       $cleaned_params['contactNoForQueries'] = $contact_number;
-    }    
+    }
+
+    if($eway_bill_no === '') {
+      $eway_bill_no = '--NA--';
+    }
 
     if(count($errors) > 0) {
       return [

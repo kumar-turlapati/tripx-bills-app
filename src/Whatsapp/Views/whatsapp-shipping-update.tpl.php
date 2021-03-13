@@ -1,22 +1,40 @@
 <?php
   use Atawa\Utilities;
 
+  // dump($sales_data);
+
   $disclaimer_a = [1=>'Yes', 0=>'No'];
   $disclaimer_default_string = 'Please note that this message is for information purposes only and not used as an authorization to receive the Goods from the Shipping agency.';
 
-  $customer_name = isset($form_data['customerName']) ? $form_data['customerName'] : '';
-  $order_nos = isset($form_data['orderNos']) ? $form_data['orderNos'] : '';
-  $invoice_nos = isset($form_data['invoiceNos']) ? $form_data['invoiceNos'] : '';
-  $lr_case_nos = isset($form_data['lrCaseNos']) ? $form_data['lrCaseNos'] : '';
-  $lr_date = isset($form_data['lrDate']) ? $form_data['lrDate'] : '';
-  $eway_bill_no = isset($form_data['eWayBillNo']) ? $form_data['eWayBillNo'] : '';
-  $transporter_name = isset($form_data['transporterName']) ? $form_data['transporterName'] : '';
-  $contact_no_for_queries = isset($form_data['contactNoForQueries']) ? $form_data['contactNoForQueries'] : $delivery_contact;
-  $whatsapp_no = isset($form_data['whatsappNo']) ? $form_data['whatsappNo'] : '';
-  $show_disclaimer = isset($form_data['showDisclaimer']) ? $form_data['showDisclaimer'] : 1;
+  $indent_no = isset($sales_data['indentNo']) && $sales_data['indentNo'] !== '' ? $sales_data['indentNo'] : '';
+  $customer_name_invoice = isset($sales_data['customerName']) && $sales_data['customerName'] !== '' ? $sales_data['customerName'] : '';
+  $whatsapp_numbers_invoice = isset($sales_data['whatsappNumbers']) && $sales_data['whatsappNumbers'] !== '' ? $sales_data['whatsappNumbers'] : '';
+
+  $whatsapp_optin = isset($sales_data['whatsappOptin']) && $sales_data['whatsappOptin'] !== '' ? $sales_data['whatsappOptin'] : '';
+  $invoice_code = isset($sales_data['invoiceCode']) && $sales_data['invoiceCode'] !== '' ? $sales_data['invoiceCode'] : '';
+  $customer_name = isset($form_data['customerName']) ? $form_data['customerName'] : $customer_name_invoice;
+  $order_nos = isset($form_data['orderNos']) ? $form_data['orderNos'] : $indent_no;
+  $invoice_nos = isset($form_data['invoiceNos']) && $form_data['invoiceNos'] !== '' ? 
+                 $form_data['invoiceNos'] : $sales_data['billNo'];
+  $lr_case_nos = isset($form_data['lrCaseNos']) && $form_data['lrCaseNos'] !== '' ? 
+                 $form_data['lrCaseNos'] : $sales_data['lrNo'];
   $lr_date = isset($form_data['lrDate']) && $form_data['lrDate'] !== '' ? 
-             date("d-m-Y", strtotime($form_data['lrDate'])) : date("d-m-Y");
+             date('d-m-Y', strtotime($form_data['lrDate'])) : $sales_data['lrDate'] !== '1970-01-01' ? date('d-m-Y', strtotime($sales_data['lrDate'])) : date("d-m-Y");
+
+  $eway_bill_no = isset($form_data['eWayBillNo']) && $form_data['eWayBillNo'] !== '' ? $form_data['eWayBillNo'] : $sales_data['wayBillNo'];
+  $transporter_name = isset($form_data['transporterName']) && $form_data['transporterName'] !== '' ? $form_data['transporterName'] : $sales_data['transporterName'];
+
+  $contact_no_for_queries = isset($form_data['contactNoForQueries']) ? $form_data['contactNoForQueries'] : $delivery_contact;
+  $show_disclaimer = isset($form_data['showDisclaimer']) ? $form_data['showDisclaimer'] : 1;
   $disclaimer_message = isset($form_data['disclaimerMessage']) && $form_data['disclaimerMessage'] !== '' ? $form_data['disclaimerMessage'] : $disclaimer_default_string;
+
+  if(isset($form_data['whatsappNo']) && $form_data['whatsappNo'] !== '') {
+    $whatsapp_no =  $form_data['whatsappNo'];
+  } elseif((int)$whatsapp_optin) {
+    $whatsapp_no =  $whatsapp_numbers_invoice;
+  } else {
+    $whatsapp_no = '';
+  }
 ?>
 <div class="row">
   <div class="col-lg-12"> 
@@ -52,7 +70,7 @@
               <label class="control-label labelStyle">Customer Whatsapp number&nbsp;<i>(use , for multiple numbers)&nbsp;<i style="font-size: 10px;">max 55 chars.</i></i></label>
               <input 
                 type="text" 
-                class="form-control noEnterKey cnameAc" 
+                class="form-control noEnterKey" 
                 name="whatsappNo" 
                 id="whatsappNo" 
                 value="<?php echo $whatsapp_no ?>"
