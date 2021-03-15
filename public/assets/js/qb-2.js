@@ -2000,13 +2000,14 @@ function initializeJS() {
               var objLength = Object.keys(lotNos).length;
               var lotNoRef = jQuery('#lotNo');
               if(objLength>0) {
+                // console.log(lotNosResponse, 'lot nos reponse....');
                 lotNoRef.empty().append(bnoFirstOption);
                 jQuery.each(lotNos.response.bcDetails, function (index, lotNoDetails) {
                   lotNosResponse[lotNoDetails.lotNo] = lotNoDetails;
                   jQuery(lotNoRef).append(
                     jQuery("<option></option>").
                     attr("value",lotNoDetails.lotNo).
-                    text(lotNoDetails.mOq + ' [ Available: ' + lotNoDetails.availableQty + ' ]')
+                    text(lotNoDetails.mOq + ' [ Available: ' + lotNoDetails.availableQty + ' ] - '+lotNoDetails.lotNo)
                   );
                 });
                 $('.itemOtherInfo, .formButtons').show();
