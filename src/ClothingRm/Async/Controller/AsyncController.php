@@ -185,10 +185,41 @@ class AsyncController {
       $api_url = 'barcode/ac/get-batches';
       $params = ['itemName' => $item_name];
       $response = $api_caller->sendRequest('get',$api_url,$params,false);
-      header("Content-type: application/json");
       if(is_array($response)) {
+        if(isset($_SESSION['indentItemsM']) && count($_SESSION['indentItemsM']) > 0) {
+          $lot_no_array = $response;
+          $session_lots = array_column($_SESSION['indentItemsM'], 'lotNo');
+          if(is_array($lot_no_array) && count($lot_no_array) > 0 && 
+             isset($lot_no_array['status']) && $lot_no_array['status'] === 'success'
+             ) {
+            $lot_nos_all = array_column($lot_no_array['response']['bcDetails'], 'lotNo');
+            foreach($lot_nos_all as $key => $lot_no) {
+              if(in_array($lot_no, $session_lots)) {
+                unset($lot_no_array['response']['bcDetails'][$key]);
+              }
+            }
+          }
+          $response = json_encode($lot_no_array);
+        }
+        header("Content-type: application/json");
         echo json_encode($response);
       } else {
+        if(isset($_SESSION['indentItemsM']) && count($_SESSION['indentItemsM']) > 0) {
+          $lot_no_array = json_decode($response, true);
+          $session_lots = array_column($_SESSION['indentItemsM'], 'lotNo');
+          if(is_array($lot_no_array) && count($lot_no_array) > 0 && 
+             isset($lot_no_array['status']) && $lot_no_array['status'] === 'success'
+             ) {
+            $lot_nos_all = array_column($lot_no_array['response']['bcDetails'], 'lotNo');
+            foreach($lot_nos_all as $key => $lot_no) {
+              if(in_array($lot_no, $session_lots)) {
+                unset($lot_no_array['response']['bcDetails'][$key]);
+              }
+            }
+          }
+          $response = json_encode($lot_no_array);
+        }
+        header("Content-type: application/json");
         echo $response;
       }
 /*    } elseif($api_string === 'bcAc' && !is_null($request->get('a'))) {
