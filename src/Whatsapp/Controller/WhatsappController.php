@@ -252,4 +252,24 @@ class WhatsappController
       ];  
     }
   }
+
+  # shipping update
+  public function pushShippingUpdate(Request $request) {
+    if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
+      
+      $sid = $form_data->sid;
+      $status = $form_data->status;
+      $updated = date("Y-m-d H:i:s");
+
+      # prepare form data
+      $form_data = [];
+      $form_data['sid'] = $sid;
+      $form_data['status'] = $status;
+
+      # push the update to api.
+      $api_action = $this->whatsapp_model->push_shipping_update($form_data);
+    }
+  }
+
 }

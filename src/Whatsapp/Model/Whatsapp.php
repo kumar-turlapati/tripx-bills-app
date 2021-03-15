@@ -19,4 +19,17 @@ class Whatsapp {
 			return array('status' => false, 'apierror' => $response['reason']);
 		}
 	}
+
+	# push update through status call back.
+	public function push_wa_status_update($form_data = []) {
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('post','whatsapp/callback',$form_data);
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true, 'sentMessages' => $response['response']['sent']);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}	
+
 }
