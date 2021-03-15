@@ -93,7 +93,8 @@ class Framework {
       '/login', '/forgot-password', '/send-otp',
       '/reset-password', '/error-device', '',
       '/id__mapper', '/force-logout',
-      '/__id__lo', '/app-print-indent', '/app-print-indent-wor', 
+      '/__id__lo', '/app-print-indent', '/app-print-indent-wor',
+      '/whatsapp/callback-hook',
     ];
     if(in_array($path, $anon_routes)) {
       return false;
