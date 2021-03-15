@@ -254,7 +254,7 @@ class WhatsappController
   }
 
   # shipping update
-  public function pushShippingUpdate(Request $request) {
+  public function callBackHook(Request $request) {
     if(count($request->request->all()) > 0) {
       $form_data = $request->request->all();
       
@@ -270,6 +270,8 @@ class WhatsappController
       # push the update to api.
       $api_action = $this->whatsapp_model->push_shipping_update($form_data);
     }
+    
+    exit;
   }
 
 }

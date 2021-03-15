@@ -1194,4 +1194,9 @@ $routes->add('whatsapp_shipping_update', new Routing\Route('/whatsapp/shipping-u
   '_controller' => 'Whatsapp\\Controller\\WhatsappController::pushShippingUpdate',
 )));
 
+// whatsapp callback hook
+$routes->add('whatsapp_message_delivery_callback', new Routing\Route('/whatsapp/callback-hook', array(
+  '_controller' => 'Whatsapp\\Controller\\WhatsappController::callBackHook',
+)));
+
 return $routes;
