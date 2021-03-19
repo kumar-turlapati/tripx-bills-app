@@ -208,7 +208,9 @@
         </div>
 
         <div class="table-responsive">
-          <?php if(count($indents)>0): ?>
+          <?php 
+            if(count($indents)>0):
+          ?>
            <table class="table table-striped table-hover">
             <thead>
               <tr class="font11">
@@ -218,7 +220,7 @@
                 <th width="5%" class="text-center valign-middle">Indent value<br />(in Rs.)</th>
                 <th width="16%" class="text-center valign-middle">Customer name</span></th>
                 <th width="10%" class="text-center valign-middle">Invoice no</th>
-                <th width="10%" class="text-center valign-middle">Executive name</th>             
+                <th width="10%" class="text-center valign-middle">Executive /<br />Campaign name</th>             
                 <th width="10%" class="text-center valign-middle">Brand name</th>             
                 <th width="8%" class="text-center valign-middle">Status</th>
                 <th width="27%" class="text-center valign-middle">Actions</th>
@@ -266,6 +268,10 @@
                   $remarks2 = isset($indent_details['remarks2']) ? $indent_details['remarks2'] : '';
                   $brand_name = $indent_details['brandName'];
                   $total += $netpay;
+
+                  if($campaign_name !== '') {
+                    $executive_name .= ' <span style="font-size: 10px; font-weight: bold; color: #ea4544">{'.$campaign_name.'}</span>';
+                  }
               ?>
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
