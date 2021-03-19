@@ -116,7 +116,6 @@ class UserController {
         }
       } else {
         $form_errors = $validate_form['errors'];
-        dump($form_errors);
         $submitted_data = $request->request->all();
       }
     } else {

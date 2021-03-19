@@ -97,7 +97,8 @@ class DevicesController
     if($result['status']) {
       $users_a = $result['users'];
       foreach($users_a as $user_details) {
-        $users[$user_details['uuid']] = $user_details['userName'].' [ '.$location_ids[$user_details['locationID']].' ]';
+        $location_name = isset($location_ids[$user_details['locationID']]) ? $location_ids[$user_details['locationID']] : ''; 
+        $users[$user_details['uuid']] = $user_details['userName'].' [ '.$location_name.' ]';
       }
     }
 
@@ -209,7 +210,8 @@ class DevicesController
       $uid_a =  array_column($users_a, 'uid');
       $users_final = array_combine($uuid_a, $uid_a);
       foreach($users_a as $user_details) {
-        $users[$user_details['uuid']] = $user_details['userName'].' - '.$location_ids[$user_details['locationID']];
+        $location_name = isset($location_ids[$user_details['locationID']]) ? $location_ids[$user_details['locationID']] : ''; 
+        $users[$user_details['uuid']] = $user_details['userName'].' - '.$location_name;
       }
     }
 

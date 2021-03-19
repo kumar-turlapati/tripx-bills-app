@@ -34,6 +34,7 @@
         <ul class="sub">
           <li><a href="/sales-indent/create"><i class="fa fa-delicious"></i> Sales indent</a></li>
           <li><a href="/sales-indent/create/mobile"><i class="fa fa-mobile"></i> Sales indent (Mobile V.)</a></li>
+          <li><a href="/sales-indent/create-from-samples"><i class="fa fa-delicious"></i> Sales Indent (Samples)</a></li>
           <li><a href="/fin/receipt-voucher/create"><i class="fa fa-circle-o"></i> Receipt</a></li>          
         </ul>
       </li>

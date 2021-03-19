@@ -611,6 +611,7 @@ class Utilities
         '/async/day-sales', '/async/itemsAc', '/async/brandAc', '/async/custAc', '/async/getAvailableQty', '/async/getItemDetailsByCode',
         '/async/finyDefault', '/async/getTrDetailsByCode', '/async/itd', '/async/getComboItemDetails',
         '/async/get-tax-percent', '/async/getBillNos', '/async/getItemBatchesByCode', '/async/updateRackNo',
+        '/async/getItemDetailsByBarcodeSample',
 
         '/sales/entry', '/sales/entry-with-barcode', '/sales/list', '/sales/search-bills', '/sales/view-invoice',
         '/sales-entry/combos', '/sales/entry-with-indent', '/sales-indent/create',
@@ -638,7 +639,7 @@ class Utilities
         '/promo-offers/list', 
 
         '/stock-transfer/out', '/stock-transfer/register', '/stock-transfer/choose-location',
-        '/stock-transfer/validate',
+        '/stock-transfer/validate', '/sales-indent/create-from-samples',
 
         '/loyalty-member/add', '/loyalty-member/update', '/loyalty-members/list', '/loyalty-member/ledger', 
 
@@ -702,12 +703,13 @@ class Utilities
 
         '/async/finyDefault', '/async/getItemDetailsByCode', '/async/itemsAc', '/async/brandAc', 
         '/async/custAc', '/async/getItemBatchesByCode', '/async/samplesCheck',
+        '/async/getItemDetailsByBarcodeSample',        
 
         '/dashboard', '/error-404', '/logout', '/device/show-name', '/me', '/',
         
         '/finy/switch', '/customers/list', '/sales-indents/list', '/barcodes/list',
         '/sales-indent/create', '/sales-indent/create/mobile', '/fin/receipt-voucher/create',
-        '/campaigns/list', '/sales-indent/update', '/finy/list',
+        '/campaigns/list', '/sales-indent/update', '/finy/list', '/sales-indent/create-from-samples',
 
         '/print-indent', '/print-indent-wor', 
 
