@@ -150,6 +150,130 @@ class SalesIndentController {
     return array($this->template->render_view('indent-create', $template_vars),$controller_vars);
   }
 
+  // create indent from sample cards
+  public function createIndentFromSamples(Request $request) {
+    # -------- initialize variables ---------------------------
+    $page_error = $page_success = '';
+    $form_errors = $agents_a = $campaigns_a = $form_data = [];
+    $executives_a = [];
+
+    # ---------- get location codes from api ------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_codes[$location_key_a[1]] = $location_key_a[0];      
+    }    
+
+    # ---------- get default location --------------------------
+    if(!is_null($request->get('lc')) && $request->get('lc') !== '') {
+      $default_location = Utilities::clean_string($request->get('lc'));
+    } elseif(isset($_SESSION['lc']) && $_SESSION['lc'] !== '') {
+      $default_location = $_SESSION['lc'];
+    } else {
+      $default_location = '';
+    }
+
+    # ---------- get business users ----------------------------
+    $agents_response = $this->bu_model->get_business_users(['userType' => 90, 'returnActiveOnly' => 1]);
+    $executives_response = $this->bu_model->get_business_users(['userType' => 91, 'returnActiveOnly' => 1]);
+    if($agents_response['status']) {
+      foreach($agents_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $agents_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $agents_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
+    if($executives_response['status']) {
+      foreach($executives_response['users'] as $user_details) {
+        if($user_details['cityName'] !== '') {
+          $executives_a[$user_details['userCode']] = $user_details['userName'].'__'.substr($user_details['cityName'],0,10);
+        } else {
+          $executives_a[$user_details['userCode']] = $user_details['userName'];
+        }
+      }
+    }
+
+    # ---------- get live campaigns ---------------------------------
+    $campaigns_response = $this->camp_model->get_live_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }
+
+    if(!is_null($request->get('lastIndent')) && is_numeric($request->get('lastIndent'))) {
+      $last_indent_no = (int)$request->get('lastIndent');
+    } else {
+      $last_indent_no = false;
+    }
+
+    if(!is_null($request->get('it'))) {
+      $indent_print_option = $request->get('it');
+    } else {
+      $indent_print_option = false;
+    }
+
+    if(!is_null($request->get('br'))) {
+      $def_billing_rate = $request->get('br');
+    } else {
+      $def_billing_rate = 'mrp';
+    }    
+
+    # ------------------------------------- check for form Submission --------------------------------
+    # ------------------------------------------------------------------------------------------------
+    if(count($request->request->all()) > 0) {
+      $form_data = $request->request->all();
+      if(isset($form_data['locationCode'])) {
+        $default_location = $form_data['locationCode'];
+      }
+      $form_validation = $this->_validate_form_data($form_data);
+      if($form_validation['status']===false) {
+        $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;You have errors in this form. Please fix them before you save', 1);
+        $form_errors = $form_validation['errors'];
+      } else {
+        $api_response = $this->sindent_model->create_sindent($form_data);
+        if($api_response['status']) {
+          $this->flash->set_flash_message('<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Sales indent with Indent No. <b>`'.$api_response['indentNo'].'`</b> created successfully.');
+          Utilities::redirect('/sales-indent/create?lastIndent='.$api_response['indentNo'].'&lc='.$default_location.'&it='.$form_data['op']);
+        } else {
+          $page_error = $api_response['apierror'];
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$page_error,1);
+        }
+      }
+    }
+
+    # --------------- build variables -----------------
+    $controller_vars = array(
+      'page_title' => 'Create Sales Indent From Samples',
+      'icon_name' => 'fa fa-delicious',
+    );
+    
+    # ---------------- prepare form variables. ---------
+    $template_vars = array(
+      'form_data' => $form_data,
+      'errors' => $form_errors,
+      'page_error' => $page_error,
+      'page_success' => $page_success,
+      'btn_label' => 'Save',
+      'flash_obj' => $this->flash,
+      'client_locations' => array(''=>'Choose') + $client_locations,
+      'location_ids' => $location_ids,
+      'location_codes' => $location_codes,
+      'default_location' => $default_location,
+      'agents' => ['' => 'Choose'] + $agents_a,
+      'executives' => ['' => 'Choose'] + $executives_a,
+      'campaigns' => ['' => 'Choose'] + $campaigns_a,
+      'last_indent_no' => $last_indent_no,
+      'indent_print_option' => $indent_print_option,
+      'def_billing_rate' => $def_billing_rate,
+    );
+
+    return array($this->template->render_view('indent-create-samples', $template_vars),$controller_vars);
+  }
+
   // update indent
   public function updateIndent(Request $request) {
 

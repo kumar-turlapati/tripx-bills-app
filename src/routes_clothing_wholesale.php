@@ -817,6 +817,9 @@ $routes->add('barcode_closing_itemwise', new Routing\Route('/barcode/cbbal-itemw
 $routes->add('create_sindent', new Routing\Route('/sales-indent/create', array(
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndent',
 )));
+$routes->add('create_sindent_samples', new Routing\Route('/sales-indent/create-from-samples', array(
+  '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::createIndentFromSamples',
+)));
 $routes->add('update_sindent', new Routing\Route('/sales-indent/update/{indentCode}', array(
   '_controller' => 'ClothingRm\\SalesIndent\\Controller\\SalesIndentController::updateIndent',
   'indentCode' => null,

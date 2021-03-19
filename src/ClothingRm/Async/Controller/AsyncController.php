@@ -180,6 +180,16 @@ class AsyncController {
       } else {
         echo $response;
       }
+    } elseif($api_string === 'getItemDetailsByBarcodeSample') {
+      $barcode =  !is_null($request->get('bc')) ? Utilities::clean_string($request->get('bc')) : '';
+      $api_url = 'inventory/get-item-details-by-barcode?scanCode='.$barcode;
+      $response = $api_caller->sendRequest('get',$api_url,[],false);
+      header("Content-type: application/json");
+      if(is_array($response)) {
+        echo json_encode($response);
+      } else {
+        echo $response;
+      }
     } elseif($api_string === 'getItemBatchesByCode') {
       $item_name =  Utilities::clean_string($request->get('itemName'));
       $api_url = 'barcode/ac/get-batches';
