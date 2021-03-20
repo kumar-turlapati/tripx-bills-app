@@ -21,7 +21,7 @@
     $toDate = $current_date;
   }
   if(isset($search_params['campaignCode']) && $search_params['campaignCode'] !== '' ) {
-    $locationCode = $search_params['campaignCode'];
+    $campaignCode = $search_params['campaignCode'];
     $query_params[] = 'campaignCode='.$campaignCode;
   } else {
     $campaignCode = '';
@@ -170,7 +170,7 @@
                     </select>
                    </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="select-wrap">
                     <select class="form-control" name="executiveCode" id="executiveCode">
                       <?php 
@@ -198,7 +198,25 @@
                     value="<?php echo $brand_name ?>"
                     title="Seperate brand name with ,(comma) to see multiple brands"
                   />
-                </div>                               
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <div class="select-wrap">
+                    <select class="form-control" name="campaignCode" id="campaignCode">
+                      <?php 
+                        foreach($campaigns as $campaign_key => $campaign_name):
+                          if($campaign_key === $campaignCode) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $campaign_key ?>" <?php echo $selected ?>>
+                          <?php echo $campaign_name ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>                
               </div>
               <div style="text-align: center;">
                 <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>

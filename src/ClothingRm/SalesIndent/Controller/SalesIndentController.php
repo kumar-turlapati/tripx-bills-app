@@ -614,7 +614,7 @@ class SalesIndentController {
       'current_page' => $page_no,
       'search_params' => $search_params,
       'agents' => [''=>'Referred by'] + $agents_a,
-      'campaigns' =>  [''=>'Campaign Name'] + $campaigns_a,
+      'campaigns' =>  [''=>'Filter by a Campaign'] + $campaigns_a,
       'executives' => [''=>'All Executives'] + $executives_a,
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
