@@ -251,6 +251,7 @@
                 // dump($indents);
                 foreach($indents as $indent_details):
                   $indent_date = date("d-m-Y", strtotime($indent_details['indentDate']));
+                  $created_time = date("h:ia", strtotime($indent_details['createdDate']));
                   $indent_no = $indent_details['indentNo'];
                   $indent_code = $indent_details['indentCode'];
                   $customer_name = $indent_details['customerName'];
@@ -294,7 +295,7 @@
                 <tr class="font11">
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle"><?php echo $indent_no ?></td>
-                  <td class="valign-middle"><?php echo $indent_date ?></td>
+                  <td align="center" class="valign-middle"><?php echo $indent_date.'<br />'.$created_time ?></td>
                   <td align="right" class="valign-middle"><?php echo number_format($netpay,2,'.','') ?></td>
                   <td align="left" class="valign-middle text-bold" title="<?php echo $customer_name ?>"><?php echo $customer_name ?></td>                
                   <td class="valign-middle" style="text-align: right;">
