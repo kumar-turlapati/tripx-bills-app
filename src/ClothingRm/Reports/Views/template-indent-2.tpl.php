@@ -5,7 +5,7 @@
   $from_date = date("01-m-Y");
 
   $format_options = ['pdf'=>'Download as PDF', 'csv' => 'Download as CSV'];
-  $show_format = false;
+  // $show_format = false;
 
   $pkd_options = ['pkd' => 'Ordered * Packed Qty.', 'wpkd' => 'Ordered Qty.'];
 ?>
@@ -93,7 +93,7 @@
                   </div>
                 </div>                
                 <?php if(!isset($show_format)): ?>
-                  <div class="col-sm-12 col-md-2 col-lg-2" style="margin-left:91px;">
+                  <div class="col-sm-12 col-md-2 col-lg-2">
                     <div class="select-wrap">
                       <select class="form-control" name="format" id="format">
                         <?php foreach($format_options as $key=>$value): ?>

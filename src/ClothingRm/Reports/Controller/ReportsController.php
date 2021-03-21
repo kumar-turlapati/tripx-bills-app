@@ -1019,7 +1019,7 @@ class ReportsController
             'reportHook' => '/indent-itemwise',
             'campaigns' => ['' => 'All Campaigns'] + $this->_get_indent_campaigns(),
             'show_fromto_dates' => true,
-            'agents' => ['' => 'Referred by'] + $agents_a
+            'agents' => ['' => 'Referred by'] + $agents_a,
           );
           $controller_vars = array(
             'page_title' => 'Itemwise Indents Booked',
