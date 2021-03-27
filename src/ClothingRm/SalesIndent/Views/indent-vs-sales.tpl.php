@@ -55,6 +55,18 @@
     $query_params[] = 'executiveCode='.$search_params['executiveCode'];    
   } else {
     $exe_code = '';
+  }
+  if(isset($search_params['brandName']) && $search_params['brandName'] !== '' ) {
+    $brand_name = $search_params['brandName'];
+    $query_params[] = 'brandName='.$search_params['brandName'];    
+  } else {
+    $brand_name = '';
+  }
+  if(isset($search_params['campaignCode']) && $search_params['campaignCode'] !== '' ) {
+    $campaign_code = $search_params['campaignCode'];
+    $query_params[] = 'campaignCode='.$campaignCode;
+  } else {
+    $campaign_code = '';
   }  
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -86,7 +98,7 @@
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1 labelStyle" style="padding-top:9px;">Filter by</div>
-                
+
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
@@ -167,7 +179,37 @@
                       <?php endforeach; ?>
                     </select>
                    </div>
-                </div>                
+                </div>
+
+                <div class="col-sm-12 col-md-2 col-lg-2" style="margin-top: 5px;">
+                  <input 
+                    placeholder="Brand name" 
+                    type="text" 
+                    name="brandName" 
+                    id="brandName" 
+                    class="form-control" 
+                    value="<?php echo $brand_name ?>"
+                  />
+                </div>
+
+                <div class="col-sm-12 col-md-2 col-lg-2" style="margin-top: 5px;">
+                  <div class="select-wrap">
+                    <select class="form-control" name="campaignCode" id="campaignCode">
+                      <?php 
+                        foreach($campaigns as $campaign_key => $campaign_name):
+                          if($campaign_key === $campaignCode) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $campaign_key ?>" <?php echo $selected ?>>
+                          <?php echo $campaign_name ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>                               
                 
                 <div align="center"><br /><br />
                   <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
@@ -227,9 +269,9 @@
                   <td align="right" class="valign-middle"><?php echo $cntr ?></td>
                   <td align="right" class="valign-middle"><?php echo $indent_no ?></td>
                   <td class="valign-middle"><?php echo $indent_date ?></td>
-                  <td align="left" class="valign-middle text-bold" title="<?php echo $item_name ?>"><?php echo substr($item_name,0,25) ?></td>
-                  <td align="left" class="valign-middle" title="<?php echo $brand_name ?>"><?php echo substr($brand_name,0,25) ?></td>                
-                  <td class="valign-middle" title="<?php echo $customer_name ?>"><?php echo substr($customer_name,0,26) ?></td>
+                  <td align="left" class="valign-middle text-bold" title="<?php echo $item_name ?>"><?php echo $item_name ?></td>
+                  <td align="left" class="valign-middle" title="<?php echo $brand_name ?>"><?php echo $brand_name ?></td>                
+                  <td class="valign-middle" title="<?php echo $customer_name ?>"><?php echo $customer_name ?></td>
                   <td class="valign-middle" align="right"><?php echo number_format($indent_details['indentQty'],2,'.','') ?></td>
                   <td class="valign-middle" align="right"><?php echo number_format($indent_details['indentValue'],2,'.','') ?></td>
                   <td class="valign-middle" align="right"><?php echo number_format($indent_details['dispatchedQty'],2,'.','') ?></td>
@@ -241,13 +283,21 @@
                 endforeach; 
               ?>
               <tr class="text-bold" style="font-size: 14px;">
-                <td colspan="6" align="right">TOTALS</td>
+                <td colspan="6" align="right">PAGE TOTALS</td>
                 <td align="right"><?php echo number_format($tot_indent_qty, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_indent_value, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_disp_qty, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_disp_value, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_pending_qty, 2, '.', '') ?></td>
               </tr>
+              <tr class="text-bold" style="font-size: 14px;">
+                <td colspan="6" align="right">QUERY TOTALS</td>
+                <td align="right"><?php echo number_format($query_totals['totalIndentQty'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalIndentValue'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalDispatchedQty'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalDispatchedValue'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalIndentQty']-$query_totals['totalDispatchedQty'] , 2, '.', '') ?></td>
+              </tr>              
             </tbody>
           </table>
           <?php endif; ?>

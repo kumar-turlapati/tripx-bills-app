@@ -79,9 +79,8 @@ class CustomersController
         $new_customer = $this->customer_api_call->createCustomer($cleaned_params);
         $status = $new_customer['status'];
         if($status === false) {
-          $page_error = $result['apierror'];
+          $page_error = $new_customer['apierror'];
           $this->flash_obj->set_flash_message($page_error, 1);
-          Utilities::redirect($redirect_url);
         } else {
           $page_success = 'Customer information added successfully with code `'.$new_customer['customerCode'].'`';
           $this->flash_obj->set_flash_message($page_success);     
@@ -115,7 +114,7 @@ class CustomersController
       
     # build variables
     $controller_vars = array(
-      'page_title' => 'Customers',
+      'page_title' => 'Customers - Create',
       'icon_name' => 'fa fa-smile-o',
     );
 
@@ -231,7 +230,7 @@ class CustomersController
 
     # build variables
     $controller_vars = array(
-      'page_title' => 'Customers',
+      'page_title' => 'Customers - Update Customer',
       'icon_name' => 'fa fa-smile-o',
     );
 
@@ -361,6 +360,8 @@ class CustomersController
     $ma_exe_code = Utilities::clean_string($form_data['maExecutive']);
     $customer_rating = Utilities::clean_string($form_data['customerRating']);
     $location_code = Utilities::clean_string($form_data['locationCode']);
+    $whatsapp_opt_in = Utilities::clean_string($form_data['whatsappOptin']);
+    $whatsapp_numbers = Utilities::clean_string($form_data['whatsappNumbers']);
 
     $age = Utilities::clean_string($form_data['age']);
     $age_category = Utilities::clean_string($form_data['ageCategory']);
@@ -424,6 +425,8 @@ class CustomersController
     $cleaned_params['maExecutive'] = $ma_exe_code;
     $cleaned_params['customerRating'] = $customer_rating;
     $cleaned_params['locationCode'] = $location_code;
+    $cleaned_params['whatsappOptin'] = $whatsapp_opt_in;
+    $cleaned_params['whatsappNumbers'] = $whatsapp_numbers;
 
     if(count($form_errors)>0) {
       return [

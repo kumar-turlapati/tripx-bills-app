@@ -60,6 +60,16 @@
   } else {
     $agent_code = '';
   }
+  if(isset($submitted_data['whatsappOptin']) && $submitted_data['whatsappOptin'] !== '') {
+    $whatsapp_optin = $submitted_data['whatsappOptin'];
+  } else {
+    $whatsapp_optin = 0;
+  }
+  if(isset($submitted_data['whatsappNumbers']) && $submitted_data['whatsappNumbers'] !== '') {
+    $whatsapp_numbers = $submitted_data['whatsappNumbers'];
+  } else {
+    $whatsapp_numbers = '';
+  }  
   $customer_rating = isset($submitted_data['customerRating']) ? $submitted_data['customerRating'] : 0;
 
   # bio details
@@ -88,11 +98,12 @@
   } else {
     $dor = '';
   }
+  $yes_no_options = [0=>'No',1=>'Yes'];
+  $status_options = [0=>'Inactive',1=>'Active'];  
 ?>
 <div class="row">
   <div class="col-lg-12"> 
     <section class="panel">
-      <h2 class="hdg-reports text-center">Create Customer</h2>
       <div class="panel-body">
         <?php echo $flash_obj->print_flash_message(); ?>        
         <?php if($page_error !== ''): ?>
@@ -113,8 +124,8 @@
         </div>
         <form class="form-validate form-horizontal" method="POST" autocomplete="off" id="customerForm">
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Customer type</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Customer type</label>
               <div class="select-wrap">
                 <select class="form-control" name="customerType" id="customerType">
                   <?php 
@@ -133,24 +144,37 @@
                 <?php endif; ?>                 
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Customer name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Customer name</label>
               <input type="text" class="form-control" name="customerName" id="customerName" value="<?php echo $customer_name ?>" />
               <?php if(isset($errors['customerName'])): ?>
                 <span class="error"><?php echo $errors['customerName'] ?></span>
               <?php endif; ?>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Mobile number</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Mobile number</label>
               <input type="text" class="form-control" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
               <?php if(isset($errors['mobileNo'])): ?>
                 <span class="error"><?php echo $errors['mobileNo'] ?></span>
               <?php endif; ?> 
-            </div> 
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">GST No.</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="gstNo" 
+                id="gstNo"
+                value="<?php echo $gst_no ?>"      
+              >
+              <?php if(isset($errors['gstNo'])): ?>
+                <span class="error"><?php echo $errors['gstNo'] ?></span>
+              <?php endif; ?>
+            </div>            
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Country name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Country name</label>
               <div class="select-wrap">
                 <select class="form-control" name="countryID" id="countryID">
                   <?php 
@@ -169,8 +193,8 @@
                 <?php endif; ?>                 
               </div>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">State</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">State</label>
               <select class="form-control" name="stateID" id="stateID">
                 <?php 
                   foreach($states as $key=>$value): 
@@ -187,14 +211,12 @@
                 <span class="error"><?php echo $form_errors['stateID'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">City name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">City name</label>
               <input type="text" class="form-control" name="cityName" id="cityName" value="<?php echo $city_name ?>">
-            </div>        
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Address</label>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Address</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -205,9 +227,11 @@
               <?php if(isset($errors['address'])): ?>
                 <span class="error"><?php echo $errors['address'] ?></span>
               <?php endif; ?>
-            </div>          
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Pincode</label>
+            </div>            
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Pincode</label>
               <input type="text" class="form-control" name="pincode" id="pincode"
               value="<?php echo $pincode ?>"              
               >
@@ -215,8 +239,8 @@
                 <span class="error"><?php echo $errors['pincode'] ?></span>
               <?php endif; ?>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Phone</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Phone</label>
               <input type="text" class="form-control" name="phone" id="phone"
               value="<?php echo $phone ?>"              
               >
@@ -224,23 +248,8 @@
                 <span class="error"><?php echo $errors['phone'] ?></span>
               <?php endif; ?>                
             </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">GST No.</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                name="gstNo" 
-                id="gstNo"
-                value="<?php echo $gst_no ?>"      
-              >
-              <?php if(isset($errors['gstNo'])): ?>
-                <span class="error"><?php echo $errors['gstNo'] ?></span>
-              <?php endif; ?>
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Store name</label>
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 
@@ -261,8 +270,8 @@
                 <span class="error"><?php echo $form_errors['locationCode'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Marketing executive name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Marketing executive name</label>
               <div class="select-wrap">                        
                 <select 
                   class="form-control"
@@ -284,11 +293,11 @@
                   <?php endforeach; ?>                            
                 </select>
               </div>
-            </div>            
+            </div>             
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Agent / Referral name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label labelStyle">Agent / Referral name</label>
               <div class="select-wrap">                        
                 <select 
                   class="form-control"
@@ -311,8 +320,8 @@
                 </select>
               </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15">
-              <label class="control-label">Customer rating</label>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label labelStyle">Customer rating</label>
               <div class="select-wrap">                        
                 <select 
                   class="form-control"
@@ -334,15 +343,52 @@
                   <?php endforeach; ?>                            
                 </select>
               </div>
-            </div>            
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-3 m-bot15">
+              <label class="control-label labelStyle">Push messages on Whatsapp?</label>
+              <div class="select-wrap">                        
+                <select 
+                  class="form-control"
+                  id="whatsappOptin" 
+                  name="whatsappOptin"
+                  style="font-size:12px;"
+                >
+                  <?php
+                    foreach($yes_no_options as $key => $value):
+                      if((int)$key === (int)$whatsapp_optin) {
+                        $selected = 'selected="selected"';
+                      } else {
+                        $selected = '';
+                      }
+                  ?>
+                    <option value="<?php echo $key ?>" <?php echo $selected ?>>
+                      <?php echo $value ?>
+                    </option>
+                  <?php endforeach; ?>                            
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label labelStyle">Whatsapp numbers (use , for multiple)</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="whatsappNumbers" 
+                id="whatsappNumbers"
+                value="<?php echo $whatsapp_numbers ?>"              
+              >
+              <?php if(isset($errors['whatsappNumbers'])): ?>
+                <span class="error"><?php echo $errors['whatsappNumbers'] ?></span>
+              <?php endif; ?>                
+            </div>
           </div>
           <div id="bioContainer">
-            <h3 class="hdg-reports text-center">Personal Details</h3>
+            <h3 class="hdg-reports text-left" style="color:#000;border-bottom: 1px solid #000;padding:10px 0 10px 0;">Personal Details</h3>
             <div class="form-group">
-              <div class="col-sm-12 col-md-4 col-lg-4">
-                <label class="control-label">Customer age</label>
+              <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                <label class="control-label labelStyle">Customer age</label>
                 <div class="row">
-                  <div class="col-sm-6 col-md-6 col-lg-8">
+                  <div class="col-sm-6 col-md-6 col-lg-6">
                     <div class="select-wrap">
                       <select class="form-control" name="age" id="age">
                         <?php 
@@ -361,7 +407,7 @@
                       <?php endif; ?>                    
                     </div>
                   </div>
-                  <div class="col-sm-6 col-md-6 col-lg-4"> 
+                  <div class="col-sm-4 col-md-5 col-lg-5"> 
                     <div class="select-wrap">
                       <select class="form-control" name="ageCategory" id="ageCategory">
                         <?php 
@@ -382,8 +428,8 @@
                   </div>
                 </div>
               </div>
-              <div class="col-sm-12 col-md-4 col-lg-4">
-                <label class="control-label">Gender</label>
+              <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                <label class="control-label labelStyle">Gender</label>
                 <div class="select-wrap">
                   <select class="form-control" name="gender" id="gender">
                     <?php 
@@ -402,8 +448,8 @@
                   <?php endif; ?>                 
                 </div>
               </div>
-              <div class="col-sm-12 col-md-4 col-lg-4">
-                <label class="control-label">Date of birth</label>
+              <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                <label class="control-label labelStyle">Date of birth</label>
                 <div class="form-group">
                   <div class="col-lg-12">
                     <div class="input-append date" data-date="<?php echo $dob ?>" data-date-format="dd-mm-yyyy">
@@ -416,10 +462,8 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="form-group">
-              <div class="col-sm-12 col-md-4 col-lg-4">
-                <label class="control-label">Date of marriage</label>
+              <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+                <label class="control-label labelStyle">Date of marriage</label>
                 <div class="form-group">
                   <div class="col-lg-12">
                     <div class="input-append date" data-date="<?php echo $dor ?>" data-date-format="dd-mm-yyyy">
@@ -431,7 +475,7 @@
                     <?php endif; ?>
                   </div>
                 </div>
-              </div>
+              </div>              
             </div>
           </div>
           <div class="text-center">

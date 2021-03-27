@@ -104,7 +104,7 @@
             <form class="form-validate form-horizontal" method="POST" action="<?php echo $page_url ?>">
               <div class="form-group">
                 <div class="col-sm-12 col-md-1 col-lg-1 labelStyle" style="padding-top:9px;">Filter by</div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="input-append date" data-date="<?php echo $current_date ?>" data-date-format="dd-mm-yyyy">
                     <input class="span2" size="16" type="text" readonly name="fromDate" id="fromDate" value="<?php echo $fromDate ?>" />
                     <span class="add-on"><i class="fa fa-calendar"></i></span>
@@ -134,7 +134,7 @@
                     </select>
                    </div>
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="executiveCode" id="executiveCode">
                       <?php 
@@ -152,9 +152,7 @@
                     </select>
                    </div>
                 </div>
-              </div>
-              <div class="form-group" style="padding-left: 92px;">
-                <div class="col-sm-12 col-md-3 col-lg-3">
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <div class="select-wrap">
                     <select class="form-control" name="locationCode" id="locationCode">
                       <?php 
@@ -174,23 +172,43 @@
                     </select>
                    </div>
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
+              </div>
+              <div class="form-group" style="padding-left: 92px;">
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <div class="select-wrap">
+                    <select class="form-control" name="campaignCode" id="campaignCode">
+                      <?php 
+                        foreach($campaigns as $campaign_key => $campaign_name):
+                          if($campaign_key === $campaignCode) {
+                            $selected = 'selected="selected"';
+                          } else {
+                            $selected = '';
+                          }  
+                      ?>
+                       <option value="<?php echo $campaign_key ?>" <?php echo $selected ?>>
+                          <?php echo $campaign_name ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                   </div>
+                </div>                
+                <div class="col-sm-12 col-md-2 col-lg-2">
                   <input 
-                    placeholder="Brand" 
+                    placeholder="Brand name" 
                     type="text" 
                     name="brandName" 
                     id="brandName" 
-                    class="form-control brandAc" 
+                    class="form-control" 
                     value="<?php echo $brandName ?>"
                     title="Choose Location to get brand names"
                   />
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-3">
-                  <input placeholder="Product Name" type="text" name="psName" id="psName" class="form-control" value="<?php echo $psName ?>">
-                </div>                
-              </div>
-              <div class="text-center">
-                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Product name" type="text" name="psName" id="psName" class="form-control" value="<?php echo $psName ?>">
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                </div>
               </div>
             </form>
 			    </div>
@@ -250,13 +268,21 @@
                 endforeach; 
               ?>
               <tr class="text-bold" style="font-size: 14px;">
-                <td colspan="4" align="right">TOTALS</td>
+                <td colspan="4" align="right">PAGE TOTALS</td>
                 <td align="right"><?php echo number_format($tot_indent_qty, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_indent_value, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_disp_qty, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_disp_value, 2, '.', '') ?></td>
                 <td align="right"><?php echo number_format($tot_pending_qty, 2, '.', '') ?></td>
               </tr>
+              <tr class="text-bold" style="font-size: 14px;">
+                <td colspan="4" align="right">QUERY TOTALS</td>
+                <td align="right"><?php echo number_format($query_totals['totalIndentQty'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalIndentValue'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalDispatchedQty'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalDispatchedValue'], 2, '.', '') ?></td>
+                <td align="right"><?php echo number_format($query_totals['totalIndentQty']-$query_totals['totalDispatchedQty'] , 2, '.', '') ?></td>
+              </tr>              
             </tbody>
           </table>
           <?php endif; ?>

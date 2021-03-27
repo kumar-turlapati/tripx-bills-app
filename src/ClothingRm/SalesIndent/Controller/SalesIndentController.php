@@ -679,6 +679,7 @@ class SalesIndentController {
     $customer_name = $request->get('custName') !== null ? Utilities::clean_string($request->get('custName')):'';
     $qty_type = $request->get('qtyType') !== null ? Utilities::clean_string($request->get('qtyType')) : 'all';
     $exe_code = $request->get('executiveCode') !== null ? Utilities::clean_string($request->get('executiveCode')) : '';
+    $brand_name = $request->get('brandName') !== null ? Utilities::clean_string($request->get('brandName')) : '';
 
     $search_params = array(
       'fromDate' => $from_date,
@@ -690,6 +691,7 @@ class SalesIndentController {
       'custName' => $customer_name,
       'qtyType' => $qty_type,
       'executiveCode' => $exe_code,
+      'brandName' => $brand_name,
     );
 
     // dump($search_params);
@@ -700,6 +702,7 @@ class SalesIndentController {
     // exit;
     if($api_response['status']) {
       if(count($api_response['response']['sales'])>0) {
+        $query_totals = $api_response['response']['query_totals'];
         $slno = Utilities::get_slno_start(count($api_response['response']['sales']),$per_page,$page_no);
         $to_sl_no = $slno+$per_page;
         $slno++;
@@ -745,7 +748,8 @@ class SalesIndentController {
       'campaignCode' => $campaign_code,
       'agentCode' => $agent_code,
       'qty_types' => ['all' => 'Pending And Completed', 'pending' => 'Pending', 'completed' => 'Completed'],
-      'sa_executives' => ['All Executives'] + $sa_executives,      
+      'sa_executives' => ['All Executives'] + $sa_executives,
+      'query_totals' => $query_totals,
     );
 
     // build variables
@@ -835,6 +839,8 @@ class SalesIndentController {
       if(count($api_response['response']['sales'])>0) {
         $slno = Utilities::get_slno_start(count($api_response['response']['sales']),$per_page,$page_no);
         $to_sl_no = $slno+$per_page;
+        $query_totals = $api_response['response']['query_totals'];
+        
         $slno++;
         if($page_no<=3) {
           $page_links_to_start = 1;
@@ -880,6 +886,7 @@ class SalesIndentController {
       'qty_types' => ['all' => 'Pending And Completed', 'pending' => 'Pending', 'completed' => 'Completed'],
       'sa_executives' => ['All Executives'] + $sa_executives,
       'client_locations' => [''=>'All Locations / Stores'] + $client_locations,
+      'query_totals' => $query_totals,
     );
 
     // build variables
