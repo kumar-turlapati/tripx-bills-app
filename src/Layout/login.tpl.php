@@ -7,12 +7,17 @@
 <html lang="en">
 <?php include "partials/head.tpl.php" ?>
 <body class="loginPage">
+  <script type="text/javascript">
+    function submitLoginForm() {
+      document.getElementById("loginForm").submit();
+    }
+  </script>
   <section id="container" class=""> 
     <?php include "partials/header.tpl.php" ?>
     <section>
       <section class="wrapper">
         <form id="bQ"><input type="hidden" name="__bq_pub" id="__bq_pub" value="" /></form>        
-        <form class="login-form" action="/login" method="POST" autocomplete="off">
+        <form class="login-form" action="/login" method="POST" autocomplete="off" id="loginForm">
           <div class="login-wrap">
             <h2 class="text-center">Login to Your Account</h2>
             <?php if(isset($error) && $error !== ''): ?>
@@ -31,7 +36,7 @@
             <div class="input-group forgot-pass">
               <a href="/forgot-password">Forgot password?</a>
             </div>
-            <div class="g-recaptcha" data-sitekey="<?php echo $site_key ?>"></div>
+            <?php /* <div class="g-recaptcha" data-sitekey="<?php echo $site_key ?>"></div> */ ?>
 
             <div class="whatsappNotifications">
               <span>
@@ -52,7 +57,14 @@
               </span>
             </div>
             <div align="center">
-              <button class="btn btn-warning btn-lg btn-block" type="submit" style="width: 50%;">Login</button>
+              <button 
+                class="btn btn-warning btn-lg btn-block g-recaptcha" 
+                type="submit" 
+                style="width: 50%;"
+                data-sitekey="6Lf6cJMaAAAAAI75KWeBxvSMiZmvHIGoFNjxZrap" 
+                data-callback="submitLoginForm"
+                data-action="submit"
+              >Login</button>
             </div>
             <div class="input-group login-copyrights">
               <p>Powered by <span style="color: #225992; font-weight: bold;">Octet Logic</span></p>

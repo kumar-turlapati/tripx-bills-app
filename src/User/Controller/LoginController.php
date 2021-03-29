@@ -30,7 +30,7 @@ class LoginController
     }
 
     $environment = Utilities::get_host_environment_key();
-    $site_key = Utilities::get_captcha_keys($environment,'public');      
+    $site_key = Utilities::get_captcha_keys($environment,'public');
 
     if( count($request->request->all()) > 0) {
       $user_id = Utilities::clean_string($request->request->get('userid'));

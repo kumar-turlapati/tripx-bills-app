@@ -4963,3 +4963,6 @@ input[name^="itemDetails"] {
   margin-top: 0;
   visibility: visible !important;
 }
+.grecaptcha-badge { 
+  visibility: hidden;
+}
