@@ -61,7 +61,7 @@
                 class="btn btn-warning btn-lg btn-block g-recaptcha" 
                 type="submit" 
                 style="width: 50%;"
-                data-sitekey="6Lf6cJMaAAAAAI75KWeBxvSMiZmvHIGoFNjxZrap" 
+                data-sitekey="<?php echo $site_key ?>" 
                 data-callback="submitLoginForm"
                 data-action="submit"
               >Login</button>
