@@ -48,8 +48,8 @@
               <?php endif; ?>               
             </div>
 
-            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-              <label class="control-label">Billing method</label>
+            <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+              <label class="control-label labelStyle">Billing Method</label>
               <div class="select-wrap">
                 <select class="form-control" name="billingMethod">
                   <?php 
@@ -68,9 +68,26 @@
                 <span class="error"><?php echo $form_errors['billingMethod'] ?></span>
               <?php endif; ?>
             </div>
+
+            <div class="col-sm-12 col-md-2 col-lg-2">
+              <label class="control-label labelStyle">Campaign Name</label>
+              <div class="select-wrap">
+                <select class="form-control" name="campaignCode" id="campaignCode">
+                  <?php 
+                    foreach($campaigns as $campaign_key => $campaign_name):
+                  ?>
+                   <option value="<?php echo $campaign_key ?>">
+                      <?php echo $campaign_name ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+               </div>
+            </div>
+
           </div>
           <div class="text-center">
-            <button class="btn btn-danger" id="invoiceDelete"><i class="fa fa-level-up"></i> Export Data</button>
+            <button class="btn btn-primary cancelOp"><i class="fa fa-level-up"></i> Export Data</button>
+            <button class="btn btn-danger cancelButton" id="exportIndent"><i class="fa fa-times"></i> Cancel</button>
           </div>
         </form>
       </div>

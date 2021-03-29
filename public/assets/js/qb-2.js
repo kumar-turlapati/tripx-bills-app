@@ -156,8 +156,6 @@ function initializeJS() {
     });
   }
 
-
-
   if($('.postSc2CB').length > 0) {
     $('.postSc2CB').on('click', function(e){
       var buttonObjId = $(this).attr('id');
@@ -2308,6 +2306,8 @@ function initializeJS() {
       window.location.href = '/dashboard';
     } else if(buttonId === 'waShippingUpdateCancel') {
       window.location.href = '/dashboard';        
+    } else if(buttonId === 'exportIndent') {
+      window.location.href = '/dashboard';
     }
   });
 

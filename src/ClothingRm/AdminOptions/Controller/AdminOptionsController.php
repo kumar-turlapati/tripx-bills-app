@@ -19,6 +19,7 @@ use ClothingRm\Grn\Model\GrnNew;
 use ClothingRm\SalesReturns\Model\SalesReturns;
 use ClothingRm\SalesIndent\Model\SalesIndent;
 use User\Model\User;
+use Campaigns\Model\Campaigns;
 
 class AdminOptionsController
 {
@@ -37,6 +38,7 @@ class AdminOptionsController
     $this->sales_return_model = new SalesReturns;
     $this->api_caller = new ApiCaller;
     $this->sindent_model = new SalesIndent;
+    $this->camp_model = new Campaigns;
 	}
 
   // delete Org. Summary
@@ -360,6 +362,7 @@ class AdminOptionsController
   // export indents
   public function exportIndents(Request $request) {
     $form_errors = $submitted_data = [];
+    $campaigns_a = [];
 
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
@@ -378,12 +381,21 @@ class AdminOptionsController
       }
     }
 
+    # ---------- get campaigns ---------------------------------
+    $campaigns_response = $this->camp_model->list_campaigns();
+    if($campaigns_response['status']) {
+      $campaign_keys = array_column($campaigns_response['campaigns']['campaigns'], 'campaignCode');
+      $campaign_names = array_column($campaigns_response['campaigns']['campaigns'], 'campaignName');
+      $campaigns_a = array_combine($campaign_keys, $campaign_names);
+    }    
+
     // prepare form variables.
     $template_vars = array(
       'errors' => $form_errors,
       'submitted_data' => $submitted_data,
       'default_location' => isset($_SESSION['lc']) ? $_SESSION['lc'] : '',
       'flash_obj' => $this->flash,
+      'campaigns' =>  [''=>'All Campaigns'] + $campaigns_a,
     );
 
     // build variables
@@ -563,6 +575,7 @@ class AdminOptionsController
     }
 
     $cleaned_params['billingMethod'] = Utilities::clean_string($submitted_data['billingMethod']);
+    $cleaned_params['campaignCode'] = Utilities::clean_string($submitted_data['campaignCode']);
 
     // dump($form_errors, $submitted_data);
     // exit;
