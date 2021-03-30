@@ -63,7 +63,16 @@
     $show_all_customers = $submitted_data['showAllCustomers'];
   } else {
     $show_all_customers = '1';
-  }  
+  }
+  if( isset($submitted_data['allowedCustomerStates']) ) {
+    $state_ids = $submitted_data['allowedCustomerStates'];
+  } else {
+    $state_ids = '';
+  }
+
+  $state_ids_class = (int)$show_all_customers === 3 ? '' : 'style="display:none;"'; 
+
+  // dump($submitted_data);
   // dump($location_ids, $location_codes, $submitted_data);
 ?>
 <!-- Basic form starts -->
@@ -248,7 +257,7 @@
             </div>            
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-3 col-lg-3">
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
               <label class="control-label labelStyle">Customer data</label>
               <div class="select-wrap">
                 <select class="form-control" name="showAllCustomers" id="showAllCustomers">
@@ -269,8 +278,22 @@
               <?php if(isset($form_errors['showAllCustomers'])): ?>
                 <span class="error"><?php echo $form_errors['showAllCustomers'] ?></span>
               <?php endif; ?>
-            </div>            
-          </div><br />          
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 m-bot15" id="gstStateIdsInput" <?php echo $state_ids_class ?>>
+              <label class="control-label labelStyle">GST State ids for filtering customers</label>
+              <input
+                type="text"
+                class="form-control"
+                name="allowedCustomerStates"
+                id="allowedCustomerStates"
+                value="<?php echo $state_ids ?>"
+                maxlength="500"
+              />
+              <?php if(isset($errors['stateIDs'])): ?>
+                <span class="error"><?php echo $errors['stateIDs'] ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
           <div class="text-center">
             <button class="btn btn-success" id="Save"><i class="fa fa-save"></i> Update</button>
           </div>

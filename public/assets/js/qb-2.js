@@ -156,6 +156,18 @@ function initializeJS() {
     });
   }
 
+  if( $('#buForm').length > 0) {
+    $('#showAllCustomers').on('change', function(e){
+      var inputValue = $(this).val();
+      if(inputValue == 3) {
+        $('#gstStateIdsInput').show();
+      } else {
+        $('#stateIDs').val('');
+        $('#gstStateIdsInput').hide();
+      }
+    });
+  }
+
   if($('.postSc2CB').length > 0) {
     $('.postSc2CB').on('click', function(e){
       var buttonObjId = $(this).attr('id');

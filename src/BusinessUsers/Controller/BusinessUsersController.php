@@ -72,12 +72,12 @@ class BusinessUsersController {
       'client_business_state' => $client_business_state,
       'client_locations' => array(''=>'Choose') + $client_locations,
       'status_a' => $status_a,
-      'show_flag_a' => [1 =>'Show all customers', 0=>'Show assigned customers', 2=>'Show storewise customers'],
+      'show_flag_a' => [1 =>'Show all customers', 0=>'Show assigned customers', 2=>'Show storewise customers', 3=>'Show statewise customers'],
     );
       
     # build variables
     $controller_vars = array(
-      'page_title' => 'Business Users',
+      'page_title' => 'Business Users - Create',
       'icon_name' => 'fa fa-user-circle-o',
     );
 
@@ -110,21 +110,27 @@ class BusinessUsersController {
 
     if( count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
-      $user_code = $request->get('userCode');
-      $new_user = $this->bu_api_call->update_business_user($submitted_data,$user_code);
-      $status = $new_user['status'];
-      if($status === false) {
-        if(isset($new_user['errors'])) {
-          $errors = $new_user['errors'];
-        } elseif(isset($new_user['apierror'])) {
-          $page_error = $new_user['apierror'];
+      $form_validation = $this->_validate_form_data($submitted_data);
+      if($form_validation['status']) {
+        $cleaned_params = $form_validation['cleaned_params'];
+        $user_code = $request->get('userCode');
+        $new_user = $this->bu_api_call->update_business_user($cleaned_params,$user_code);
+        $status = $new_user['status'];
+        if($status === false) {
+          if(isset($new_user['errors'])) {
+            $errors = $new_user['errors'];
+          } elseif(isset($new_user['apierror'])) {
+            $page_error = $new_user['apierror'];
+          }
+          $submitted_data = $submitted_data;
+          $this->flash_obj->set_flash_message($page_error,1);           
+        } else {
+          $page_success = 'User information updated successfully';
+          $this->flash_obj->set_flash_message($page_success);     
+          Utilities::redirect($redirect_url);        
         }
-        $submitted_data = $submitted_data;
-        $this->flash_obj->set_flash_message($page_error,1);           
       } else {
-        $page_success = 'User information updated successfully';
-        $this->flash_obj->set_flash_message($page_success);     
-        Utilities::redirect($redirect_url);        
+        $form_errors = $form_validation['errors'];
       }
     } elseif($request->get('userCode') && $request->get('userCode') !== '') {
       $user_code = Utilities::clean_string($request->get('userCode'));
@@ -156,7 +162,7 @@ class BusinessUsersController {
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
       'status_a' => $status_a,
-      'show_flag_a' => [1 =>'Show all customers', 0=>'Show assigned customers', 2=>'Show storewise customers'],
+      'show_flag_a' => [1 =>'Show all customers', 0=>'Show assigned customers', 2=>'Show storewise customers', 3=>'Show statewise customers'],
     );
 
     # build variables
@@ -269,6 +275,7 @@ class BusinessUsersController {
 
   private function _validate_form_data($form_data=[]) {
     $form_errors = $cleaned_params = [];
+    $state_ids_loop = [];
 
     $user_types = array_keys(Utilities::get_business_user_types());
     $user_type = Utilities::clean_string($form_data['userType']);
@@ -283,6 +290,11 @@ class BusinessUsersController {
     $gst_no = Utilities::clean_string($form_data['gstNo']);
     $status = Utilities::clean_string($form_data['status']);
     $show_all_customers = Utilities::clean_string($form_data['showAllCustomers']);
+    $state_ids = Utilities::clean_string($form_data['allowedCustomerStates']);
+    $location_states = array_keys(Constants::$LOCATION_STATES);
+
+    // dump($location_states);
+    // exit;
 
     // if(ctype_alnum(str_replace([' ', '.'], ['',''], $user_name)) ) {
     if($user_name !== '') {
@@ -336,11 +348,36 @@ class BusinessUsersController {
         $form_errors['locationCode'] = 'Invalid location code.';
       }
     }
+    if((int)$show_all_customers === 3 && $state_ids !== '') {
+      $state_ids_a = explode(',', $state_ids);
+      foreach($state_ids_a as $state_id) {
+        $state_id = trim($state_id);
+        if(!in_array($state_id, $location_states)) {
+          $form_errors['stateIDs'] = 'Invalid GST State id [ '.$state_id.' ]';
+          break;
+        } else {
+          $state_ids_loop[] = $state_id;
+        }
+      }
+      $cleaned_params['showAllCustomers'] = $show_all_customers;
+    } elseif((int)$show_all_customers !== 3) {
+      $cleaned_params['showAllCustomers'] = $show_all_customers;
+    } else {
+      $form_errors['stateIDs'] = 'GST State Ids required.';
+    }
+
+    if(count($state_ids_loop) > 0) {
+      $cleaned_params['stateIDs'] = implode(',', $state_ids_loop);
+    }
 
     $cleaned_params['countryID'] = $country_id;
     $cleaned_params['address'] = $address;
     $cleaned_params['status'] = $status;
-    $cleaned_params['showAllCustomers'] = $show_all_customers;
+
+    // dump($cleaned_params);
+    // exit;
+    // dump($form_errors);
+    // exit;
 
     if(count($form_errors)>0) {
       return [
