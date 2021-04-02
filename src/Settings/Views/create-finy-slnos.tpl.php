@@ -38,7 +38,7 @@
               </div>              
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label"><b>Store Name</b></label>              
+              <label class="control-label"><b>Store Name (Don't select for Global Series)</b></label>              
               <div class="select-wrap">
                 <select class="form-control" name="locationCode" id="locationCode">
                   <?php 

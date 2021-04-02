@@ -77,7 +77,7 @@ class FinySlnosController {
       'flash_obj' => $this->flash,
       'voc_types' => $voc_types,
       'finys' => $finys,
-      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'client_locations' => ['' => 'All Stores/Locations (Common)'] + $client_locations,
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,
     );
@@ -266,7 +266,7 @@ class FinySlnosController {
       'page_links_to_end' => $page_links_to_end,
       'current_page' => $page_no,
       'finys' => $finys,
-      'client_locations' => ['' => 'All Stores'] + $client_locations,
+      'client_locations' => ['' => 'All Stores / Locations'] + $client_locations,
       'location_ids' => $location_ids,
       'location_codes' => $location_codes,      
     );
@@ -315,9 +315,11 @@ class FinySlnosController {
       } else {
         $form_errors['locationCode'] = 'Store does not exists.';
       }
+    // } else {
+    //   $form_errors['locationCode'] = 'Invalid Store Name.';
     } else {
-      $form_errors['locationCode'] = 'Invalid Store Name.';
-    }    
+      $cleaned_params['locationCode'] = '';
+    }
 
     foreach($voc_types as $voc_key => $voc_name) {
       $text_key = $voc_key.'_text';
@@ -340,6 +342,9 @@ class FinySlnosController {
         $form_errors['vocCodesAic'][$aic_key] = 'Invalid key.';
       }
     }
+
+      // dump($cleaned_params);
+      // exit;
       
     if(count($form_errors) > 0) {
       return [
