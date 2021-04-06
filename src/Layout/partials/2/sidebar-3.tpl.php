@@ -396,6 +396,7 @@
             </a>
             <ul class="sub">
               <li><a href="/admin-options/export-indents"><i class="fa fa-delicious"></i> Indents</a></li>
+              <li><a href="/admin-options/export-pos"><i class="fa fa-compass"></i> POs</a></li>
             </ul>
           </li>
           <li class="sub-menu">

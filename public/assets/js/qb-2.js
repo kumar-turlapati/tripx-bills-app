@@ -1359,6 +1359,16 @@ function initializeJS() {
     });
   }
 
+  // download pos.
+  if( $('#exportPOsForm').length > 0 ) {
+    $('#downloadPOsAction').on('click', function(e){
+      e.preventDefault();
+      $(this).attr('disabled', true);
+      $('#downloadPOsAction').attr('disabled', true);
+      $('#exportPOsForm').submit();
+    });
+  }
+
   // delete gatepass.
   jQuery('.delGatepass').on("click", function(e){
     e.preventDefault();
@@ -2320,6 +2330,8 @@ function initializeJS() {
       window.location.href = '/dashboard';        
     } else if(buttonId === 'exportIndent') {
       window.location.href = '/dashboard';
+    } else if(buttonId === 'downloadPO') {
+      window.location.href = '/admin-options/export-pos';      
     }
   });
 

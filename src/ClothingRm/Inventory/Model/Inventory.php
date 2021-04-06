@@ -12,8 +12,23 @@ class Inventory
 	public function __construct() {
 		$this->api_caller = new ApiCaller();
 	}
+
+	public function export_pos($form_data = []) {
+		$end_point = '/reports/pos-data-export';
+		// call api.
+		$api_caller = new ApiCaller();
+		$response = $api_caller->sendRequest('get',$end_point,$form_data);
+		// dump($response);
+		// exit;
+		$status = $response['status'];
+		if ($status === 'success') {
+			return array('status' => true, 'results' => $response['response'],);
+		} elseif($status === 'failed') {
+			return array('status' => false, 'apierror' => $response['reason']);
+		}
+	}
 	
-	public function get_available_qtys($search_params=array()) {
+	public function get_available_qtys($search_params = []) {
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();
 		$request_uri = 'inventory/qty-available/'.$client_id;
@@ -67,7 +82,7 @@ class Inventory
 		}
 	}	
 
-	public function get_inventory_item_details($search_params=array()) {
+	public function get_inventory_item_details($search_params = []) {
 
 		// fetch client id
 		$client_id = Utilities::get_current_client_id();

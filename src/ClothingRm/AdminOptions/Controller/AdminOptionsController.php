@@ -400,13 +400,214 @@ class AdminOptionsController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Export Indents to CSV',
+      'page_title' => 'Download Indents to CSV',
       'icon_name' => 'fa fa-delicious',
     );
 
     // render template
     return array($this->template->render_view('export-indents',$template_vars),$controller_vars);    
   }
+
+  public function exportPos(Request $request) {
+    $form_errors = $submitted_data = [];
+    $client_locations = Utilities::get_client_locations();
+
+    if(count($request->request->all()) > 0) {
+      $submitted_data = $request->request->all();
+      $form_validation = $this->_validate_export_pos_data($submitted_data);
+      if($form_validation['status'] === false) {
+        $form_errors = $form_validation['errors'];
+      } else {
+        $submitted_data = $form_validation['cleaned_params'];
+        $api_response = $this->inv_model->export_pos($submitted_data);
+        if($api_response['status']) {
+          $this->_dump_csv_for_pos($api_response['results'], $submitted_data['fromPoNo'], $submitted_data['toPoNo']);
+        } else {
+          $page_error = '<i class="fa fa-times" aria-hidden="true"></i> '.$api_response['apierror'];
+          $this->flash->set_flash_message($page_error, 1);
+        }
+      }
+    }
+
+    // prepare form variables.
+    $template_vars = array(
+      'errors' => $form_errors,
+      'submitted_data' => $submitted_data,
+      'flash_obj' => $this->flash,
+      'client_locations' => [''=>'Choose'] + $client_locations,
+    );
+
+    // build variables
+    $controller_vars = array(
+      'page_title' => 'Download Purchase Orders to CSV',
+      'icon_name' => 'fa fa-compass',
+    );
+
+    // render template
+    return array($this->template->render_view('export-pos',$template_vars),$controller_vars);    
+  }
+
+  // dump csv for pos
+  private function _dump_csv_for_pos($records = [], $from_po_no='', $to_po_no='') {
+    $total_records = [];
+    $states_a = Constants::$LOCATION_STATES;
+
+    $voc_type = 'Purchase';
+    $ledger_group = 'Sundry Creditors';
+    $reg_type = 'Regular';
+    $stock_group = 'Primary';
+    $maintain_batches = 'Yes';
+    $applicable_from = '01-07-2017';
+
+    $purchase_ledger = '';
+    $tracking_no = '';
+    $order_no = '';
+    $order_due_date = '';
+    $godown_name = '';
+    $receipt_note_no = '';
+    $receipt_note_date = '';
+    $order_no = '';
+    $order_date = '';
+    $hsn_description = '';
+    $voc_no = '';
+
+    // dump($records);
+    // exit;
+
+    foreach($records as $record_key => $record_details) {
+
+      $item_type = $record_details['itemType'];
+      $supply_type = $record_details['supplyType'];
+      $payment_method = $record_details['paymentMethod'];
+
+      $is_service_item = $item_type === 's' ? true : false;
+
+      $voc_date = date("d-m-Y");
+      $supplier_inv_no = $record_details['billNo'];
+      $supplier_inv_date = date("d-m-Y", strtotime($record_details['purchaseDate']));
+      $party_name = $record_details['supplierName'];
+      $gstin_no = $record_details['supplierGSTNo'];
+      $country_name = $record_details['supplierCountryName'];
+      $state_name = $states_a[$record_details['supplierStateID']];
+      $pincode = $record_details['supplierPincode'];
+      $address1 = $record_details['supplierAddress1'];
+      $address2 = $record_details['supplierAddress2'];
+      $address3 = $record_details['supplierAddress3'];
+      $item_name = $record_details['itemName'];
+      $unit = $record_details['uomName'];
+      $hsn_code = $record_details['hsnSacCode'];
+      $batch = $record_details['cno'];
+      $qty = $record_details['packedQty'] * $record_details['billedQty'];
+      $rate = (float)$record_details['itemRate'];
+      $amount = round($qty*$rate, 2);
+      $discount = (float)$record_details['discountAmountItem'];
+      $final_amount_item = round($amount-$discount,2);
+      $tax_percent = $record_details['taxPercent'];
+      $registration_type = $record_details['registrationType'];
+
+      if($is_service_item) {
+        $additional_ledger = $item_name;
+        $item_name = '';
+        $maintain_batches = '';
+        $stock_group = '';
+      } else {
+        $additional_ledger = '';
+      }
+
+      $cgst_ledger_name = 'CGST';
+      $sgst_ledger_name = 'SGST';
+      $igst_ledger_name = 'IGST';
+      $cess_ledger_name = 'CESS';
+
+      if($supply_type === 'inter') {
+        $igst_rate = $tax_percent;
+        $sgst_rate = '';
+        $cgst_rate = '';
+        $cess_rate = '';
+
+        $igst_amount = round($record_details['igstAmount'],2);
+        $sgst_amount = 0;
+        $cgst_amount = 0;
+        $cess_amount = 0;
+      } else {
+        $tax_percent_equal = round($tax_percent/2, 2);
+        $igst_rate = '';
+        $cess_rate = '';
+        $sgst_rate = $tax_percent_equal;
+        $cgst_rate = $tax_percent_equal;
+
+        $cgst_amount = round($record_details['cgstAmount'],2);
+        $sgst_amount = round($record_details['sgstAmount'],2);
+        $igst_amount = 0;
+        $cess_amount = 0;
+      }
+
+      // dump($igst_amount, $cgst_amount, $sgst_amount);
+      // exit;
+
+      $total = $final_amount_item+$igst_amount+$cgst_amount+$sgst_amount;
+      $narration = '';
+
+      $total_records[$record_key] = [
+        'Vch No.' => $voc_no,
+        'Vch Type' => 'Purchase',
+        'Date' => $voc_date,
+        'Supplier Inv No' => $supplier_inv_no,
+        'Supplier Inv Date' => $supplier_inv_date,
+        'Receipt Note No' => $receipt_note_no,
+        'Receipt Note Date' => $receipt_note_date,
+        'Order No' => $order_no,
+        'Order Date' => $order_date,
+        'Party Name' => $party_name,
+        'Ledger Group' => $ledger_group,
+        'Registration Type' => $registration_type,
+        'GSTIN No' => $gstin_no,
+        'Country' => $country_name,
+        'State' => $state_name,
+        'Pincode' => $pincode,
+        'Address 1' => $address1,
+        'Address 2' => $address2,
+        'Address 3' => $address3,
+        'Purchase Ledger' => $purchase_ledger,
+        'Item Name' => $item_name,
+        'Stock Group' => $stock_group,
+        'Unit' => $unit,
+        'Maintain Batches' => $maintain_batches,
+        'Applicable From' => $applicable_from,
+        'HSN Description' => $hsn_description,
+        'HSN' => $hsn_code,
+        'IGST Rate' => $igst_rate,
+        'CGST Rate' => $cgst_rate,
+        'SGST Rate' => $sgst_rate,
+        'CESS Rate' => $cess_rate,
+        'Tracking No' => $tracking_no,
+        'Order No' => $order_no,
+        'Order Due Date' => $order_due_date,
+        'Godown' => $godown_name,
+        'Batch' => $batch,
+        'Qty' => $qty,
+        'Rate' => $rate,
+        'Discount' => $discount,
+        'Amt' => $amount,
+        'Additional Ledger' => $additional_ledger,
+        'Amount' => $amount,
+        'CGST Ledger' => $cgst_ledger_name,
+        'CGST Amt' => $cgst_amount,
+        'SGST Ledger' => $sgst_ledger_name, 
+        'SGST Amt' => $sgst_amount,  
+        'IGST Ledger' => $igst_ledger_name,
+        'IGST Amt' => $igst_amount,
+        'CESS Ledger' => $cess_ledger_name,
+        'CESS Amt' => $cess_amount,
+        'Total' => $total, 
+        'Narration' => '',
+      ];
+    }
+
+    $csv_file_name = 'PosExportCSV__'.$from_po_no.'_'.$to_po_no;
+    Utilities::download_as_CSV_attachment($csv_file_name, [], $total_records);
+    return;
+  }  
 
   // dump csv for indents.
   private function _dump_csv_for_indents($records = [], $billing_method='b2c') {
@@ -489,7 +690,6 @@ class AdminOptionsController
     Utilities::download_as_CSV_attachment($csv_file_name, [], $total_records);
     return;
   }
-
 
   // update business information
 	public function editBusinessInfoAction(Request $request) {
@@ -592,6 +792,63 @@ class AdminOptionsController
       ];
     }
   }
+
+  // validate po export data inputs.
+  private function _validate_export_pos_data($submitted_data = []) {
+    $cleaned_params = $form_errors = [];
+
+    $from_po_no = isset($submitted_data['fromPoNo']) && $submitted_data['fromPoNo'] !== '' ? $submitted_data['fromPoNo'] : '';
+    $to_po_no = isset($submitted_data['toPoNo']) && $submitted_data['toPoNo'] !== '' ? $submitted_data['toPoNo'] : '';
+    $from_date = isset($submitted_data['fromDate']) && $submitted_data['fromDate'] !== '' ? $submitted_data['fromDate'] : date("01-m-Y");
+    $to_date = isset($submitted_data['toDate']) && $submitted_data['toDate'] !== '' ? $submitted_data['toDate'] : date("d-m-Y");
+    $location_code = isset($submitted_data['locationCode']) && $submitted_data['locationCode'] !== '' ? $submitted_data['locationCode'] : '';
+    $po_nos_diff = (int)$to_po_no - (int)$from_po_no;
+
+    if($from_po_no === '') {
+      $form_errors['fromPoNo'] = 'Invalid from PO No.';
+    } else {
+      $cleaned_params['fromPoNo'] = $from_po_no;
+    }
+    if($to_po_no === '') {
+      $form_errors['toPoNo'] = 'Invalid to PO No.';
+    } else {
+      $cleaned_params['toPoNo'] = $to_po_no;
+    }    
+    if(Utilities::validate_date($from_date)) {
+      $cleaned_params['fromDate'] = $from_date;
+    } else {
+      $form_errors['fromDate'] = 'Invalid From Date';
+    }
+    if(Utilities::validate_date($to_date)) {
+      $cleaned_params['toDate'] = $to_date;
+    } else {
+      $form_errors['toDate'] = 'Invalid To Date';
+    }
+    if($location_code === '') {
+      $form_errors['locationCode'] = 'Invalid store name / location.';
+    } else {
+      $cleaned_params['locationCode'] = $location_code;
+    }
+    if((int)$to_po_no < (int)$from_po_no) {
+      $form_errors['toPoNo'] = 'To PO No. must be greater than from PO No.';
+    }
+    if($po_nos_diff > 50) {
+      $form_errors['toPoNo'] = 'You can download only 50 POs at a time.';
+    }
+    // dump($form_errors, $submitted_data);
+    // exit;
+    if(count($form_errors)>0) {
+      return [
+        'status' => false,
+        'errors' => $form_errors,
+      ];
+    } else {
+      return [
+        'status' => true,
+        'cleaned_params' => $cleaned_params,
+      ];
+    }
+  }  
 
   // validation of business info.
   private function _validate_businessinfo($form_data=[]) {
