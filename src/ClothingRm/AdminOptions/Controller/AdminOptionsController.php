@@ -410,7 +410,12 @@ class AdminOptionsController
 
   public function exportPos(Request $request) {
     $form_errors = $submitted_data = [];
-    $client_locations = Utilities::get_client_locations();
+    $client_locations = Utilities::get_client_locations(true, false, true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_ids[$location_key_a[1]] = $location_value;
+      $location_names[$location_key_a[0]] = $location_value;
+    }    
 
     if(count($request->request->all()) > 0) {
       $submitted_data = $request->request->all();
@@ -421,7 +426,7 @@ class AdminOptionsController
         $submitted_data = $form_validation['cleaned_params'];
         $api_response = $this->inv_model->export_pos($submitted_data);
         if($api_response['status']) {
-          $this->_dump_csv_for_pos($api_response['results'], $submitted_data['fromPoNo'], $submitted_data['toPoNo']);
+          $this->_dump_csv_for_pos($api_response['results'], $submitted_data['fromPoNo'], $submitted_data['toPoNo'], $location_ids);
         } else {
           $page_error = '<i class="fa fa-times" aria-hidden="true"></i> '.$api_response['apierror'];
           $this->flash->set_flash_message($page_error, 1);
@@ -434,7 +439,7 @@ class AdminOptionsController
       'errors' => $form_errors,
       'submitted_data' => $submitted_data,
       'flash_obj' => $this->flash,
-      'client_locations' => [''=>'Choose'] + $client_locations,
+      'client_locations' => [''=>'Choose'] + $location_names,
     );
 
     // build variables
@@ -448,9 +453,12 @@ class AdminOptionsController
   }
 
   // dump csv for pos
-  private function _dump_csv_for_pos($records = [], $from_po_no='', $to_po_no='') {
+  private function _dump_csv_for_pos($records = [], $from_po_no='', $to_po_no='', $location_ids=[]) {
     $total_records = [];
     $states_a = Constants::$LOCATION_STATES;
+
+    // dump($records);
+    // exit;
 
     $voc_type = 'Purchase';
     $ledger_group = 'Sundry Creditors';
@@ -463,7 +471,6 @@ class AdminOptionsController
     $tracking_no = '';
     $order_no = '';
     $order_due_date = '';
-    $godown_name = '';
     $receipt_note_no = '';
     $receipt_note_date = '';
     $order_no = '';
@@ -496,7 +503,9 @@ class AdminOptionsController
       $item_name = $record_details['itemName'];
       $unit = $record_details['uomName'];
       $hsn_code = $record_details['hsnSacCode'];
-      $batch = $record_details['cno'];
+      $batch = $record_details['batchNo'];
+      $containe_or_case_no = $record_details['cno'];
+      $item_sku = $record_details['itemSku'];
       $qty = $record_details['packedQty'] * $record_details['billedQty'];
       $rate = (float)$record_details['itemRate'];
       $amount = round($qty*$rate, 2);
@@ -504,6 +513,13 @@ class AdminOptionsController
       $final_amount_item = round($amount-$discount,2);
       $tax_percent = $record_details['taxPercent'];
       $registration_type = $record_details['registrationType'];
+      $godown_name = isset($location_ids[$record_details['locationID']]) ? $location_ids[$record_details['locationID']] : '';
+      $brand_name = $record_details['mfgName'];
+      $category = $record_details['categoryName'];
+      $wholesale_price = $record_details['wholesalePrice'];
+      $online_price = $record_details['onlinePrice'];
+      $supplier_barcode = $record_details['suppBarcode'];
+      $default_barcode = $record_details['barcode'];
 
       if($is_service_item) {
         $additional_ledger = $item_name;
@@ -601,6 +617,15 @@ class AdminOptionsController
         'CESS Amt' => $cess_amount,
         'Total' => $total, 
         'Narration' => '',
+        'TALLYIMPORTSTATUS' => '',
+        'Container Or Case No' => $containe_or_case_no,
+        'Supplier Barcode' => $supplier_barcode,
+        'Generated Barcode' => $default_barcode,
+        'Brand' => $brand_name,
+        'Category' => $category,
+        'Wholesale Price' => $wholesale_price,
+        'Online Price' => $online_price,
+        'Item SKU' => $item_sku,
       ];
     }
 
