@@ -362,7 +362,7 @@ class CustomersController
     $location_code = Utilities::clean_string($form_data['locationCode']);
     $whatsapp_opt_in = Utilities::clean_string($form_data['whatsappOptin']);
     $whatsapp_numbers = Utilities::clean_string($form_data['whatsappNumbers']);
-
+    $status = Utilities::clean_string($form_data['status']);
     $age = Utilities::clean_string($form_data['age']);
     $age_category = Utilities::clean_string($form_data['ageCategory']);
     $gender = Utilities::clean_string($form_data['gender']) === '' ? 'o' : Utilities::clean_string($form_data['gender']);
@@ -427,6 +427,7 @@ class CustomersController
     $cleaned_params['locationCode'] = $location_code;
     $cleaned_params['whatsappOptin'] = $whatsapp_opt_in;
     $cleaned_params['whatsappNumbers'] = $whatsapp_numbers;
+    $cleaned_params['status'] = $status;
 
     if(count($form_errors)>0) {
       return [

@@ -400,8 +400,8 @@
               <div class="select-wrap">                        
                 <select 
                   class="form-control"
-                  id="whatsappConsent" 
-                  name="whatsappConsent"
+                  id="status" 
+                  name="status"
                   style="font-size:12px;"
                 >
                   <?php
