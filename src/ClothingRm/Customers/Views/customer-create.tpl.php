@@ -455,6 +455,7 @@
                     <div class="input-append date" data-date="<?php echo $dob ?>" data-date-format="dd-mm-yyyy">
                       <input class="span2" value="<?php echo $dob ?>" size="16" type="text" readonly name="dob" id="dob" />
                       <span class="add-on"><i class="fa fa-calendar"></i></span>
+                      <input type="hidden" name="status" value="1" />
                     </div>
                     <?php if(isset($errors['dob'])): ?>
                       <span class="error"><?php echo $errors['dob'] ?></span>
