@@ -200,7 +200,7 @@
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <label class="control-label">Billing rate</label>
                   <span style="font-size:14px;font-weight: bold;"><?php echo strtoupper($billing_rate) ?></span>
-                  <input type="hidden" value="<?php echo $billing_rate ?>" name="billingRate" />
+                  <input type="hidden" value="<?php echo $billing_rate ?>" name="billingRate" id="billingRate" />
                 </div>
               </div>
             </div>

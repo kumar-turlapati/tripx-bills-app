@@ -185,7 +185,7 @@
                   <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;padding-left:5px;">Billing rate</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <span style="font-size:14px;font-weight: bold;"><?php echo strtoupper($billing_rate) ?></span>
-                    <input type="hidden" value="<?php echo $form_data['billingRate'] ?>" name="billingRate" />
+                    <input type="hidden" value="<?php echo $form_data['billingRate'] ?>" name="billingRate" id="billingRate" />
                   </td>
                 </tr>
               </thead>
