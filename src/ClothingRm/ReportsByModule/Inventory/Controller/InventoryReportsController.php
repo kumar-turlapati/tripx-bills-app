@@ -2059,9 +2059,11 @@ class InventoryReportsController {
       }
 
       // start PDF printing.
-      $item_widths = array(10,100,50);
+      $item_widths = array(10,70,30,60,50,50);
       $totals_width = $item_widths[0] + $item_widths[1];
       $slno = 0; $tot_qty = 0;
+      $tot_noof_products = $tot_noof_lots = 0;
+      $tot_value = 0;
 
       $pdf = PDF::getInstance();
       $pdf->AliasNbPages();
@@ -2081,13 +2083,25 @@ class InventoryReportsController {
         $slno++;
         $brand_name = substr($item_details['brandName'], 0, 40);
         $closing_qty = $item_details['closingQty'];
+        $closing_value = $item_details['closingValue'];
+        $total_products = $item_details['totalProducts'];
+        $total_lots = $item_details['totalLots'];
+
         $tot_qty += $closing_qty;
+        $tot_value += $closing_value;
+        $tot_noof_products += $total_products;
+        $tot_noof_lots += $total_lots;
+
         $row_cntr++;
           
         $pdf->Ln();
         $pdf->Cell($item_widths[0],6,$slno,'LRTB',0,'R');
         $pdf->Cell($item_widths[1],6,$brand_name,'RTB',0,'L');
-        $pdf->Cell($item_widths[2],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');            
+        $pdf->Cell($item_widths[2],6,number_format($closing_qty,2,'.',''),'RTB',0,'R');
+        $pdf->Cell($item_widths[3],6,number_format($closing_value,2,'.',''),'RTB',0,'R');            
+        $pdf->Cell($item_widths[4],6,number_format($total_products,0,'.',''),'RTB',0,'R');            
+        $pdf->Cell($item_widths[5],6,number_format($total_lots,0,'.',''),'RTB',0,'R');            
+
         if($first_page && $row_cntr === 23) {
           $pdf->AddPage('L','A4');
           $this->_add_page_heading_for_stock_report_by_brand($pdf, $item_widths);
@@ -2104,6 +2118,9 @@ class InventoryReportsController {
       $pdf->SetFont('Arial','B',11);
       $pdf->Cell($totals_width,6,'REPORT TOTALS','LRTB',0,'R');
       $pdf->Cell($item_widths[2],6,number_format($tot_qty,2,'.',''),'RTB',0,'R');            
+      $pdf->Cell($item_widths[3],6,number_format($tot_value,2,'.',''),'RTB',0,'R');            
+      $pdf->Cell($item_widths[4],6,number_format($tot_noof_products,0,'.',''),'RTB',0,'R');            
+      $pdf->Cell($item_widths[5],6,number_format($tot_noof_lots,0,'.',''),'RTB',0,'R');            
 
       $pdf->Output();
     }
@@ -2406,16 +2423,27 @@ class InventoryReportsController {
 
   private function _format_stock_report_brand_for_csv($total_records = []) {
     $cleaned_params = [];
-    $sno = $tot_qty = 0;
+    $sno = $tot_qty = $tot_value = $tot_noof_products = $tot_noof_lots = 0;
     foreach($total_records as $key => $item_details) {
       $sno++;
       $brand_name = $item_details['brandName'];
       $closing_qty = $item_details['closingQty'];
+      $closing_value = $item_details['closingValue'];
+      $total_products = $item_details['totalProducts'];
+      $total_lots = $item_details['totalLots'];
+
       $tot_qty += $closing_qty;
+      $tot_value += $closing_value;
+      $tot_noof_products += $total_products;
+      $tot_noof_lots += $total_lots;
+
       $cleaned_params[$key] = [
         'Sno.' => $sno,
         'Brand Name' => $brand_name,
-        'Closing Qty.'     => number_format($closing_qty,2,'.',''),
+        'Closing Qty.' => number_format($closing_qty,2,'.',''),
+        'Closing Value (Approx.)' => number_format($closing_value,2,'.',''),
+        'Total No. of Products' => $total_products,
+        'Total No. of Lots' => $total_lots,
       ];
     }
 
@@ -2423,6 +2451,9 @@ class InventoryReportsController {
       'Sno.' => '',
       'Brand Name'  => '',
       'Closing Qty.' => number_format($tot_qty,2,'.',''),
+      'Closing Value (Approx.)' => number_format($tot_value,2,'.',''),
+      'Total No. of Products' => $tot_noof_products,
+      'Total No. of Lots' => $tot_noof_lots,
     ];
 
     return $cleaned_params;
@@ -2790,6 +2821,10 @@ class InventoryReportsController {
     $pdf->Cell($item_widths[0],  6,'Sno.','LRTB',0,'C');
     $pdf->Cell($item_widths[1],  6,'Brand Name','RTB',0,'C');
     $pdf->Cell($item_widths[2],  6,'Closing Qty.','RTB',0,'C');
+    $pdf->Cell($item_widths[3],  6,'Closing Value - in Rs. (Approx.)','RTB',0,'C');
+    $pdf->Cell($item_widths[4],  6,'Total No. of Products','RTB',0,'C');
+    $pdf->Cell($item_widths[4],  6,'Total No. of Lots','RTB',0,'C');
+
     $pdf->SetFont('Arial','',10);
   }  
 
