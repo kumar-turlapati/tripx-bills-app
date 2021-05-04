@@ -444,16 +444,32 @@ class InventoryController {
 
   public function refreshCb(Request $request) {
     $refreshed = null;
+    $client_locations = $location_codes = [];
+    $query_params = [];
+
+    # ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_codes[$location_key_a[0]] = $location_value;
+    }    
 
     if(count($request->request->all()) > 0) {
-      // call api.
-      $api_caller = new ApiCaller();
-      $response = $api_caller->sendRequest('post','refresh/stock/wo-indents',[]);
-      $status = $response['status'];
-      if($status === 'success') {
-        $refreshed = true;
-      } elseif($status === 'failed') {
-        $refreshed = false;
+      $form_data = $request->request->all();
+      if(isset($form_data['locationCode']) && $form_data['locationCode'] !== '') {
+        $query_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+        // call api.
+        $api_caller = new ApiCaller();
+        $response = $api_caller->sendRequest('post','refresh/stock/wo-indents',$query_params);
+        $status = $response['status'];
+        if($status === 'success') {
+          $refreshed = true;
+        } elseif($status === 'failed') {
+          $refreshed = false;
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$response['reason'], 1);
+        }
+      } else {
+        $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;Store / Location name is required', 1);
       }
     }
 
@@ -465,6 +481,7 @@ class InventoryController {
 
     $template_vars = array(
       'refreshed' => $refreshed,
+      'client_locations' => ['' => 'Choose'] + $location_codes,
     );
 
     // render template
@@ -473,26 +490,44 @@ class InventoryController {
 
   public function refreshCbIndents(Request $request) {
     $refreshed = null;
+    $client_locations = $location_codes = [];
+    $query_params = [];
+
+    # ---------- get location codes from api -----------------------
+    $client_locations = Utilities::get_client_locations(true);
+    foreach($client_locations as $location_key => $location_value) {
+      $location_key_a = explode('`', $location_key);
+      $location_codes[$location_key_a[0]] = $location_value;
+    }    
+
     if(count($request->request->all()) > 0) {
-      // call api.
-      $api_caller = new ApiCaller();
-      $response = $api_caller->sendRequest('post','refresh/stock/with-indents',[]);
-      $status = $response['status'];
-      if($status === 'success') {
-        $refreshed = true;
-      } elseif($status === 'failed') {
-        $refreshed = false;
+      $form_data = $request->request->all();      
+      if(isset($form_data['locationCode']) && $form_data['locationCode'] !== '') {
+        $query_params['locationCode'] = Utilities::clean_string($form_data['locationCode']);
+        // call api.
+        $api_caller = new ApiCaller();
+        $response = $api_caller->sendRequest('post','refresh/stock/with-indents',$query_params);
+        $status = $response['status'];
+        if($status === 'success') {
+          $refreshed = true;
+        } elseif($status === 'failed') {
+          $refreshed = false;
+          $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;'.$response['reason'], 1);
+        }
+      } else {
+        $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i>&nbsp;Store / Location name is required', 1);
       }
     }
 
    // prepare template
     $controller_vars = array(
-      'page_title' => 'Refresh Closing Balances - With Indents',
+      'page_title' => 'Refresh Closing Balances - For Indents Only',
       'icon_name' => 'fa fa-refresh',
     );
 
     $template_vars = array(
       'refreshed' => $refreshed,
+      'client_locations' => ['' => 'Choose'] + $location_codes,
     );
 
     // render template
