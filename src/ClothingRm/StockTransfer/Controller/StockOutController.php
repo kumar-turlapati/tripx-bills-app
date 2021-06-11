@@ -167,7 +167,7 @@ class StockOutController
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'View Stock Transfer',
+      'page_title' => "View Stock Transfer { Voucher No. $form_data[transferNo] }",
       'icon_name' => 'fa fa-database',
     );
 
