@@ -2341,6 +2341,7 @@ class InventoryReportsController {
       $tax_percent = $item_details['taxPercent'];
       $wholesale_price = $item_details['wholesalePrice'];
       $online_price = $item_details['onlinePrice'];
+      $exmill_price = $item_details['exMillPrice'];
       $rack_no = $item_details['rackNo'];
 
       $amount = round($closing_qty * $purchase_rate, 2);
@@ -2373,6 +2374,8 @@ class InventoryReportsController {
         'Lot No.'     => $lot_no,
         'Wholesale Price' => $wholesale_price,
         'Online Price' => $online_price,
+        'Exmill'      => $exmill_price,
+        'Rate'        => number_format($purchase_rate,2,'.',''),
         'GST (%)'     => number_format($tax_percent,2,'.',''),
         'OP Qty.'     => number_format($opening_qty,2,'.',''),
         'PU Qty.'     => number_format($purchased_qty,2,'.',''),
@@ -2382,7 +2385,6 @@ class InventoryReportsController {
         'SA Qty.'     => number_format($sold_qty,2,'.',''),
         'PR Qty.'     => number_format($purchase_return_qty,2,'.',''), 
         'CL Qty.'     => number_format($closing_qty,2,'.',''),
-        'Rate'        => number_format($purchase_rate,2,'.',''),
         'Amount'      => number_format($amount,2,'.',''),
         'M.R.P'       => number_format($mrp,2,'.',''),
       ];
