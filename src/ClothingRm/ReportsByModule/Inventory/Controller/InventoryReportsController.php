@@ -2406,6 +2406,8 @@ class InventoryReportsController {
         'Lot No.'     => '',
         'Wholesale Price' => '',
         'Online Price' => '',
+        'Exmill'      => '',
+        'Rate'        => '',
         'GST (%)'     => '',
         'OP Qty.'     => number_format($tot_op_qty,2,'.',''),
         'PU Qty.'     => number_format($tot_pu_qty,2,'.',''),
@@ -2415,7 +2417,6 @@ class InventoryReportsController {
         'SA Qty.'     => number_format($tot_sa_qty,2,'.',''),
         'PR Qty.'     => number_format($tot_pr_qty,2,'.',''), 
         'CL Qty.'     => number_format($tot_cl_qty,2,'.',''),
-        'Rate'        => '',
         'Amount'      => number_format($tot_amount,2,'.',''),
         'M.R.P'       => '',
     ];
