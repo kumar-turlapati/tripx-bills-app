@@ -1,4 +1,4 @@
-<?php 
+<?php
 if($page_links_to_end>1 && $total_records>0):
   if(!isset($query_params)) {
     $query_params = '';

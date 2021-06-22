@@ -120,7 +120,12 @@
     $forward_store = $submitted_data['forwardStore'];
   } else {
     $forward_store = 0;
-  }  
+  }
+
+  $einv_user_name = isset($submitted_data['einvUsername']) ? $submitted_data['einvUsername'] : '';
+  $eway_user_name = isset($submitted_data['eWayBillUsername']) ? $submitted_data['eWayBillUsername'] : '';
+  $returns_user_name = isset($submitted_data['returnsUsername']) ? $submitted_data['returnsUsername'] : '';
+
   $disabled_status_class = $location_status === 0 ? 'disabled' : '';
   $active_inactive_a = [0=>'Inactive', 1=>'Active'];
 ?>
@@ -138,9 +143,10 @@
           </div>
         </div>
         <form class="form-validate form-horizontal" method="POST">
+          <h4 class="labelStyleOnlyColor">General Details</h4>
           <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Store name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Store name</label>
               <input
                 type="text" 
                 class="form-control" 
@@ -153,8 +159,8 @@
                 <span class="error"><?php echo $form_errors['locationName'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Address1</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Address1</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -167,8 +173,8 @@
                 <span class="error"><?php echo $form_errors['address1'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Address2</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Address2</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -181,10 +187,8 @@
                 <span class="error"><?php echo $form_errors['address2'] ?></span>
               <?php endif; ?>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Country name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Country name</label>
               <div class="select-wrap">
                 <select class="form-control" name="countryID" id="countryID">
                   <?php 
@@ -202,9 +206,11 @@
               <?php if(isset($form_errors['countryID'])): ?>
                 <span class="error"><?php echo $form_errors['countryID'] ?></span>
               <?php endif; ?>                 
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">State</label>
+            </div>      
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">State</label>
               <select class="form-control" name="stateID" id="stateID">
                 <?php 
                   foreach($states as $key=>$value): 
@@ -221,8 +227,8 @@
                 <span class="error"><?php echo $form_errors['stateID'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">City name</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">City name</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -233,11 +239,9 @@
               <?php if(isset($form_errors['cityName'])): ?>
                 <span class="error"><?php echo $form_errors['cityName'] ?></span>
               <?php endif; ?>   
-            </div>    
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Pincode</label>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Pincode</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -249,17 +253,19 @@
                 <span class="error"><?php echo $form_errors['pincode'] ?></span>
               <?php endif; ?>              
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">Phone</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Phone</label>
               <input type="text" class="form-control" name="phone" id="phone"
               value="<?php echo $phone ?>"              
               >
               <?php if(isset($form_errors['phone'])): ?>
                 <span class="error"><?php echo $form_errors['phone'] ?></span>
               <?php endif; ?>                
-            </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">GST no.</label>
+            </div>            
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">GST no.</label>
               <input 
                 type="text" 
                 class="form-control" 
@@ -271,10 +277,8 @@
                 <span class="error"><?php echo $form_errors['locGstNo'] ?></span>
               <?php endif; ?>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Location short name (Printed on Invoices)</label>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Location short name (Printed on Invoices)</label>
               <input
                 type="text"
                 class="form-control" 
@@ -287,9 +291,10 @@
                 <span class="error"><?php echo $form_errors['locationNameShort'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;SMS Sender ID (Max. 6 chars)</span>
+            <?php /*
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">
+                <span><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;SMS Sender ID (Max. 6 chars)</span>
               </label>
               <input
                 type="text"
@@ -303,13 +308,13 @@
                 <span class="error"><?php echo $form_errors['smsSenderID'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;Store Name in SMS (Max. 20 Chars.)</span>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">
+                <span><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;Store Name in SMS (Max. 20 Chars.)</span>
               </label>
               <input
                 type="text" 
-                class="form-control"
+                class="form-control labelStyle"
                 name="smsCompanyShortName"
                 id="smsCompanyShortName"
                 value="<?php echo $sms_company_short_name ?>"
@@ -318,12 +323,10 @@
               <?php if(isset($form_errors['smsCompanyShortName'])): ?>
                 <span class="error"><?php echo $form_errors['smsCompanyShortName'] ?></span>
               <?php endif; ?>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-inr" aria-hidden="true"></i>&nbsp;Allow MRP Editing?</span>
+            </div> */ ?>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">
+                <span><i class="fa fa-inr" aria-hidden="true"></i>&nbsp;Allow MRP Editing?</span>
               </label>
               <select class="form-control" name="mrpEditing" id="mrpEditing">
                 <?php 
@@ -341,9 +344,9 @@
                 <span class="error"><?php echo $errors['mrpEditing'] ?></span>
               <?php endif; ?>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-inr" aria-hidden="true"></i>&nbsp;Allow Manual Sales Discount?</span>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">
+                <span><i class="fa fa-inr" aria-hidden="true"></i>&nbsp;Allow Manual Sales Discount?</span>
               </label>
               <select class="form-control" name="allowManualDiscount" id="allowManualDiscount">
                 <?php 
@@ -360,10 +363,12 @@
               <?php if(isset($errors['allowManualDiscount'])): ?>
                 <span class="error"><?php echo $errors['allowManualDiscount'] ?></span>
               <?php endif; ?>
-            </div>             
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Choose a Bank to print details on B2B Invoice</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label labelStyle" title="Choose a Bank to print details on B2B Invoice">
+                Choose a Bank
               </label>
               <select class="form-control" name="bankCode" id="bankCode">
                 <?php 
@@ -380,11 +385,11 @@
               <?php if(isset($errors['mrpEditing'])): ?>
                 <span class="error"><?php echo $errors['mrpEditing'] ?></span>
               <?php endif; ?>
-            </div>            
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;"><i class="fa fa-keyboard-o" aria-hidden="true"></i>&nbsp;Sales Operator - Invoice edit days allowed</label>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle" title="Sales Operator - Invoice edit days allowed">
+                <i class="fa fa-keyboard-o" aria-hidden="true"></i>&nbsp;Invoice edit days allowed
+              </label>
               <input
                 type="text"
                 class="form-control" 
@@ -397,10 +402,9 @@
                 <span class="error"><?php echo $form_errors['edaysInvoice'] ?></span>
               <?php endif; ?>
             </div>
-
-            <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Is a Forward/Temporary location?</span>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">
+                <span>Is a Forward/Temporary location?</span>
               </label>
               <select class="form-control" name="forwardStore" id="forwardStore">
                 <?php 
@@ -418,24 +422,111 @@
                 <span class="error"><?php echo $errors['forwardStore'] ?></span>
               <?php endif; ?>
             </div>
-          </div>          
+          </div>
+          <h4 class="labelStyleOnlyColor">GST Portal Credentials</h4>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">eInvoice Username</label>
+              <input
+                type="text" 
+                class="form-control" 
+                name="einvUsername" 
+                id="einvUsername"
+                value="<?php echo $einv_user_name ?>"
+                maxlength="50"
+              >
+              <?php if(isset($form_errors['einvUsername'])): ?>
+                <span class="error"><?php echo $form_errors['einvUsername'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">eInvoice Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                name="einvPassword"
+                id="einvPassword" 
+                maxlength="100"
+              >
+              <?php if(isset($form_errors['address1'])): ?>
+                <span class="error"><?php echo $form_errors['address1'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">eWaybill Username</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="eWayBillUsername"
+                id="eWayBillUsername" 
+                value="<?php echo $eway_user_name ?>"
+                maxlength="100"
+              >
+              <?php if(isset($form_errors['eWayBillUsername'])): ?>
+                <span class="error"><?php echo $form_errors['eWayBillUsername'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">eWaybill Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                name="eWayBillPassword"
+                id="eWayBillPassword" 
+                maxlength="100"
+              >
+              <?php if(isset($form_errors['eWayBillPassword'])): ?>
+                <span class="error"><?php echo $form_errors['eWayBillPassword'] ?></span>
+              <?php endif; ?>                 
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
+              <label class="control-label labelStyle">Returns Username</label>
+              <input
+                type="text" 
+                class="form-control" 
+                name="returnsUsername" 
+                id="returnsUsername"
+                value="<?php echo $returns_user_name ?>"
+                maxlength="50"
+              >
+              <?php if(isset($form_errors['locationName'])): ?>
+                <span class="error"><?php echo $form_errors['locationName'] ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="control-label labelStyle">Returns Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                name="returnsPassword"
+                id="returnsPassword" 
+                maxlength="100"
+              >
+              <?php if(isset($form_errors['returnsPassword'])): ?>
+                <span class="error"><?php echo $form_errors['returnsPassword'] ?></span>
+              <?php endif; ?>
+            </div>            
+          </div>
+          <h4 class="labelStyleOnlyColor">Terms and Conditions on Invoice</h4>
           <div class="form-group">
             <div class="col-sm-12 col-md-6 col-lg-6">
               <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Terms &amp; Conditions on B2B Invoice (one per line)</span>
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;">B2B Invoice (one per line)</span>
               </label>
               <textarea id="tacB2B" name="tacB2B" rows="5" cols="60"><?php echo $tac_b2b ?></textarea>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6">
               <label class="control-label">
-                <span style="font-size:14px;color:#2E1114;font-weight:bold;">Terms &amp; Conditions on B2C Invoice (one per line)</span>
+                <span style="font-size:14px;color:#2E1114;font-weight:bold;">B2C Invoice (one per line)</span>
               </label>
               <textarea id="tacB2C" name="tacB2C" rows="5" cols="60"><?php echo $tac_b2c ?></textarea>
             </div>            
           </div>
+          <h4 class="labelStyleOnlyColor">Status</h4>
           <div class="form-group">
             <div class="col-sm-12 col-md-3 col-lg-3 m-bot15">
-              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Status</label>
               <div class="select-wrap">
                 <select class="form-control" name="status" id="status" style="border: 2px solid red;" <?php echo $disabled_status_class ?>>
                   <?php 
@@ -456,7 +547,7 @@
             </div>
             <?php if($location_status === 1): ?>
               <div class="col-sm-12 col-md-9 col-lg-9 m-bot15">
-                <p style="padding-top: 30px; font-size: 14px; text-decoration: underline; font-weight: bold;color: red;">Making this store inactive will lock the store with immediate effect. You can't make active again.</p>
+                <p style="padding-top: 10px; font-size: 14px; text-decoration: underline; font-weight: bold;color: red;">Making this store inactive will lock the store with immediate effect. You can't make active again.</p>
               </div>
             <?php endif; ?>
           </div>

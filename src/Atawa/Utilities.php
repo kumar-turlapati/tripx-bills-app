@@ -100,17 +100,16 @@ class Utilities
 	 * return starting index of slno
 	 */
 	public static function get_slno_start($record_count=0, $no_of_records=0, $page_no=1) {
-	    
-	    $total_records  =   $no_of_records*$page_no;
-	    if($record_count==$no_of_records) {
-	        $slno       =    $total_records-$no_of_records;
-	    } else if($record_count < $no_of_records) {
-	        $slno       =    $total_records-($no_of_records);
-	    } else {
-	        $slno       =    0;
-	    }
-	    
-	    return $slno;
+    $total_records  = $no_of_records*$page_no;
+    if($record_count == $no_of_records) {
+      $slno       =    $total_records-$no_of_records;
+    } else if($record_count < $no_of_records) {
+      $slno       =    $total_records-($no_of_records);
+    } else {
+      $slno       =    0;
+    }
+    
+    return $slno;
 	}
 
   # removes tags, carriage returns and new lines from string.
@@ -1309,6 +1308,31 @@ class Utilities
       $is_valid = true;
     }
     return $is_valid;
+  }
+
+  public static function get_services_url() {
+    return Config::get_services_url($_SERVER['apiEnvironment']);
+  }
+
+  public static function get_services_token() {
+    if(isset($_SESSION['servicesToken'])) {
+      return $_SESSION['servicesToken'];
+    } else {
+      // get service token from api
+      $client_code = Utilities::get_current_client_id();
+      $api_caller = new ApiCaller();
+      $response = $api_caller->sendRequest('get','clients/details/'.$client_code);
+      $status = $response['status'];
+      if($status === 'success' && 
+         isset($response['response']['clientDetails']['servicesToken']) &&
+         $response['response']['clientDetails']['servicesToken'] !== ''
+        ) {
+        $_SESSION['servicesToken'] = $response['response']['clientDetails']['servicesToken'];
+        return $response['response']['clientDetails']['servicesToken'];
+      } elseif($status === 'failed') {
+        return false;
+      }      
+    }
   }  
 
 }

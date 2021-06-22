@@ -126,7 +126,7 @@
         <form class="form-validate form-horizontal" method="POST">
           <div class="form-group">
             <div class="col-sm-12 col-md-4 col-lg-4">
-              <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Location name (only digits and alphabets allowed)</label>
+              <label class="control-label labelStyle" style="font-size:14px;color:#2E1114;font-weight:bold;">Location name (only digits and alphabets allowed)</label>
               <input
                 type="text" 
                 class="form-control" 

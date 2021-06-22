@@ -142,6 +142,7 @@
               <li><a href="/gate-pass/register"><i class="fa fa-truck"></i> Gatepass Register</a></li>
               <li><a href="/sales-return/list"><i class="fa fa-repeat"></i> Sales Return Register</a></li>
               <li><a href="/fin/sales2cb/register"><i class="fa fa-arrow-right"></i> Sales2CB Register</a></li>
+              <li><a href="/einvoices/list"><i class="fa fa-inr"></i> eInvoices Register</a></li>
             </ul>
           </li>
           <li class="sub-menu">

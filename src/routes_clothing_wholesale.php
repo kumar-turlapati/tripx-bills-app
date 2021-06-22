@@ -302,6 +302,33 @@ $routes->add('release_indent_items', new Routing\Route('/release-indent-items/{p
   'pageNo' => null,
 )));
 
+// einvoice routes...
+$routes->add('generate_einvoice', new Routing\Route('/sales/generate-einvoice/{salesCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\EInvoiceController::generateEinvoiceAction',
+  'salesCode' => null,
+)));
+$routes->add('einvoices_list', new Routing\Route('/einvoices/list/{pageNo}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\EInvoiceController::eInvoiceRegister',
+  'pageNo' => null
+)));
+$routes->add('view_einvoice', new Routing\Route('/einvoice/view/{invoiceCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\EInvoiceController::eInvoiceView',
+  'invoiceCode' => null,
+)));
+$routes->add('einvoice_cancel', new Routing\Route('/einvoice/cancel-irn/{irn}/{invoiceCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\EInvoiceController::cancelEinvoice',
+  'irn' => null,
+  'invoiceCode' => null,
+)));
+$routes->add('einvoice_waybill', new Routing\Route('/einvoice/generate-eway-bill/{irn}/{invoiceCode}', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\EInvoiceController::generateEwayBill',
+  'irn' => null,
+  'invoiceCode' => null,
+)));
+$routes->add('generate_qrcode', new Routing\Route('/qrcode', array(
+  '_controller' => 'ClothingRm\\Sales\\Controller\\EInvoiceController::generateQrCode',
+)));
+
 // Sales Return routes
 $routes->add('sales_return_entry', new Routing\Route('/sales-return/entry/{salesCode}', array(
   '_controller' => 'ClothingRm\\SalesReturns\\Controller\\SalesReturnsController::salesReturnEntryAction',

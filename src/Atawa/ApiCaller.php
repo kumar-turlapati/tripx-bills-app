@@ -135,6 +135,68 @@ class ApiCaller
 
 		return $response;
 	}
- 
 
+	public function sendRequestExternal($method='',$uri='',$param_array=[],$process_response=true,$debug=false) {
+		if(isset($_SESSION['servicesToken'])) {
+			$services_token = $_SESSION['servicesToken'];
+		} else {
+			$services_token = Utilities::get_services_token();
+		}
+
+		if( strlen($services_token) === 0) Utilities::redirect('/error-404');
+
+		// prepare headers.
+		self::$instance->setHeader('Content-Type', 'application/json');
+		self::$instance->setHeader('domain', 'QwikBills');
+		self::$instance->setHeader('client_secret', $services_token);
+
+		// get api environment
+		$this->api_url = Utilities::get_services_url();
+
+		// prepare end point
+		$end_point = $this->api_url.'/'.$uri;
+		// dump($param_array);
+		// echo 'end point is....'.$end_point;
+		// exit;
+
+		# initiate CURL request.
+		switch ($method) {
+			case 'post':
+				self::$instance->post($end_point, $param_array);	
+				break;
+			case 'get':
+				self::$instance->get($end_point, $param_array);	
+				break;
+			case 'update':
+				break;
+			case 'put':
+				self::$instance->put($end_point, $param_array);			
+				break;
+			case 'delete':
+				self::$instance->delete($end_point, $param_array);			
+				break;			
+		}
+
+		// dump(self::$instance);
+		// exit;
+
+		if (self::$instance->error) {
+			if((int)self::$instance->errorCode===500) {
+				$response = json_decode(self::$instance->response, true);
+				if(isset($response['errorcode']) && $response['errortext']) {
+					return array('status'=>'failed', 'reason' => $response['errorcode'].'#'.$response['errortext']);
+				} else {
+					return ['status'=>'failed', 'reason' => '#Unknown error.'];
+				}
+			} else {
+				return array(
+					'status'=>'failed', 
+					'reason'=> '( '.self::$instance->errorCode.' ) '.self::$instance->errorMessage,
+					'error_message' => isset(self::$instance->response->message) ? self::$instance->response->message : '',
+				);
+			}
+		} else {
+			return json_decode(json_encode(self::$instance->response), true);
+		}
+	}
 }

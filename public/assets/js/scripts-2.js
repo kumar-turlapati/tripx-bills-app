@@ -156,6 +156,54 @@ function initializeJS() {
     });
   }
 
+  if($('#eInvoiceForm').length > 0) {
+    $('#generateEinvoice').on('click', function(e){
+      e.preventDefault();
+      $('#generateEinvoice, .cancelButton').attr('disabled', true);
+      $('#eInvoiceForm').submit();
+    });
+  }
+
+  if($('#irnCancelForm').length > 0) {
+    $('#cancelIrn').on('click', function(e){
+      e.preventDefault();
+      bootbox.confirm("Are you sure. You want to cancel this IRN?", function(result) {
+        if(result === true) {
+          $('#cancelIrn, .cancelButton').attr('disabled', true);
+          $('#irnCancelForm').submit();
+        } else {
+          return;
+        }
+      }); 
+    });    
+  }  
+
+  if( $('#eWayBillByIrn').length > 0 ) {
+    $('#transportMode').on('change', function(){
+      var transportMode = parseInt($('#transportMode').val());
+      if(transportMode === 0) {
+        $('#transportByRoad, #transportByOtherModes').hide();
+        $('#vehicleType').val('0');
+        $('#vehicleNo, #transportDocNumber').val('');
+      } else if(transportMode === 1) {
+        $('#transportByRoad').show();
+        $('#transportByOtherModes').hide();
+        $('#transportDocNumber').val('');
+      } else {
+        $('#transportByOtherModes').show();
+        $('#transportByRoad').hide();
+        $('#vehicleType').val('0');
+        $('#vehicleNo').val('');
+      }
+    });
+
+    $('#cancelIrn').on('click', function(e){
+      e.preventDefault();
+      $('#cancelIrn, .cancelButton').attr('disabled', true);
+      $('#eWayBillByIrn').submit();
+    });     
+  }
+
   if( $('#buForm').length > 0) {
     $('#showAllCustomers').on('change', function(e){
       var inputValue = $(this).val();
@@ -2332,6 +2380,8 @@ function initializeJS() {
       window.location.href = '/dashboard';
     } else if(buttonId === 'downloadPO') {
       window.location.href = '/admin-options/export-pos';      
+    } else if(buttonId === 'cancelIrnCancel' || buttonId === 'cancelGenerateEinvoice') {
+      window.location.href = '/einvoices/list';      
     }
   });
 
@@ -2757,11 +2807,8 @@ function initializeJS() {
     function updateTransferOutTotal() {
       var totGrossAmount = totTaxableAmount = totDiscount = totTaxAmount = 0;
       var totBeforeRound = roundedNetPay = netPay = 0;
-
       var shippingCharges = insuranceCharges = otherCharges = 0;
-
       var totAvailableQty = totTransferQty = 0;
-
       var taxCalcOption = $('#taxCalcOption').val();
 
       jQuery('.grossAmount').each(function(i, obj) {
