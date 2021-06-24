@@ -148,7 +148,7 @@ class ApiCaller
 		// prepare headers.
 		self::$instance->setHeader('Content-Type', 'application/json');
 		self::$instance->setHeader('domain', 'QwikBills');
-		self::$instance->setHeader('client_secret', $services_token);
+		self::$instance->setHeader('clientsecret', $services_token);
 
 		// get api environment
 		$this->api_url = Utilities::get_services_url();
