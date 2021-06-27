@@ -47,7 +47,7 @@ class salesEntryWithBarcode {
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = $agents_a = [];
-    $customer_types = Constants::$CUSTOMER_TYPES;
+    $customer_types = Constants::$SUPPLY_TYPES_INVOICE;
     $sa_categories = ['' => 'Choose'];
 
     $from_indent = false;
@@ -241,6 +241,7 @@ class salesEntryWithBarcode {
       'sa_categories' => $sa_categories,
       'wallets' => array(''=>'Choose') + Constants::$WALLETS,
       'agents' => [''=>'Choose']+$agents_a,
+      'yes_no_options' => ['N' => 'No', 'Y' => 'Yes'],
     );
 
     return array($this->template->render_view('sales-entry-with-barcode', $template_vars),$controller_vars);
@@ -256,7 +257,7 @@ class salesEntryWithBarcode {
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = $agents_a = [];
-    $customer_types = Constants::$CUSTOMER_TYPES;
+    $customer_types = Constants::$SUPPLY_TYPES_INVOICE;
     $sa_categories = ['' => 'Choose'];
 
     $from_indent = false;
@@ -299,7 +300,7 @@ class salesEntryWithBarcode {
         $form_data = $this->_map_invoice_data_with_form_data($sales_response['saleDetails']);
       } else {
         $page_error = $sales_response['apierror'];
-        $flash->set_flash_message($page_error,1);
+        $this->flash->set_flash_message($page_error,1);
         Utilities::redirect('/sales/list');
       }
     } else {
@@ -480,6 +481,7 @@ class salesEntryWithBarcode {
       'agents' => [''=>'Choose']+$agents_a,
       'allowMrpEdit' => $allow_mrp_edit,
       'allowDiscEdit' => $allow_disc_edit,
+      'yes_no_options' => ['N' => 'No', 'Y' => 'Yes'],
     );
 
     return array($this->template->render_view('sales-update-with-barcode', $template_vars),$controller_vars);
@@ -517,7 +519,7 @@ class salesEntryWithBarcode {
     $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
     $item_details = $form_data['itemDetails'];
     $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
-    $referral_code = is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
+    $referral_code = isset($form_data['refCode']) && is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
     $from_indent = isset($form_data['fi']) ? 'y': 'n';
     $customer_type = $form_data['customerType'];
@@ -541,6 +543,8 @@ class salesEntryWithBarcode {
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
     $is_combo_bill = isset($form_data['isComboBill']) ? Utilities::clean_string($form_data['isComboBill']) : 0;
+    $igst_on_intra = isset($form_data['igstOnIntra']) ? Utilities::clean_string($form_data['igstOnIntra']) : 'N';
+    $reverse_charge = isset($form_data['reverseCharge']) ? Utilities::clean_string($form_data['reverseCharge']) : 'N';
 
     // validate customer type
     if( in_array($customer_type, $customer_types) ) {
@@ -813,6 +817,8 @@ class salesEntryWithBarcode {
     $cleaned_params['billingRate'] = $billing_rate;
     $cleaned_params['indentCode'] = $ic;
     $cleaned_params['indentNo'] = $indent_no;
+    $cleaned_params['reverseCharge'] = $reverse_charge;
+    $cleaned_params['igstOnIntra'] = $igst_on_intra;
 
     // dump($cleaned_params, $form_data);
     // exit;

@@ -37,7 +37,7 @@
   $split_payment_cn = isset($form_data['splitPaymentCn']) ? $form_data['splitPaymentCn'] : '';
   $promo_code = isset($form_data['promoCode']) ? $form_data['promoCode'] : '';
   $referral_code = isset($form_data['refCode']) ? $form_data['refCode'] : '';
-  $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'b2c';
+  $customer_type = isset($form_data['customerType']) ? $form_data['customerType'] : 'B2C';
   $credit_days = isset($form_data['saCreditDays']) ? $form_data['saCreditDays'] : '';
 
   $packing_charges = isset($form_data['packingCharges']) ? $form_data['packingCharges'] : '';
@@ -74,6 +74,8 @@
   $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
+  $igst_on_intra = isset($form_data['igstOnIntra']) ? $form_data['igstOnIntra'] : 'N';
+  $reverse_charge = isset($form_data['reverseCharge']) ? $form_data['reverseCharge'] : 'N';
 
   // dump($errors);
 ?>
@@ -157,7 +159,7 @@
                       <?php endforeach; ?>
                     </select>                    
                   </td>
-                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Customer Type</td>
+                  <td style="vertical-align:middle;font-size:15px;font-weight:bold;border-right:none;border-left:none;border-top:none;text-align:right;width:10%;">Supply Type</td>
                   <td style="vertical-align:middle;border-right:none;border-left:none;border-top:none;width:15%;text-align:left;">
                     <select class="form-control" name="customerType" id="customerType">
                       <?php 
@@ -752,23 +754,7 @@
                   </div>                
                 </div>              
                 <div class="form-group">
-                  <?php 
-                  /*
-                  <div class="col-sm-12 col-md-3 col-lg-3">
-                    <label class="control-label labelStyle">Customer mobile number</label>
-                    <input type="text" class="form-control noEnterKey" name="mobileNo" id="mobileNo" maxlength="10" value="<?php echo $mobile_no ?>">
-                    <?php if(isset($errors['mobileNo'])): ?>
-                      <span class="error"><?php echo $errors['mobileNo'] ?></span>
-                    <?php endif; ?>
-                  </div>
-                  <div class="col-sm-12 col-md-3 col-lg-3">
-                    <label class="control-label labelStyle">Customer name</label>
-                    <input type="text" class="form-control noEnterKey cnameAc" name="name" id="name" value="<?php echo $customer_name ?>" />
-                    <?php if(isset($errors['name'])): ?>
-                      <span class="error"><?php echo $errors['name'] ?></span>
-                    <?php endif; ?>                  
-                  </div>
-                  */ ?>
+                  <?php /*
                   <div class="col-sm-12 col-md-3 col-lg-3">
                     <label class="control-label labelStyle">Referral code</label>
                     <input type="text" class="form-control noEnterKey" name="refCode" id="refCode" value="<?php echo $referral_code ?>" />
@@ -781,7 +767,41 @@
                   <div class="col-sm-12 col-md-3 col-lg-3">
                     <label class="control-label labelStyle">Referral mobile</label>
                     <input type="text" class="form-control noEnterKey" name="refMemberMobile" id="refMemberMobile" disabled />
-                  </div>                
+                  </div>*/?>
+                  <div class="col-sm-12 col-md-3 col-lg-3">
+                    <label class="control-label labelStyle">Reverse charge?</label>
+                    <div class="select-wrap">
+                      <select class="form-control" name="reverseCharge" id="reverseCharge">
+                        <?php 
+                          foreach($yes_no_options as $key => $value): 
+                            if($reverse_charge === $key) {
+                              $selected = 'selected = selected';
+                            } else {
+                              $selected = '';
+                            }
+                        ?>
+                          <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3 col-lg-3">
+                    <label class="control-label labelStyle">IGST on intra?</label>
+                    <div class="select-wrap">
+                      <select class="form-control" name="igstOnIntra" id="igstOnIntra">
+                        <?php 
+                          foreach($yes_no_options as $key => $value): 
+                            if($igst_on_intra === $key) {
+                              $selected = 'selected = selected';
+                            } else {
+                              $selected = '';
+                            }
+                        ?>
+                          <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </div>                    
+                  </div>
                 </div>
               </div>
             </div>

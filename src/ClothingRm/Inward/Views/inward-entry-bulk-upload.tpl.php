@@ -191,7 +191,7 @@
               <div class="form-group" style="padding-left: 35%">
                 <div class="col-sm-12 col-md-8" id="downloadButton" style="padding-top:15px;">
                   <label class="control-label">
-                    <a href="/downloads/Qb_InwardMaterial_Upload_Format_V.1.0.xlsx" target="_blank">
+                    <a href="/downloads/Qb_InwardMaterial_Upload_Format_V.1.1.xlsx" target="_blank">
                       <i class="fa fa-download"></i> Click here to download format.
                     </a>
                   </label>

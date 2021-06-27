@@ -812,7 +812,7 @@ function initializeJS() {
     $('#customerType').on('change', function(e){
       if($('#tBodyowItems tr').length > 0) {
         var customerType = $(this).val();
-        if(customerType === 'b2c') {
+        if(customerType === 'B2C') {
           $('#siOtherInfoWindow').hide();
           $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');
         } else if(customerType === 'b2b') {
@@ -823,7 +823,7 @@ function initializeJS() {
           $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');          
         }
       } else {
-        $(this).val('b2c');
+        $(this).val('B2C');
         alert('Scan Barcode first.');
       }
     });

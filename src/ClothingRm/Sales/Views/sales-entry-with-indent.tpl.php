@@ -111,6 +111,9 @@
   $billing_rates = ['mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online', 'ex' => 'Exmill'];
   $billing_rate = isset($form_data['billingRate']) ? $form_data['billingRate'] : 'mrp';
   $indent_no = isset($form_data['indentNo']) ? $form_data['indentNo'] : '';
+
+  $igst_on_intra = isset($form_data['igstOnIntra']) ? $form_data['igstOnIntra'] : 'N';
+  $reverse_charge = isset($form_data['reverseCharge']) ? $form_data['reverseCharge'] : 'N';
 ?>
 
 <div class="row">
@@ -745,6 +748,7 @@
                     <span class="error"><?php echo $errors['name'] ?></span>
                   <?php endif; ?>                  
                 </div>
+                <?php /*
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <label class="control-label labelStyle">Referral code</label>
                   <input type="text" class="form-control noEnterKey" name="refCode" id="refCode" value="<?php echo $referral_code ?>" />
@@ -757,6 +761,40 @@
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <label class="control-label labelStyle">Referral mobile</label>
                   <input type="text" class="form-control noEnterKey" name="refMemberMobile" id="refMemberMobile" disabled />
+                </div> */ ?>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">Reverse charge?</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="reverseCharge" id="reverseCharge">
+                      <?php 
+                        foreach($yes_no_options as $key => $value): 
+                          if($reverse_charge === $key) {
+                            $selected = 'selected = selected';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                  <label class="control-label labelStyle">IGST on intra?</label>
+                  <div class="select-wrap">
+                    <select class="form-control" name="igstOnIntra" id="igstOnIntra">
+                      <?php 
+                        foreach($yes_no_options as $key => $value): 
+                          if($igst_on_intra === $key) {
+                            $selected = 'selected = selected';
+                          } else {
+                            $selected = '';
+                          }
+                      ?>
+                        <option value="<?php echo $key ?>" <?php echo $selected ?>><?php echo $value ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>                    
                 </div>                
               </div>
             </div>

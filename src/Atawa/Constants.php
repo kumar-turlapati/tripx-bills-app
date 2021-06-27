@@ -177,6 +177,16 @@ class Constants
     4=>"Rejected"
   ];
 
+  public static $SUPPLY_TYPES_INVOICE = [
+    'B2B' => 'Business to Business',
+    'B2C' => 'Business to Customer',
+    'SEZWP' => 'To SEZ with Payment',
+    'SEZWOP' => 'To SEZ without Payment',
+    'EXPWP' => 'Export with Payment',
+    'EXPWOP' => 'Export without Payment',
+    'DEXP' => 'Deemed Export',
+  ];
+
   public static $GET_SESSION_INACTIVE_PERIOD = 3600;
 
   public static $REPORTS_ERROR_MESSAGE = '<i class="fa fa-exclamation-triangle"></i> No data is available. Change report filters and try again.';

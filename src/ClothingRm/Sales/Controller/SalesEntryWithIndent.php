@@ -236,6 +236,7 @@ class salesEntryWithIndent {
       'wallets' => array(''=>'Choose') + Constants::$WALLETS,
       'agents' => [''=>'Choose']+$agents_a,
       'is_submitted' => $is_submitted,
+      'yes_no_options' => ['N' => 'No', 'Y' => 'Yes'],
     );
 
     return array($this->template->render_view('sales-entry-with-indent', $template_vars),$controller_vars);
@@ -297,6 +298,8 @@ class salesEntryWithIndent {
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
     $is_combo_bill = isset($form_data['isComboBill']) ? Utilities::clean_string($form_data['isComboBill']) : 0;
+    $igst_on_intra = isset($form_data['igstOnIntra']) ? Utilities::clean_string($form_data['igstOnIntra']) : 'N';
+    $reverse_charge = isset($form_data['reverseCharge']) ? Utilities::clean_string($form_data['reverseCharge']) : 'N';
 
     // validate customer type
     if( in_array($customer_type, $customer_types) ) {
@@ -561,6 +564,8 @@ class salesEntryWithIndent {
     $cleaned_params['billingRate'] = $billing_rate;
     $cleaned_params['indentCode'] = $ic;
     $cleaned_params['indentNo'] = $indent_no;
+    $cleaned_params['reverseCharge'] = $reverse_charge;
+    $cleaned_params['igstOnIntra'] = $igst_on_intra;
 
     # return response.
     if(count($form_errors)>0) {

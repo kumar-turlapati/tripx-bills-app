@@ -43,7 +43,7 @@ class SalesEntryWoBarcode {
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = $agents_a = [];
     $sa_categories = ['' => 'Choose'];
-    $customer_types = Constants::$CUSTOMER_TYPES;    
+    $customer_types = Constants::$SUPPLY_TYPES_INVOICE;    
 
     $page_error = $page_success = $promo_key = '';
 
@@ -220,6 +220,7 @@ class SalesEntryWoBarcode {
       'sa_categories' => $sa_categories,
       'wallets' => array(''=>'Choose') + Constants::$WALLETS,
       'agents' => [''=>'Choose']+$agents_a,
+      'yes_no_options' => ['N' => 'No', 'Y' => 'Yes'],
     );
 
     return array($this->template->render_view('sales-entry-wo-barcode', $template_vars),$controller_vars);
@@ -238,7 +239,7 @@ class SalesEntryWoBarcode {
     $agents_a = [];
     $sa_categories = ['' => 'Choose'];
 
-    $customer_types = Constants::$CUSTOMER_TYPES;    
+    $customer_types = Constants::$SUPPLY_TYPES_INVOICE;    
     $page_error = $page_success = $promo_key = '';
 
     if($request->get('salesCode') && $request->get('salesCode')!=='') {
@@ -458,6 +459,7 @@ class SalesEntryWoBarcode {
       'sa_categories' => $sa_categories,
       'wallets' => array(''=>'Choose') + Constants::$WALLETS,
       'agents' => [''=>'Choose'] + $agents_a,
+      'yes_no_options' => ['N' => 'No', 'Y' => 'Yes']
     );
 
     return array($this->template->render_view('sales-update-wo-barcode', $template_vars),$controller_vars);
@@ -1138,7 +1140,7 @@ class SalesEntryWoBarcode {
     $split_payment_found = 0;
 
     $coupon_code = '';
-    $customer_types = array_keys(Constants::$CUSTOMER_TYPES);
+    $customer_types = array_keys(Constants::$SUPPLY_TYPES_INVOICE);
 
     $sale_date = Utilities::clean_string($form_data['saleDate']);
     $payment_method = (int)Utilities::clean_string($form_data['paymentMethod']);
@@ -1154,7 +1156,7 @@ class SalesEntryWoBarcode {
     $split_payment_wallet = isset($form_data['splitPaymentWallet']) && is_numeric($form_data['splitPaymentWallet'])  ? Utilities::clean_string($form_data['splitPaymentWallet']) : 0;    $cn_no = isset($form_data['cnNo']) ? Utilities::clean_string($form_data['cnNo']) : 0;
     $item_details = $form_data['itemDetails'];
     $executive_id = isset($form_data['saExecutive']) && $form_data['saExecutive'] !== '' ? Utilities::clean_string($form_data['saExecutive']) : '';
-    $referral_code = is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
+    $referral_code = isset($form_data['refCode']) && is_numeric($form_data['refCode']) ? Utilities::clean_string($form_data['refCode']) : 0;
     $promo_code = isset($form_data['promoCode']) ? Utilities::clean_string($form_data['promoCode']) : '';
     $from_indent = isset($form_data['fi']) ? 'y': 'n';
     $customer_type = $form_data['customerType'];
@@ -1179,6 +1181,8 @@ class SalesEntryWoBarcode {
     $wallet_id = isset($form_data['walletID']) ? Utilities::clean_string($form_data['walletID']) : 0;
     $wallet_ref_no = isset($form_data['walletRefNo']) ? Utilities::clean_string($form_data['walletRefNo']) : '';
     $is_combo_bill = isset($form_data['isComboBill']) ? Utilities::clean_string($form_data['isComboBill']) : 0;
+    $igst_on_intra = isset($form_data['igstOnIntra']) ? Utilities::clean_string($form_data['igstOnIntra']) : 'N';
+    $reverse_charge = isset($form_data['reverseCharge']) ? Utilities::clean_string($form_data['reverseCharge']) : 'N';
 
     // validate customer type
     if( in_array($customer_type, $customer_types) ) {
@@ -1436,6 +1440,8 @@ class SalesEntryWoBarcode {
     $cleaned_params['billingRate'] = $billing_rate;
     $cleaned_params['indentCode'] = $ic;
     $cleaned_params['indentNo'] = $indent_no;
+    $cleaned_params['reverseCharge'] = $reverse_charge;
+    $cleaned_params['igstOnIntra'] = $igst_on_intra;
 
     # return response.
     if(count($form_errors)>0) {
