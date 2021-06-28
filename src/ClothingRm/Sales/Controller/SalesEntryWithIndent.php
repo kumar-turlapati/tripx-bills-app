@@ -257,7 +257,7 @@ class salesEntryWithIndent {
     $split_payment_found = 0;
 
     $coupon_code = '';
-    $customer_types = array_keys(Constants::$CUSTOMER_TYPES);
+    $customer_types = array_keys(Constants::$SUPPLY_TYPES_INVOICE);
 
     $sale_date = Utilities::clean_string($form_data['saleDate']);
     $payment_method = (int)Utilities::clean_string($form_data['paymentMethod']);
