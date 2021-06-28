@@ -45,7 +45,7 @@ class salesEntryWithIndent {
     $ages_a = $credit_days_a = $qtys_a = $offers_raw = [];
     $form_data = $errors = $form_errors = $offers = [];
     $taxes = $loc_states = $agents_a = [];
-    $customer_types = Constants::$CUSTOMER_TYPES;
+    $customer_types = Constants::$SUPPLY_TYPES_INVOICE;
     $sa_categories = ['' => 'Choose'];
 
     $from_indent = $is_submitted = false;
@@ -780,7 +780,7 @@ class salesEntryWithIndent {
     $form_data['name'] = $tran_details['customerName'];
     $form_data['mobileNo'] = $tran_details['primaryMobileNo'];
     $form_data['indentNo'] = $tran_details['indentNo'];
-    $form_data['customerType'] = 'b2b';
+    $form_data['customerType'] = 'B2B';
     $form_data['taxCalcOption'] = 'e';
     $form_data['billingRate'] = $tran_details['billingRate'];
     if($tran_details['remarks'] === '') {
