@@ -62,6 +62,8 @@ class InventoryReportsController {
 
       // hit api
       $inven_api_response = $this->inven_api->get_stock_report($form_data);
+      // dump($inven_api_response);
+      // exit;
       if($inven_api_response['status'] === false) {
         $error_message = Constants::$REPORTS_ERROR_MESSAGE;
         $this->flash->set_flash_message($error_message, 1);
@@ -2343,6 +2345,7 @@ class InventoryReportsController {
       $online_price = $item_details['onlinePrice'];
       $exmill_price = $item_details['exMillPrice'];
       $rack_no = $item_details['rackNo'];
+      $hsn_sac_code = $item_details['hsnSacCode'];
 
       $amount = round($closing_qty * $purchase_rate, 2);
       
@@ -2361,6 +2364,7 @@ class InventoryReportsController {
       $cleaned_params[$key] = [
         'Sno.' => $sno,
         'Item Name' => $item_name,
+        'HSN/SAC Code' => $hsn_sac_code,
         'Rack No' => str_replace(',', '_', $rack_no),
         'Category Name' => $category_name,
         'Brand Name'  => $brand_name,
@@ -2393,6 +2397,7 @@ class InventoryReportsController {
     $cleaned_params[count($cleaned_params)] = [
         'Sno.'          => '',
         'Item Name'     => '',
+        'HSN/SAC Code'  => '',
         'Rack No'       => '',
         'Category Name' => '',
         'Brand Name'    => '',

@@ -101,54 +101,60 @@
               </tr>
             </thead>
             <tbody>
-              <?php
-                foreach($einvoices as $invoice_details):
-                  $sl_no++;
-                  $doc_no = $invoice_details['docNo'];
-                  $gst_no = $invoice_details['gstNo'];
-                  $customer_gst_no = $invoice_details['customerGstNo'];
-                  $irn = $invoice_details['irnNo'];
-                  $ack_no = $invoice_details['ackNo'];
-                  $ack_date = date("d-m-Y H:ia", strtotime(str_replace(['T', '.000Z'], ['', ''], $invoice_details['ackDt'])));
-                  $invoice_amount = $invoice_details['invoiceValue'];
-                  $eway_bill_no = $invoice_details['ewbNo'];
-                  $eway_bill_date = !is_null($invoice_details['ewbDate']) ? date("d-m-Y H:ia", strtotime(str_replace(['T', '.000Z'], ['', ''], $invoice_details['ewbDate']))) : '';
-                  $status = $invoice_details['status'];
-                  $qb_location_id = $invoice_details['qblocationId'];
-                  $qb_invoice_code = !is_null($invoice_details['qbinvoiceCode']) ? $invoice_details['qbinvoiceCode'] : 'unknown';
-              ?>
-               <tr class="font11">
-                 <td class="valign-middle" align="right"><?php echo $sl_no ?></td>
-                 <td class="valign-middle"><?php echo $doc_no ?></td>
-                 <td class="valign-middle"><?php echo $customer_gst_no ?></td>
-                 <td class="valign-middle" align="right" style="font-weight: bold;"><?php echo number_format($invoice_amount, 2, '.', 0) ?></td>
-                 <td class="valign-middle" align="right"><?php echo $ack_no ?></td>
-                 <td class="valign-middle" align="right"><?php echo $ack_date ?></td>
-                 <td class="valign-middle" align="right"><?php echo $eway_bill_no ?></td>
-                 <td class="valign-middle" align="right"><?php echo $eway_bill_date ?></td>
-                 <td class="valign-middle" align="center"><?php echo $status === 'ACT' ? 'Active' : '<span style="color: red; font-weight: bold;">Cancelled</span>' ?></td>
-                 <td class="valign-middle" align="left">
-                  <div class="btn-actions-group" style="padding-left:10px;">
-                    <a class="btn btn-success" href="javascript: printSalesBillCombo('<?php //echo $sales_code ?>')" title="Print eInvoice">
-                      <i class="fa fa-print" aria-hidden="true"></i>
-                    </a>
-                    <?php if($status === 'ACT'): ?>
-                      <a class="btn btn-danger" href="/einvoice/cancel-irn/<?php echo $irn ?>/<?php echo $qb_invoice_code ?>" title="Cancel IRN">
-                        <i class="fa fa-times" aria-hidden="true"></i>
+              <?php if( count($einvoices) > 0): ?>
+                <?php
+                  foreach($einvoices as $invoice_details):
+                    $sl_no++;
+                    $doc_no = $invoice_details['docNo'];
+                    $gst_no = $invoice_details['gstNo'];
+                    $customer_gst_no = $invoice_details['customerGstNo'];
+                    $irn = $invoice_details['irnNo'];
+                    $ack_no = $invoice_details['ackNo'];
+                    $ack_date = date("d-m-Y H:ia", strtotime(str_replace(['T', '.000Z'], ['', ''], $invoice_details['ackDt'])));
+                    $invoice_amount = $invoice_details['invoiceValue'];
+                    $eway_bill_no = $invoice_details['ewbNo'];
+                    $eway_bill_date = !is_null($invoice_details['ewbDate']) ? date("d-m-Y H:ia", strtotime(str_replace(['T', '.000Z'], ['', ''], $invoice_details['ewbDate']))) : '';
+                    $status = $invoice_details['status'];
+                    $qb_location_id = $invoice_details['qblocationId'];
+                    $qb_invoice_code = !is_null($invoice_details['qbinvoiceCode']) ? $invoice_details['qbinvoiceCode'] : 'unknown';
+                ?>
+                 <tr class="font11">
+                   <td class="valign-middle" align="right"><?php echo $sl_no ?></td>
+                   <td class="valign-middle"><?php echo $doc_no ?></td>
+                   <td class="valign-middle"><?php echo $customer_gst_no ?></td>
+                   <td class="valign-middle" align="right" style="font-weight: bold;"><?php echo number_format($invoice_amount, 2, '.', 0) ?></td>
+                   <td class="valign-middle" align="right"><?php echo $ack_no ?></td>
+                   <td class="valign-middle" align="right"><?php echo $ack_date ?></td>
+                   <td class="valign-middle" align="right"><?php echo $eway_bill_no ?></td>
+                   <td class="valign-middle" align="right"><?php echo $eway_bill_date ?></td>
+                   <td class="valign-middle" align="center"><?php echo $status === 'ACT' ? 'Active' : '<span style="color: red; font-weight: bold;">Cancelled</span>' ?></td>
+                   <td class="valign-middle" align="left">
+                    <div class="btn-actions-group" style="padding-left:10px;">
+                      <a class="btn btn-success" href="javascript: printSalesBillCombo('<?php //echo $sales_code ?>')" title="Print eInvoice">
+                        <i class="fa fa-print" aria-hidden="true"></i>
                       </a>
-                    <?php endif; ?>
-                    <?php if(strlen($eway_bill_no) === 0 && $status === 'ACT'): ?>
-                      <a class="btn btn-primary" href="/einvoice/generate-eway-bill/<?php echo $irn ?>/<?php echo $qb_invoice_code ?>" title="Generate eWayBill">
-                        <i class="fa fa-bus" aria-hidden="true"></i>
-                      </a>
-                    <?php endif; ?>
-                    <a class="btn btn-warning" href="/einvoice/view/<?php echo $qb_invoice_code ?>?docNo=<?php echo $doc_no ?>" title="View eInvoice">
-                      <i class="fa fa-eye" aria-hidden="true"></i>
-                    </a>                    
-                  </div>
-                 </td>
-               </tr> 
-              <?php endforeach; ?>
+                      <?php if($status === 'ACT'): ?>
+                        <a class="btn btn-danger" href="/einvoice/cancel-irn/<?php echo $irn ?>/<?php echo $qb_invoice_code ?>" title="Cancel IRN">
+                          <i class="fa fa-times" aria-hidden="true"></i>
+                        </a>
+                      <?php endif; ?>
+                      <?php if(strlen($eway_bill_no) === 0 && $status === 'ACT'): ?>
+                        <a class="btn btn-primary" href="/einvoice/generate-eway-bill/<?php echo $irn ?>/<?php echo $qb_invoice_code ?>" title="Generate eWayBill">
+                          <i class="fa fa-bus" aria-hidden="true"></i>
+                        </a>
+                      <?php endif; ?>
+                      <a class="btn btn-warning" href="/einvoice/view/<?php echo $qb_invoice_code ?>?docNo=<?php echo $doc_no ?>" title="View eInvoice">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                      </a>                    
+                    </div>
+                   </td>
+                 </tr> 
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="10" style="text-align: center; font-weight: bold; font-size: 16px; color: red;">No records are available between given dates!</td>
+                </tr>
+              <?php endif; ?>
             </tbody>
           </table>
           <?php include_once __DIR__."/../../../Layout/helpers/pagination.helper.php" ?>
