@@ -20,11 +20,11 @@
   } else {
     $size = '';
   }
-  if(isset($search_params['styleCode']) && $search_params['styleCode'] !== '') {
-    $styleCode = $search_params['styleCode'];
-    $query_params[] = 'styleCode='.$styleCode;
+  if(isset($search_params['barcode']) && $search_params['barcode'] !== '') {
+    $barcode = $search_params['barcode'];
+    $query_params[] = 'barcode='.$barcode;
   } else {
-    $styleCode = '';
+    $barcode = '';
   }
   if(isset($search_params['cno']) && $search_params['cno'] !== '') {
     $cno = $search_params['cno'];
@@ -44,6 +44,13 @@
   } else {
     $locationCode = $default_location;
   }
+  if(isset($search_params['lotNo']) && $search_params['lotNo'] !== '') {
+    $lot_no = $search_params['lotNo'];
+    $query_params[] = 'lotNo='.$lot_no;
+  } else {
+    $lot_no = '';
+  }
+
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
@@ -108,12 +115,15 @@
                   <input placeholder="Size" type="text" name="size" id="size" class="form-control" value="<?php echo $size ?>">
                 </div>                
                 <div class="col-sm-12 col-md-2 col-lg-2">
-                  <input placeholder="Style Code" type="text" name="styleCode" id="styleCode" class="form-control" value="<?php echo $styleCode ?>">
+                  <input placeholder="Barcode" type="text" name="barcode" id="barcode" class="form-control" value="<?php echo $barcode ?>">
                 </div>
                 <div style="height:40px;"></div>
                 <div class="col-sm-12 col-md-2 col-lg-2">
                   <input placeholder="Case / Box No." type="text" name="cno" id="cno" class="form-control" value="<?php echo $cno ?>">
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input placeholder="Lot No." type="text" name="lotNo" id="lotNo" class="form-control" value="<?php echo $lot_no ?>">
+                </div>                
                 <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="container-fluid">
                     <button class="btn btn-success">
@@ -133,18 +143,22 @@
             <table class="table table-striped table-hover font12">
               <thead>
                 <tr>
-                  <th width="5%" class="text-center">Sno</th>
-                  <th width="25%" class="text-center">Item name</th>
-                  <th width="10%" class="text-center">Category</th>
-                  <th width="10%" class="text-center">Brand</th>
-                  <th width="8%" class="text-center">Style code</th>
-                  <th width="6%" class="text-center">Size</th>
-                  <th width="8%" class="text-center">Color</th>
+                  <th width="5%"  class="text-center">Sno</th>
+                  <th width="23%" class="text-center">Item name</th>
+                  <?php /*<th width="10%" class="text-center">Category</th> */?>
+                  <th width="12%" class="text-center">Brand</th>
+                  <?php /*<th width="8%"  class="text-center">Style code</th>*/?>
+                  <th width="6%"  class="text-center">Size</th>
+                  <?php /*<th width="8%"  class="text-center">Color</th>*/ ?>
                   <th width="10%" class="text-center">Lot no.</th>
-                  <th width="10%" class="text-center">CASE / Box no.</th>
-                  <th width="8%" class="text-center">M.R.P<br />(in Rs.)</th>
-                  <th width="8%" class="text-center">Available<br />Qty.</th>
-                  <th width="10%" class="text-center">Value<br />(in Rs.)</th>                
+                  <th width="8%" class="text-center">CASE / Box no.</th>
+                  <th width="8%"  class="text-center">M.R.P<br />( in Rs. )</th>
+                  <th width="8%"  class="text-center">Wholesale<br />price<br />( in Rs. )</th>
+                  <th width="8%"  class="text-center">Exmill<br />price<br />( in Rs. )</th>
+                  <th width="8%"  class="text-center">Online<br />price<br />( in Rs. )</th>
+                  <th width="8%"  class="text-center">Available<br />qty.</th>
+                  <th width="8%"  class="text-center">Barcode</th>
+                  <?php /*<th width="10%" class="text-center">Value<br />(in Rs.)</th>*/?>
                 </tr>
               </thead>
               <tbody>
@@ -152,6 +166,8 @@
                   $cntr = $sl_no;
                   $total_value = $total_qty = 0;
                   foreach($items as $item_details):
+                    // dump($item_details);
+                    // exit;
                     $item_name = $item_details['itemName'];
                     $category_name = $item_details['categoryName'];
                     $brand_name = $item_details['brandName'];
@@ -159,32 +175,48 @@
                     $ava_qty = $item_details['closingQty'];
                     $lot_no = $item_details['lotNo'];
                     $cno = $item_details['cno'];
-                    $item_rate = $item_details['mrp'];
-                    $item_value = $ava_qty * $item_rate;
                     $location_id = $item_details['locationID'];
                     $location_name = isset($location_ids[$location_id]) ?  $location_ids[$location_id] : 'Invalid';
                     $style_code = $item_details['itemStyleCode'];
                     $size = $item_details['itemSize'];
                     $color = $item_details['itemColor'];
 
+                    $mrp = $item_details['mrp'];
+                    $online_price = $item_details['onlinePrice'];
+                    $wholesale_price = $item_details['wholesalePrice'];
+                    $exmill_price = $item_details['exMill'];
+                    $item_value = $ava_qty * $mrp;
+
                     $total_value += $item_value;
                     $total_qty += $ava_qty;
                 ?>
                   <tr class="text-right font11">
-                    <td><?php echo $cntr ?></td>
+                    <td class="valign-middle"><?php echo $cntr ?></td>
                     <td class="text-left valign-middle">
                       <?php echo $item_name ?>
                     </td>
-                    <td class="text-left valign-middle" title="<?php echo $category_name ?>"><?php echo substr($category_name,0,10) ?></td>                 
-                    <td class="text-left valign-middle" title="<?php echo $brand_name ?>"><?php echo substr($brand_name,0,10) ?></td>                 
-                    <td class="text-left valign-middle"><?php echo $style_code ?></td>
+                    <?php /*<td class="text-left valign-middle" title="<?php echo $category_name ?>"><?php echo substr($category_name,0,10) ?></td>*/ ?>    
+                    <td class="text-left valign-middle" title="<?php echo $brand_name ?>"><?php echo substr($brand_name,0,15) ?></td>                 
+                    <?php /*<td class="text-left valign-middle"><?php echo $style_code ?></td>*/?>
                     <td class="text-right valign-middle"><?php echo $size ?></td>
-                    <td class="text-left valign-middle"><?php echo $color ?></td>
+                    <?php /*<td class="text-left valign-middle"><?php echo $color ?></td> */?>
                     <td class="text-left valign-middle"><?php echo $lot_no ?></td>
                     <td class="text-left valign-middle"><?php echo $cno ?></td>                                        
-                    <td class="text-right valign-middle"><?php echo number_format($item_rate,2,'.','') ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($ava_qty,2,'.','') ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($item_value,2,'.','') ?></td>                    
+                    <td class="text-right valign-middle" style="color: #000; font-weight: bold;"><?php echo number_format($mrp,2,'.','') ?></td>
+                    <td class="text-right valign-middle" style="color: #225992; font-weight: bold;">
+                      <?php echo $wholesale_price > 0 ? number_format($wholesale_price,2,'.','') : '' ?>
+                    </td>
+                    <td class="text-right valign-middle" style="color: #f0ad4e; font-weight: bold;">
+                      <?php echo $exmill_price > 0 ? number_format($exmill_price,2,'.','') : '' ?>
+                    </td>
+                    <td class="text-right valign-middle" style="color: orangered; font-weight: bold;">
+                      <?php echo $online_price > 0 ? number_format($online_price,2,'.','') : '' ?>
+                    </td>
+                    <td class="text-right valign-middle" style="font-size: 14px; font-weight: bold;color: green;">
+                      <?php echo number_format($ava_qty,2,'.','') ?>
+                    </td>
+                    <td class="text-right valign-middle"><?php echo $item_details['barcode'] ?></td>
+                    <?php /*<td class="text-right valign-middle"><?php echo number_format($item_value,2,'.','') ?></td>*/?>
                   </tr>
               <?php
                 $cntr++;
