@@ -12,6 +12,7 @@ use Atawa\Flash;
 use ClothingRm\Sales\Model\Einvoice;
 use ClothingRm\Sales\Model\Sales;
 use User\Model\User;
+use Location\Model\Location;
 
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\LabelAlignment;
@@ -26,6 +27,7 @@ class EInvoiceController {
     $this->flash = new Flash;
     $this->einvoice = new Einvoice;
     $this->sales = new Sales;
+    $this->location_model = new Location;
 	}
 
   // create einvoice
@@ -135,9 +137,17 @@ class EInvoiceController {
   public function eInvoiceRegister(Request $request) {
     $einvoices_a = $search_params = [];
     $page_error = '';
-    
+
     $total_pages = $total_records = $record_count = $page_no = 0 ;
     $slno = $to_sl_no = $page_links_to_start =  $page_links_to_end = 0;
+
+    $location_details_response = $this->location_model->get_client_location_details($_SESSION['lc']);
+    if(isset($location_details_response['status']) && $location_details_response['status']) {
+      $location_details = $location_details_response['locationDetails'];
+    } else {
+      $this->flash->set_flash_message('<i class="fa fa-times" aria-hidden="true"></i> Invalid location/store detected', 1);
+      Utilities::redirect("/sales/list");      
+    }
 
     // parse request parameters.
     $from_date = $request->get('fromDate') !== null ? Utilities::clean_string($request->get('fromDate')) : '01-'.date('m').'-'.date("Y");
@@ -152,8 +162,8 @@ class EInvoiceController {
       'limit' => $per_page,
     );
 
-    $seller_gst_no = '29AABCT1332L000';
-
+    // $seller_gst_no = '29AABCT1332L000';
+    $seller_gst_no = $location_details['locGstNo'];
     $api_response = $this->einvoice->get_all_einvoices($search_params, $seller_gst_no);
     // dump($api_response);
     if($api_response['status']) {
@@ -236,8 +246,8 @@ class EInvoiceController {
       }
     }
 
-    // $seller_gst_no = $invoice_details['saleDetails']['locGstNo'];
-    $seller_gst_no = '29AABCT1332L000';
+    $seller_gst_no = $invoice_details['saleDetails']['locGstNo'];
+    // $seller_gst_no = '29AABCT1332L000';
     $api_response = $this->einvoice->get_einvoice_details($seller_gst_no, $doc_no);
     $status = $api_response['status'];
     if(!$status) {
@@ -281,7 +291,7 @@ class EInvoiceController {
       }
     }
 
-    // $seller_gst_no = $invoice_details['saleDetails']['locGstNo'];
+    $seller_gst_no = $invoice_details['saleDetails']['locGstNo'];
 
     $cancel_reasons = [
       1 => 'Duplicate',
@@ -382,7 +392,7 @@ class EInvoiceController {
       }
     }
 
-    // $seller_gst_no = $invoice_details['saleDetails']['locGstNo'];    
+    $seller_gst_no = $invoice_details['saleDetails']['locGstNo'];    
 
     $transport_modes = [
       1 => 'Road',
@@ -467,8 +477,8 @@ class EInvoiceController {
       $gst_tax_type = 'intra';
     }    
 
-    $seller_gst_no = '29AABCT1332L000';
-    // $seller_gst_no = $sales_details['locGstNo'];
+    // $seller_gst_no = '29AABCT1332L000';
+    $seller_gst_no = $sales_details['locGstNo'];
 
     $buyer_gst_no = $sales_details['customerGstNo'];
     $distance = $form_data['distance'];
@@ -553,8 +563,8 @@ class EInvoiceController {
       "TrdNm" => $seller_gst_response['gstnDetails']['tradeName'],
       "Addr1" => $seller_addr1,
       "Loc" => is_null($seller_gst_response['gstnDetails']['addrLoc']) ? 'null' : $seller_gst_response['gstnDetails']['addrLoc'],
-      // "Pin" =>  $seller_gst_response['gstDetails']['addrPncd'],
-      "Pin" => 560021,
+      "Pin" =>  $seller_gst_response['gstDetails']['addrPncd'],
+      // "Pin" => 560021,
       "Stcd" => (string)$seller_gst_response['gstnDetails']['stateCode'],
     ];
     if(strlen($seller_addr2) > 3) {
