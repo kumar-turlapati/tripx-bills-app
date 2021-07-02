@@ -58,7 +58,8 @@
             </a>
           </div>
         </div>
-        <h3 style="color: red;margin-top: 0px;">(*** This is a Sandbox environment and only used for Testing ***)</h3>
+        <?php /*
+        <h3 style="color: red;margin-top: 0px;">(*** This is a Sandbox environment and only used for Testing ***)</h3> */?>
         <div class="table-responsive">
           <table class="table table-striped table-hover font14" style="margin-bottom:10px;">
             <tr>
