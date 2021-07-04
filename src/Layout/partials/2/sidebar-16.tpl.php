@@ -62,9 +62,10 @@
           <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
         </ul>
       </li>
+      <?php /*
       <li>
         <a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a>
-      </li>      
+      </li> */?>   
       <li>
         <a href="/tasks/list"><i class="fa fa-tasks"></i> My Tasks</a>
       </li>
