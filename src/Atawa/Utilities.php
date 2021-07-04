@@ -650,7 +650,7 @@ class Utilities
 
         '/reports/stock-transfer-register', '/reports/stock-adjustment-register',
 
-        '/finy/switch', '/discount-manager',
+        '/finy/switch', '/discount-manager', '/inventory/available-qty',
 
         '/indent-vs-sales', '/indent-vs-sales-by-item', '/print-indent', '/print-indent-wor',
 

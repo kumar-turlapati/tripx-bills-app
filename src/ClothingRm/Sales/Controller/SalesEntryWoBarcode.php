@@ -651,6 +651,16 @@ class SalesEntryWoBarcode {
     } else {
       $search_params['custName'] = Utilities::clean_string($request->get('custName'));
     }
+    if(is_null($request->get('billNo'))) {
+      $search_params['billNo'] = '';
+    } else {
+      $search_params['billNo'] = Utilities::clean_string($request->get('billNo'));
+    }
+    if(is_null($request->get('documentNo'))) {
+      $search_params['documentNo'] = '';
+    } else {
+      $search_params['documentNo'] = Utilities::clean_string($request->get('documentNo'));
+    }    
 
     $search_params['walletID'] = !is_null($request->get('walletID')) ? Utilities::clean_string($request->get('walletID')) : '';
 

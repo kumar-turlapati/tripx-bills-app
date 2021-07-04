@@ -62,10 +62,10 @@
         <ul class="sub">
           <li><a href="/sales/search-bills"><i class="fa fa-inr"></i> Invoices</a></li>
           <li><a href="/inventory/track-item"><i class="fa fa-angle-double-up"></i> Item Track</a></li>
-          <?php /*
-          <li><a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a></li>
-          */ ?>
         </ul>
+      </li>
+      <li>
+        <a href="/inventory/available-qty"><i class="fa fa-database"></i> Stock In Hand</a>
       </li>
       <li>
         <a href="/tasks/list"><i class="fa fa-tasks"></i> My Tasks</a>

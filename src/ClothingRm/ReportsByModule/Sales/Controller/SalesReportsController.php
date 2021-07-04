@@ -4116,6 +4116,9 @@ class SalesReportsController {
     $pdf->SetFont('Arial','B',11);
     $pdf->Ln(-3);
     $pdf->Cell(190,6,'Tax Invoice','',1,'C');
+
+    // $file_download_path = __DIR__.'/../../../../bulkuploads';
+    // $pdf->Image("http://bills.local/qrcode.png",150,0,0,0,'PNG');   
     
     $pdf->SetFont('Arial','B',10);
     $pdf->SetTextColor(255,255,255);

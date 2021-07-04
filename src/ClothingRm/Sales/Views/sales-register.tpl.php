@@ -26,24 +26,41 @@
   }
   if(isset($search_params['locationCode']) && $search_params['locationCode'] !== '' ) {
     $locationCode = $search_params['locationCode'];
+    $query_params[] = 'locationCode='.$locationCode;
   } else {
     $locationCode = '';
   }  
   if(isset($search_params['saExecutiveCode']) && $search_params['saExecutiveCode'] !== '' ) {
     $saExecutiveCode = $search_params['saExecutiveCode'];
+    $query_params[] = 'saExecutiveCode='.$saExecutiveCode;
   } else {
     $saExecutiveCode = '';
   }
   if(isset($search_params['walletID']) && $search_params['walletID'] !== '' ) {
     $wallet_id = $search_params['walletID'];
+    $query_params[] = 'walletID='.$wallet_id;
   } else {
     $wallet_id = '';
   }
   if(isset($search_params['custName']) && $search_params['custName'] !== '' ) {
     $customer_name = $search_params['custName'];
+    $query_params[] = 'custName='.$customer_name;
   } else {
     $customer_name = '';
+  }
+  if(isset($search_params['billNo']) && $search_params['billNo'] !== '' ) {
+    $bill_no = $search_params['billNo'];
+    $query_params[] = 'billNo='.$bill_no;
+  } else {
+    $bill_no = '';
+  }
+  if(isset($search_params['documentNo']) && $search_params['documentNo'] !== '' ) {
+    $document_no = $search_params['documentNo'];
+    $query_params[] = 'documentNo='.$document_no;
+  } else {
+    $document_no = '';
   }  
+
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
@@ -170,7 +187,29 @@
                     value="<?php echo $customer_name ?>"
                   />
                 </div>
-                <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                  <input 
+                    placeholder="Bill no." 
+                    type="text" 
+                    name="billNo" 
+                    id="billNo" 
+                    class="form-control" 
+                    value="<?php echo $bill_no ?>"
+                  />
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+                  <input 
+                    placeholder="Document no." 
+                    type="text" 
+                    name="documentNo" 
+                    id="documentNo" 
+                    class="form-control" 
+                    value="<?php echo $document_no ?>"
+                  />
+                </div>
+                <div align="center" style="clear: both;">         
+                  <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
+                </div>
               </div>
     			  </form>
     			</div>
