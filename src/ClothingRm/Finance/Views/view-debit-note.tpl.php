@@ -83,7 +83,7 @@
         <div class="table-responsive">
           <table class="table table-striped table-hover font12" style="margin-bottom:0px;">
             <tr>
-              <th width="25%" class="text-center valign-middle">Debit note date</th>
+              <th width="25%" class="text-center valign-middle">Debit note date / no.</th>
               <th width="25%"  class="text-center valign-middle">Debit note type</th>             
               <th width="25%" class="text-center valign-middle">Supplier name</th>
               <th width="25%"  class="text-center valign-middle">Bill no.</th>             
