@@ -563,7 +563,7 @@ class EInvoiceController {
       "TrdNm" => $seller_gst_response['gstnDetails']['tradeName'],
       "Addr1" => $seller_addr1,
       "Loc" => is_null($seller_gst_response['gstnDetails']['addrLoc']) ? 'null' : $seller_gst_response['gstnDetails']['addrLoc'],
-      "Pin" =>  $seller_gst_response['gstnDetails']['addrPncd'],
+      "Pin" =>  (int)$seller_gst_response['gstnDetails']['addrPncd'],
       "Stcd" => (string)$seller_gst_response['gstnDetails']['stateCode'],
     ];
     if(strlen($seller_addr2) > 3) {
@@ -678,8 +678,8 @@ class EInvoiceController {
     $payload['RefDtls']['InvRm'] = $form_data['locationID'].'__'.$form_data['invoiceCode'].
                                    '__'.$form_data['invoiceNo'];
     // dump($payload);
-    // exit;
     // echo json_encode($payload);
+    // dump($seller_gst_response, $buyer_gst_response);
     // exit;
     
     return ['status' => true, 'payload' => $payload, 'seller_gst_no' => $seller_gst_no];
