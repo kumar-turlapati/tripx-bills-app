@@ -168,7 +168,7 @@ class DebitNotesController {
 
     // build variables
     $controller_vars = array(
-      'page_title' => 'Finance Management - Debit Note',
+      'page_title' => 'Finance Management - Debit Note Details - '.$dn_details['dnNo'],
       'icon_name' => 'fa fa-inr',
     );
 

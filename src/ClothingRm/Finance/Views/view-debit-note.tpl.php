@@ -17,6 +17,7 @@
     $dn_type = 'Auto';
   }
   $dn_date = date("d-m-Y", strtotime($dn_details['dnDate']));
+  $dn_no = $dn_details['dnNo'];
   $supplier_name = $dn_details['supplierName'];
   $supplier_code = $dn_details['supplierCode'];
   $bill_no = $dn_details['billNo'];
@@ -88,7 +89,7 @@
               <th width="25%"  class="text-center valign-middle">Bill no.</th>             
             </tr>
             <tr>
-              <td width="25%" style="vertical-align:middle;text-align:center;"><?php echo $dn_date ?></td>
+              <td width="25%" style="vertical-align:middle;text-align:center;"><?php echo $dn_date.' / '.$dn_no ?></td>
               <td width="25%" style="vertical-align:middle;text-align:center;"><?php echo $dn_type ?></td>
               <td width="25%" style="vertical-align:middle;text-align:center;"><?php echo $supplier_name ?></td>
               <td width="25%" style="vertical-align:middle;text-align:center;"><?php echo $bill_no ?></td>
