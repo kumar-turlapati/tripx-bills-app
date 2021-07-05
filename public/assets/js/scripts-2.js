@@ -3958,8 +3958,8 @@ function initializeJS() {
                       dualBarcodesHtml += '</tbody>';
                       dualBarcodesHtml += '</table>';
                       dualBarcodesHtml += '</div>';
-                      $('#modalStockTransferLotNos').html(dualBarcodesHtml);
-                      $('#modalStockTransfer').modal('show');
+                      $('#modalManualDebitNoteLotNos').html(dualBarcodesHtml);
+                      $('#modalManualDebitNote').modal('show');
                     }
                   } else {
                     alert('Barcode not found');                
@@ -4064,6 +4064,27 @@ function initializeJS() {
         }
       }
     });
+
+    $(document).on('click', '#modalManDebitNoteSelect', function(){
+      $('#dualLotModal').modal('hide');
+      var billingRate = $('#billingRate').val();
+      var selectedLotNo = $('[name="dualLotRadios"]:checked').val();
+      var barcode = $('.manDnBarcode').val().split('+').join("");
+      var selectedLotNoDetails = lotNosResponse[selectedLotNo];
+      var barCodeItem = '[ '+barcode+' ] '+selectedLotNoDetails.itemName;
+      if(selectedLotNoDetails.cno !== '') {
+        barCodeItem += '<span style="font-size: 12px;padding-left:5px;">CASE No: '+selectedLotNoDetails.cno+'</span>';
+      }
+      $('#lastScannedSaleItem').html(barCodeItem);
+      updateManDebitNoteRowFromBarcode(selectedLotNoDetails);
+      $('.manDnBarcode').focus().val('');
+      $('#modalManualDebitNote').modal('hide');
+    });
+
+    $(document).on('click', '#modalManDebitNoteCancel', function(){
+      $('#modalManualDebitNote').modal('hide');
+      $('.manDnBarcode').focus().val('');
+    });    
   }  
 
   // sales return window.

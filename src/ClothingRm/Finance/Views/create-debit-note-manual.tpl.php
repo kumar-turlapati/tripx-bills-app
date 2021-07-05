@@ -219,7 +219,7 @@
                 <?php 
                   $tot_item_amount = $tot_taxable_amount = $tot_tax_amount = $tot_discount = 0;
                   $tot_bill_qty = $netpay = $netpay_actual = $round_off = 0;
-                  for($i=1;$i<=15;$i++):
+                  for($i=1;$i<=20;$i++):
                     $item_name = isset($form_data['itemDetails']['itemName'][$i-1]) ? $form_data['itemDetails']['itemName'][$i-1] : '';
                     $item_qty = isset($form_data['itemDetails']['itemReturnQty'][$i-1]) && is_numeric($form_data['itemDetails']['itemReturnQty'][$i-1]) ? $form_data['itemDetails']['itemReturnQty'][$i-1] : 0;
                     $item_avail_qty = isset($form_data['itemDetails']['itemAvailQty'][$i-1]) && is_numeric($form_data['itemDetails']['itemAvailQty'][$i-1]) ? $form_data['itemDetails']['itemAvailQty'][$i-1] : 0;
@@ -392,7 +392,7 @@
         <h5 class="modal-title" id="dualLotNosTitle" style="font-size: 18px; font-weight: bold; color: #225992;"></h5>
       </div>
       <p style="margin: 0;text-align: center;color: red;font-weight: bold;font-size: 16px;">Multiple entries found. Select Lot No. to continue</p>
-      <div class="modal-body" id="modalStockTransferLotNos" style="padding:0px;"></div>
+      <div class="modal-body" id="modalManualDebitNoteLotNos" style="padding:0px;"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" id="modalManDebitNoteCancel">Cancel</button>
         <button type="button" class="btn btn-primary" id="modalManDebitNoteSelect">Select</button>

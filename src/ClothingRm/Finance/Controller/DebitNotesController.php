@@ -342,7 +342,7 @@ class DebitNotesController {
     $cleaned_params['mDebitNoteType'] = $m_dn_type;
     $cleaned_params['dnDate'] = $dn_date;
 
-    for($item_key=0;$item_key<15;$item_key++) {
+    for($item_key=0;$item_key<20;$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
         $one_item_found = true;
 

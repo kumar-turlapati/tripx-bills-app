@@ -15,7 +15,7 @@ class Einvoice {
 	// retrieve gst details of a business.
 	public function get_gst_details($gst_no_client='', $gst_no_customer='') {
 		// call api.
-		$response = $this->api_caller->sendRequestExternal('get',"einvoice/gstn/details/29AABCT1332L000/$gst_no_customer",[]);
+		$response = $this->api_caller->sendRequestExternal('get',"einvoice/gstn/details/$gst_no_client/$gst_no_customer",[]);
 		return $response;
 	}
 
