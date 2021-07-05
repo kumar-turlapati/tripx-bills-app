@@ -3812,6 +3812,7 @@ function initializeJS() {
       $('#manDebitNoteCancel').attr('disabled', true);
       $('#manDebitNoteForm').submit();
     });
+
     if( $('.manDnBarcode').length > 0) {
 
       var lotNosResponse = [];
@@ -3819,6 +3820,7 @@ function initializeJS() {
       var barcode = '';
       var barcodeId = '';
       var rowId = '';
+      var barcodeOriginal = '';
 
       $(document).on('click', '#modalManDebitNoteCancel', function(){
         $('#modalManualDebitNote').modal('hide');
@@ -3907,7 +3909,8 @@ function initializeJS() {
 
       $('.manDnBarcode').on('keypress', function (e) {
        if (e.keyCode == 13) {
-          barcode = $(this).val();
+          barcodeOriginal = $(this).val();
+          barcode = $(this).val().split('+').join("");
           barcodeId = $(this).attr('id');
           rowId = parseInt(barcodeId.split('_')[1]);
           var locationCode = $('#locationCode').val();

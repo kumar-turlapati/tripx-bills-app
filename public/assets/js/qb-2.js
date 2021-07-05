@@ -812,7 +812,7 @@ function initializeJS() {
     $('#customerType').on('change', function(e){
       if($('#tBodyowItems tr').length > 0) {
         var customerType = $(this).val();
-        if(customerType === 'b2c') {
+        if(customerType === 'B2C') {
           $('#siOtherInfoWindow').hide();
           $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');
         } else if(customerType === 'b2b') {
@@ -823,7 +823,7 @@ function initializeJS() {
           $('#packingCharges, #shippingCharges, #insuranceCharges, #otherCharges').val('');          
         }
       } else {
-        $(this).val('b2c');
+        $(this).val('B2C');
         alert('Scan Barcode first.');
       }
     });
@@ -3812,6 +3812,7 @@ function initializeJS() {
       $('#manDebitNoteCancel').attr('disabled', true);
       $('#manDebitNoteForm').submit();
     });
+
     if( $('.manDnBarcode').length > 0) {
 
       var lotNosResponse = [];
@@ -3819,6 +3820,7 @@ function initializeJS() {
       var barcode = '';
       var barcodeId = '';
       var rowId = '';
+      var barcodeOriginal = '';
 
       $(document).on('click', '#modalManDebitNoteCancel', function(){
         $('#modalManualDebitNote').modal('hide');
@@ -3907,7 +3909,8 @@ function initializeJS() {
 
       $('.manDnBarcode').on('keypress', function (e) {
        if (e.keyCode == 13) {
-          barcode = $(this).val();
+          barcodeOriginal = $(this).val();
+          barcode = $(this).val().split('+').join("");
           barcodeId = $(this).attr('id');
           rowId = parseInt(barcodeId.split('_')[1]);
           var locationCode = $('#locationCode').val();
