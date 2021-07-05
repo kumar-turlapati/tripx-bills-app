@@ -559,12 +559,11 @@ class EInvoiceController {
                    $seller_gst_response['gstnDetails']['addrSt'];    
     $payload['SellerDtls'] = [
       "Gstin" => $seller_gst_response['gstnDetails']['gstNo'],
-      "LglNm" =>  $seller_gst_response['gstnDetails']['legalName'],
+      "LglNm" => $seller_gst_response['gstnDetails']['legalName'],
       "TrdNm" => $seller_gst_response['gstnDetails']['tradeName'],
       "Addr1" => $seller_addr1,
       "Loc" => is_null($seller_gst_response['gstnDetails']['addrLoc']) ? 'null' : $seller_gst_response['gstnDetails']['addrLoc'],
-      "Pin" =>  $seller_gst_response['gstDetails']['addrPncd'],
-      // "Pin" => 560021,
+      "Pin" =>  $seller_gst_response['gstnDetails']['addrPncd'],
       "Stcd" => (string)$seller_gst_response['gstnDetails']['stateCode'],
     ];
     if(strlen($seller_addr2) > 3) {
