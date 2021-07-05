@@ -333,7 +333,8 @@ class EInvoiceController {
             1);
         } else {
           $message = '<i class="fa fa-check" aria-hidden="true"></i> IRN No. '.
-                     '{{ <span style="font-size: 16px;">'.$irn.'</span> }} cancelled successfully.';            
+                     '{{ <span style="font-size: 14px;">'.$irn.'</span> }} cancelled successfully.';
+          Utilities::redirect("/einvoices/list");                      
         }
       }
     }
