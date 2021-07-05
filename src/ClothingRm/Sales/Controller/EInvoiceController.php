@@ -540,8 +540,10 @@ class EInvoiceController {
                    $buyer_gst_response['gstnDetails']['addrSt'];
     $payload['BuyerDtls'] = [
       "Gstin" => $buyer_gst_response['gstnDetails']['gstNo'],
-      "LglNm" =>  $buyer_gst_response['gstnDetails']['legalName'],
       "TrdNm" => $buyer_gst_response['gstnDetails']['tradeName'],
+      "LglNm" => !is_null($buyer_gst_response['gstnDetails']['legalName']) ? 
+                 $buyer_gst_response['gstnDetails']['legalName'] : 
+                 $buyer_gst_response['gstnDetails']['tradeName'],
       "Pos" => (string)$buyer_gst_response['gstnDetails']['stateCode'],
       "Addr1" => $buyer_addr1,
       "Loc" => $buyer_gst_response['gstnDetails']['addrLoc'],
@@ -559,8 +561,10 @@ class EInvoiceController {
                    $seller_gst_response['gstnDetails']['addrSt'];    
     $payload['SellerDtls'] = [
       "Gstin" => $seller_gst_response['gstnDetails']['gstNo'],
-      "LglNm" => $seller_gst_response['gstnDetails']['legalName'],
       "TrdNm" => $seller_gst_response['gstnDetails']['tradeName'],
+      "LglNm" => !is_null($seller_gst_response['gstnDetails']['legalName']) ? 
+                 $seller_gst_response['gstnDetails']['legalName']:
+                 $seller_gst_response['gstnDetails']['tradeName'],
       "Addr1" => $seller_addr1,
       "Loc" => is_null($seller_gst_response['gstnDetails']['addrLoc']) ? 'null' : $seller_gst_response['gstnDetails']['addrLoc'],
       "Pin" =>  (int)$seller_gst_response['gstnDetails']['addrPncd'],
