@@ -96,13 +96,13 @@
             </tr>
             <tr>
               <th width="25%"  class="text-center valign-middle">Store name</th>
-              <th width="25%"  class="text-center valign-middle">Debit note value / Total qty.</th>
+              <th width="25%"  class="text-center valign-middle">Debit note value / Total returned qty.</th>
               <th width="25%"  class="text-center valign-middle">Debit note reason</th>
               <th width="25%"  class="text-center valign-middle">Tax calculation</th>
             </tr>
             <tr>
               <td width="25%"  class="text-center valign-middle"><?php echo $store_name ?></td>
-              <td width="25%"  class="text-center valign-middle" style="font-size: 16px; color: red;"><?php echo number_format($dn_value, 2, '.', '').' / '. number_format($tot_return_qty, 2, '.', '')?></td>           
+              <td width="25%"  class="text-center valign-middle" style="font-size: 18px; color: red; font-weight: bold;"><?php echo number_format($dn_value, 2, '.', '').' / '. number_format($tot_return_qty, 2, '.', '')?></td>           
               <td width="25%"  class="text-center valign-middle"><?php echo $dn_reason ?></td>           
               <td width="25%"  class="text-center valign-middle"><?php echo $tax_calc_option ?></td>           
             </tr>
