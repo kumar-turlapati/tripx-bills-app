@@ -110,7 +110,7 @@
         </div><br /><br />
         <div class="text-center">
           <button class="btn btn-primary" onclick="window.location.href='/fin/debit-notes'">
-            <i class="fa fa-save"></i> Back
+            <i class="fa fa-backward"></i> Back
           </button>            
         </div>          
       </div>
