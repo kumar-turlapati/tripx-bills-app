@@ -14,8 +14,8 @@
   $invoice_code = isset($sales_data['invoiceCode']) && $sales_data['invoiceCode'] !== '' ? $sales_data['invoiceCode'] : '';
   $customer_name = isset($form_data['customerName']) ? $form_data['customerName'] : $customer_name_invoice;
   $order_nos = isset($form_data['orderNos']) ? $form_data['orderNos'] : $indent_no;
-  $invoice_nos = isset($form_data['invoiceNos']) && $form_data['invoiceNos'] !== '' ? 
-                 $form_data['invoiceNos'] : $sales_data['billNo'];
+  // $invoice_nos = isset($form_data['invoiceNos']) && $form_data['invoiceNos'] !== '' ? 
+  //                $form_data['invoiceNos'] : $sales_data['billNo'];
   $lr_case_nos = isset($form_data['lrCaseNos']) && $form_data['lrCaseNos'] !== '' ? 
                  $form_data['lrCaseNos'] : $sales_data['lrNo'];
   $lr_date = isset($form_data['lrDate']) && $form_data['lrDate'] !== '' ? 
@@ -34,6 +34,16 @@
     $whatsapp_no =  $whatsapp_numbers_invoice;
   } else {
     $whatsapp_no = '';
+  }
+
+  if(isset($form_data['invoiceNos']) && $form_data['invoiceNos'] !== '') {
+    $invoice_nos = $form_data['invoiceNos'];
+  } elseif($sales_data['customBillNo'] !== '') {
+    $invoice_nos = $sales_data['customBillNo'];
+  } elseif($form_data['gstDocNo'] !== '') {
+    $invoice_nos = $sales_data['gstDocNo'];
+  } else {
+    $invoice_nos = $sales_data['billNo'];
   }
 ?>
 <div class="row">

@@ -60,14 +60,6 @@ class SalesReportsController {
       $customer_name = $tmp_cust_name;
     }
 
-    // dump($banks);
-    // exit;
-    // dump($sale_details, $_SESSION);
-    // dump($sale_item_details);
-    // exit;
-    // dump($sales_response);
-    // exit;
-
     $tax_calc_option = $sale_details['taxCalcOption'];
 
     $business_name  =   isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];
@@ -352,47 +344,6 @@ class SalesReportsController {
     $pdf->Cell(190,6,'GST Details','LRB',0,'C');
     $pdf->Ln();
 
-    // $pdf->SetFont('Arial','B',8);
-    // $pdf->Cell(15,6,'TAX %','LRB',0,'C');
-    // $pdf->Cell(30,6,'TAXABLE (Rs.)','RB',0,'C');
-    // $pdf->Cell(13,6,'IGST %','RB',0,'C');
-    // $pdf->Cell(20,6,'IGST (Rs.)','RB',0,'C');
-    // $pdf->Cell(13,6,'CGST %','RB',0,'C');
-    // $pdf->Cell(20,6,'CGST (Rs.)','RB',0,'C');
-    // $pdf->Cell(13,6,'SGST %','RB',0,'C');
-    // $pdf->Cell(20,6,'SGST (Rs.)','RB',0,'C');
-    // $pdf->Cell(20,6,'CESS (Rs.)','RB',0,'C');
-    // $pdf->Cell(26,6,'TOTAL TAX (Rs.)','RB',0,'C');
-    // $pdf->Ln();
-    // $pdf->SetFont('Arial','',8);
-
-    // foreach($gst_percents_a as $gst_percent) {
-    //   if(isset($taxable_values[$gst_percent])) {
-    //     $taxable_amount = $taxable_values[$gst_percent];
-    //     $total_tax = $taxable_gst_value[$gst_percent];
-    //     if($gst_tax_type === 'intra') {
-    //       $cgst_percent = $sgst_percent = round($gst_percent/2,2);
-    //       $cgst_amount = $sgst_amount = round($taxable_gst_value[$gst_percent]/2, 2);
-    //       $igst_percent = $igst_amount = 0;
-    //     } else {
-    //       $cgst_percent = $sgst_percent = $cgst_amount = $sgst_amount = 0;
-    //       $igst_percent = $gst_percent;
-    //       $igst_amount = round($taxable_gst_value[$gst_percent],2);
-    //     }
-
-    //     $pdf->Cell(15,6,number_format($gst_percent,2,'.','').'%','LRB',0,'R');
-    //     $pdf->Cell(30,6,number_format($taxable_amount, 2, '.', ''),'LRB',0,'R');
-    //     $pdf->Cell(13,6,$igst_percent > 0 ? number_format($igst_percent, 2, '.', '').'%' : '','RB',0,'R');
-    //     $pdf->Cell(20,6,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','RB',0,'R');
-    //     $pdf->Cell(13,6,$cgst_percent > 0 ? number_format($cgst_percent, 2, '.', '').'%' : '','RB',0,'R');
-    //     $pdf->Cell(20,6,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','RB',0,'R');
-    //     $pdf->Cell(13,6,$sgst_percent > 0 ? number_format($sgst_percent, 2, '.', '').'%' : '','RB',0,'R');
-    //     $pdf->Cell(20,6,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','RB',0,'R');
-    //     $pdf->Cell(20,6,'','RB',0,'R');
-    //     $pdf->Cell(26,6,number_format($total_tax, 2, '.', ''),'RB',0,'R');
-    //   }
-    // }
-
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(15,6,'HSN/SAC','LRB',0,'C');
     $pdf->Cell(12,6,'Qty.','RB',0,'C');
@@ -517,10 +468,6 @@ class SalesReportsController {
       $y = $pdf->getY();
       $pdf->setXY($x+130, $y);
       $pdf->Multicell(60,5,$ifsc_code,'','C');
-/*      $x = $pdf->getX();
-      $y = $pdf->getY();
-      $pdf->setXY($x+130, $y);
-      $pdf->Multicell(60,4,$bank_address,'','C');*/
     }
 
     // add signature headers
@@ -540,16 +487,28 @@ class SalesReportsController {
     
     $pdf->setXY($final_x, $final_y);
 
-    // $pdf->Ln(20);
-    // $pdf->SetFont('Arial','BU',9);
-    // $pdf->Cell(63.33,6,'Prepared by','',0,'C');
-    // $pdf->Cell(63.33,6,'Verified by','',0,'C');
-    // $pdf->Cell(63.33,6,'Authorized by','',0,'C');
-
     // dump($taxable_values, $taxable_gst_value);
     // exit;
 
     $pdf->Output();
+  }
+
+  // print b2b sales invoice with IRN
+  public function printB2BSalesInvoiceWithIrn(Request $request) {
+    $sales_code = Utilities::clean_string($request->get('salesCode'));
+    $slno = 0;
+    $gst_percents_a = ['5.00','12.00','18.00','28.00'];
+    $banks = [];
+
+    $sales_response = $this->sales_model->get_sales_details($sales_code,false);
+    $status = $sales_response['status'];
+    if($status) {
+      $sale_details = $sales_response['saleDetails'];
+      $sale_item_details = $sale_details['itemDetails'];
+      unset($sale_details['itemDetails']);
+    } else {
+      die('Invalid Sales Transaction.');
+    }    
   }
 
   // prints sales register.

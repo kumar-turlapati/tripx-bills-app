@@ -59,7 +59,13 @@
     $query_params[] = 'documentNo='.$document_no;
   } else {
     $document_no = '';
-  }  
+  }
+  if(isset($search_params['brandName']) && $search_params['brandName'] !== '' ) {
+    $brand_name = $search_params['brandName'];
+    $query_params[] = 'brandName='.$brand_name;
+  } else {
+    $brand_name = '';
+  }
 
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
@@ -138,7 +144,7 @@
                     </select>
                    </div>
                 </div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="col-sm-12 col-md-3 col-lg-3">
                   <div class="select-wrap">
                     <select class="form-control" name="saExecutiveCode" id="saExecutiveCode">
                       <?php 
@@ -199,7 +205,7 @@
                 </div>
                 <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
                   <input 
-                    placeholder="Document no." 
+                    placeholder="GST Document no." 
                     type="text" 
                     name="documentNo" 
                     id="documentNo" 
@@ -207,6 +213,16 @@
                     value="<?php echo $document_no ?>"
                   />
                 </div>
+                <div class="col-sm-12 col-md-2 col-lg-2 m-bot15">
+                  <input 
+                    placeholder="Brand name" 
+                    type="text" 
+                    name="brandName" 
+                    id="brandName" 
+                    class="form-control" 
+                    value="<?php echo $brand_name ?>"
+                  />
+                </div>                
                 <div align="center" style="clear: both;">         
                   <?php include_once __DIR__."/../../../Layout/helpers/filter-buttons.helper.php" ?>
                 </div>
@@ -220,16 +236,18 @@
               <tr>
                 <th width="3%"  class="text-center">Sno.</th>
                 <th width="15%" class="text-center">Customer<br />Name</th>
-                <?php /*<th width="7%" class="text-center">Mobile<br />Number</th> */ ?>
                 <th width="7%" class="text-center">Payment<br />Method</th>                
-                <th width="10%" class="text-center">Invoice No. &amp; Date</th>
+                <th width="9%" class="text-center">Invoice No. &amp; Date</th>
+                <th width="7%" class="text-center">Invoice Value<br />(in Rs.)</th>
+                <th width="10%" class="text-center">GST Document<br />No.</th>
+                <th width="12%" class="text-center">Brand Name</th>
+                <th width="28%" class="text-center">Actions</th>
+
+                <?php /*<th width="7%" class="text-center">Mobile<br />Number</th>
                 <th width="7%" class="text-center">Bill Amount<br />(in Rs.)</th>
                 <th width="6%" class="text-center">Discount<br />(in Rs.)</th>
                 <th width="7%" class="text-center">Taxable<br />(in Rs.)</th>
-                <th width="7%" class="text-center">GST<br />(in Rs.)</th>                
-                <?php /*<th width="5%" class="text-center">R.off<br />(in Rs.)</th> */ ?>
-                <th width="7%" class="text-center">Bill Value<br />(in Rs.)</th>
-                <th width="28%" class="text-center">Actions</th>
+                <th width="7%" class="text-center">GST<br />(in Rs.)</th> */?>
               </tr>
             </thead>
             <tbody>
@@ -238,7 +256,8 @@
                 $tot_bill_amount = $tot_disc_amount = $tot_amount = $tot_tax_amount = 0;
                 $tot_round_off = $tot_net_pay = 0;
                 foreach($sales as $sales_details):
-                  // dump($mobile_number);
+                  // dump($sales_details);
+                  // exit;
                   $sales_code = $sales_details['invoiceCode'];
                   $invoice_date = date("d-m-Y", strtotime($sales_details['invoiceDate']));
                   $mobile_number = $sales_details['mobileNo'];
@@ -274,6 +293,9 @@
                   $gatepass_status = (int)$sales_details['gatePassStatus'] === 1 ? 'Generated' : 'Pending'; 
                   $transporter_name = $sales_details['transporterName'];
                   $gst_no = $sales_details['gstNo'];
+
+                  $gst_doc_no = $sales_details['gstDocNo'] !== '' ? $sales_details['gstDocNo'] : $sales_details['customBillNo'];
+                  $brand_name = $sales_details['brandName'];
               ?>
                   <tr class="text-uppercase text-right font11">
                     <td class="valign-middle"><?php echo $cntr ?></td>
@@ -284,7 +306,6 @@
                         <?php echo $customer_name_short ?>
                       <?php endif; ?>
                     </td>
-                    <?php /*<td class="text-left med-name valign-middle"><?php echo $mobile_number ?></td> */?>
                     <td class="text-left med-name valign-middle">
                       <span style="font-weight:bold;"><?php echo $payment_method ?></span>
                     </td>
@@ -293,12 +314,18 @@
                         <?php echo $sales_details['billNo'].' / '.$invoice_date ?>
                       </a>
                     </td>
-                    <td class="text-right valign-middle"><?php echo number_format($bill_amount,2,'.','') ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($discount_amount,2,'.','') ?></td>
-                    <td class="text-right valign-middle"><?php echo number_format($taxable_amount,2,'.','') ?></td>                    
-                    <td class="text-right valign-middle"><?php echo number_format($sales_details['taxAmount'],2,'.','').' ['. $tax_calc_option.']' ?></td>
-                    <?php /*<td class="text-right valign-middle"><?php echo number_format($sales_details['roundOff'],2,'.','') ?></td> */ ?>
-                    <td class="text-right valign-middle"><?php echo number_format($sales_details['netPay'],2,'.','') ?></td>    
+                    <td class="text-right valign-middle" style="font-size: 13px; font-weight: bold; color: green;"><?php echo number_format($sales_details['netPay'],2,'.','') ?></td>
+                    <td class="text-right valign-middle"><?php echo $gst_doc_no ?></td>    
+                    <td class="text-left valign-middle"><?php echo $brand_name ?></td>    
+                    <?php 
+                      /*
+                        <td class="text-left med-name valign-middle"><?php echo $mobile_number ?></td>
+                        <td class="text-right valign-middle"><?php echo number_format($discount_amount,2,'.','') ?></td>
+                        <td class="text-right valign-middle"><?php echo number_format($taxable_amount,2,'.','') ?></td>                    
+                        <td class="text-right valign-middle"><?php echo number_format($sales_details['taxAmount'],2,'.','').' ['. $tax_calc_option.']' ?></td>
+                        <td class="text-right valign-middle"><?php echo number_format($sales_details['roundOff'],2,'.','') ?></td> 
+                      */ 
+                    ?>
                     <td>
                       <div class="btn-actions-group">
                         <?php if($sales_code !== ''): ?>
@@ -327,7 +354,7 @@
 
                             <a class="btn btn-primary" target="_blank" href="/whatsapp/shipping-update?ic=<?php echo $sales_code ?>" title="Push Whatsapp shipping update">
                               <i class="fa fa-whatsapp" aria-hidden="true"></i>
-                            </a>                        
+                            </a>
                             <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
                               <i class="fa fa-bold" aria-hidden="true"></i>
                             </a>
@@ -369,23 +396,34 @@
             ?>
             <tr class="text-uppercase font11">
               <td colspan="4" align="right">PAGE TOTALS</td>
-              <td class="text-bold text-right"><?php echo number_format($tot_bill_amount,2,'.','') ?></td>
-              <td class="text-bold text-right"><?php echo number_format($tot_disc_amount,2,'.','') ?></td>
-              <td class="text-bold text-right"><?php echo number_format($tot_amount,2,'.','') ?></td>
-              <td class="text-bold text-right"><?php echo number_format($tot_tax_amount,2,'.','') ?></td>              
-              <?php /*<td class="text-bold text-right"><?php echo number_format($tot_round_off,2,'.','') ?></td> */ ?>
-              <td class="text-bold text-right"><?php echo number_format($tot_net_pay,2,'.','') ?></td>
+              <?php 
+                /*              
+                <td class="text-bold text-right"><?php echo number_format($tot_bill_amount,2,'.','') ?></td>
+                <td class="text-bold text-right"><?php echo number_format($tot_disc_amount,2,'.','') ?></td>
+                <td class="text-bold text-right"><?php echo number_format($tot_amount,2,'.','') ?></td>
+                <td class="text-bold text-right"><?php echo number_format($tot_tax_amount,2,'.','') ?></td>              
+                <td class="text-bold text-right"><?php echo number_format($tot_round_off,2,'.','') ?></td> 
+                */ 
+              ?>
+              <td class="text-bold text-right" style="font-size: 13px; font-weight: bold; color: green;"><?php echo number_format($tot_net_pay,2,'.','') ?></td>
+              <td>&nbsp;</td>
               <td>&nbsp;</td>
             </tr>
             <tr class="text-uppercase font11">
-              <td colspan="4" align="right">TOTAL SALES</td>
-              <td class="text-bold text-right"><?php echo isset($query_totals['billAmount']) ? number_format($query_totals['billAmount'],2,'.','') : "0.00" ?></td>
-              <td class="text-bold text-right"><?php echo isset($query_totals['discountAmount']) ? number_format($query_totals['discountAmount'],2,'.','') : "0.00" ?></td>
-              <td class="text-bold text-right"><?php echo isset($query_totals['totalAmount']) ? number_format($query_totals['totalAmount'],2,'.','') : "0.00"  ?></td>
-              <td class="text-bold text-right"><?php echo isset($query_totals['taxAmount']) ? number_format($query_totals['taxAmount'],2,'.','') : "0.00" ?></td>
-              <?php /*<td class="text-bold text-right"><?php echo isset($query_totals['roundOff']) ? number_format($query_totals['roundOff'],2,'.','') : "0.00" ?></td> */ ?>
-              <td class="text-bold text-right"><?php echo isset($query_totals['netPay']) ? number_format($query_totals['netPay'],2,'.','') : "0.00" ?></td>
+              <td colspan="4" align="right">TOTAL SALES (does not include Brand filter)</td>
+              <?php 
+                /*              
+                <td class="text-bold text-right"><?php echo isset($query_totals['billAmount']) ? number_format($query_totals['billAmount'],2,'.','') : "0.00" ?></td>
+                <td class="text-bold text-right"><?php echo isset($query_totals['discountAmount']) ? number_format($query_totals['discountAmount'],2,'.','') : "0.00" ?></td>
+                <td class="text-bold text-right"><?php echo isset($query_totals['totalAmount']) ? number_format($query_totals['totalAmount'],2,'.','') : "0.00"  ?></td>
+                <td class="text-bold text-right"><?php echo isset($query_totals['taxAmount']) ? number_format($query_totals['taxAmount'],2,'.','') : "0.00" ?></td>
+                <td class="text-bold text-right"><?php echo isset($query_totals['roundOff']) ? number_format($query_totals['roundOff'],2,'.','') : "0.00" ?></td> 
+                */ 
+              ?>
+              <td class="text-bold text-right" style="font-size: 13px; font-weight: bold; color: green;"><?php echo isset($query_totals['netPay']) ? number_format($query_totals['netPay'],2,'.','') : "0.00" ?></td>
               <td>&nbsp;</td>      
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
             </tr>
           </tbody>
           </table>

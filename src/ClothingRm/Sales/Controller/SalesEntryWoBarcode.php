@@ -660,7 +660,12 @@ class SalesEntryWoBarcode {
       $search_params['documentNo'] = '';
     } else {
       $search_params['documentNo'] = Utilities::clean_string($request->get('documentNo'));
-    }    
+    }
+    if(is_null($request->get('brandName'))) {
+      $search_params['brandName'] = '';
+    } else {
+      $search_params['brandName'] = Utilities::clean_string($request->get('brandName'));
+    }       
 
     $search_params['walletID'] = !is_null($request->get('walletID')) ? Utilities::clean_string($request->get('walletID')) : '';
 

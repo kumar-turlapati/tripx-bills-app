@@ -36,9 +36,9 @@
   } else {
     $lr_no = '';
   }  
-  if(isset($submitted_data['lrDate'])) {
+  if(isset($submitted_data['lrDate']) && $submitted_data['lrDate']) {
     $lr_date = $submitted_data['lrDate'];
-  } elseif(isset($form_data['lrDate']) && $form_data['lrDate'] !== '') {
+  } elseif(isset($form_data['lrDate']) && $form_data['lrDate'] !== '0' && $form_data['lrDate'] !== '0000-00-00') {
     $lr_date = date("d-m-Y", strtotime($form_data['lrDate']));
   } else {
     $lr_date = date("d-m-Y");
@@ -111,6 +111,7 @@
     $shipping_phones = $form_data['phones'];
   }
 
+  // dump($lr_date);
   // dump($shipping_city_name);
 ?>
 <div class="row">
@@ -154,14 +155,14 @@
             <div class="panel-body" style="border: 1px dotted;">
               <div class="form-group">
                 <div class="col-sm-12 col-md-4 col-lg-4">
-                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Transporter Name (max 15 chars.)</label>
+                  <label class="control-label" style="font-size:14px;color:#2E1114;font-weight:bold;">Transporter Name (max 50 chars.)</label>
                   <input 
                     type="text"
                     class="form-control noEnterKey" 
                     name="transporterName" 
                     id="transporterName" 
                     value="<?php echo $transporter_name ?>"
-                    maxlength="15"
+                    maxlength="50"
                   />
                   <?php if(isset($errors['transporterName'])): ?>
                     <span class="error"><?php echo $errors['transporterName'] ?></span>

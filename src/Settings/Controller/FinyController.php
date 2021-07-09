@@ -141,6 +141,7 @@ class FinyController {
 
     $finys = $form_data = $form_errors = [];
     $def_finy = '';
+    $def_finy_code = $def_finy_name = '';
 
     $finy_response = $this->finy_model->get_finys();
     if($finy_response['status'] && count($finy_response['finys']) > 0) {
