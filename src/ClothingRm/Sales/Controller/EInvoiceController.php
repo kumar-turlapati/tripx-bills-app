@@ -111,13 +111,13 @@ class EInvoiceController {
     }
 
     // check irn already generated or not
-    if($sales_details['gstIrn'] !== '') {
-      $message = '<i class="fa fa-check" aria-hidden="true"></i> eInvoice already generated with IRN No. '.
-                 '{{ <span style="font-size: 14px;">'.$sales_details['gstIrn'].'</span> }}'.
-                 ' Ack No.: {{ <span style="font-size: 14px;">'.$sales_details['gstAckNo'].'</span>}} '.
-                 ' Ack Dt.: {{ <span style="font-size: 14px;">'.date('d-m-Y h:ia', strtotime($sales_details['gstAckDate'])).'</span> }}';
-      $this->flash->set_flash_message($message);
-    }
+    // if($sales_details['gstIrn'] !== '') {
+    //   $message = '<i class="fa fa-check" aria-hidden="true"></i> eInvoice already generated with IRN No. '.
+    //              '{{ <span style="font-size: 14px;">'.$sales_details['gstIrn'].'</span> }}'.
+    //              ' Ack No.: {{ <span style="font-size: 14px;">'.$sales_details['gstAckNo'].'</span>}} '.
+    //              ' Ack Dt.: {{ <span style="font-size: 14px;">'.date('d-m-Y h:ia', strtotime($sales_details['gstAckDate'])).'</span> }}';
+    //   $this->flash->set_flash_message($message);
+    // }
 
     // --------------- build variables -----------------
     $controller_vars = array(
@@ -619,7 +619,7 @@ class EInvoiceController {
     $tot_discount = $tot_inv_value = $rnd_off_amount = 0;
     foreach($sales_details['itemDetails'] as $item_slno => $item_details) {
       $gst_item_array = [];
-      $total_amount = round($item_details['itemRate']*$item_details['itemQty'],2);
+      $total_amount = round($item_details['mrp'] * $item_details['itemQty'],2);
       $ass_amount = round($total_amount - $item_details['discountAmount'], 2);
       $tax_percent = $item_details['taxPercent'];
 
@@ -651,7 +651,7 @@ class EInvoiceController {
       }
       $gst_item_array['Qty'] = round($item_details['itemQty'],2);
       $gst_item_array['FreeQty'] = 0;
-      $gst_item_array['UnitPrice'] = round($item_details['itemRate'],2);
+      $gst_item_array['UnitPrice'] = round($item_details['mrp'],2);
       $gst_item_array['Discount'] = round($item_details['discountAmount'],2);
       $gst_item_array['GstRt'] = round($item_details['taxPercent'],2);
       $gst_item_array['TotAmt'] = round($total_amount,2);
@@ -681,6 +681,8 @@ class EInvoiceController {
       $tot_sgst_value += $sgst_amount;
       $tot_igst_value += $igst_amount;
       $tot_discount += $item_details['discountAmount'];
+
+      // dump($ass_amount.'  ass amount'.$slno_string);
     }
 
     // dump($item_list);
