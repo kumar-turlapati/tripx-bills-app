@@ -616,6 +616,7 @@ class EInvoiceController {
 
     $item_details_array = $sales_details['itemDetails'];
     $tot_ass_value = $tot_cgst_value = $tot_sgst_value = $tot_igst_value = 0;
+    $tot_total_amount = 0;
     $tot_discount = $tot_inv_value = $rnd_off_amount = 0;
     foreach($sales_details['itemDetails'] as $item_slno => $item_details) {
       $gst_item_array = [];
@@ -678,6 +679,7 @@ class EInvoiceController {
 
       $item_list[] = $gst_item_array;
 
+      $tot_total_amount += $total_amount;
       $tot_ass_value += $ass_amount;
       $tot_cgst_value += $cgst_amount;
       $tot_sgst_value += $sgst_amount;
@@ -693,7 +695,7 @@ class EInvoiceController {
     $payload['ItemList'] = $item_list;
 
     $tot_inv_value_wo_roundoff = round( 
-      ($tot_ass_value + 
+      ($tot_total_amount + 
        $tot_cgst_value +
        $tot_sgst_value +
        $tot_igst_value
