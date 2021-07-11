@@ -761,7 +761,7 @@ class SalesReportsController {
       }
       $pdf->Ln();
       $record_cntr++;
-      if($record_cntr === 32) {
+      if($record_cntr === 30) {
         $pdf->setMargins(5, 1, 1);
         $pdf->AddPage('P','A4');        
         $this->_add_einvoice_header($pdf, $customer_info, $item_widths, $loc_address, $gst_details, $brand_name);
