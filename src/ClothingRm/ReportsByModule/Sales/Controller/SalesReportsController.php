@@ -514,9 +514,6 @@ class SalesReportsController {
       die('Invalid Sales Transaction.');
     }
 
-    // dump($sale_details, $sale_item_details);
-    // exit;
-
     $bill_no = $sale_details['billNo'];
     $bill_date = date('d-M-Y',strtotime($sale_details['invoiceDate']));
     $bill_time = date('h:ia',strtotime($sale_details['createdTime']));
@@ -650,7 +647,7 @@ class SalesReportsController {
 
     $pdf = PdfWoHeaderFooter::getInstance();
     $pdf->AliasNbPages();
-    $pdf->SetAutoPageBreak(true, 5);
+    $pdf->SetAutoPageBreak(false);
     $pdf->setMargins(5, 1, 1);
     $pdf->AddPage('P','A4');
     $pdf->setTitle('eInvoice'.'__'.$customer_info['custom_invoice_no'].'__'.date('jS F, Y'));
@@ -665,9 +662,6 @@ class SalesReportsController {
     $record_cntr = 0;
     $items_per_page = 20;
     $empty_rows_tobe_filled = count($sale_item_details) < $items_per_page ? $items_per_page-count($sale_item_details) : 0;
-    $empty_rows_tobe_filled = 0;
-    // dump($sale_item_details);
-    // exit;
     $sale_item_details_filled = array_fill(count($sale_item_details)-1, $empty_rows_tobe_filled, []);
     $sale_item_final = array_merge($sale_item_details, $sale_item_details_filled);
     $unique_hsn_codes = array_unique(array_column($sale_item_details, 'hsnSacCode')); 
@@ -706,12 +700,8 @@ class SalesReportsController {
         $taxable = (float)round($amount-$discount,2);
         $tax_value = (float)round(($taxable*$tax_percent/100),2);
 
-        // dump($tax_value, $taxable);
-
         $cgst_percent = $sgst_percent = round($tax_percent/2,2);
         $cgst_value = $sgst_value = round($tax_value/2,2);
-
-        // dump($tax_value, $item_qty, $discount, $tax_percent, $mrp, 'hello...');
 
         $tot_items_qty += $item_qty;
         $tot_bill_value += $amount;
@@ -731,18 +721,10 @@ class SalesReportsController {
         }
 
         if(isset($hsn_codes_array["$hsn_sac_code"])) {
-          // $hsn_code_qty = $hsn_codes_array["$hsn_sac_code"]['qty'];
-          // $hsn_code_taxable = $hsn_codes_array["$hsn_sac_code"]['taxable'];
-          // $hsn_cgst_value = $hsn_codes_array["$hsn_sac_code"]['cgst_value'];
-          // $hsn_sgst_value = $hsn_codes_array["$hsn_sac_code"]['sgst_value'];
-
           $hsn_codes_array["$hsn_sac_code"]['qty'] = $hsn_codes_array["$hsn_sac_code"]['qty']+$item_qty;
           $hsn_codes_array["$hsn_sac_code"]['taxable'] = $hsn_codes_array["$hsn_sac_code"]['taxable']+$taxable;
           $hsn_codes_array["$hsn_sac_code"]['cgst_value'] = (float)$hsn_codes_array["$hsn_sac_code"]['cgst_value']+(float)$cgst_value;
           $hsn_codes_array["$hsn_sac_code"]['sgst_value'] = (float)$hsn_codes_array["$hsn_sac_code"]['sgst_value']+(float)$sgst_value;
-
-          // dump($hsn_codes_array, 'inside');
-
         } else {
           $hsn_codes_array["$hsn_sac_code"]['qty'] = $item_qty;
           $hsn_codes_array["$hsn_sac_code"]['taxable'] = $taxable;
@@ -750,8 +732,6 @@ class SalesReportsController {
           $hsn_codes_array["$hsn_sac_code"]['sgst_percent'] = $sgst_percent;
           $hsn_codes_array["$hsn_sac_code"]['cgst_value'] = $cgst_value;
           $hsn_codes_array["$hsn_sac_code"]['sgst_value'] = $sgst_value;
-
-          // dump($hsn_codes_array);          
         }
 
         // dump($hsn_codes_array);
@@ -768,19 +748,25 @@ class SalesReportsController {
         $pdf->Cell($item_widths[7],  5,$discount > 0 ? number_format($discount,2,'.','') : '','RB',0,'R');
         $pdf->Cell($item_widths[8],  5,number_format($taxable,2,'.',''),'RB',0,'R');
       } else {
-        $pdf->Cell($item_widths[0],  5,'','L',0,'R');
-        $pdf->Cell($item_widths[1],  5,'','L',0,'L');
-        $pdf->Cell(             23,  5,'','R',0,'L');
-        $pdf->Cell($item_widths[2],  5,'','L',0,'L');
-        $pdf->Cell($item_widths[4],  5,'','L',0,'R');
-        $pdf->Cell($item_widths[3],  5,'','L',0,'R');        
-        $pdf->Cell($item_widths[5],  5,'','L',0,'R');
-        $pdf->Cell($item_widths[6],  5,'','L',0,'R');
-        $pdf->Cell($item_widths[7],  5,'','L',0,'R');
-        $pdf->Cell($item_widths[8],  5,'','LR',0,'R');
+        $pdf->Cell($item_widths[0],  5,'','LR',0,'R');
+        $pdf->Cell($item_widths[1],  5,'','R',0,'L');
+        $pdf->Cell($item_widths[2],  5,'','R',0,'L');
+        $pdf->Cell(             21,  5,'','R',0,'L');
+        $pdf->Cell($item_widths[5],  5,'','R',0,'L');
+        $pdf->Cell($item_widths[3],  5,'','R',0,'R');
+        $pdf->Cell($item_widths[4],  5,'','R',0,'R');        
+        $pdf->Cell($item_widths[6],  5,'','R',0,'R');
+        $pdf->Cell($item_widths[7],  5,'','R',0,'R');
+        $pdf->Cell($item_widths[8],  5,'','R',0,'R');
       }
       $pdf->Ln();
       $record_cntr++;
+      if($record_cntr === 32) {
+        $pdf->setMargins(5, 1, 1);
+        $pdf->AddPage('P','A4');        
+        $this->_add_einvoice_header($pdf, $customer_info, $item_widths, $loc_address, $gst_details, $brand_name);
+        $record_cntr=0;
+      }
     }
 
     $round_off = $net_pay - ($tot_taxable + $tot_tax_amount);
@@ -788,7 +774,7 @@ class SalesReportsController {
     // print batch nos if exists
     if(count($bnos_a) > 0) {
       $pdf->SetFont('Arial','',8);
-      $pdf->MultiCell(202,5,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRB','L');
+      $pdf->MultiCell(202,5,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRBT','L');
     }
 
     // print totals
@@ -880,6 +866,7 @@ class SalesReportsController {
       $pdf->Cell(20,4,'','RB',0,'R');
       $pdf->Cell(26,4,number_format($total_tax, 2, '.', ''),'RB',1,'R');
     }
+
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(27,4,'Totals','LB',0,'R');
     $pdf->Cell(12,4,number_format($hsn_tot_billed_qty, 2, '.', ''),'LB',0,'R');
