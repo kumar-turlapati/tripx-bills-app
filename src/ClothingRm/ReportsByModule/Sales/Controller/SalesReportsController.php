@@ -514,6 +514,9 @@ class SalesReportsController {
       die('Invalid Sales Transaction.');
     }
 
+    // dump($sale_details, $sale_item_details);
+    // exit;
+
     $bill_no = $sale_details['billNo'];
     $bill_date = date('d-M-Y',strtotime($sale_details['invoiceDate']));
     $bill_time = date('h:ia',strtotime($sale_details['createdTime']));
@@ -601,6 +604,7 @@ class SalesReportsController {
     $customer_info['payment_method'] = $sale_details['paymentMethod'];
     $customer_info['credit_days'] = $sale_details['saCreditDays'];
     $customer_info['promo_code'] = $sale_details['promoCode'];
+    $customer_info['promo_code_discount'] = $sale_details['promoDiscountPercent'];
     $customer_info['billing'] = [
       'customer_name' => $customer_name,
       'address' => $sale_details['address'],
@@ -626,10 +630,10 @@ class SalesReportsController {
     $customer_info['transport_details'] = [
       'transporter_name' => $sale_details['transporterName'],
       'lr_no' => $sale_details['lrNo'],
-      'lr_date' => $sale_details['lrDate'],
+      'lr_date' => $sale_details['lrDate'] !== '0000-00-00' ? $sale_details['lrDate'] : '',
       'challan_no' => $sale_details['challanNo'],
       'way_bill_no' => $sale_details['wayBillNo'],
-      'way_bill_date' => $sale_details['wayBillDate'],
+      'way_bill_date' => $sale_details['wayBillDate'] !== '00-00-0000' ? $sale_details['wayBillDate'] : '',
     ];
     $gst_details = [
       'irn' => $sale_details['gstIrn'],
@@ -651,7 +655,7 @@ class SalesReportsController {
     $pdf->setTitle('eInvoice'.'__'.$customer_info['custom_invoice_no'].'__'.date('jS F, Y'));
 
     // print sale items.
-    $item_widths = [8,50,15,16,13,15,20,20,22];
+    $item_widths = [8,50,17,16,13,15,20,20,22];
               //    0, 1, 2, 3, 4, 5, 6, 7, 8
 
     $this->_add_einvoice_header($pdf, $customer_info, $item_widths, $loc_address, $gst_details, $brand_name);
@@ -751,29 +755,28 @@ class SalesReportsController {
 
         // dump($hsn_codes_array);
 
-        $pdf->SetFont('Arial','',8);
-        $pdf->Cell($item_widths[0],  4,$sno,'LRB',0,'R');
-        $pdf->Cell($item_widths[1],  4,$item_name,'RB',0,'L');
-        $pdf->Cell($item_widths[2],  4,$hsn_sac_code,'RB',0,'L');
-        $pdf->Cell(             23,  4,$cno,'RB',0,'L');
-        $pdf->SetFont('Arial','',8);
-        $pdf->Cell($item_widths[5],  4,number_format($item_qty,2,'.',''),'RB',0,'R');
-        $pdf->Cell($item_widths[3],  4,number_format($mrp,2,'.',''),'RB',0,'R');        
-        $pdf->Cell($item_widths[4],  4,$uom_name,'RB',0,'R');
-        $pdf->Cell($item_widths[6],  4,number_format($amount,2,'.',''),'RB',0,'R');
-        $pdf->Cell($item_widths[7],  4,$discount > 0 ? number_format($discount,2,'.','') : '','RB',0,'R');
-        $pdf->Cell($item_widths[8],  4,number_format($taxable,2,'.',''),'RB',0,'R');
+        $pdf->SetFont('Arial','',9);
+        $pdf->Cell($item_widths[0],  5,$sno,'LRB',0,'R');
+        $pdf->Cell($item_widths[1],  5,$item_name,'RB',0,'L');
+        $pdf->Cell($item_widths[2],  5,$hsn_sac_code,'RB',0,'L');
+        $pdf->Cell(             21,  5,$cno,'RB',0,'L');
+        $pdf->Cell($item_widths[5],  5,number_format($item_qty,2,'.',''),'RB',0,'R');
+        $pdf->Cell($item_widths[3],  5,number_format($mrp,2,'.',''),'RB',0,'R');        
+        $pdf->Cell($item_widths[4],  5,$uom_name,'RB',0,'R');
+        $pdf->Cell($item_widths[6],  5,number_format($amount,2,'.',''),'RB',0,'R');
+        $pdf->Cell($item_widths[7],  5,$discount > 0 ? number_format($discount,2,'.','') : '','RB',0,'R');
+        $pdf->Cell($item_widths[8],  5,number_format($taxable,2,'.',''),'RB',0,'R');
       } else {
-        $pdf->Cell($item_widths[0],  4,'','L',0,'R');
-        $pdf->Cell($item_widths[1],  4,'','L',0,'L');
-        $pdf->Cell(             23,  4,'','R',0,'L');
-        $pdf->Cell($item_widths[2],  4,'','L',0,'L');
-        $pdf->Cell($item_widths[4],  4,'','L',0,'R');
-        $pdf->Cell($item_widths[3],  4,'','L',0,'R');        
-        $pdf->Cell($item_widths[5],  4,'','L',0,'R');
-        $pdf->Cell($item_widths[6],  4,'','L',0,'R');
-        $pdf->Cell($item_widths[7],  4,'','L',0,'R');
-        $pdf->Cell($item_widths[8],  4,'','LR',0,'R');
+        $pdf->Cell($item_widths[0],  5,'','L',0,'R');
+        $pdf->Cell($item_widths[1],  5,'','L',0,'L');
+        $pdf->Cell(             23,  5,'','R',0,'L');
+        $pdf->Cell($item_widths[2],  5,'','L',0,'L');
+        $pdf->Cell($item_widths[4],  5,'','L',0,'R');
+        $pdf->Cell($item_widths[3],  5,'','L',0,'R');        
+        $pdf->Cell($item_widths[5],  5,'','L',0,'R');
+        $pdf->Cell($item_widths[6],  5,'','L',0,'R');
+        $pdf->Cell($item_widths[7],  5,'','L',0,'R');
+        $pdf->Cell($item_widths[8],  5,'','LR',0,'R');
       }
       $pdf->Ln();
       $record_cntr++;
@@ -4604,7 +4607,11 @@ class SalesReportsController {
 
     $pdf->Cell(80,5,$customer_info['transport_details']['transporter_name'],'LB',0,'C');
     $pdf->Cell(30,5,$customer_info['transport_details']['lr_no'],'TB',0,'C');
-    if($customer_info['transport_details']['lr_date'] !== '0' && strlen($customer_info['transport_details']['lr_date']) > 0) {
+    if(
+        $customer_info['transport_details']['lr_date'] !== '0' && 
+        strlen($customer_info['transport_details']['lr_date']) > 0 &&
+        $customer_info['transport_details']['lr_date'] !== ''
+      ) {
       $pdf->Cell(20,5,date("d-M-Y",strtotime($customer_info['transport_details']['lr_date'])),'TB',0,'C');
     } else {
       $pdf->Cell(20,5,'','TB',0,'C');
@@ -4737,9 +4744,13 @@ class SalesReportsController {
     $pdf->SetFont('Arial','B',11);    
     $pdf->Cell(25,6,$customer_info['bill_date'],'BTR',0,'C');
     $pdf->SetFont('Arial','I',9);    
-    $pdf->Cell(20,6,'Brand','BTR',0,'R');
+    $pdf->Cell(10,6,'Brand','BTR',0,'R');
+    $pdf->SetFont('Arial','B',10);    
+    $pdf->Cell(37,6,$brand_name,'BTR',0,'C');
+    $pdf->SetFont('Arial','I',9);    
+    $pdf->Cell(20,6,'Discount(%)','BTR',0,'R');
     $pdf->SetFont('Arial','B',11);    
-    $pdf->Cell(67,6,$brand_name,'BTR',0,'C');
+    $pdf->Cell(20,6,$customer_info['promo_code_discount'],'BTR',0,'C');
     $pdf->Ln(6);
 
     // section or location information
@@ -4782,6 +4793,7 @@ class SalesReportsController {
     $pdf->Cell(50,5,$customer_info['transport_details']['lr_no'],'TB',0,'C');
     if($customer_info['transport_details']['lr_date'] !== '0' &&
        $customer_info['transport_details']['lr_date'] !== '1970-01-01' && 
+       $customer_info['transport_details']['lr_date'] !== '0000-00-00' && 
        strlen($customer_info['transport_details']['lr_date']) > 0) {
       $pdf->Cell(22,5,date("d-M-Y",strtotime($customer_info['transport_details']['lr_date'])),'TB',0,'C');
     } else {
@@ -4794,7 +4806,7 @@ class SalesReportsController {
     $pdf->Cell($item_widths[0],  6,'Sno.','LRB',0,'C');
     $pdf->Cell($item_widths[1],  6,'Description','RB',0,'C');
     $pdf->Cell($item_widths[2],  6,'HSN/SAC','RB',0,'C');
-    $pdf->Cell(             23,  6,'Case/Box No.','RB',0,'C');
+    $pdf->Cell(             21,  6,'Case/Box No.','RB',0,'C');
     $pdf->Cell($item_widths[5],  6,'Qty.','RB',0,'C');
     $pdf->Cell($item_widths[3],  6,'Rate (Rs.)','RB',0,'C');        
     $pdf->Cell($item_widths[4],  6,'Unit','RB',0,'C');

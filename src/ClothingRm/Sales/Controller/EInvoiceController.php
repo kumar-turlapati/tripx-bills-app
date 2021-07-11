@@ -619,7 +619,9 @@ class EInvoiceController {
     $tot_total_amount = 0;
     $tot_discount = $tot_inv_value = $rnd_off_amount = 0;
     $tot_total_item_val = 0;
+    $slno=0;
     foreach($sales_details['itemDetails'] as $item_slno => $item_details) {
+      $slno++;
       $gst_item_array = [];
       $item_qty = (float)$item_details['itemQty'];
 
@@ -643,7 +645,7 @@ class EInvoiceController {
       $total_item_val = round($ass_amount + $sgst_amount + $cgst_amount + $igst_amount, 2);
       $slno_string = $item_slno+1;
 
-      $gst_item_array['SlNo'] = "$item_slno";
+      $gst_item_array['SlNo'] = "$slno";
       $gst_item_array['IsServc'] = $item_details['itemType'] === 'p' ? 'N' : 'Y';
       $gst_item_array['PrdDesc'] = $item_details['itemName'];
       $gst_item_array['HsnCd'] = $item_details['hsnSacCode'];
