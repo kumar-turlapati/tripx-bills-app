@@ -619,8 +619,10 @@ class EInvoiceController {
     $tot_discount = $tot_inv_value = $rnd_off_amount = 0;
     foreach($sales_details['itemDetails'] as $item_slno => $item_details) {
       $gst_item_array = [];
-      $total_amount = round($item_details['mrp'] * $item_details['itemQty'],2);
-      $ass_amount = round($total_amount - $item_details['discountAmount'], 2);
+      $item_qty = (float)$item_details['itemQty'];
+
+      $total_amount = (float)round($item_details['mrp']*$item_qty,2);
+      $ass_amount = (float)round($total_amount-$item_details['discountAmount'], 2);
       $tax_percent = $item_details['taxPercent'];
 
       $tax_value = (float)round(($ass_amount*$tax_percent/100),2);
@@ -628,11 +630,11 @@ class EInvoiceController {
 
       // compute correct tax values...
       if($gst_tax_type === 'intra') {
-        $sgst_amount = round($sgst_value, 2);
-        $cgst_amount = round($cgst_value, 2);
+        $sgst_amount = $sgst_value;
+        $cgst_amount = $cgst_value;
         $igst_amount = 0;
       } else {
-        $igst_amount = round($sgst_value+$cgst_value, 2);
+        $igst_amount = round($tax_value, 2);
         $sgst_amount = $cgst_amount = 0;
       }
 
@@ -676,7 +678,7 @@ class EInvoiceController {
 
       $item_list[] = $gst_item_array;
 
-      $tot_ass_value += $ass_amount;
+      $tot_ass_value += $total_amount;
       $tot_cgst_value += $cgst_amount;
       $tot_sgst_value += $sgst_amount;
       $tot_igst_value += $igst_amount;
