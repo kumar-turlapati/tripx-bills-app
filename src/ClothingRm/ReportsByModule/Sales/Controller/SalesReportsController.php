@@ -604,6 +604,7 @@ class SalesReportsController {
     $customer_info['payment_method'] = $sale_details['paymentMethod'];
     $customer_info['credit_days'] = $sale_details['saCreditDays'];
     $customer_info['promo_code'] = $sale_details['promoCode'];
+    $customer_info['campaign_name'] = $sale_details['campaignName'];
     $customer_info['promo_code_discount'] = $sale_details['promoDiscountPercent'];
     $customer_info['billing'] = [
       'customer_name' => $customer_name,
@@ -4750,7 +4751,7 @@ class SalesReportsController {
     $pdf->SetFont('Arial','I',9);    
     $pdf->Cell(20,6,'Discount(%)','BTR',0,'R');
     $pdf->SetFont('Arial','B',11);    
-    $pdf->Cell(20,6,$customer_info['promo_code_discount'],'BTR',0,'C');
+    $pdf->Cell(20,6,number_format($customer_info['promo_code_discount'],0,'.',''),0,,'BTR',0,'C');
     $pdf->Ln(6);
 
     // section or location information
@@ -4763,7 +4764,7 @@ class SalesReportsController {
     $pdf->SetFont('Arial','',8);
     $pdf->Cell(53,5,$customer_info['location_name'],'LB',0,'C');
     $pdf->Cell(63,5,$customer_info['executive_name'],'B',0,'C');
-    $pdf->Cell(43,5,$customer_info['promo_code'],'B',0,'C');
+    $pdf->Cell(43,5,$customer_info['campaign_name'],'B',0,'C');
     $pdf->Cell(43,5,$payment_method_name,'BR',0,'C');
     $pdf->Ln();
 
