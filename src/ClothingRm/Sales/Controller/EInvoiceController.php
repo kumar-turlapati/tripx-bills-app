@@ -705,10 +705,10 @@ class EInvoiceController {
     // dump($tot_ass_value, $tot_cgst_value, $tot_sgst_value, $tot_igst_value, $tot_discount);
     // exit;
 
-    $payload['ValDtls']['AssVal'] = round($tot_ass_value+$tot_discount,2);
+    $payload['ValDtls']['AssVal'] = round($tot_ass_value,2);
     $payload['ValDtls']['Discount'] = round($tot_discount,2);
     $payload['ValDtls']['RndOffAmt'] = round($round_off,2);
-    $payload['ValDtls']['TotInvVal'] = round($tot_inv_value_wo_discount, 0);
+    $payload['ValDtls']['TotInvVal'] = round($tot_inv_value_wo_roundoff+$round_off, 0);
     $payload['ValDtls']['CgstVal'] = round($tot_cgst_value,2);
     $payload['ValDtls']['SgstVal'] = round($tot_sgst_value,2);
     $payload['ValDtls']['IgstVal'] = round($tot_igst_value,2);
