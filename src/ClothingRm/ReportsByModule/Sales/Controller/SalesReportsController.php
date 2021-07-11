@@ -4682,6 +4682,10 @@ class SalesReportsController {
       die("<h2>Invalid eInvoice Details / eInvoice not found...</h2>");
     }
 
+    $promo_code_discount = $customer_info['promo_code_discount'] > 0 ? 
+                           number_format($customer_info['promo_code_discount'],0,'.','').'%' :
+                           '';
+
     // supplier address
     $image_url = Utilities::generate_QRcode_for_einvoice($qrdata, $irn);
     // echo $image_url;
@@ -4751,7 +4755,7 @@ class SalesReportsController {
     $pdf->SetFont('Arial','I',9);    
     $pdf->Cell(20,6,'Discount(%)','BTR',0,'R');
     $pdf->SetFont('Arial','B',11);    
-    $pdf->Cell(20,6,$customer_info['promo_code_discount'] > 0 ? number_format($customer_info['promo_code_discount'],0,'.','').'%','BTR',0,'C');
+    $pdf->Cell(20,6,$promo_code_discount,'BTR',0,'C');
     $pdf->Ln(6);
 
     // section or location information
