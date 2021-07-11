@@ -18,6 +18,7 @@ class PdfWoHeaderFooter extends FPDF {
   }
 
   // Page footer
+  /*
   public function Footer() {
     // Position at 1.5 cm from bottom
     $this->SetY(-10);
@@ -32,5 +33,5 @@ class PdfWoHeaderFooter extends FPDF {
     $this->Cell(0,4,$footer_text,'T',2,'C');
     $this->SetFont('Arial','B',6);    
     $this->Cell(0,-4,$promo_text,0,1,'R');
-  }  
+  }*/ 
 }
