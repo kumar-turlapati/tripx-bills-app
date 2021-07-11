@@ -764,9 +764,11 @@ class SalesReportsController {
       if($record_cntr === 30) {
         $pdf->Ln();
         $pdf->Ln();
+        $pdf->Ln();
+        $pdf->SetFont('Arial','BI',9);
         $pdf->Cell($item_widths[0]+$item_widths[1]+$item_widths[2]+
                    $item_widths[5]+$item_widths[3]+$item_widths[4]+
-                   $item_widths[6]+$item_widths[7]+$item_widths[8]+21,  5,"cont...",0,0,'L');                
+                   $item_widths[6]+$item_widths[7]+$item_widths[8]+21,  5,"continued...",0,0,'L');                
         $pdf->setMargins(5, 1, 1);
         $pdf->AddPage('P','A4');        
         $this->_add_einvoice_header($pdf, $customer_info, $item_widths, $loc_address, $gst_details, $brand_name);
