@@ -15,7 +15,13 @@
           </div>
         </div>
         <div align="center" style="margin-bottom: 8px;">
-          <button class="btn btn-warning" id="printIrn" name="printIrn" value="printIrn">
+          <button 
+            class="btn btn-warning" 
+            id="printIrn" 
+            name="printIrn" 
+            value="printIrn"
+            onclick="window.open('/sales-invoice-irn/<?php echo $einvoice_details['qbinvoiceCode'] ?>', '_blank')" 
+          >
             <i class="fa fa-print"></i> Print IRN
           </button>&nbsp;
           <button 

@@ -122,7 +122,7 @@
                    <td class="valign-middle" align="right"><?php echo $sl_no ?></td>
                    <td class="valign-middle"><?php echo $doc_no ?></td>
                    <td class="valign-middle"><?php echo $customer_gst_no ?></td>
-                   <td class="valign-middle" align="right" style="font-weight: bold;"><?php echo number_format($invoice_amount, 2, '.', 0) ?></td>
+                   <td class="valign-middle" align="right" style="font-weight: bold;"><?php echo number_format($invoice_amount, 2, '.', '') ?></td>
                    <td class="valign-middle" align="right"><?php echo $ack_no ?></td>
                    <td class="valign-middle" align="right"><?php echo $ack_date ?></td>
                    <td class="valign-middle" align="right"><?php echo $eway_bill_no ?></td>
@@ -130,7 +130,7 @@
                    <td class="valign-middle" align="center"><?php echo $status === 'ACT' ? 'Active' : '<span style="color: red; font-weight: bold;">Cancelled</span>' ?></td>
                    <td class="valign-middle" align="left">
                     <div class="btn-actions-group" style="padding-left:10px;">
-                      <a class="btn btn-success" href="javascript: printSalesBillCombo('<?php //echo $sales_code ?>')" title="Print eInvoice">
+                      <a class="btn btn-success" href="/sales-invoice-irn/<?php echo $qb_invoice_code ?>" title="Print eInvoice" target="_blank">
                         <i class="fa fa-print" aria-hidden="true"></i>
                       </a>
                       <?php if($status === 'ACT'): ?>
