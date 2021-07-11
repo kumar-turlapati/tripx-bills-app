@@ -662,11 +662,12 @@ class SalesReportsController {
     $record_cntr = 0;
     $items_per_page = 20;
     $empty_rows_tobe_filled = count($sale_item_details) < $items_per_page ? $items_per_page-count($sale_item_details) : 10;
-    $sale_item_details_filled = array_fill(count($sale_item_details)-1, $empty_rows_tobe_filled, []);
 
     if(count($sale_item_details) < $items_per_page) {
+      $sale_item_details_filled = array_fill(count($sale_item_details)-1, $empty_rows_tobe_filled, []);
       $sale_item_final = array_merge($sale_item_details, $sale_item_details_filled);
     } else {
+      $sale_item_details_filled = array_fill(0, $empty_rows_tobe_filled, []);
       $sale_item_final = array_splice($sale_item_details, 19, 0, $sale_item_details_filled);
     }    
     $unique_hsn_codes = array_unique(array_column($sale_item_details, 'hsnSacCode')); 
