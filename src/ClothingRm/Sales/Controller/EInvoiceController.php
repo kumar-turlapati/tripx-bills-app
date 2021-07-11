@@ -8,6 +8,8 @@ use Atawa\Utilities;
 use Atawa\Constants;
 use Atawa\Template;
 use Atawa\Flash;
+use Atawa\Config\Config;
+use Atawa\S3;
 
 use ClothingRm\Sales\Model\Einvoice;
 use ClothingRm\Sales\Model\Sales;
@@ -93,6 +95,8 @@ class EInvoiceController {
           $shipping_info['gstAckNo'] = $api_response['response']['AckNo'];
           $shipping_info['gstAckDate'] = $api_response['response']['AckDt'];
           $shipping_info['gstIrn'] = $api_response['response']['Irn'];
+          $shipping_info['ewbNo'] = $api_response['response']['EwbNo'];
+          $shipping_info['ewbDate'] = $api_response['response']['EwbDt'];
 
           // update shipping info
           $shipping_response = $this->sales->update_shipping_info($shipping_info, $sales_code);
@@ -361,15 +365,39 @@ class EInvoiceController {
   // generate qrcode
   public function generateQrCode(Request $request) {
     $data = $request->get('data') !== null ? Utilities::clean_string($request->get('data')) : '';
+    $irn = $request->get('irn') !== null ? Utilities::clean_string($request->get('irn')) : '';
     if( strlen($data) > 0) {
-      $qr_code = new QrCode($data);
-      $qr_code->setSize(210);
-      $qr_code->setMargin(5);
-      $qr_code->setWriterByName('png');
-      $qr_code->setEncoding('UTF-8');
-      header('Content-Type: '.$qr_code->getContentType());
-      echo $qr_code->writeString();
-    }
+      $s3_config = Config::get_s3_details();
+
+      $client_code = $_SESSION['ccode'];
+      $file_name = $irn.'.png';
+      $s3_url = 'https://'.$s3_config['BUCKET_NAME'].'.'.$s3_config['END_POINT_FULL'].'/'.$client_code;
+      $file_url = $s3_url.'/einvqrcodes/'.$file_name;
+      if (!file_exists($file_url)) {
+        $qr_code = new QrCode($data);
+        $qr_code->setSize(210);
+        $qr_code->setMargin(5);
+        $qr_code->setWriterByName('png');
+        $qr_code->setEncoding('UTF-8');
+        $local_file_name = __DIR__.'/../../../../bulkuploads/einvqrcodes/'.$file_name;
+        $qr_code->writeFile($local_file_name);
+
+        $s3 = new S3($s3_config['IAM_KEY'], $s3_config['IAM_SECRET'], false, $s3_config['END_POINT_FULL'], $s3_config['END_POINT_SHORT']);
+        $meta_headers = [
+          'Content-Disposition' => "inline; filename=$file_name",
+          'Content-Type' => 'image/png',
+        ];
+        $key_name = $client_code.'/einvqrcodes/'.$file_name;
+        $upload_result = $s3->putObjectFile($local_file_name, 
+                                            $s3_config['BUCKET_NAME'], 
+                                            $key_name, 
+                                            S3::ACL_PUBLIC_READ, 
+                                            [], 
+                                            $meta_headers
+                                          );
+      } // second if
+      return $file_url;
+    } //main if
     exit;
   }
 

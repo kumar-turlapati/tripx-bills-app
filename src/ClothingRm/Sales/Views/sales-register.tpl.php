@@ -296,6 +296,7 @@
 
                   $gst_doc_no = $sales_details['gstDocNo'] !== '' ? $sales_details['gstDocNo'] : $sales_details['customBillNo'];
                   $brand_name = $sales_details['brandName'];
+                  $gst_irn = $sales_details['gstIrn'];
               ?>
                   <tr class="text-uppercase text-right font11">
                     <td class="valign-middle"><?php echo $cntr ?></td>
@@ -355,9 +356,16 @@
                             <a class="btn btn-primary" target="_blank" href="/whatsapp/shipping-update?ic=<?php echo $sales_code ?>" title="Push Whatsapp shipping update">
                               <i class="fa fa-whatsapp" aria-hidden="true"></i>
                             </a>
-                            <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
-                              <i class="fa fa-bold" aria-hidden="true"></i>
-                            </a>
+
+                            <?php if($gst_irn !== ''): ?>
+                              <a class="btn btn-success" target="_blank" href="/sales-invoice-irn/<?php echo $sales_code ?>" title="Print B2B Invoice">
+                                <i class="fa fa-bold" aria-hidden="true"></i>
+                              </a>
+                            <?php else: ?>
+                              <a class="btn btn-success" target="_blank" href="/sales-invoice-b2b/<?php echo $sales_code ?>" title="Print B2B Invoice">
+                                <i class="fa fa-bold" aria-hidden="true"></i>
+                              </a>
+                            <?php endif; ?>
                             <a 
                               class="btn <?php echo strlen($transporter_name) > 0 ? 'btn-success' : 'btn-danger' ?>" 
                               target="_blank" 

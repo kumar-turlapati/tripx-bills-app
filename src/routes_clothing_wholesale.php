@@ -877,6 +877,10 @@ $routes->add('report_sales_b2b_invoice', new Routing\Route('/sales-invoice-b2b/{
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printB2BSalesInvoice',
   'salesCode' => null,
 )));
+$routes->add('report_sales_b2b_invoice_with_irn', new Routing\Route('/sales-invoice-irn/{salesCode}', array(
+  '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::printB2BSalesInvoiceWithIrn',
+  'salesCode' => null,
+)));
 $routes->add('report_sales_register_itemwise', new Routing\Route('/reports/itemwise-sales-register', array(
   '_controller' => 'ClothingRm\\ReportsByModule\\Sales\\Controller\\SalesReportsController::itemwiseSalesRegister',
 )));

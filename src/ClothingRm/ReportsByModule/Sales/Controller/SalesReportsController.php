@@ -9,9 +9,12 @@ use Atawa\Constants;
 use Atawa\Template;
 use Atawa\Flash;
 use Atawa\PDF;
+use Atawa\PdfWoHeaderFooter;
 
 use ClothingRm\Sales\Model\Sales;
 use ClothingRm\Finance\Model\Finance;
+use ClothingRm\Sales\Model\Einvoice;
+
 use BusinessUsers\Model\BusinessUsers;
 
 class SalesReportsController {
@@ -24,6 +27,7 @@ class SalesReportsController {
     $this->bu_model = new BusinessUsers;
     $this->flash = new Flash;    
     $this->fin_model = new Finance;
+    $this->einvoice = new Einvoice;
   }
 
   // print b2b sales invoice
@@ -508,7 +512,406 @@ class SalesReportsController {
       unset($sale_details['itemDetails']);
     } else {
       die('Invalid Sales Transaction.');
-    }    
+    }
+
+    $bill_no = $sale_details['billNo'];
+    $bill_date = date('d-M-Y',strtotime($sale_details['invoiceDate']));
+    $bill_time = date('h:ia',strtotime($sale_details['createdTime']));
+    $payment_method = Constants::$PAYMENT_METHODS_RC[$sale_details['paymentMethod']];
+    $payment_method_num = (int)$sale_details['paymentMethod'];
+    $tmp_cust_name = $sale_details['tmpCustName'];
+    $customer_name  =  $sale_details['customerName'] !== '' ? $sale_details['customerName'] : '';
+    $card_no = $sale_details['cardNo'] > 0 ? '* ****'.$sale_details['cardNo'] : '';
+    $auth_code = $sale_details['authCode'] > 0 ? $sale_details['authCode'] : '****';
+
+    $cn_no =  $sale_details['cnNo'];
+    $referral_no = $sale_details['refCardNo'];
+    $promo_code =  $sale_details['promoCode'];
+    if($customer_name === '') {
+      $customer_name = $tmp_cust_name;
+    }
+
+    $tax_calc_option = $sale_details['taxCalcOption'];
+
+    $business_name  =   isset($sale_details['locationNameShort']) && $sale_details['locationNameShort'] !== '' ? $sale_details['locationNameShort'] : $sale_details['locationName'];
+    $business_add1  =   $sale_details['locAddress1'];
+    $business_add2  =   $sale_details['locAddress2'];
+    $city_name      =   $sale_details['locCityName'];
+    $state_name     =   Utilities::get_location_state_name($sale_details['locStateID']);
+    $pincode        =   $sale_details['locPincode'];
+    $business_add3  =   ucwords(strtolower($city_name)).', '.ucwords(strtolower($state_name)).' - '.$pincode;
+    $phones         =   $sale_details['locPhones'];
+
+    $gst_no         =   $sale_details['locGstNo'];
+    $card_no        =   $sale_details['cardNo'] > 0 ? '* ****'.$sale_details['cardNo'] : '';
+    $auth_code      =   $sale_details['authCode'] > 0 ? $sale_details['authCode'] : '****';
+
+    $cn_no          =   $sale_details['cnNo'];
+    $referral_no    =   $sale_details['refCardNo'];
+    $net_pay        =   $sale_details['netPay'];
+    $bank_id        =   $sale_details['bankID'];
+    $remarks_invoice=   $sale_details['remarksInvoice'];
+    if($bank_id > 0) {
+      // get all banks from back-end.
+      $result = $this->fin_model->banks_list();
+      if($result['status']) {
+        $banks = $result['banks'];
+        $bank_key = array_search($bank_id, array_column($banks, 'bankID'));
+      }
+    }
+
+    $loc_address = [
+      'address1' => $business_add1,
+      'address2' => $business_add2,
+      'address3' => $business_add3,
+      'phones' => $phones,
+      'store_name' => $business_name,
+      'gst_no' => $gst_no,
+    ];
+
+    // igst or (cgst and sgst)
+    if((int)$sale_details['stateID'] > 0 && (int)$sale_details['locStateID'] > 0) {
+      if((int)$sale_details['stateID'] === (int)$sale_details['locStateID']) {
+        $gst_tax_type = 'intra';
+      } else {
+        $gst_tax_type = 'inter';
+      }
+    } else {
+      $gst_tax_type = 'intra';
+    }
+
+    // customer array
+    if($sale_details['customBillNo'] !== '') {
+      $customer_info['custom_invoice_no'] = $sale_details['customBillNo'];
+    } elseif($sale_details['customBillNo'] !== '') {
+      $customer_info['custom_invoice_no'] = $sale_details['gstDocNo'];
+    } else {
+      $customer_info['custom_invoice_no'] = $sale_details['billNo'];
+    }
+
+    // $customer_info['custom_invoice_no'] = $sale_details['customBillNo'] !== '' ? $sale_details['customBillNo'] : $sale_details['billNo'];
+    $customer_info['bill_no'] = $sale_details['billNo'];
+    $customer_info['indent_no'] = $sale_details['indentNo'];
+    $customer_info['bill_date'] = date("d-M-Y",strtotime($sale_details['invoiceDate']));
+    $customer_info['location_name'] = $sale_details['locationName'];
+    $customer_info['location_name_short'] = $sale_details['locationNameShort'];
+    $customer_info['executive_name'] = $sale_details['executiveName'];
+    $customer_info['agent_name'] = '';
+    $customer_info['invoice_code'] = $sale_details['invoiceCode'];
+    $customer_info['payment_method'] = $sale_details['paymentMethod'];
+    $customer_info['credit_days'] = $sale_details['saCreditDays'];
+    $customer_info['promo_code'] = $sale_details['promoCode'];
+    $customer_info['billing'] = [
+      'customer_name' => $customer_name,
+      'address' => $sale_details['address'],
+      'city_name' => $sale_details['cityName'],
+      'state_name' => Utilities::get_location_state_name($sale_details['stateID']),
+      'country_name' => Utilities::get_country_name($sale_details['countryID']),
+      'pincode' => $sale_details['pincode'],
+      'phones' => $sale_details['phones'],
+      'gst_no' => $sale_details['customerGstNo'],
+      'state_id' => $sale_details['stateID'],
+    ];
+    $customer_info['shipping'] = [
+      'customer_name' => $customer_name,
+      'address' => $sale_details['shippingAddress'] !== '' ? $sale_details['shippingAddress'] : $sale_details['address'],
+      'city_name' => $sale_details['shippingCityName'] !== '' ? $sale_details['shippingCityName'] : $sale_details['cityName'],
+      'state_name' => $sale_details['shippingStateID'] !== '' ? Utilities::get_location_state_name($sale_details['shippingStateID']) : Utilities::get_location_state_name($sale_details['stateID']),
+      'country_name' => $sale_details['shippingCountryID'] !== '' ? Utilities::get_country_name($sale_details['shippingCountryID']) : Utilities::get_country_name($sale_details['countryID']),
+      'pincode' => $sale_details['shippingPincode'] !== '' ? $sale_details['shippingPincode'] : $sale_details['pincode'],
+      'phones' => $sale_details['shippingPhones'] !== '' ? $sale_details['shippingPhones'] : $sale_details['phones'],
+      'gst_no' => $sale_details['customerGstNo'],
+      'state_id' => $sale_details['shippingStateID'] !== '' ? $sale_details['shippingStateID'] : $sale_details['stateID'],
+    ];
+    $customer_info['transport_details'] = [
+      'transporter_name' => $sale_details['transporterName'],
+      'lr_no' => $sale_details['lrNo'],
+      'lr_date' => $sale_details['lrDate'],
+      'challan_no' => $sale_details['challanNo'],
+      'way_bill_no' => $sale_details['wayBillNo'],
+      'way_bill_date' => $sale_details['wayBillDate'],
+    ];
+    $gst_details = [
+      'irn' => $sale_details['gstIrn'],
+      'gst_doc_no' => $sale_details['gstDocNo'],
+      'gst_ack_no' => $sale_details['gstAckNo'],
+      'gst_ack_date' => $sale_details['gstAckDate'],
+    ];
+
+    $brand_name = $sale_item_details[0]['brandName'];
+
+    // dump($customer_info);
+    // exit;
+
+    $pdf = PdfWoHeaderFooter::getInstance();
+    $pdf->AliasNbPages();
+    $pdf->SetAutoPageBreak(true, 5);
+    $pdf->setMargins(5, 1, 1);
+    $pdf->AddPage('P','A4');
+    $pdf->setTitle('eInvoice'.'__'.$customer_info['custom_invoice_no'].'__'.date('jS F, Y'));
+
+    // print sale items.
+    $item_widths = [8,50,15,16,13,15,20,20,22];
+              //    0, 1, 2, 3, 4, 5, 6, 7, 8
+
+    $this->_add_einvoice_header($pdf, $customer_info, $item_widths, $loc_address, $gst_details, $brand_name);
+    
+    $sno = 0;
+    $record_cntr = 0;
+    $items_per_page = 20;
+    $empty_rows_tobe_filled = count($sale_item_details) < $items_per_page ? $items_per_page-count($sale_item_details) : 0;
+    $empty_rows_tobe_filled = 0;
+    // dump($sale_item_details);
+    // exit;
+    $sale_item_details_filled = array_fill(count($sale_item_details)-1, $empty_rows_tobe_filled, []);
+    $sale_item_final = array_merge($sale_item_details, $sale_item_details_filled);
+    $unique_hsn_codes = array_unique(array_column($sale_item_details, 'hsnSacCode')); 
+
+    // dump(count($sale_item_final));
+
+    $taxable_values = $tax_amounts = $taxable_gst_value = [];
+    $tot_bill_value = $tot_discount = $tot_taxable = $tot_items_qty = 0;
+    $tot_tax_amount = 0;
+    $hsn_code_qty = $hsn_code_taxable = $hsn_cgst_value = $hsn_sgst_value = 0;
+    $cnos_a = $hsn_codes_array = $bnos_a = [];
+    foreach($sale_item_final as $item_details) {
+      if(is_array($item_details) && count($item_details) > 0) {
+        $item_qty = $amount = $discount = $taxable = $tax_value = 0;
+        $hsn_code_qty = $hsn_code_taxable = $hsn_cgst_value = $hsn_sgst_value = 0;
+
+        $sno++;
+
+        $item_name = $item_details['itemName'];
+        $brand_name = $item_details['brandName'];
+        $hsn_sac_code = $item_details['hsnSacCode'];
+        $item_qty = (float)$item_details['itemQty'];
+        $uom_name = $item_details['uomName'];
+        $discount = $item_details['discountAmount'];
+        $tax_percent = $item_details['taxPercent'];
+        $mrp = $item_details['mrp'];
+        $cno = $item_details['cno'];
+        if($item_details['cno'] !== '') {
+          $cnos_a[] = $item_details['cno'];
+        }
+        if($item_details['bno'] !== '') {
+          $bnos_a[] = $item_details['bno'];
+        }        
+
+        $amount = (float)round($item_qty*$mrp,2);
+        $taxable = (float)round($amount-$discount,2);
+        $tax_value = (float)round(($taxable*$tax_percent/100),2);
+
+        // dump($tax_value, $taxable);
+
+        $cgst_percent = $sgst_percent = round($tax_percent/2,2);
+        $cgst_value = $sgst_value = round($tax_value/2,2);
+
+        // dump($tax_value, $item_qty, $discount, $tax_percent, $mrp, 'hello...');
+
+        $tot_items_qty += $item_qty;
+        $tot_bill_value += $amount;
+        $tot_discount += $discount;
+        $tot_taxable += $taxable;
+        $tot_tax_amount += $tax_value;
+
+        if(isset($taxable_values[$tax_percent])) {
+          $taxable_amount = $taxable_values[$tax_percent] + ($taxable);
+          $gst_value = $taxable_gst_value[$tax_percent] + $tax_value;
+
+          $taxable_values[$tax_percent] = $taxable_amount;
+          $taxable_gst_value[$tax_percent] = $gst_value;
+        } else {
+          $taxable_values[$tax_percent] = $taxable;
+          $taxable_gst_value[$tax_percent] = $tax_value;
+        }
+
+        if(isset($hsn_codes_array["$hsn_sac_code"])) {
+          // $hsn_code_qty = $hsn_codes_array["$hsn_sac_code"]['qty'];
+          // $hsn_code_taxable = $hsn_codes_array["$hsn_sac_code"]['taxable'];
+          // $hsn_cgst_value = $hsn_codes_array["$hsn_sac_code"]['cgst_value'];
+          // $hsn_sgst_value = $hsn_codes_array["$hsn_sac_code"]['sgst_value'];
+
+          $hsn_codes_array["$hsn_sac_code"]['qty'] = $hsn_codes_array["$hsn_sac_code"]['qty']+$item_qty;
+          $hsn_codes_array["$hsn_sac_code"]['taxable'] = $hsn_codes_array["$hsn_sac_code"]['taxable']+$taxable;
+          $hsn_codes_array["$hsn_sac_code"]['cgst_value'] = (float)$hsn_codes_array["$hsn_sac_code"]['cgst_value']+(float)$cgst_value;
+          $hsn_codes_array["$hsn_sac_code"]['sgst_value'] = (float)$hsn_codes_array["$hsn_sac_code"]['sgst_value']+(float)$sgst_value;
+
+          // dump($hsn_codes_array, 'inside');
+
+        } else {
+          $hsn_codes_array["$hsn_sac_code"]['qty'] = $item_qty;
+          $hsn_codes_array["$hsn_sac_code"]['taxable'] = $taxable;
+          $hsn_codes_array["$hsn_sac_code"]['cgst_percent'] = $cgst_percent;
+          $hsn_codes_array["$hsn_sac_code"]['sgst_percent'] = $sgst_percent;
+          $hsn_codes_array["$hsn_sac_code"]['cgst_value'] = $cgst_value;
+          $hsn_codes_array["$hsn_sac_code"]['sgst_value'] = $sgst_value;
+
+          // dump($hsn_codes_array);          
+        }
+
+        // dump($hsn_codes_array);
+
+        $pdf->SetFont('Arial','',8);
+        $pdf->Cell($item_widths[0],  4,$sno,'LRB',0,'R');
+        $pdf->Cell($item_widths[1],  4,$item_name,'RB',0,'L');
+        $pdf->Cell($item_widths[2],  4,$hsn_sac_code,'RB',0,'L');
+        $pdf->Cell(             23,  4,$cno,'RB',0,'L');
+        $pdf->SetFont('Arial','',8);
+        $pdf->Cell($item_widths[5],  4,number_format($item_qty,2,'.',''),'RB',0,'R');
+        $pdf->Cell($item_widths[3],  4,number_format($mrp,2,'.',''),'RB',0,'R');        
+        $pdf->Cell($item_widths[4],  4,$uom_name,'RB',0,'R');
+        $pdf->Cell($item_widths[6],  4,number_format($amount,2,'.',''),'RB',0,'R');
+        $pdf->Cell($item_widths[7],  4,$discount > 0 ? number_format($discount,2,'.','') : '','RB',0,'R');
+        $pdf->Cell($item_widths[8],  4,number_format($taxable,2,'.',''),'RB',0,'R');
+      } else {
+        $pdf->Cell($item_widths[0],  4,'','L',0,'R');
+        $pdf->Cell($item_widths[1],  4,'','L',0,'L');
+        $pdf->Cell(             23,  4,'','R',0,'L');
+        $pdf->Cell($item_widths[2],  4,'','L',0,'L');
+        $pdf->Cell($item_widths[4],  4,'','L',0,'R');
+        $pdf->Cell($item_widths[3],  4,'','L',0,'R');        
+        $pdf->Cell($item_widths[5],  4,'','L',0,'R');
+        $pdf->Cell($item_widths[6],  4,'','L',0,'R');
+        $pdf->Cell($item_widths[7],  4,'','L',0,'R');
+        $pdf->Cell($item_widths[8],  4,'','LR',0,'R');
+      }
+      $pdf->Ln();
+      $record_cntr++;
+    }
+
+    $round_off = $net_pay - ($tot_taxable + $tot_tax_amount);
+
+    // print batch nos if exists
+    if(count($bnos_a) > 0) {
+      $pdf->SetFont('Arial','',8);
+      $pdf->MultiCell(202,5,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRB','L');
+    }
+
+    // print totals
+    $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + 23;
+    $gst_width = array_sum($item_widths) - $item_widths[8];
+    $pdf->SetFont('Arial','',9);
+    $pdf->Cell(25,    6,'Total Qty.','LT',0,'C');
+    $pdf->Cell(25,    6,'Gross Value','LT',0,'C');
+    $pdf->Cell(25,    6,'Discount','LT',0,'C');
+    $pdf->Cell(25,    6,'Taxable (in Rs.)','LT',0,'C');
+    $pdf->Cell(25,    6,'GST (in Rs.)','LT',0,'C');
+    $pdf->Cell(25,    6,'Roff (in Rs.)','LT',0,'C');
+    $pdf->Cell(52,    6,'Invoice Value (in Rs.)','LTR',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(25,    6, number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(25,    6, number_format($tot_bill_value,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(25,    6, number_format($tot_discount,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(25,    6, number_format($tot_taxable,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(25,    6, number_format($tot_tax_amount,2,'.',''),'LTB',0,'R');
+    $pdf->Cell(25,    6, number_format($round_off,2,'.',''),'LTB',0,'R');
+    $pdf->SetFont('Arial','B',13);
+    $pdf->Cell(52,    6, number_format($net_pay,2,'.',''),'LTBR',0,'R');
+    $pdf->Ln();
+
+    // GST total
+    $pdf->SetFont('Arial','I',8);
+    $pdf->Cell(202,  5,'( In words: '.Utilities::get_indian_currency($net_pay).' )','LR',0,'R');
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(202,5,'GST Details','LRB',0,'C');
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell(27,4,'HSN/SAC','LRB',0,'C');
+    $pdf->Cell(12,4,'Qty.','RB',0,'C');
+    $pdf->Cell(18,4,'Taxable','RB',0,'C');
+    $pdf->Cell(13,4,'IGST %','RB',0,'C');
+    $pdf->Cell(20,4,'IGST (Rs.)','RB',0,'C');
+    $pdf->Cell(13,4,'CGST %','RB',0,'C');
+    $pdf->Cell(20,4,'CGST (Rs.)','RB',0,'C');
+    $pdf->Cell(13,4,'SGST %','RB',0,'C');
+    $pdf->Cell(20,4,'SGST (Rs.)','RB',0,'C');
+    $pdf->Cell(20,4,'CESS (Rs.)','RB',0,'C');
+    $pdf->Cell(26,4,'TOTAL GST (Rs.)','RB',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+
+    // dump($hsn_codes_array);
+    // exit;
+
+    $hsn_tot_billed_qty = $hsn_tot_tax = 0;
+    $hsn_tot_taxable = $hsn_tot_igst_amount = $hsn_tot_cgst_amount = $hsn_tot_sgst_amount = 0;
+    foreach($hsn_codes_array as $hsn_sac_code => $hsn_code_details) {
+      $taxable_amount = $hsn_code_details['taxable'];
+      $total_qty = $hsn_code_details['qty'];
+      $cgst_percent = $hsn_code_details['cgst_percent'];
+      $sgst_percent = $hsn_code_details['sgst_percent'];
+      $cgst_amount = $hsn_code_details['cgst_value'];
+      $sgst_amount = $hsn_code_details['sgst_value'];
+      $total_tax = $hsn_code_details['cgst_value'] + $hsn_code_details['sgst_value'];
+      $gst_percent = $hsn_code_details['cgst_percent'] + $hsn_code_details['sgst_percent'];
+      if($gst_tax_type === 'intra') {
+        $igst_percent = $igst_amount = 0;
+      } else {
+        $igst_percent = $cgst_percent + $sgst_percent;
+        $igst_amount = $cgst_amount+$sgst_amount;
+        $cgst_percent = $sgst_percent = $cgst_amount = $sgst_amount = 0;
+      }
+
+      $hsn_tot_igst_amount += $igst_amount;
+      $hsn_tot_cgst_amount += $cgst_amount;
+      $hsn_tot_sgst_amount += $sgst_amount;
+      $hsn_tot_billed_qty += $total_qty;
+      $hsn_tot_taxable += $taxable_amount;
+
+      $hsn_tot_tax += ($igst_amount+$cgst_amount+$sgst_amount);
+
+      $pdf->Cell(27,4,$hsn_sac_code,'LB',0,'R');
+      $pdf->Cell(12,4,number_format($total_qty, 2, '.', ''),'LB',0,'R');
+      $pdf->Cell(18,4,number_format($taxable_amount, 2, '.', ''),'LRB',0,'R');
+      $pdf->Cell(13,4,$igst_percent > 0 ? number_format($igst_percent, 2, '.', '').'%' : '','RB',0,'R');
+      $pdf->Cell(20,4,$igst_amount > 0 ? number_format($igst_amount, 2, '.', '') : '','RB',0,'R');
+      $pdf->Cell(13,4,$cgst_percent > 0 ? number_format($cgst_percent, 2, '.', '').'%' : '','RB',0,'R');
+      $pdf->Cell(20,4,$cgst_amount > 0 ? number_format($cgst_amount, 2, '.', '') : '','RB',0,'R');
+      $pdf->Cell(13,4,$sgst_percent > 0 ? number_format($sgst_percent, 2, '.', '').'%' : '','RB',0,'R');
+      $pdf->Cell(20,4,$sgst_amount > 0 ? number_format($sgst_amount, 2, '.', '') : '','RB',0,'R');
+      $pdf->Cell(20,4,'','RB',0,'R');
+      $pdf->Cell(26,4,number_format($total_tax, 2, '.', ''),'RB',1,'R');
+    }
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell(27,4,'Totals','LB',0,'R');
+    $pdf->Cell(12,4,number_format($hsn_tot_billed_qty, 2, '.', ''),'LB',0,'R');
+    $pdf->Cell(18,4,number_format($hsn_tot_taxable, 2, '.', ''),'LRB',0,'R');
+    $pdf->Cell(13,4,'','RB',0,'R');
+    $pdf->Cell(20,4,$igst_amount > 0 ? number_format($hsn_tot_igst_amount, 2, '.', '') : '','RB',0,'R');
+    $pdf->Cell(13,4,'','RB',0,'R');
+    $pdf->Cell(20,4,$cgst_amount > 0 ? number_format($hsn_tot_cgst_amount, 2, '.', '') : '','RB',0,'R');
+    $pdf->Cell(13,4,'','RB',0,'R');
+    $pdf->Cell(20,4,$sgst_amount > 0 ? number_format($hsn_tot_sgst_amount, 2, '.', '') : '','RB',0,'R');
+    $pdf->Cell(20,4,'','RB',0,'R');
+    $pdf->Cell(26,4,number_format($hsn_tot_tax, 2, '.', ''),'RB',1,'R');    
+    $pdf->SetFont('Arial','BU',8);
+    $pdf->Cell(202,5,'Invoice Remarks','LR',0,'C');
+    $pdf->Ln(1);
+    $pdf->SetFont('Arial','',8);
+    $pdf->Multicell(202,5,$remarks_invoice,'LRB','L');
+
+    $tandc_a = preg_split('/\r\n|[\r\n]/', $sale_details['tacB2B']);
+
+    $pdf->Ln(1);
+    $pdf->SetFont('Arial','I',9);
+    $pdf->MultiCell(202,4,implode(' ', $tandc_a),0,'LR',false);
+    if(count($banks)>0 && isset($banks[$bank_key]) && $bank_key !== false) {
+      $bank_account_no = 'Account No.: '.$banks[$bank_key]['accountNo'];
+      $bank_name = 'Bank Name: '.$banks[$bank_key]['bankName'];
+      $ifsc_code = 'IFSC Code: '.$banks[$bank_key]['ifscCode'];
+      $bank_address = 'Bank Address: '.$banks[$bank_key]['bankAddress'];
+
+      $bank_details_string = $bank_account_no.', '.$bank_name.', '.$ifsc_code.', '.$bank_address;
+      $pdf->SetFont('Arial','',8);
+      $pdf->Ln(1);
+      $pdf->MultiCell(202,4,'Bank Details:: '.$bank_details_string,0,'L',false);
+    }
+
+    $pdf->Output();
   }
 
   // prints sales register.
@@ -4223,5 +4626,182 @@ class SalesReportsController {
     $pdf->Cell($item_widths[8],  6,'Taxable (Rs.)','RB',0,'C');
     $pdf->Ln();
   }
+
+  private function _add_einvoice_header(&$pdf=null, $customer_info=[], $item_widths=[], $loc_address=[], $gst_details=[], $brand_name='') {
+
+    $billing_address = $shipping_address = '';
+
+    // dump($customer_info);
+    // exit;
+    // $file_download_path = __DIR__.'/../../../../bulkuploads';
+
+    $address_string = $loc_address['address1'].', '.$loc_address['address2'].', '.$loc_address['address3'];
+    
+    if($customer_info['billing']['address'] !== '') {
+      $billing_address .= $customer_info['billing']['address'];
+    }
+    if($customer_info['billing']['pincode'] !== '') {
+      $billing_address .= ','.$customer_info['billing']['city_name'].'-'.$customer_info['billing']['pincode'].'.';
+    } else {
+      $billing_address .= ','.$customer_info['billing']['city_name'];      
+    }
+
+    if($customer_info['shipping']['address'] !== '') {
+      $shipping_address .= $customer_info['shipping']['address'];
+    }
+    if($customer_info['shipping']['pincode'] !== '') {
+      $shipping_address .= ','.$customer_info['shipping']['city_name'].'-'.$customer_info['shipping']['pincode'].'.';
+    } else {
+      $shipping_address .= ','.$customer_info['shipping']['city_name'];
+    }
+
+    if($gst_details['gst_doc_no'] !== '') {
+      $document_no = $gst_details['gst_doc_no'];
+    } elseif($customer_info['custom_invoice_no'] !== '') {
+      $document_no = $customer_info['custom_invoice_no'];
+    } else {
+      $document_no = $customer_info['bill_no'];
+    }
+
+    $payment_method_name = Constants::$PAYMENT_METHODS_RC[$customer_info['payment_method']];
+
+    // get einvoice details for QRCode generation.
+    $einvoice_details = $this->einvoice->get_einvoice_details($loc_address['gst_no'], $document_no);
+    if($einvoice_details['status']) {
+      $qrdata = $einvoice_details['response']['signedQrCode'];
+      $irn = $einvoice_details['response']['irnNo'];
+    } else {
+      die("<h2>Invalid eInvoice Details / eInvoice not found...</h2>");
+    }
+
+    // supplier address
+    $image_url = Utilities::generate_QRcode_for_einvoice($qrdata, $irn);
+    // echo $image_url;
+    // exit;
+    $pdf->Image($image_url,0,0,0,0,'PNG');   
+
+    $pdf->SetFont('Arial','B',14);
+    $pdf->Cell(0,5,'TAX INVOICE',0,1,'R');
+    $pdf->SetFont('Arial','I',8);
+    $pdf->Cell(0,3,'IRN: '.$gst_details['irn'],0,1,'R');
+    $pdf->setX(60);
+    $pdf->Cell(150,4,'Ack No - '.$gst_details['gst_ack_no'].' :: Ack Date - '.
+                    date('d/M/Y h:ia', strtotime($gst_details['gst_ack_date'])),'B',1,'R');
+
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Ln(2);
+    $pdf->setX(60);
+    $pdf->Cell(0,4,$loc_address['store_name'],0,1,'L');
+    $pdf->SetFont('Arial','I',8);
+    $pdf->setX(60);
+    $pdf->Cell(0,4,'GSTN: '.$loc_address['gst_no'],0,1,'L');
+    $pdf->SetFont('Arial','',9);
+    $pdf->setX(60);
+    $pdf->Cell(0,4,$address_string,0,1,'L');
+
+    // client address
+    $pdf->Ln(1.5);
+    $pdf->SetFont('Arial','U',9);
+    $pdf->setX(60);
+    $pdf->Cell(0,4,'Buyer - Bill to',0,1,'L');
+    $pdf->Ln(1);
+    $pdf->SetFont('Arial','B',10);
+    $pdf->setX(60);
+    $pdf->Cell(150,4,$customer_info['billing']['customer_name'],0,1,'L');
+    $pdf->SetFont('Arial','I',8);
+    $pdf->setX(60);
+    $pdf->Cell(0,4,'GSTN: '.$customer_info['billing']['gst_no'],0,1,'L');
+    $pdf->setX(60);
+    $pdf->Cell(150,3,$billing_address,0,1,'L');
+
+    $pdf->Ln(1.5);
+    $pdf->SetFont('Arial','U',9);
+    $pdf->setX(60);
+    $pdf->Cell(150,4,'Buyer - Ship to',0,1,'L');
+    $pdf->Ln(0.9);
+    $pdf->SetFont('Arial','B',10);
+    $pdf->setX(60);
+    $pdf->Cell(150,4,$customer_info['shipping']['customer_name'],0,1,'L');
+    $pdf->SetFont('Arial','I',8);
+    $pdf->setX(60);
+    $pdf->Cell(0,4,'GSTN: '.$customer_info['shipping']['gst_no'],0,1,'L');
+    $pdf->setX(60);
+    $pdf->Cell(150,4,$shipping_address,0,1,'L');    
+
+    $pdf->SetFont('Arial','I',9);    
+    $pdf->Cell(25,6,'Document No.','LBTR',0,'R');
+    $pdf->SetFont('Arial','B',11);    
+    $pdf->Cell(40,6,$document_no,'BTR',0,'C');
+    $pdf->SetFont('Arial','I',9);    
+    $pdf->Cell(25,6,'Document Date','BTR',0,'R');
+    $pdf->SetFont('Arial','B',11);    
+    $pdf->Cell(25,6,$customer_info['bill_date'],'BTR',0,'C');
+    $pdf->SetFont('Arial','I',9);    
+    $pdf->Cell(20,6,'Brand','BTR',0,'R');
+    $pdf->SetFont('Arial','B',11);    
+    $pdf->Cell(67,6,$brand_name,'BTR',0,'C');
+    $pdf->Ln(6);
+
+    // section or location information
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(55,5,'Section / Division','LBT',0,'C');
+    $pdf->Cell(63,5,'Excecutive Name','B',0,'C');
+    $pdf->Cell(43,5,'Scheme','BT',0,'C');
+    $pdf->Cell(41,5,'Payment Terms','BRT',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Cell(53,5,$customer_info['location_name'],'LB',0,'C');
+    $pdf->Cell(63,5,$customer_info['executive_name'],'B',0,'C');
+    $pdf->Cell(43,5,$customer_info['promo_code'],'B',0,'C');
+    $pdf->Cell(43,5,$payment_method_name,'BR',0,'C');
+    $pdf->Ln();
+
+    // order no and information
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(55,5,'Buyer Order No.','LB',0,'C');
+    $pdf->Cell(63,5,'Agent Name','B',0,'C');
+    $pdf->Cell(43,5,'eWayBill No.','B',0,'C');
+    $pdf->Cell(41,5,'eWayBill Date','BR',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+    $pdf->Cell(53,5,$customer_info['indent_no'],'LB',0,'C');
+    $pdf->Cell(63,5,'','B',0,'C');
+    $pdf->Cell(43,5,$customer_info['transport_details']['way_bill_no'],'B',0,'C');
+    $pdf->Cell(43,5,$customer_info['transport_details']['way_bill_date'],'BR',0,'C');
+    $pdf->Ln();    
+
+    // transport information
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(100,5,'Dispatched Through','LBR',0,'C');
+    $pdf->Cell(70,5,'Dispatch Doc. No.','R',0,'C');
+    $pdf->Cell(32,5,'Dispatch Doc. Dt.','R',0,'C');
+    $pdf->Ln();
+    $pdf->SetFont('Arial','',8);
+
+    $pdf->Cell(100,5,$customer_info['transport_details']['transporter_name'],'LB',0,'C');
+    $pdf->Cell(50,5,$customer_info['transport_details']['lr_no'],'TB',0,'C');
+    if($customer_info['transport_details']['lr_date'] !== '0' &&
+       $customer_info['transport_details']['lr_date'] !== '1970-01-01' && 
+       strlen($customer_info['transport_details']['lr_date']) > 0) {
+      $pdf->Cell(22,5,date("d-M-Y",strtotime($customer_info['transport_details']['lr_date'])),'TB',0,'C');
+    } else {
+      $pdf->Cell(22,5,'','TB',0,'C');
+    }
+    $pdf->Cell(30,5,$customer_info['transport_details']['way_bill_no'],'TRB',0,'C');
+    $pdf->Ln();    
+
+    $pdf->SetFont('Arial','B',8);
+    $pdf->Cell($item_widths[0],  6,'Sno.','LRB',0,'C');
+    $pdf->Cell($item_widths[1],  6,'Description','RB',0,'C');
+    $pdf->Cell($item_widths[2],  6,'HSN/SAC','RB',0,'C');
+    $pdf->Cell(             23,  6,'Case/Box No.','RB',0,'C');
+    $pdf->Cell($item_widths[5],  6,'Qty.','RB',0,'C');
+    $pdf->Cell($item_widths[3],  6,'Rate (Rs.)','RB',0,'C');        
+    $pdf->Cell($item_widths[4],  6,'Unit','RB',0,'C');
+    $pdf->Cell($item_widths[6],  6,'Amount (Rs.)','RB',0,'C');
+    $pdf->Cell($item_widths[7],  6,'Discount (Rs.)','RB',0,'C');
+    $pdf->Cell($item_widths[8],  6,'Taxable (Rs.)','RB',0,'C');
+    $pdf->Ln();
+  }  
 
 }
