@@ -111,13 +111,13 @@ class EInvoiceController {
     }
 
     // check irn already generated or not
-    // if($sales_details['gstIrn'] !== '') {
-    //   $message = '<i class="fa fa-check" aria-hidden="true"></i> eInvoice already generated with IRN No. '.
-    //              '{{ <span style="font-size: 14px;">'.$sales_details['gstIrn'].'</span> }}'.
-    //              ' Ack No.: {{ <span style="font-size: 14px;">'.$sales_details['gstAckNo'].'</span>}} '.
-    //              ' Ack Dt.: {{ <span style="font-size: 14px;">'.date('d-m-Y h:ia', strtotime($sales_details['gstAckDate'])).'</span> }}';
-    //   $this->flash->set_flash_message($message);
-    // }
+    if($sales_details['gstIrn'] !== '') {
+      $message = '<i class="fa fa-check" aria-hidden="true"></i> eInvoice already generated with IRN No. '.
+                 '{{ <span style="font-size: 14px;">'.$sales_details['gstIrn'].'</span> }}'.
+                 ' Ack No.: {{ <span style="font-size: 14px;">'.$sales_details['gstAckNo'].'</span>}} '.
+                 ' Ack Dt.: {{ <span style="font-size: 14px;">'.date('d-m-Y h:ia', strtotime($sales_details['gstAckDate'])).'</span> }}';
+      $this->flash->set_flash_message($message);
+    }
 
     // --------------- build variables -----------------
     $controller_vars = array(
