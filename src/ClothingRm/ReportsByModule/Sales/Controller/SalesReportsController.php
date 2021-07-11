@@ -4751,7 +4751,7 @@ class SalesReportsController {
     $pdf->SetFont('Arial','I',9);    
     $pdf->Cell(20,6,'Discount(%)','BTR',0,'R');
     $pdf->SetFont('Arial','B',11);    
-    $pdf->Cell(20,6,number_format($customer_info['promo_code_discount'],0,'.',''),0,,'BTR',0,'C');
+    $pdf->Cell(20,6,number_format($customer_info['promo_code_discount'],0,'.',''),0,'BTR',0,'C');
     $pdf->Ln(6);
 
     // section or location information
