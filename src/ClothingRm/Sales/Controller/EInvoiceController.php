@@ -618,6 +618,7 @@ class EInvoiceController {
     $tot_ass_value = $tot_cgst_value = $tot_sgst_value = $tot_igst_value = 0;
     $tot_total_amount = 0;
     $tot_discount = $tot_inv_value = $rnd_off_amount = 0;
+    $tot_total_item_val = 0;
     foreach($sales_details['itemDetails'] as $item_slno => $item_details) {
       $gst_item_array = [];
       $item_qty = (float)$item_details['itemQty'];
@@ -685,6 +686,7 @@ class EInvoiceController {
       $tot_sgst_value += $sgst_amount;
       $tot_igst_value += $igst_amount;
       $tot_discount += $item_details['discountAmount'];
+      $tot_total_item_val += $total_item_val;
 
       // dump($ass_amount.'  ass amount'.$slno_string);
     }
@@ -693,24 +695,15 @@ class EInvoiceController {
     // exit;
 
     $payload['ItemList'] = $item_list;
-
-    $tot_inv_value_wo_roundoff = round( 
-      ($tot_total_amount + 
-       $tot_cgst_value +
-       $tot_sgst_value +
-       $tot_igst_value
-      ) - $tot_discount, 2);
-
-    $round_off = round(round($tot_inv_value_wo_roundoff, 0) - $tot_inv_value_wo_roundoff, 2);
-    $tot_inv_value_wo_discount = round($tot_ass_value+$tot_cgst_value+$tot_sgst_value+$tot_igst_value, 2);
+    $round_off = round(round($tot_total_item_val, 0) - $tot_total_item_val, 2);
 
     // dump($tot_ass_value, $tot_cgst_value, $tot_sgst_value, $tot_igst_value, $tot_discount);
     // exit;
 
     $payload['ValDtls']['AssVal'] = round($tot_ass_value,2);
-    $payload['ValDtls']['Discount'] = round($tot_discount,2);
+    // $payload['ValDtls']['Discount'] = round($tot_discount,2);
     $payload['ValDtls']['RndOffAmt'] = round($round_off,2);
-    $payload['ValDtls']['TotInvVal'] = round($tot_inv_value_wo_roundoff+$round_off, 0);
+    $payload['ValDtls']['TotInvVal'] = round($tot_total_item_val+$round_off, 0);
     $payload['ValDtls']['CgstVal'] = round($tot_cgst_value,2);
     $payload['ValDtls']['SgstVal'] = round($tot_sgst_value,2);
     $payload['ValDtls']['IgstVal'] = round($tot_igst_value,2);
