@@ -21,17 +21,14 @@ class PdfWoHeaderFooter extends FPDF {
   public function Footer() {
     // Position at 1.5 cm from bottom
     $this->SetY(-10);
-    /*
     // Arial italic 8
     $this->SetFont('Arial','IB',8);
-
     // footer text
     $footer_text = 'Page '.$this->PageNo().'/{nb}';
     $promo_text = 'Powered by QwikBills.com - Cloud based Billing & Inventory Solution.';
-
     // Page number
     $this->Cell(0,4,$footer_text,'T',2,'C');
     $this->SetFont('Arial','B',6);    
-    $this->Cell(0,-4,$promo_text,0,1,'R');*/
+    $this->Cell(0,-4,$promo_text,0,1,'R');
   }
 }
