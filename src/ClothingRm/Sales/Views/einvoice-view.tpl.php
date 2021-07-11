@@ -114,7 +114,9 @@
               <tr align="right">
                 <td class="valign-middle" style="width:20%; font-size: 14px; font-weight: bold;">QR Code</td>
                 <td class="valign-middle" style="width:80%;" align="center">
-                  <img src="/qrcode?data=<?php echo $einvoice_details['signedQrCode'] ?>&irn=<?php echo $einvoice_details['irnNo'] ?>">
+                  <?php /*
+                  <img src="/qrcode?data=<?php echo $einvoice_details['signedQrCode'] ?>&irn=<?php echo $einvoice_details['irnNo'] ?>">*/?>
+                  <img src="<?php Utilities::generate_QRcode_for_einvoice($einvoice_details['signedQrCode'], $einvoice_details['irnNo']) ?>" />
                 </td>
               </tr>
             </tbody>
