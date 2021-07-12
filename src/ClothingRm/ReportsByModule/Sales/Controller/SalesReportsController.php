@@ -648,7 +648,7 @@ class SalesReportsController {
     $pdf = PdfWoHeaderFooter::getInstance();
     $pdf->AliasNbPages();
     $pdf->SetAutoPageBreak(false);
-    $pdf->setMargins(5, 1, 1);
+    $pdf->setMargins(8, 5, 8);
     $pdf->AddPage('P','A4');
     $pdf->setTitle('eInvoice'.'__'.$customer_info['custom_invoice_no'].'__'.date('jS F, Y'));
 
@@ -735,7 +735,7 @@ class SalesReportsController {
         }
 
         // dump($hsn_codes_array);
-
+        $pdf->setX(5.5);
         $pdf->SetFont('Arial','',9);
         $pdf->Cell($item_widths[0],  5,$sno,'LRB',0,'R');
         $pdf->Cell($item_widths[1],  5,$item_name,'RB',0,'L');
@@ -748,6 +748,7 @@ class SalesReportsController {
         $pdf->Cell($item_widths[7],  5,$discount > 0 ? number_format($discount,2,'.','') : '','RB',0,'R');
         $pdf->Cell($item_widths[8],  5,number_format($taxable,2,'.',''),'RB',0,'R');
       } else {
+        $pdf->setX(5.5);
         $pdf->Cell($item_widths[0],  5,'','LR',0,'R');
         $pdf->Cell($item_widths[1],  5,'','R',0,'L');
         $pdf->Cell($item_widths[2],  5,'','R',0,'L');
@@ -787,6 +788,7 @@ class SalesReportsController {
     // print totals
     $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] + 23;
     $gst_width = array_sum($item_widths) - $item_widths[8];
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','',9);
     $pdf->Cell(25,    6,'Total Qty.','LT',0,'C');
     $pdf->Cell(25,    6,'Gross Value','LT',0,'C');
@@ -797,6 +799,7 @@ class SalesReportsController {
     $pdf->Cell(50,    6,'Invoice Value (in Rs.)','LTR',0,'C');
     $pdf->Ln();
     $pdf->SetFont('Arial','B',9);
+    $pdf->setX(5.5);
     $pdf->Cell(25,    6, number_format($tot_items_qty,2,'.',''),'LTB',0,'R');
     $pdf->Cell(25,    6, number_format($tot_bill_value,2,'.',''),'LTB',0,'R');
     $pdf->Cell(25,    6, number_format($tot_discount,2,'.',''),'LTB',0,'R');
@@ -808,14 +811,17 @@ class SalesReportsController {
     $pdf->Ln();
 
     // GST total
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','I',8);
     $pdf->Cell(200,  5,'( In words: '.Utilities::get_indian_currency($net_pay).' )','LR',0,'R');
     $pdf->Ln();
 
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell(200,5,'GST Details','LRB',0,'C');
     $pdf->Ln();
 
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(25,4,'HSN/SAC','LRB',0,'C');
     $pdf->Cell(12,4,'Qty.','RB',0,'C');
@@ -860,7 +866,8 @@ class SalesReportsController {
       $hsn_tot_taxable += $taxable_amount;
 
       $hsn_tot_tax += ($igst_amount+$cgst_amount+$sgst_amount);
-
+  
+      $pdf->setX(5.5);
       $pdf->Cell(25,4,$hsn_sac_code,'LB',0,'R');
       $pdf->Cell(12,4,number_format($total_qty, 2, '.', ''),'LB',0,'R');
       $pdf->Cell(18,4,number_format($taxable_amount, 2, '.', ''),'LRB',0,'R');
@@ -874,6 +881,7 @@ class SalesReportsController {
       $pdf->Cell(26,4,number_format($total_tax, 2, '.', ''),'RB',1,'R');
     }
 
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(25,4,'Totals','LB',0,'R');
     $pdf->Cell(12,4,number_format($hsn_tot_billed_qty, 2, '.', ''),'LB',0,'R');
@@ -887,14 +895,17 @@ class SalesReportsController {
     $pdf->Cell(20,4,'','RB',0,'R');
     $pdf->Cell(26,4,number_format($hsn_tot_tax, 2, '.', ''),'RB',1,'R');    
     $pdf->SetFont('Arial','BU',8);
-    $pdf->Cell(200,5,'Invoice Remarks','LR',0,'C');
-    $pdf->Ln(1);
-    $pdf->SetFont('Arial','',8);
-    $pdf->Multicell(200,5,$remarks_invoice,'LRB','L');
 
+    $pdf->setX(5.5);
+    $pdf->Cell(200,5,'Remarks','LR',1,'C');
+    $pdf->SetFont('Arial','',8);
+    $pdf->setX(5.5);
+    $pdf->Multicell(200,3,$remarks_invoice,'LRB','L');
+
+    $pdf->setX(5.5);
     $tandc_a = preg_split('/\r\n|[\r\n]/', $sale_details['tacB2B']);
 
-    $pdf->Ln(1);
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','I',9);
     $pdf->MultiCell(202,4,implode(' ', $tandc_a),0,'LR',false);
     if(count($banks)>0 && isset($banks[$bank_key]) && $bank_key !== false) {
@@ -906,6 +917,7 @@ class SalesReportsController {
       $bank_details_string = $bank_account_no.', '.$bank_name.', '.$ifsc_code.', '.$bank_address;
       $pdf->SetFont('Arial','',8);
       $pdf->Ln(1);
+      $pdf->setX(5.5);
       $pdf->MultiCell(200,4,'Bank Details:: '.$bank_details_string,0,'L',false);
     }
 
@@ -4684,7 +4696,7 @@ class SalesReportsController {
     $image_url = Utilities::generate_QRcode_for_einvoice($qrdata, $irn);
     // echo $image_url;
     // exit;
-    $pdf->Image($image_url,148,0,0,0,'PNG');   
+    $pdf->Image($image_url,148,6,0,0,'PNG');   
 
     $pdf->SetFont('Arial','B',14);
     $pdf->setX(4);
@@ -4736,6 +4748,7 @@ class SalesReportsController {
     $pdf->setX(4);
     $pdf->Cell(150,4,$shipping_address,0,1,'L');    
 
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','I',9);    
     $pdf->Cell(25,6,'Document No.','LBTR',0,'R');
     $pdf->SetFont('Arial','B',11);    
@@ -4754,6 +4767,7 @@ class SalesReportsController {
     $pdf->Cell(18,6,$promo_code_discount,'BTR',0,'C');
     $pdf->Ln(6);
 
+    $pdf->setX(5.5);
     // section or location information
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell(55,5,'Section / Division','LBT',0,'C');
@@ -4761,6 +4775,7 @@ class SalesReportsController {
     $pdf->Cell(43,5,'Scheme','BT',0,'C');
     $pdf->Cell(39,5,'Payment Terms','BRT',0,'C');
     $pdf->Ln();
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','',8);
     $pdf->Cell(55,5,$customer_info['location_name'],'LB',0,'C');
     $pdf->Cell(63,5,$customer_info['executive_name'],'B',0,'C');
@@ -4768,6 +4783,7 @@ class SalesReportsController {
     $pdf->Cell(39,5,$payment_method_name,'BR',0,'C');
     $pdf->Ln();
 
+    $pdf->setX(5.5);
     // order no and information
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell(55,5,'Buyer Order No.','LB',0,'C');
@@ -4775,6 +4791,7 @@ class SalesReportsController {
     $pdf->Cell(43,5,'eWayBill No.','B',0,'C');
     $pdf->Cell(39,5,'eWayBill Date','BR',0,'C');
     $pdf->Ln();
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','',8);
     $pdf->Cell(53,5,$customer_info['indent_no'],'LB',0,'C');
     $pdf->Cell(63,5,'','B',0,'C');
@@ -4783,6 +4800,7 @@ class SalesReportsController {
     $pdf->Ln();    
 
     // transport information
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell(100,5,'Dispatched Through','LBR',0,'C');
     $pdf->Cell(70,5,'Dispatch Doc. No.','R',0,'C');
@@ -4790,6 +4808,7 @@ class SalesReportsController {
     $pdf->Ln();
     $pdf->SetFont('Arial','',8);
 
+    $pdf->setX(5.5);
     $pdf->Cell(100,5,$customer_info['transport_details']['transporter_name'],'LB',0,'C');
     $pdf->Cell(50,5,$customer_info['transport_details']['lr_no'],'TB',0,'C');
     if($customer_info['transport_details']['lr_date'] !== '0' &&
@@ -4803,6 +4822,7 @@ class SalesReportsController {
     $pdf->Cell(28,5,$customer_info['transport_details']['way_bill_no'],'TRB',0,'C');
     $pdf->Ln();    
 
+    $pdf->setX(5.5);
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell($item_widths[0],  6,'Sno.','LRB',0,'C');
     $pdf->Cell($item_widths[1],  6,'Description','RB',0,'C');
