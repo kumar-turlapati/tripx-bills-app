@@ -192,11 +192,7 @@ class LoginController
   // redirect the user to dashboard based on category.
   private function _redirect_to_dashboard() {
     $bc = isset($_SESSION['bc'])&&$_SESSION['bc']>0?$_SESSION['bc']:0;
-    if((int)$bc === 3) {
-      Utilities::redirect('/crm-dashboard');
-    } else {
-      Utilities::redirect('/dashboard');
-    }    
+    Utilities::redirect('/dashboard');
   }
 
   public function idMapper(Request $request) {
@@ -207,7 +203,7 @@ class LoginController
         $_SESSION['__bq_fp'] = $fingerprint;
       }
     }
-    echo 'QwikBills.V.1.0 - OK...';
+    echo 'QwikBills.V.2.8 - OK...';
     exit;
   }
 

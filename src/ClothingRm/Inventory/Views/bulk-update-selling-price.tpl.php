@@ -135,7 +135,7 @@
               <div class="form-group">
                 <div class="col-sm-12 col-md-12 col-md-12" id="downloadButton" style="padding-top:15px;">
                   <label class="control-label" style="text-align: center;">
-                    <a href="/downloads/Qb_SellingPrice_Update_Format_V.1.0.xlsx" target="_blank">
+                    <a href="/downloads/Qb_SellingPrice_Update_Format_V.1.1.xlsx" target="_blank">
                       <i class="fa fa-download"></i> Download update format.
                     </a>
                   </label>
