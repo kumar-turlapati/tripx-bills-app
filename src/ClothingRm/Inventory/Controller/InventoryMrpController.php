@@ -330,7 +330,7 @@ class InventoryMrpController {
 
     $allowed_extensions = ['xlsx'];
     $form_errors = $cleaned_params = $missing_fields = $imp_record_errors = [];
-    $upload_fields = ["ItemName", "LotNo", "NewMrp", "NewWholesalePrice", "NewOnlinePrice"];
+    $upload_fields = ["ItemName", "LotNo", "NewMrp", "NewWholesalePrice", "NewOnlinePrice", "NewExmill"];
 
     $is_one_item_found = false; 
     $all_fields_exists = true;
@@ -350,7 +350,9 @@ class InventoryMrpController {
         ($form_data['billingRate'] === 'all' || 
          $form_data['billingRate'] === 'mrp' || 
          $form_data['billingRate'] === 'wholesale' || 
-         $form_data['billingRate'] === 'online')
+         $form_data['billingRate'] === 'online' ||
+         $form_data['billingRate'] === 'exmill'
+        )
       ) {
       $cleaned_params['billingRate'] = $form_data['billingRate'];
     } else {

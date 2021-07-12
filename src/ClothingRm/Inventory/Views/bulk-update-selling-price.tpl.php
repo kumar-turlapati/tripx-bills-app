@@ -20,7 +20,13 @@
   //     }
   //   }
   // }
-  $billing_rates = [ 'all' => 'All Selling Prices', 'mrp' => 'M.R.P', 'wholesale' => 'Wholesale', 'online' => 'Online'];
+  $billing_rates = [ 
+    'all' => 'All Selling Prices', 
+    'mrp' => 'M.R.P', 
+    'wholesale' => 'Wholesale', 
+    'online' => 'Online',
+    'exmill' => 'Exmill',
+  ];
 ?>
 <div class="row">
   <div class="col-lg-12"> 
