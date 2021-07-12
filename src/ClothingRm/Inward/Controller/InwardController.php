@@ -35,7 +35,7 @@ class InwardController
     $form_errors = $form_data = [];
     $api_error = '';
     
-    $total_item_rows = !is_null($request->get('tr')) && is_numeric($request->get('tr')) ? (int)$request->get('tr') : 50;
+    $total_item_rows = !is_null($request->get('tr')) && is_numeric($request->get('tr')) ? (int)$request->get('tr') : 60;
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
     }
@@ -90,13 +90,13 @@ class InwardController
         if(!is_null($request->get('tr')) && (int)$request->get('tr') <= 150) {
           $total_item_rows = (int)$request->get('tr');
         } else {
-          $total_item_rows = 50;
+          $total_item_rows = 60;
         }
         $uploaded_data = $_SESSION['inwardBulkUpload']['uploadedData'];
         $form_data = $this->_map_uploaded_data_with_form_data($uploaded_data);
         unset($_SESSION['inwardBulkUpload']);
       } else {
-        $total_item_rows = 50;
+        $total_item_rows = 60;
       }
     }
 
@@ -135,7 +135,7 @@ class InwardController
     $api_error = $page_error = '';
     $edit_after_grn = false;
     
-    $total_item_rows = 50;
+    $total_item_rows = 60;
 
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
@@ -203,7 +203,7 @@ class InwardController
         $onlinePrices = array_column($purchase_details['itemDetails'], 'onlinePrice');
         $batchNos = array_column($purchase_details['itemDetails'], 'batchNo');
 
-        if(count($item_names)>50) {
+        if(count($item_names)>60) {
           $total_item_rows = count($item_names);
         }
 
@@ -343,7 +343,7 @@ class InwardController
     $form_errors = $form_data = [];
     $page_error = '';
 
-    $total_item_rows = 50;
+    $total_item_rows = 60;
 
     for($i=1;$i<=365;$i++) {
       $credit_days_a[$i] = $i;
