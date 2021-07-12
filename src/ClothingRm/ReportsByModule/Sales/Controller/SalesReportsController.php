@@ -781,8 +781,9 @@ class SalesReportsController {
 
     // print batch nos if exists
     if(count($bnos_a) > 0) {
+      $pdf->setX(5.5);
       $pdf->SetFont('Arial','',8);
-      $pdf->MultiCell(200,5,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRBT','L');
+      $pdf->MultiCell(200,4,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRBT','L');
     }
 
     // print totals
