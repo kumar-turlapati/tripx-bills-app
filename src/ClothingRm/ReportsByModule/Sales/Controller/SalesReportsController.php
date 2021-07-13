@@ -778,7 +778,8 @@ class SalesReportsController {
                    $item_widths[5]+$item_widths[3]+$item_widths[4]+
                    $item_widths[6]+$item_widths[7]+$item_widths[8]+21,  5,"continued on next page...",0,0,'R');                
         $pdf->setMargins(10, 8, 10);
-        $pdf->AddPage('P','A4');        
+        $pdf->AddPage('P','A4');
+        $pdf->Rect(8, 7, 195, 280);
         $this->_add_einvoice_header($pdf, $customer_info, $item_widths, $loc_address, $gst_details, $brand_name);
         $record_cntr=0;
       }
@@ -788,9 +789,9 @@ class SalesReportsController {
 
     // print batch nos if exists
     if(count($bnos_a) > 0) {
-      $pdf->setX(5.5);
+      $pdf->setX(9);
       $pdf->SetFont('Arial','',8);
-      $pdf->MultiCell(200,4,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRBT','L');
+      $pdf->MultiCell(192,4,'Batch No(s): '.implode(',', array_unique($bnos_a)),'LRBT','L');
     }
 
     // print totals
