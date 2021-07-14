@@ -859,7 +859,7 @@ function initializeJS() {
          var barcodeOriginal = $(this).val();
          var barcode = $(this).val().split('+').join("");
          var locationCode = $('#locationCode').val();
-         jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+         jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=false', {
             success: function(itemDetails) {
               if(itemDetails.status === 'success') {
                 var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -1108,7 +1108,7 @@ function initializeJS() {
        if (e.keyCode == 13) {
          var barcode = $(this).val().split('+').join("");
          var locationCode = $('#locationCode').val();
-         jQuery.ajax("/async/getItemDetailsByCode?qtyZero=true&bc="+barcode+'&locationCode='+$('#locationCode').val(), {
+         jQuery.ajax("/async/getItemDetailsByCode?qtyZero=false&bc="+barcode+'&locationCode='+$('#locationCode').val(), {
             success: function(itemDetails) {
               if(itemDetails.status === 'success') {
                 var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -1151,8 +1151,8 @@ function initializeJS() {
                     dualBarcodesHtml += '<tbody>';
                     jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
                       var lotNo = lotNoDetails.lotNo;
-                      var batchNo = lotNoDetails.batchNo;
-                      var availableQty = lotNoDetails.availableQty;
+                      var batchNo = lotNoDetails.bno;
+                      var availableQty = lotNoDetails.closingQty;
                       var cno = lotNoDetails.cno;
                       dualBarcodesHtml += '<tr>';
                       dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
@@ -1299,7 +1299,7 @@ function initializeJS() {
           return false;
         }
         var locationCode = $('#locationCode').val();
-        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=true', {
+        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=false', {
           success: function(itemDetails) {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -1331,8 +1331,8 @@ function initializeJS() {
                   dualBarcodesHtml += '<tbody>';
                   jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
                     var lotNo = lotNoDetails.lotNo;
-                    var batchNo = lotNoDetails.batchNo;
-                    var availableQty = lotNoDetails.availableQty;
+                    var batchNo = lotNoDetails.bno;
+                    var availableQty = lotNoDetails.closingQty;
                     var cno = lotNoDetails.cno;
                     dualBarcodesHtml += '<tr>';
                     dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
@@ -1456,7 +1456,7 @@ function initializeJS() {
           return false;
         }
         var locationCode = $('#locationCode').val();
-        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+        jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=false', {
           success: function(itemDetails) {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -1610,7 +1610,7 @@ function initializeJS() {
         barcodeId = $(this).attr('id');
         rowId = parseInt(barcodeId.split('_')[1]);
        var locationCode = $('#fromLocation').val();
-       jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+       jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=false', {
           success: function(itemDetails) {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -1638,8 +1638,8 @@ function initializeJS() {
                   dualBarcodesHtml += '<tbody>';
                   jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
                     var lotNo = lotNoDetails.lotNo;
-                    var batchNo = lotNoDetails.batchNo;
-                    var availableQty = lotNoDetails.availableQty;
+                    var batchNo = lotNoDetails.bno;
+                    var availableQty = lotNoDetails.closingQty;
                     var cno = lotNoDetails.cno;
                     dualBarcodesHtml += '<tr>';
                     dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
@@ -1684,7 +1684,7 @@ function initializeJS() {
        var scannedQty = 0;
        var transferQty = parseFloat($('#trTransQty').text());
        if(scannedQty < transferQty) {
-         jQuery.ajax("/async/getTrDetailsByCode?barcode="+barcode+'&locationCode='+locationCode+'&transferCode='+transferCode, {
+         jQuery.ajax("/async/getTrDetailsByCode?barcode="+barcode+'&locationCode='+locationCode+'&transferCode='+transferCode+'&qtyZero=false', {
            beforeSend: function() {
               $('#stBarcode').attr('disabled', true);
               $('#stBarcode').val('Validating Barcode. Please wait...');              
@@ -1881,7 +1881,7 @@ function initializeJS() {
        var barcode = $(this).val().split('+').join("");
        var locationCode = $('#locationCode').val();
        var billingRate = $('#billingRate').val();
-       jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&sl=true&ind=true', {
+       jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&sl=true&ind=true'+'&qtyZero=false', {
           success: function(itemDetails) {
             if(itemDetails.status === 'success') {
               var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -1915,8 +1915,8 @@ function initializeJS() {
                   dualBarcodesHtml += '<tbody>';
                   jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
                     var lotNo = lotNoDetails.lotNo;
-                    var batchNo = lotNoDetails.batchNo;
-                    var availableQty = lotNoDetails.availableQty;
+                    var batchNo = lotNoDetails.bno;
+                    var availableQty = lotNoDetails.closingQty;
                     var cno = lotNoDetails.cno;
                     dualBarcodesHtml += '<tr>';
                     dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
@@ -3919,7 +3919,7 @@ function initializeJS() {
           barcodeId = $(this).attr('id');
           rowId = parseInt(barcodeId.split('_')[1]);
           var locationCode = $('#locationCode').val();
-          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode, {
+          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=false', {
               success: function(itemDetails) {
                 if(itemDetails.status === 'success') {
                   var objLength = Object.keys(itemDetails.response.bcDetails).length;
@@ -3947,8 +3947,8 @@ function initializeJS() {
                       dualBarcodesHtml += '<tbody>';
                       jQuery.each(itemDetails.response.bcDetails, function (index, lotNoDetails) {
                         var lotNo = lotNoDetails.lotNo;
-                        var batchNo = lotNoDetails.batchNo;
-                        var availableQty = lotNoDetails.availableQty;
+                        var batchNo = lotNoDetails.bno;
+                        var availableQty = lotNoDetails.closingQty;
                         var cno = lotNoDetails.cno;
                         dualBarcodesHtml += '<tr>';
                         dualBarcodesHtml += '<td style="vertical-align: middle; padding-left: 10px;" align="center">';
@@ -4108,7 +4108,7 @@ function initializeJS() {
             return false;
           }
           var locationCode = $('#locationCode').val();
-          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=true', {
+          jQuery.ajax("/async/getItemDetailsByCode?bc="+barcode+'&locationCode='+locationCode+'&qtyZero=false', {
             success: function(itemDetails) {
               if(itemDetails.status === 'success') {
                 var objLength = Object.keys(itemDetails.response.bcDetails).length;

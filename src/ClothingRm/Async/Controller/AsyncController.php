@@ -164,7 +164,6 @@ class AsyncController {
       $ind = !is_null($request->get('ind')) ? Utilities::clean_string($request->get('ind')) : false;
       $bch = !is_null($request->get('bch')) ? Utilities::clean_string($request->get('bch')) : false;
       $qty_zero = !is_null($request->get('qtyZero')) ? Utilities::clean_string($request->get('qtyZero')) : false;
-
       if(!is_null($request->get('sc'))) {
         $barcode = Utilities::clean_string($request->get('sc'));
         $sc = true;

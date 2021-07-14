@@ -167,7 +167,7 @@
               <li><a href="/inventory/stock-adjustments-list"><i class="fa fa-adjust"></i> Stock Adj. Register</a></li>
               <li><a href="/barcodes/list"><i class="fa fa-barcode"></i> Barcodes Register</a></li>
               <?php /*<li><a href="/stock-audit/register"><i class="fa fa-check"></i> Stock Audit Register</a></li> */ ?>
-              <li><a href="/inventory/changed-mrp-register"><i class="fa fa-edit"></i> Changed MRP Register</a></li>          
+              <li><a href="/inventory/changed-mrp-register"><i class="fa fa-edit"></i> Changed Price Register</a></li>          
             </ul>            
           </li>
           <li class="sub-menu">
