@@ -3851,14 +3851,19 @@ function initializeJS() {
         var cno = selectedLotNoDetails.cno;
         var mOq = parseFloat(selectedLotNoDetails.mOq).toFixed(2);
         var taxPercent = parseFloat(selectedLotNoDetails.taxPercent).toFixed(2);
-        var mrpDn = parseFloat(selectedLotNoDetails.mrpDn).toFixed(2);
         var transferQty = parseFloat(mOq*1).toFixed(2);
         var itemAmount = parseFloat(mrpDn*transferQty).toFixed(2);
         var lotNoRef = $('#lotNo_'+rowId);
         var isLotExists = false;
         var existingLotId = null;
         var selectedLotId = selectedLotNo = null;
-
+        var mrpDnActual = parseFloat(selectedLotNoDetails.mrpDn).toFixed(2);
+        var exMill = parseFloat(selectedLotNoDetails.exMill).toFixed(2);
+        if(exMill > 0) {
+          var mrpDn = exMill;
+        } else {
+          var mrpDn = mrpDnActual;
+        }
         /* check if lot no is already selected. */
         jQuery('.lotNo').each(function(i, obj) {
           selectedLotNo = $(this).val();
@@ -3874,7 +3879,7 @@ function initializeJS() {
           var selectedLotIndex = existingLotId;
           var selectedLotQty = parseFloat($('#qty_'+selectedLotIndex).val());
           var newTransferQty = parseFloat(transferQty)+parseFloat(selectedLotQty); 
-          var itemAmount = parseFloat(mrp*newTransferQty).toFixed(2);
+          var itemAmount = parseFloat(mrpDn*newTransferQty).toFixed(2);
           var availQty = parseFloat($('#qtyava_'+selectedLotIndex).val());
           if(newTransferQty <= availableQty) {
             $('#qty_'+selectedLotIndex).val(newTransferQty);

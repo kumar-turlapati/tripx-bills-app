@@ -34,7 +34,7 @@
   if(is_array($query_params) && count($query_params)>0) {
     $query_params = '?'.implode('&', $query_params);
   }
-  $page_url = '/stock-transfer/register';
+  $page_url = $pagination_url = '/stock-transfer/register';
 ?>
 
 <div class="row">

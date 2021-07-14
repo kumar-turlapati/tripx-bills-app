@@ -667,7 +667,7 @@ class SalesReportsController {
     
     $sno = 0;
     $record_cntr = 0;
-    $items_per_page = 16;
+    $items_per_page = 15;
     $empty_rows_tobe_filled = count($sale_item_details) < $items_per_page ? $items_per_page-count($sale_item_details) : 0;
     $sale_item_details_filled = array_fill(count($sale_item_details)-1, $empty_rows_tobe_filled, []);
     $sale_item_final = array_merge($sale_item_details, $sale_item_details_filled);
