@@ -1735,7 +1735,7 @@ class InventoryReportsController {
       $pdf->Ln(5);
       $pdf->Cell(0,0,$heading2,'',1,'C');
                       //    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12  
-      $item_widths = array(10,17,17,50,27,27,25,20,15,15,12,42);
+      $item_widths = array(10,17,17,50,27,28,24,20,15,15,12,42);
       $totals_width = $item_widths[0] + $item_widths[1] + $item_widths[2] +
                       $item_widths[3] + $item_widths[4] + $item_widths[5] +
                       $item_widths[6] + $item_widths[7];
@@ -1748,13 +1748,13 @@ class InventoryReportsController {
       $pdf->Cell($item_widths[2],6,'Voc.No.','LTR',0,'C');
       $pdf->Cell($item_widths[3],6,'Item Name','RT',0,'C');
       $pdf->Cell($item_widths[4],6,'Brand Name','RT',0,'C');    
-      $pdf->Cell($item_widths[5],6,'Category','RT',0,'C');
       $pdf->Cell($item_widths[6],6,'Lot No.','RT',0,'C');
       $pdf->Cell($item_widths[7],6,'Case/Box No.','RT',0,'C');
       $pdf->Cell($item_widths[8],6,'Tran.Qty.','RT',0,'C');
       $pdf->Cell($item_widths[9],6,'Item Rate','RT',0,'C');
       $pdf->Cell($item_widths[10],6,'Tax%','RT',0,'C');
       $pdf->Cell($item_widths[11],6,'Transferred to','RT',0,'C');
+      $pdf->Cell($item_widths[5],6,'Received On','RT',0,'C');
       $pdf->SetFont('Arial','',8);
       $pdf->Ln();
 
@@ -1777,6 +1777,8 @@ class InventoryReportsController {
         $tax_percent = $item_details['taxPercent'];
         $purchase_rate = $item_details['purchaseRate'];
         $location_name = isset($location_ids[$location_id]) ? $location_ids[$location_id] : '';
+        $received_on = $item_details['receivedOn'] !== '0000-00-00 00:00:00' ? 
+                       date("d-m-y h:ia", strtotime($item_details['receivedOn'])) : ':: N/R ::';
 
         if($transfer_qty<0) {
           $transfer_qty *= -1;
@@ -1789,23 +1791,21 @@ class InventoryReportsController {
         $pdf->Cell($item_widths[2],6,$voc_no,'RTB',0,'L');    
         $pdf->Cell($item_widths[3],6,$item_name,'RTB',0,'L');
         $pdf->Cell($item_widths[4],6,$brand_name,'RTB',0,'L');
-        $pdf->Cell($item_widths[5],6,$category_name,'RTB',0,'L');
         $pdf->Cell($item_widths[6],6,$lot_no,'RTB',0,'L');
         $pdf->Cell($item_widths[7],6,$cno,'RTB',0,'L');
         $pdf->Cell($item_widths[8],6,number_format($transfer_qty, 2, '.', ''),'RTB',0,'R');
         $pdf->Cell($item_widths[9],6,number_format($item_rate,2,'.',''),'RTB',0,'R');
         $pdf->Cell($item_widths[10],6,$tax_percent,'RTB',0,'R');
         $pdf->Cell($item_widths[11],6,substr($location_name,0,20),'RTB',0,'L');
+        $pdf->SetFont('Arial','BI',8);
+        $pdf->Cell($item_widths[5],6,$received_on,'RTB',0,'C');
+        $pdf->SetFont('Arial','',8);
         $pdf->Ln();
       }
 
       $pdf->SetFont('Arial','B',10);
-      $pdf->Cell($totals_width,6,'Total Transferred Qty.','LRB',0,'R');
-      $pdf->Cell($item_widths[8]+
-                 $item_widths[9]+
-                 $item_widths[10]+
-                 $item_widths[11],6,number_format($tot_qty,2,'.',''),'BR',0,'L'
-                );
+      $pdf->Cell(165,6,'Total Transferred Qty.','LRB',0,'R');
+      $pdf->Cell($item_widths[8],6,number_format($tot_qty,2,'.',''),'BR',0,'R');
       $pdf->SetFont('Arial','B',11);
 
       $pdf->Output();
@@ -2695,6 +2695,8 @@ class InventoryReportsController {
       $tax_percent = $item_details['taxPercent'];
       $purchase_rate = $item_details['purchaseRate'];
       $location_name = isset($location_ids[$location_id]) ? $location_ids[$location_id] : '';
+      $received_on = $item_details['receivedOn'] !== '0000-00-00 00:00:00' ? 
+                       date("d-m-y h:ia", strtotime($item_details['receivedOn'])) : ':: N/R ::';
 
       if($transfer_qty<0) {
         $transfer_qty *= -1;
@@ -2715,6 +2717,7 @@ class InventoryReportsController {
         'Item Rate' => $item_rate,
         'Tax Percent' => $tax_percent,
         'Transferred To' => $location_name,
+        'Received On' => $received_on,
       ];
     }
 
@@ -2730,7 +2733,8 @@ class InventoryReportsController {
       'Transferred Qty.' => number_format($tot_qty, 2, '.', ''),
       'Item Rate' => number_format($item_rate, 2, '.', ''),
       'Tax Percent' => number_format($tax_percent, 2, '.', ''),
-      'Transferred To' => $location_name,
+      'Transferred To' => '',
+      'Received On' => '',
     ];
 
     return $cleaned_params;
