@@ -73,22 +73,21 @@
                 <span class="error"><?php echo $form_errors['supplierName'] ?></span>
               <?php endif; ?>                  
             </div>
-            <div class="col-sm-12 col-md-2 col-lg-2" style="padding-left:0px;">
-              <label class="control-label labelStyle">Bill no.</label>
+            <div class="col-sm-12 col-md-2 col-lg-2">
+              <label class="control-label labelStyle">Debit note value (in Rs.)</label>
               <input 
-                type="text"
-                id="billNo"
-                name="billNo"
-                style="font-weight:bold;font-size:14px;padding-left:5px;"
-                value="<?php echo $bill_no ?>"
-                class="form-control noEnterKey"
-                maxlength="50"
-              />
-              <?php if(isset($form_errors['billNo'])): ?>
-                <span class="error"><?php echo $form_errors['billNo'] ?></span>
-              <?php endif; ?>
-            </div>
-            <div class="col-sm-12 col-md-3 col-lg-3" style="padding-left:0px;">
+                type="text" 
+                class="form-control" 
+                name="dnValue" 
+                id="dnValue" 
+                value="<?php echo $dn_value ?>"
+                style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
+              >
+              <?php if(isset($form_errors['dnValue'])): ?>
+                <span class="error"><?php echo $form_errors['dnValue'] ?></span>
+              <?php endif; ?>   
+            </div>            
+            <div class="col-sm-12 col-md-3 col-lg-3">
               <label class="control-label labelStyle">Store name</label>
               <div class="select-wrap">
                 <select 
@@ -117,21 +116,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-12 col-md-2 col-lg-2">
-              <label class="control-label labelStyle">Debit note value (in Rs.)</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                name="dnValue" 
-                id="dnValue" 
-                value="<?php echo $dn_value ?>"
-                style="font-weight:bold;font-size:14px;padding-left:5px;border:1px dashed;"
-              >
-              <?php if(isset($form_errors['dnValue'])): ?>
-                <span class="error"><?php echo $form_errors['dnValue'] ?></span>
-              <?php endif; ?>   
-            </div>
-            <div class="col-sm-12 col-md-3 col-lg-3" style="padding-left:0px;">
+            <div class="col-sm-12 col-md-3 col-lg-3">
               <label class="control-label labelStyle">Reason</label>
               <div class="select-wrap">
                 <select class="form-control" id="adjReasonCode" name="adjReasonCode">
@@ -371,6 +356,7 @@
             </table>
           </div>
           <br />
+          <input type="hidden" name="billNo" value="" />
           <div class="text-center">
             <button class="btn btn-success cancelOp" id="manDebitNoteSubmit">
               <i class="fa fa-save"></i> Save
@@ -400,3 +386,20 @@
     </div>
   </div>
 </div>
+
+            <?php /*
+            <div class="col-sm-12 col-md-2 col-lg-2" style="padding-left:0px;">
+              <label class="control-label labelStyle">Bill no.</label>
+              <input 
+                type="text"
+                id="billNo"
+                name="billNo"
+                style="font-weight:bold;font-size:14px;padding-left:5px;"
+                value="<?php echo $bill_no ?>"
+                class="form-control noEnterKey"
+                maxlength="50"
+              />
+              <?php if(isset($form_errors['billNo'])): ?>
+                <span class="error"><?php echo $form_errors['billNo'] ?></span>
+              <?php endif; ?>
+            </div>*/?>

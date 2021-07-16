@@ -599,6 +599,7 @@ class SalesReportsController {
     $customer_info['bill_date'] = date("d-M-Y",strtotime($sale_details['invoiceDate']));
     $customer_info['location_name'] = $sale_details['locationName'];
     $customer_info['location_name_short'] = $sale_details['locationNameShort'];
+    $customer_info['location_code'] = $sale_details['locationCode'];
     $customer_info['executive_name'] = $sale_details['executiveName'];
     $customer_info['agent_name'] = '';
     $customer_info['invoice_code'] = $sale_details['invoiceCode'];
@@ -674,12 +675,14 @@ class SalesReportsController {
     $unique_hsn_codes = array_unique(array_column($sale_item_details, 'hsnSacCode')); 
 
     // dump(count($sale_item_final));
-
+    // exit;
+    $total_hsn_codes = count(array_unique(array_column($sale_item_final, 'hsnSacCode')));
     $taxable_values = $tax_amounts = $taxable_gst_value = [];
     $tot_bill_value = $tot_discount = $tot_taxable = $tot_items_qty = 0;
     $tot_tax_amount = 0;
     $hsn_code_qty = $hsn_code_taxable = $hsn_cgst_value = $hsn_sgst_value = 0;
     $cnos_a = $hsn_codes_array = $bnos_a = [];
+    $total_rows_count = count($sale_item_final);
     foreach($sale_item_final as $item_details) {
       if(is_array($item_details) && count($item_details) > 0) {
         $item_qty = $amount = $discount = $taxable = $tax_value = 0;
@@ -769,7 +772,11 @@ class SalesReportsController {
       }
       $pdf->Ln();
       $record_cntr++;
-      if($record_cntr === 25) {
+      if( ($record_cntr === 25 && $total_rows_count > 25) || 
+          ($record_cntr === 18 && $total_hsn_codes > 1 && $total_rows_count <= 25) 
+        ) {
+        $pdf->Ln();
+        $pdf->Ln();
         $pdf->Ln();
         $pdf->Ln();
         $pdf->Ln();
@@ -4669,7 +4676,7 @@ class SalesReportsController {
     // dump($logo_url);
     // exit;
 
-    // dump($customer_info);
+    // dump($customer_info, $loc_address);
     // exit;
     // $file_download_path = __DIR__.'/../../../../bulkuploads';
 
@@ -4833,14 +4840,14 @@ class SalesReportsController {
     $pdf->setX(9);
     // section or location information
     $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(50,5,'Section / Division','LBT',0,'C');
+    $pdf->Cell(50,5,'Promo Code','LBT',0,'C');
     $pdf->Cell(62,5,'Excecutive Name','B',0,'C');
     $pdf->Cell(40,5,'Scheme','BT',0,'C');
     $pdf->Cell(40,5,'Payment Terms','BRT',0,'C');
     $pdf->Ln();
     $pdf->setX(9);
     $pdf->SetFont('Arial','',8);
-    $pdf->Cell(50,5,$customer_info['location_name'],'LB',0,'C');
+    $pdf->Cell(50,5,$customer_info['promo_code'],'LB',0,'C');
     $pdf->Cell(62,5,$customer_info['executive_name'],'B',0,'C');
     $pdf->Cell(40,5,$customer_info['campaign_name'],'B',0,'C');
     $pdf->Cell(40,5,$payment_method_name,'BR',0,'C');

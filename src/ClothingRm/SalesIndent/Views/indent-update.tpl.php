@@ -8,7 +8,7 @@
     $location_code = '';
   }
 
-  // dump($location_code);
+  // dump($location_code, $errors);
   // exit;
 
   $tot_products = isset($form_data['itemDetails']['itemName']) ? count($form_data['itemDetails']['itemName']) : 0;

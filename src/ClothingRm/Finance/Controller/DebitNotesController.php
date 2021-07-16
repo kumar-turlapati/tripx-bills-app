@@ -332,15 +332,17 @@ class DebitNotesController {
     } else {
       $form_errors['adjReasonCode'] = 'Invalid reason';
     }
-    if($bill_no !== '') {
-      $cleaned_params['billNo'] = $bill_no;
-    } else {
-      $form_errors['billNo'] = 'Invalid bill no';
-    }
+
+    // if($bill_no !== '') {
+    //   $cleaned_params['billNo'] = $bill_no;
+    // } else {
+    //   $form_errors['billNo'] = 'Invalid bill no';
+    // }
 
     $cleaned_params['taxCalcOption'] = $tax_calc_option;
     $cleaned_params['mDebitNoteType'] = $m_dn_type;
     $cleaned_params['dnDate'] = $dn_date;
+    $cleaned_params['billNo'] = $bill_no;    
 
     for($item_key=0;$item_key<20;$item_key++) {
       if($item_details['itemName'][$item_key] !== '') {
@@ -393,75 +395,3 @@ class DebitNotesController {
     }
   }
 }
-
-
-  // create debit note.
-  // public function dnCreateAction(Request $request) {
-  //   $form_data = $form_errors = $suppliers_a = [];
-  //   $purchase_details = [];
-
-  //   $api_error = '';
-
-  //   // get purchase details if purchase code is available.
-  //   if( !is_null($request->get('pc')) ) {
-  //     $purchase_code = Utilities::clean_string($request->get('pc'));
-  //     $purchase_response = $this->inward_model->get_purchase_details($purchase_code);
-  //     if($purchase_response['status']) {
-  //       $purchase_details = $purchase_response['purchaseDetails'];
-  //     } else {
-  //       $this->flash->set_flash_message($purchase_response['apierror'], 1);
-  //       Utilities::redirect('/purchase-return/entry');
-  //     }
-  //   } else {
-  //     $this->flash->set_flash_message('Invalid parameter in Debit Note.', 1);
-  //     Utilities::redirect('/purchase-return/register');
-  //   }
-
-  //   // get suppliers data
-  //   $suppliers = $this->supplier_model->get_suppliers(0,0,[]);
-  //   if($suppliers['status']) {
-  //     $suppliers_a += $suppliers['suppliers'];
-  //   }  
-
-  //   if(count($request->request->all()) > 0) {
-  //     $form_data = $request->request->all();
-  //     $validation = $this->_validate_form_data($form_data, $purchase_details);
-  //     if( $validation['status'] === false ) {
-  //       $form_errors = $validation['errors'];
-  //       $this->flash->set_flash_message('You have errors in this Form. Please fix them before saving this voucher.',1);
-  //     } else {
-  //       # hit api and process sales transaction.
-  //       $cleaned_params = $validation['cleaned_params'];
-  //       $api_response = $this->dn_model->create_debit_note($cleaned_params);
-  //       if($api_response['status']) {
-  //         $this->flash->set_flash_message('Debit note with Voucher No. <b>`'.$api_response['dnNo'].'`</b> created successfully.');
-  //         Utilities::redirect('/fin/debit-note/create');
-  //       } else {
-  //         $page_error = $api_response['apierror'];
-  //         $this->flash->set_flash_message($page_error,1);
-  //       }
-  //     }
-
-  //   } else {
-  //     $form_data['supplierCode'] = $purchase_details['supplierCode'];
-  //     $form_data['billNo'] = $purchase_details['billNo'];
-  //     $form_data['amount'] = $purchase_details['netPay'];
-  //   }
-
-  //   // build variables
-  //   $controller_vars = array(
-  //     'page_title' => 'Finance Management - Debit Notes',
-  //     'icon_name' => 'fa fa-minus-square',
-  //   );
-
-  //   // template variables
-  //   $template_vars = array(
-  //     'form_errors' => $form_errors,
-  //     'form_data' => $form_data,
-  //     'api_error' => $api_error,
-  //     'suppliers_a' => $suppliers_a,
-  //   );    
-
-  //   // render template
-  //   return array($this->template->render_view('create-debit-note', $template_vars), $controller_vars);     
-  // }
